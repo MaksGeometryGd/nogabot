@@ -11,7 +11,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiohttp import web
 
-TOKEN = os.environ.get("8383839196:AAEJAbGIB1gqtQ85M4ZRZ98Z9m4MeCvlank")
+TOKEN = os.environ.get("8383839196:AAHm3sUvmztvszKjytZf1WAG1E8w6bahx28")
 ADMIN_USERNAME = "MaksGeometryGd"
 DB_PATH = "nogost.db"
 
