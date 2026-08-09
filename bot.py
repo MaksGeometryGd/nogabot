@@ -32,18 +32,18 @@ def get_level_visual(score: int) -> str:
     if score < 150:  return "🦵🦵 (2 ур)"
     if score < 300:  return "🦵🦵🦵 (3 ур)"
     if score < 500:  return "🦵🦵🦵🦵 (4 ур)"
-    if score < 800:  return "🦵🦵🦵🦵🦵 (5 ур. Максимальная плоть)"
-    if score < 1200: return "🦿🦵🦵🦵🦵 (6 ур. Киборг-начмырыш)"
-    if score < 1600: return "🦿🦿🦵🦵🦵 (7 ур. Полу-робот)"
-    if score < 2000: return "🦿🦿🦿🦵🦵 (8 ур. Железный бегун)"
-    if score < 2400: return "🦿🦿🦿🦿🦵 (9 ур. Почти Терминатор)"
-    if score < 3000: return "🦿🦿🦿🦿🦿 (10 ур. Чистый Металл)"
-    if score < 3600: return "🍗 Куриный Бог Скорости (11 ур)"
-    if score < 4200: return "🐾 Кошачий Мягкоступ (12 ур)"
-    if score < 4800: return "🄿🄾🄳🄾🅂🄳🅆🄰 Титана (13 ур)"
-    if score < 5400: return "🧦 Священный Носок Судьбы (14 ур)"
-    if score < 6000: return "🦶 Великий Пятка-Убийца (15 ур)"
-    return "🛸 Leg-Mother КОСМИЧЕСКАЯ НОГА (16+ ур. Финал эволюции)"
+    if score < 800:  return "🦵🦵🦵🦵🦵 (5 ур)"
+    if score < 1200: return "🦿🦵🦵🦵🦵 (6 ур)"
+    if score < 1600: return "🦿🦿🦵🦵🦵 (7 ур)"
+    if score < 2000: return "🦿🦿🦿🦵🦵 (8 ур)"
+    if score < 2400: return "🦿🦿🦿🦿🦵 (9 ур)"
+    if score < 3000: return "🦿🦿🦿🦿🦿 (10 ур)"
+    if score < 3600: return "🍗 Куринная ношка(11 ур)"
+    if score < 4200: return "🐾 Нога котости(12 ур)"
+    if score < 4800: return "🩴 Тапость (13 ур)"
+    if score < 5400: return "🧦 Носочек (14 ур)"
+    if score < 6000: return "🦶 Пяткость (15 ур)"
+    return "🛸🦵 НОГА БОГА (Макс ур)"
 
 def get_next_level_info(score: int) -> str:
     for m in MILESTONES:
@@ -70,7 +70,7 @@ async def count_legs(message: Message):
         cursor.execute("INSERT INTO users (user_id, username, score) VALUES (?, ?, ?)", (user_id, username, new_score))
     
     conn.commit()
-    await message.reply(f"Лютый рофл засчитан! +{legs_count} к ногости 👣 (Всего: {new_score})")
+    await message.reply(f"+{legs_count} к ногости 👣 (Всего: {new_score})")
 
 @dp.message(F.text.lower() == "!моя нога")
 async def my_profile(message: Message):
@@ -101,7 +101,7 @@ async def top_players(message: Message):
         await message.reply("В топе пока пусто, никто еще не кинул ногу... 🧍")
         return
         
-    text = "🏆 **ТОП-10 САМЫХ НОГАСТЫХ КИБОРГОВ:**\n\n"
+    text = "🏆 **ТОП-10 САМЫХ НОГОСТЬ:**\n\n"
     for idx, (username, score) in enumerate(rows, 1):
         mention = f"@{username}" if not username.startswith("@") else username
         mention = mention.replace("_", "\\_")
