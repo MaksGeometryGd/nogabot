@@ -18,23 +18,23 @@ ADMIN_USERNAME = "MaksGeometryGd"
 TURSO_URL = os.environ.get("TURSO_DATABASE_URL")
 TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN")
 
-PREMIUM_MIKU = '<tg-emoji emoji-id="0000000000000000001">🤩</tg-emoji>'
-PREMIUM_MGG = '<tg-emoji emoji-id="0000000000000000002">🥰</tg-emoji>'
+PREMIUM_MIKU = '<tg-emoji emoji-id="5199793038410391513">🤩</tg-emoji>'
+PREMIUM_MGG = '<tg-emoji emoji-id="6327920744789444368">🥰</tg-emoji>'
 
-PREMIUM_BADGE_EVO = '<tg-emoji emoji-id="0000000000000000010">🏅</tg-emoji>'
-PREMIUM_BADGE_CASE = '<tg-emoji emoji-id="0000000000000000011">🎖️</tg-emoji>'
-PREMIUM_BADGE_FARM = '<tg-emoji emoji-id="0000000000000000012">🥇</tg-emoji>'
-PREMIUM_BADGE_EVO5 = '<tg-emoji emoji-id="0000000000000000013">👑</tg-emoji>'
+PREMIUM_BADGE_EVO = '<tg-emoji emoji-id="5370704514561093615">🏅</tg-emoji>'
+PREMIUM_BADGE_CASE = '<tg-emoji emoji-id="5328257610472775810">🎖️</tg-emoji>'
+PREMIUM_BADGE_FARM = '<tg-emoji emoji-id="5415966542078683753">🥇</tg-emoji>'
+PREMIUM_BADGE_EVO5 = '<tg-emoji emoji-id="5372812377135789260">👑</tg-emoji>'
 
-PREMIUM_DAILY_CHARM = '<tg-emoji emoji-id="0000000000000000020">🧿</tg-emoji>'
+PREMIUM_DAILY_CHARM = '<tg-emoji emoji-id="5233570349148311519">🧿</tg-emoji>'
 
-PREMIUM_MK_MGG = '<tg-emoji emoji-id="0000000000000000030">🪬</tg-emoji>'
-PREMIUM_MK_SANDSMOON = '<tg-emoji emoji-id="0000000000000000031">🌔</tg-emoji>'
-PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="0000000000000000032">😎</tg-emoji>'
-PREMIUM_MK_MK = '<tg-emoji emoji-id="0000000000000000033">🔱</tg-emoji>'
-PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="0000000000000000034">🫯</tg-emoji>'
-PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="0000000000000000035">➰</tg-emoji>'
-PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="0000000000000000036">🩹</tg-emoji>'
+PREMIUM_MK_MGG = '<tg-emoji emoji-id="5420141555233071341">🪬</tg-emoji>'
+PREMIUM_MK_SANDSMOON = '<tg-emoji emoji-id="5197260300490907908">🌔</tg-emoji>'
+PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="5330393755407111028">😎</tg-emoji>'
+PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">🔱</tg-emoji>'
+PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5778352775591103997">🫯</tg-emoji>'
+PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="5233239138450312962">➰</tg-emoji>'
+PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">🩹</tg-emoji>'
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
@@ -61,7 +61,7 @@ CUSTOM_LEVELS = [
     (18000, "👁", "нога полу-бога"),
     (18600, "🌌", "космическая нога"),
     (19200, "🧿", "нога бога"),
-    (19800, PREMIUM_MGG, "нога мгг (кошкодевочка)"),
+    (19800, PREMIUM_MGG, "нога мгг"),
 ]
 
 ALL_THRESHOLDS = REGULAR_THRESHOLDS + [t for t, _, _ in CUSTOM_LEVELS]
