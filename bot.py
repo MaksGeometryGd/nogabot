@@ -169,6 +169,92 @@ CASES = {
                  "mk_broken", "mk_mary", "mk_veron03", "strange_coin"]},
 }
 
+# ---------- Перерождение (Rebirth) ----------
+REBIRTH_EVO_PER_POINT = 5          # 5 уровней эволюции = 1 Очко Перерождения
+REBIRTH_HARDNESS_STEP = 0.125      # +12.5% к сложности эволюций за каждое перерождение (середина диапазона 10-15%)
+
+# ---------- Меню прокачки (апгрейды за Очки Перерождения) ----------
+# Каждый апгрейд: max_level, базовая цена (лвл 1), правило прироста цены за уровень.
+# cost(level) — цена, чтобы поднять апгрейд С (level-1) НА level.
+
+def _linear_cost(base: int, step: int):
+    return lambda level: base + step * (level - 1)
+
+
+def _per_n_levels_cost(base: int, step: int, n: int):
+    # цена растёт на `step` каждые `n` уровней (используется для Бустера: +1 🉑 каждые 3 лвл)
+    return lambda level: base + step * ((level - 1) // n)
+
+
+UPGRADES = {
+    "farm_yield": {
+        "name": "Ферма ДОБЫЧА",
+        "desc": "+10% к добыче фермы за лвл",
+        "max_level": 10,
+        "cost": _linear_cost(1, 1),
+        "category": 1,
+    },
+    "farm_cd": {
+        "name": "Ферма КД",
+        "desc": "-2 мин к КД фермы за лвл",
+        "max_level": 5,
+        "cost": _linear_cost(1, 2),
+        "category": 1,
+    },
+    "auto_farm_legs": {
+        "name": "Авто-Ферма НОГИ",
+        "desc": "1:10 ног/мин · 2:100 ног/30с · 3:1000 ног/10с",
+        "max_level": 3,
+        "cost": _linear_cost(1, 4),
+        "category": 1,
+    },
+    "auto_farm_coins": {
+        "name": "Авто-Ферма КОИНЫ",
+        "desc": "1:1 коин/5мин · 2:5 коин/5мин · 3:10 коин/3мин",
+        "max_level": 3,
+        "cost": _linear_cost(1, 2),  # базовая прогрессия 1/3/5
+        "category": 1,
+    },
+    "booster": {
+        "name": "Бустер",
+        "desc": "+5% буст ко всему за лвл",
+        "max_level": 50,
+        "cost": _per_n_levels_cost(1, 1, 3),
+        "category": 2,
+    },
+    "equip_slots": {
+        "name": "Слоты экипировки",
+        "desc": "+1 слот экипировки бустеров за лвл",
+        "max_level": 2,
+        "cost": _linear_cost(5, 5),
+        "category": 2,
+    },
+    "discount": {
+        "name": "Скидка",
+        "desc": "-10% к цене кейсов за лвл",
+        "max_level": 3,
+        "cost": _linear_cost(1, 1),
+        "category": 2,
+    },
+    "sell_boost": {
+        "name": "Продажа",
+        "desc": "+2 коина к продаже за лвл (3 лвл: 1% шанс +1 🉑 при продаже)",
+        "max_level": 3,
+        "cost": _linear_cost(2, 2),
+        "category": 2,
+    },
+    # В разработке — не покупаемы, только отображаются
+    "crafts": {"name": "Крафты", "desc": "В разработке", "max_level": 2, "cost": None, "category": 3, "wip": True},
+    "brew_speed": {"name": "Скорость готовки зелья", "desc": "В разработке", "max_level": 5, "cost": None, "category": 3, "wip": True},
+    "brew_duration": {"name": "Длительность зелья", "desc": "В разработке", "max_level": 3, "cost": None, "category": 3, "wip": True},
+    "exchanger": {"name": "Обменник", "desc": "В разработке", "max_level": 2, "cost": None, "category": 3, "wip": True},
+}
+UPGRADE_ORDER = list(UPGRADES.keys())
+UPGRADE_CATEGORIES = {1: "🌾 Ферма", 2: "🎒 Экономика", 3: "🔧 В разработке"}
+
+AUTO_FARM_LEGS_RATES = {1: (10, 60), 2: (100, 30), 3: (1000, 10)}     # лвл: (кол-во ног, за X секунд)
+AUTO_FARM_COINS_RATES = {1: (1, 300), 2: (5, 300), 3: (10, 180)}       # лвл: (кол-во коинов, за X секунд)
+
 # ---------- Regex ----------
 AMOUNT = r"(\d+(?:\.\d+)?к{0,4})"
 
@@ -185,6 +271,8 @@ ADMIN_TAKE_ITEM_RE = re.compile(r"^!снять п (.+?)(\s+себе)?$", re.IGNO
 ADMIN_GIVE_VIP_RE = re.compile(rf"^!дать вип {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_VIP_RE = re.compile(r"^!снять вип(\s+себе)?$", re.IGNORECASE)
 ADMIN_RESET_RE = re.compile(r"^!сбросить(\s+себе)?$", re.IGNORECASE)
+ADMIN_GIVE_REBIRTH_RE = re.compile(rf"^!дать очкп {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_TAKE_REBIRTH_RE = re.compile(rf"^!снять очкп {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 
 PEER_GIVE_LEGS_RE = re.compile(rf"^дать ног {AMOUNT}$", re.IGNORECASE)
 PEER_GIVE_COIN_RE = re.compile(rf"^дать коин {AMOUNT}$", re.IGNORECASE)
@@ -199,11 +287,13 @@ FIXED_COMMANDS = {
     "моя нога", "топ ног", "гл топ ног", "топ эво", "гл топ эво", "топ коин", "гл топ коин",
     "ферма", "фарма", "инвентарь", "эволюция", "кейс", "кейсы", "бонус",
     "смс выкл", "смс вкл", "вип", "!ивент ноги", "бейджи",
+    "перерождение", "апгрейд", "прокачка", "апг", "баланс", "топ очкп", "гл топ очкп",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
     "!дать коин", "!снять коин", "!дать б", "!снять б", "!дать п", "!снять п", "!дать вип", "!снять вип", "!сбросить",
     "передать ", "кейс ", NEWS_PREFIX, "дать ног ", "дать коин ", "инфо ", "продать б ", "продать п ",
+    "!дать очкп", "!снять очкп",
 )
 
 
@@ -252,15 +342,16 @@ def base_level_threshold(level: int) -> int:
     return MAX_LEVEL_SCORE + round(200 * (level - 39) ** 1.5)
 
 
-def level_threshold(level: int, evolution_level: int) -> int:
-    return round(base_level_threshold(level) * (1 + EVO_HARDNESS_RATE * evolution_level))
+def level_threshold(level: int, evolution_level: int, rebirth_count: int = 0) -> int:
+    hardness = (1 + EVO_HARDNESS_RATE * evolution_level) * rebirth_hardness_multiplier(rebirth_count)
+    return round(base_level_threshold(level) * hardness)
 
 
-def get_level_index(score: int, evolution_level: int = 0) -> int:
+def get_level_index(score: int, evolution_level: int = 0, rebirth_count: int = 0) -> int:
     lo, hi = 0, 200000
     while lo < hi:
         mid = (lo + hi + 1) // 2
-        if level_threshold(mid, evolution_level) <= score:
+        if level_threshold(mid, evolution_level, rebirth_count) <= score:
             lo = mid
         else:
             hi = mid - 1
@@ -283,15 +374,15 @@ def get_level_visual(level: int):
     return "❓", "неизвестный уровень", True
 
 
-def next_level_text(score: int, evolution_level: int) -> str:
-    level = get_level_index(score, evolution_level)
+def next_level_text(score: int, evolution_level: int, rebirth_count: int = 0) -> str:
+    level = get_level_index(score, evolution_level, rebirth_count)
     if level >= MGG_MEGA_LEVEL:
         return "Ты достиг абсолютного предела ноги — дальше только легенды 🌌"
-    nxt = level_threshold(level + 1, evolution_level)
+    nxt = level_threshold(level + 1, evolution_level, rebirth_count)
     return f"До {level + 1} уровня осталось {nxt - score} очков"
 
 
-def get_multiplier(evolution_level: int, active_item: str, vip_active: bool) -> float:
+def get_multiplier(evolution_level: int, active_item: str, vip_active: bool, upgrades: dict = None) -> float:
     mult = 1.0
     if evolution_level >= 2:
         mult += EVO_BOOST_STEP
@@ -301,11 +392,113 @@ def get_multiplier(evolution_level: int, active_item: str, vip_active: bool) -> 
         mult += ITEMS[active_item][2] / 100
     if vip_active:
         mult += VIP_BOOST
+    if upgrades:
+        mult += 0.05 * upgrade_level(upgrades, "booster")
     return mult
 
 
 def parse_hidden(hidden_str: str) -> set:
     return set(h for h in (hidden_str or "").split(",") if h)
+
+
+def parse_upgrades(upgrades_str: str) -> dict:
+    result = {}
+    for part in (upgrades_str or "").split(","):
+        if not part or ":" not in part:
+            continue
+        key, _, lvl = part.partition(":")
+        if key in UPGRADES:
+            try:
+                result[key] = int(lvl)
+            except ValueError:
+                pass
+    return result
+
+
+def format_upgrades(upgrades: dict) -> str:
+    return ",".join(f"{k}:{v}" for k, v in upgrades.items() if v > 0)
+
+
+def upgrade_level(upgrades: dict, key: str) -> int:
+    return upgrades.get(key, 0)
+
+
+def upgrade_next_cost(key: str, upgrades: dict):
+    cfg = UPGRADES[key]
+    if cfg.get("wip") or cfg["cost"] is None:
+        return None
+    level = upgrade_level(upgrades, key)
+    if level >= cfg["max_level"]:
+        return None
+    return cfg["cost"](level + 1)
+
+
+async def claim_offline_auto_farm(user_id: int, row) -> tuple:
+    """Начисляет оффлайн-доход от Авто-Фермы НОГИ/КОИНЫ по разнице времени.
+    Возвращает (legs_gained, coins_gained, new_score, new_coins)."""
+    upgrades = parse_upgrades(row[16])
+    legs_lvl = upgrade_level(upgrades, "auto_farm_legs")
+    coins_lvl = upgrade_level(upgrades, "auto_farm_coins")
+    score, coins = row[2], row[5]
+    last_claim = row[17] or 0
+    now = int(time.time())
+
+    if not legs_lvl and not coins_lvl:
+        # нечего копить — просто обновим метку, чтобы не копился долг на будущее
+        if not last_claim:
+            await db_exec("UPDATE users SET last_auto_claim = ? WHERE user_id = ?", (now, user_id))
+        return 0, 0, score, coins
+
+    if not last_claim:
+        await db_exec("UPDATE users SET last_auto_claim = ? WHERE user_id = ?", (now, user_id))
+        return 0, 0, score, coins
+
+    elapsed = max(0, now - last_claim)
+    legs_gained = 0
+    coins_gained = 0
+
+    if legs_lvl:
+        amount, per_seconds = AUTO_FARM_LEGS_RATES[legs_lvl]
+        legs_gained = int(elapsed // per_seconds) * amount
+    if coins_lvl:
+        amount, per_seconds = AUTO_FARM_COINS_RATES[coins_lvl]
+        coins_gained = int(elapsed // per_seconds) * amount
+
+    if legs_gained == 0 and coins_gained == 0:
+        return 0, 0, score, coins
+
+    new_score = score + legs_gained
+    new_coins = coins + coins_gained
+    await db_exec(
+        "UPDATE users SET score = ?, coins = ?, total_farmed = total_farmed + ?, last_auto_claim = ? WHERE user_id = ?",
+        (new_score, new_coins, legs_gained, now, user_id),
+    )
+    return legs_gained, coins_gained, new_score, new_coins
+
+
+def rebirth_hardness_multiplier(rebirth_count: int) -> float:
+    return 1 + REBIRTH_HARDNESS_STEP * rebirth_count
+
+
+def farm_yield_multiplier(upgrades: dict) -> float:
+    return 1 + 0.10 * upgrade_level(upgrades, "farm_yield")
+
+
+def farm_cd_seconds(upgrades: dict) -> int:
+    reduction = 120 * upgrade_level(upgrades, "farm_cd")
+    return max(60, FARM_COOLDOWN - reduction)  # не даём КД уйти в ноль/минус
+
+
+def booster_upgrade_multiplier(upgrades: dict) -> float:
+    return 1 + 0.05 * upgrade_level(upgrades, "booster")
+
+
+def case_discount(upgrades: dict) -> float:
+    return 0.10 * upgrade_level(upgrades, "discount")
+
+
+def sell_bonus_coins(upgrades: dict) -> int:
+    return 2 * upgrade_level(upgrades, "sell_boost")
 
 
 def badge_list(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool):
@@ -422,8 +615,13 @@ async def db_query_one(sql, params=()):
 
 USER_COLUMNS = (
     "user_id, username, score, evolution_level, last_farm, coins, active_item, "
-    "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges"
+    "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
+    "rebirth_points, rebirth_count, upgrades, last_auto_claim"
 )
+# Индексы полей выше при обращении по row[...]:
+#  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item,
+#  7 cases_opened, 8 total_farmed, 9 last_bonus, 10 bonus_streak, 11 levelup_notify, 12 vip_until,
+#  13 hidden_badges, 14 rebirth_points, 15 rebirth_count, 16 upgrades (строка "key:lvl,key:lvl"), 17 last_auto_claim
 
 
 async def init_db():
@@ -469,6 +667,10 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN levelup_notify INTEGER DEFAULT 1",
         "ALTER TABLE users ADD COLUMN vip_until INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN hidden_badges TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN rebirth_points INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN rebirth_count INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN upgrades TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN last_auto_claim INTEGER DEFAULT 0",
     ):
         try:
             await db_exec(stmt)
@@ -488,7 +690,8 @@ async def ensure_user(user_id: int, username: str):
     row = await get_user(user_id)
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
-        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "")
+        now = int(time.time())
+        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now)
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
@@ -531,13 +734,13 @@ async def get_all_chat_ids():
 async def build_top(chat_id, order_column: str, limit: int = 10):
     if chat_id is None:
         rows = await db_query(
-            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges "
+            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count "
             f"FROM users ORDER BY {order_column} DESC LIMIT ?",
             (limit,),
         )
     else:
         rows = await db_query(
-            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges
+            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges, u.rebirth_points, u.rebirth_count
                 FROM users u JOIN chat_members cm ON u.user_id = cm.user_id
                 WHERE cm.chat_id = ? ORDER BY u.{order_column} DESC LIMIT ?""",
             (chat_id, limit),
@@ -631,11 +834,11 @@ async def error_handler(event, exception):
 
 
 async def maybe_announce_levelup(message: Message, username: str, old_score: int, new_score: int,
-                                  evolution_level: int, notify: bool):
+                                  evolution_level: int, notify: bool, rebirth_count: int = 0):
     if not notify:
         return
-    old_level = get_level_index(old_score, evolution_level)
-    new_level = get_level_index(new_score, evolution_level)
+    old_level = get_level_index(old_score, evolution_level, rebirth_count)
+    new_level = get_level_index(new_score, evolution_level, rebirth_count)
     if new_level <= old_level:
         return
     emoji, name, show_level = get_level_visual(new_level)
@@ -721,6 +924,8 @@ async def count_legs(message: Message):
     row = await ensure_user(user_id, username)
     score, evolution_level, active_item = row[2], row[3], row[6]
     levelup_notify, vip_until = row[11], row[12]
+    rebirth_count = row[15]
+    upgrades = parse_upgrades(row[16])
     vip_active = is_vip_active(vip_until)
 
     flat_bonus = ITEM_FLAT_BONUS.get(active_item, 0)
@@ -737,8 +942,9 @@ async def count_legs(message: Message):
         return
 
     gained += flat_bonus  # гарант-бонус применяется один раз к итогу, а не за каждую ногу
+    gained = round(gained * farm_yield_multiplier(upgrades))
 
-    mult = get_multiplier(evolution_level, active_item, vip_active)
+    mult = get_multiplier(evolution_level, active_item, vip_active, upgrades)
     event_mult = 2 if await is_event_active() else 1
     total = round(gained * mult * event_mult)
     new_score = score + total
@@ -748,7 +954,7 @@ async def count_legs(message: Message):
         (new_score, total, user_id),
     )
 
-    await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify))
+    await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count)
 
     inv = await get_inventory(user_id)
     has_strange_coin = any(k == "strange_coin" and q > 0 for k, q in inv)
@@ -778,12 +984,14 @@ async def my_profile(message: Message):
     row = await ensure_user(user_id, username)
     score, evolution_level, coins, active_item = row[2], row[3], row[5], row[6]
     vip_until = row[12]
+    rebirth_points, rebirth_count = row[14], row[15]
+    upgrades = parse_upgrades(row[16])
     vip_active = is_vip_active(vip_until)
 
-    level = get_level_index(score, evolution_level)
+    level = get_level_index(score, evolution_level, rebirth_count)
     emoji, name, show_level = get_level_visual(level)
-    nxt = next_level_text(score, evolution_level)
-    mult = get_multiplier(evolution_level, active_item, vip_active)
+    nxt = next_level_text(score, evolution_level, rebirth_count)
+    mult = get_multiplier(evolution_level, active_item, vip_active, upgrades)
     flat_bonus = ITEM_FLAT_BONUS.get(active_item, 0)
 
     if vip_active:
@@ -797,15 +1005,17 @@ async def my_profile(message: Message):
     lvl_line = f"● Уровень ноги: {level} лвл\n" if show_level else ""
     name_part = f" {esc(name)}" if name else ""
     guarant_line = f"● Гарант-буст с предмета: +{flat_bonus} к итогу\n" if flat_bonus else ""
+    rebirth_line = f"● Перерождений: {rebirth_count} (🉑 {rebirth_points})\n" if rebirth_count else ""
 
     text = (
         f"👣 <b>ТВОЯ ЛЮТАЯ НОГОСТЬ:</b>\n"
         f"━━━━━━━━━━━━━━━━━━\n"
-        f"● Очки: <code>{score}</code> {emoji}\n"
+        f"● Очки: <code>{score}</code>\n"
         f"● Монеты: <code>{coins}</code> 🪙\n"
         f"● Вид ног: {emoji}{name_part}\n"
         f"{lvl_line}"
         f"● Уровень эволюции: {evolution_level}\n"
+        f"{rebirth_line}"
         f"● Процентовый буст: +{round((mult - 1) * 100)}%\n"
         f"{guarant_line}"
         f"{vip_line}"
@@ -831,9 +1041,10 @@ async def info_player(message: Message):
     score, evolution_level, coins, active_item = row[2], row[3], row[5], row[6]
     cases_opened, total_farmed = row[7], row[8]
     vip_until = row[12]
+    rebirth_count = row[15] if len(row) > 15 else 0
     hidden = parse_hidden(row[13] if len(row) > 13 else "")
     vip_active = is_vip_active(vip_until)
-    level = get_level_index(score, evolution_level)
+    level = get_level_index(score, evolution_level, rebirth_count)
     emoji, name, show_level = get_level_visual(level)
     lvl_part = f" ({level} лвл)" if show_level else ""
     name_part = f" {esc(name)}" if name else ""
@@ -861,13 +1072,13 @@ async def send_legs_top(message: Message, chat_id, title: str):
         return
 
     text = f"🏆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges) in enumerate(rows, 1):
-        level = get_level_index(score, evolution_level)
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count) in enumerate(rows, 1):
+        level = get_level_index(score, evolution_level, rebirth_count)
         emoji, name, show_level = get_level_visual(level)
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         lvl_part = f" ({level} лвл)" if show_level else ""
         name_part = f" {esc(name)}" if name else ""
-        text += f"{i}. {esc(username)}{badges} — <code>{score}</code>\n   └ {emoji}{name_part}{lvl_part}\n\n"
+        text += f"{i}. {esc(username)}{badges} — <code>{score}</code>\n   └ {emoji}{name_part}{lvl_part} · эво {evolution_level}\n\n"
 
     await message.reply(text)
 
@@ -880,7 +1091,7 @@ async def send_evo_top(message: Message, chat_id, title: str):
         return
 
     text = f"🎆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count) in enumerate(rows, 1):
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         text += f"{i}. {esc(username)}{badges} — эво {evolution_level} ({score} очков)\n"
 
@@ -895,9 +1106,24 @@ async def send_coin_top(message: Message, chat_id, title: str):
         return
 
     text = f"🪙 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count) in enumerate(rows, 1):
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         text += f"{i}. {esc(username)}{badges} — {coins} 🪙\n"
+
+    await message.reply(text)
+
+
+async def send_rebirth_top(message: Message, chat_id, title: str):
+    rows = await build_top(chat_id, "rebirth_points")
+
+    if not rows:
+        await message.reply("В топе пока пусто.")
+        return
+
+    text = f"🉑 <b>{title}</b>\n\n"
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
+        text += f"{i}. {esc(username)}{badges} — {rebirth_points} 🉑 (перерождений: {rebirth_count})\n"
 
     await message.reply(text)
 
@@ -932,6 +1158,16 @@ async def top_coin_global(message: Message):
     await send_coin_top(message, None, "ТОП МОНЕТ ВЕЗДЕ")
 
 
+@dp.message(F.text.lower() == "топ очкп")
+async def top_rebirth_local(message: Message):
+    await send_rebirth_top(message, message.chat.id, "ТОП ОЧКОВ ПЕРЕРОЖДЕНИЯ ЭТОГО ЧАТА")
+
+
+@dp.message(F.text.lower() == "гл топ очкп")
+async def top_rebirth_global(message: Message):
+    await send_rebirth_top(message, None, "ТОП ОЧКОВ ПЕРЕРОЖДЕНИЯ ВЕЗДЕ")
+
+
 @dp.message(F.text.lower().in_({"ферма", "фарма"}))
 async def farm(message: Message):
     user_id = message.from_user.id
@@ -941,18 +1177,24 @@ async def farm(message: Message):
     row = await ensure_user(user_id, username)
     score, evolution_level, active_item = row[2], row[3], row[6]
     last_farm, levelup_notify, vip_until = row[4], row[11], row[12]
+    rebirth_count = row[15]
+    upgrades = parse_upgrades(row[16])
     vip_active = is_vip_active(vip_until)
 
-    if now - last_farm < FARM_COOLDOWN:
-        left = FARM_COOLDOWN - (now - last_farm)
+    cooldown = farm_cd_seconds(upgrades)
+    if now - last_farm < cooldown:
+        left = cooldown - (now - last_farm)
         m, s = divmod(left, 60)
         await message.reply(f"Ферма на кулдауне ⏳ Осталось {m} мин {s} сек")
         return
 
+    # оффлайн-доход от Авто-Фермы — начисляем при действии игрока
+    auto_legs, auto_coins, score, _coins_after = await claim_offline_auto_farm(user_id, row)
+
     low, high = farm_range(evolution_level)
-    mult = get_multiplier(evolution_level, active_item, vip_active)
+    mult = get_multiplier(evolution_level, active_item, vip_active, upgrades)
     event_mult = 2 if await is_event_active() else 1
-    gained = round(random.randint(low, high) * mult * event_mult)
+    gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult)
     new_score = score + gained
 
     await db_exec(
@@ -960,8 +1202,16 @@ async def farm(message: Message):
         (new_score, now, gained, user_id),
     )
 
-    await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify))
-    await message.reply(f"Наферметил ногу! 🦵 +{gained} очков (Всего: {new_score})")
+    await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count)
+    auto_text = ""
+    if auto_legs or auto_coins:
+        bits = []
+        if auto_legs:
+            bits.append(f"+{auto_legs} очков")
+        if auto_coins:
+            bits.append(f"+{auto_coins} 🪙")
+        auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
+    await message.reply(f"Наферметил ногу! 🦵 +{gained} очков (Всего: {new_score}){auto_text}")
 
 
 @dp.message(F.text.lower() == "бонус")
@@ -1022,6 +1272,7 @@ async def exchange(message: Message):
 
     row = await ensure_user(user_id, username)
     score, coins, evolution_level = row[2], row[5], row[3]
+    rebirth_count = row[15]
 
     spent = coins_wanted * EXCHANGE_RATE
     if spent > score:
@@ -1029,9 +1280,9 @@ async def exchange(message: Message):
         await message.reply(f"Недостаточно очков. У тебя {score}, максимум можешь обменять на {max_coins} 🪙.")
         return
 
-    old_level = get_level_index(score, evolution_level)
+    old_level = get_level_index(score, evolution_level, rebirth_count)
     new_score = score - spent
-    new_level = get_level_index(new_score, evolution_level)
+    new_level = get_level_index(new_score, evolution_level, rebirth_count)
     new_coins = coins + coins_wanted
 
     await db_exec("UPDATE users SET score = ?, coins = ? WHERE user_id = ?", (new_score, new_coins, user_id))
@@ -1400,8 +1651,9 @@ async def evolve(message: Message):
 
     row = await ensure_user(user_id, username)
     score, evolution_level = row[2], row[3]
+    rebirth_count = row[15]
 
-    required = level_threshold(39, evolution_level)
+    required = level_threshold(39, evolution_level, rebirth_count)
     if score < required:
         await message.reply(f"Нужно достичь «ногу мгг» (39 ур, {required} очков), чтобы эволюционировать.")
         return
@@ -1439,6 +1691,220 @@ async def toggle_event(message: Message):
         await message.reply("🌟 Ивент «Золотая ногость» запущен! Х2 к фарме ног во всех чатах.")
     else:
         await message.reply("Ивент «Золотая ногость» окончен.")
+
+
+# ---------- Меню прокачки ("апгрейд" / "прокачка" / "апг") ----------
+
+def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int) -> str:
+    header = (
+        f"⚙️ <b>МЕНЮ ПРОКАЧКИ</b> — {UPGRADE_CATEGORIES[category]}\n"
+        f"🉑 Очки перерождения: <code>{rebirth_points}</code>\n"
+        f"━━━━━━━━━━━━━━━━━━\n"
+    )
+    return header
+
+
+def upgrade_page_keyboard(upgrades: dict, user_id: int, category: int) -> InlineKeyboardMarkup:
+    rows = []
+    for key in UPGRADE_ORDER:
+        cfg = UPGRADES[key]
+        if cfg["category"] != category:
+            continue
+        level = upgrade_level(upgrades, key)
+        if cfg.get("wip"):
+            label = f"🔧 {cfg['name']} — {level}/{cfg['max_level']} (в разработке)"
+            rows.append([InlineKeyboardButton(text=label, callback_data="upg_noop")])
+            continue
+        cost = upgrade_next_cost(key, upgrades)
+        if cost is None:
+            label = f"✅ {cfg['name']} — {level}/{cfg['max_level']} (макс)"
+            rows.append([InlineKeyboardButton(text=label, callback_data="upg_noop")])
+        else:
+            label = f"{cfg['name']} — {level}/{cfg['max_level']} ({cost} 🉑)"
+            rows.append([InlineKeyboardButton(text=label, callback_data=f"upg_buy:{user_id}:{category}:{key}")])
+
+    nav = []
+    for cat in (1, 2, 3):
+        marker = "• " if cat == category else ""
+        nav.append(InlineKeyboardButton(text=f"{marker}{cat}", callback_data=f"upg_page:{user_id}:{cat}"))
+    rows.append(nav)
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+@dp.message(F.text.lower().in_({"апгрейд", "прокачка", "апг"}))
+async def upgrade_menu(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    upgrades = parse_upgrades(row[16])
+    rebirth_points = row[14]
+
+    await message.reply(
+        format_upgrade_page_text(upgrades, rebirth_points, 1),
+        reply_markup=upgrade_page_keyboard(upgrades, user_id, 1),
+    )
+
+
+@dp.callback_query(F.data == "upg_noop")
+async def upgrade_noop(callback: CallbackQuery):
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("upg_page:"))
+async def upgrade_change_page(callback: CallbackQuery):
+    _, owner_str, category_str = callback.data.split(":")
+    owner_id = int(owner_str)
+    category = int(category_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer("Это не твоё меню прокачки!", show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    upgrades = parse_upgrades(row[16])
+    rebirth_points = row[14]
+    await callback.message.edit_text(
+        format_upgrade_page_text(upgrades, rebirth_points, category),
+        reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
+    )
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("upg_buy:"))
+async def upgrade_buy(callback: CallbackQuery):
+    _, owner_str, category_str, key = callback.data.split(":")
+    owner_id = int(owner_str)
+    category = int(category_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer("Это не твоё меню прокачки!", show_alert=True)
+        return
+    if key not in UPGRADES or UPGRADES[key].get("wip"):
+        await callback.answer("Этот раздел ещё в разработке.", show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    upgrades = parse_upgrades(row[16])
+    rebirth_points = row[14]
+    cost = upgrade_next_cost(key, upgrades)
+
+    if cost is None:
+        await callback.answer("Максимальный уровень уже достигнут.", show_alert=True)
+        return
+    if rebirth_points < cost:
+        await callback.answer(f"Не хватает 🉑. Нужно {cost}, у тебя {rebirth_points}.", show_alert=True)
+        return
+
+    upgrades[key] = upgrade_level(upgrades, key) + 1
+    new_points = rebirth_points - cost
+    await db_exec(
+        "UPDATE users SET rebirth_points = ?, upgrades = ? WHERE user_id = ?",
+        (new_points, format_upgrades(upgrades), owner_id),
+    )
+
+    await callback.message.edit_text(
+        format_upgrade_page_text(upgrades, new_points, category),
+        reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
+    )
+    await callback.answer(f"Улучшено! {UPGRADES[key]['name']} → {upgrades[key]} лвл")
+
+
+# ---------- Перерождение ----------
+
+@dp.message(F.text.lower() == "перерождение")
+async def rebirth(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    score, evolution_level = row[2], row[3]
+    rebirth_points, rebirth_count = row[14], row[15]
+
+    if evolution_level < REBIRTH_EVO_PER_POINT:
+        await message.reply(
+            f"Перерождение доступно с {REBIRTH_EVO_PER_POINT} уровня эволюции "
+            f"(сейчас у тебя {evolution_level}). Каждые {REBIRTH_EVO_PER_POINT} уровней эво = 1 🉑."
+        )
+        return
+
+    points_gained = evolution_level // REBIRTH_EVO_PER_POINT
+    new_rebirth_points = rebirth_points + points_gained
+    new_rebirth_count = rebirth_count + 1
+
+    await db_exec(
+        "UPDATE users SET score = 0, evolution_level = 0, rebirth_points = ?, rebirth_count = ? WHERE user_id = ?",
+        (new_rebirth_points, new_rebirth_count, user_id),
+    )
+
+    new_hardness = round(REBIRTH_HARDNESS_STEP * new_rebirth_count * 100)
+    await message.reply(
+        f"🉑 <b>ПЕРЕРОЖДЕНИЕ!</b>\n"
+        f"Очки ноги и эволюция сброшены. Получено: +{points_gained} 🉑 (Всего: {new_rebirth_points}).\n"
+        f"⚠️ Эволюции теперь на {new_hardness}% сложнее, чем с нуля.\n"
+        f"Прокачки из меню «апгрейд» остались с тобой навсегда."
+    )
+
+
+@dp.message(F.text.lower() == "баланс")
+async def show_balance(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    coins, rebirth_points = row[5], row[14]
+
+    await message.reply(f"коин: {coins}\nОчки перерождение: {rebirth_points}")
+
+
+@dp.message(F.text.lower().startswith("!дать очкп"))
+async def admin_give_rebirth(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_GIVE_REBIRTH_RE.match(message.text.strip())
+    if not match:
+        await message.reply("Формат: !дать очкп <количество> [себе] (в ответ на сообщение игрока)")
+        return
+
+    target = await resolve_target(message, bool(match.group(2)))
+    if not target:
+        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        return
+
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
+    target_username = target.username or target.first_name or "Без имени"
+
+    row = await ensure_user(target.id, target_username)
+    new_points = row[14] + amount
+    await db_exec("UPDATE users SET rebirth_points = ? WHERE user_id = ?", (new_points, target.id))
+    await message.reply(f"Выдано {amount} 🉑 игроку {esc(target_username)} (Всего: {new_points})")
+
+
+@dp.message(F.text.lower().startswith("!снять очкп"))
+async def admin_take_rebirth(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_TAKE_REBIRTH_RE.match(message.text.strip())
+    if not match:
+        await message.reply("Формат: !снять очкп <количество> [себе] (в ответ на сообщение игрока)")
+        return
+
+    target = await resolve_target(message, bool(match.group(2)))
+    if not target:
+        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        return
+
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
+    target_username = target.username or target.first_name or "Без имени"
+
+    row = await ensure_user(target.id, target_username)
+    new_points = max(0, row[14] - amount)
+    await db_exec("UPDATE users SET rebirth_points = ? WHERE user_id = ?", (new_points, target.id))
+    await message.reply(f"Снято {amount} 🉑 у игрока {esc(target_username)} (Осталось: {new_points})")
 
 
 @dp.message(F.text.lower().startswith(NEWS_PREFIX))
