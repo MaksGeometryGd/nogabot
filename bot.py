@@ -29,18 +29,21 @@ PREMIUM_BADGE_EVO5 = '<tg-emoji emoji-id="5372812377135789260">👑</tg-emoji>'
 
 PREMIUM_DAILY_CHARM = '<tg-emoji emoji-id="5233570349148311519">🧿</tg-emoji>'
 
-PREMIUM_MK_MGG = '<tg-emoji emoji-id="5420141555233071341">🪬</tg-emoji>'
-PREMIUM_MK_SANDSMOON = '<tg-emoji emoji-id="5197260300490907908">🌔</tg-emoji>'
-PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="5330393755407111028">😎</tg-emoji>'
-PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">🔱</tg-emoji>'
-PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5778352775591103997">🫯</tg-emoji>'
-PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="5233239138450312962">➰</tg-emoji>'
-PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">🩹</tg-emoji>'
+PREMIUM_MK_MGG = '<tg-emoji emoji-id="5420141555233071341">📿</tg-emoji>'
+PREMIUM_MK_SANDSMOON = '<tg-emoji emoji-id="5197260300490907908">📿</tg-emoji>'
+PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="5330393755407111028">📿</tg-emoji>'
+PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">📿</tg-emoji>'
+PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5778352775591103997">📿</tg-emoji>'
+PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="5233239138450312962">📿</tg-emoji>'
+PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">📿</tg-emoji>'
 
 # заглушки — замени на реальные emoji-id, когда достанешь (см. инструкцию про custom_emoji_id)
 PREMIUM_OWNER_BADGE = '<tg-emoji emoji-id="5204056085509477484">💠</tg-emoji>'
 PREMIUM_VIP_BADGE = '<tg-emoji emoji-id="5233333941263437275">💎</tg-emoji>'
-PREMIUM_VIP_ITEM = '<tg-emoji emoji-id="5235625121632265369">🎗️</tg-emoji>'
+PREMIUM_VIP_ITEM = '<tg-emoji emoji-id="5344025423258864934">🎗️</tg-emoji>'
+PREMIUM_MK_MARY = '<tg-emoji emoji-id="5224652622652266008">📿</tg-emoji>'
+PREMIUM_MK_VERON03 = '<tg-emoji emoji-id="5429446558930182229">📿</tg-emoji>'
+PREMIUM_STRANGE_COIN = '<tg-emoji emoji-id="5035428694441592026">🪙</tg-emoji>'
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
@@ -63,13 +66,13 @@ CUSTOM_LEVELS = [
     (14400, "🦵💀", "нога смерти"),
     (15000, "🦵😎", "нога Fixsahal1"),
     (15600, "🦵👼", "нога ангела"),
-    (16200, "🦵🫯", "нога Panther"),
+    (16200, "🦵🦵", "нога Panther"),
     (16800, PREMIUM_MIKU, "нога Мику"),
     (17400, "🦵🏇", "нога героя"),
     (18000, "🦵👁", "нога полу-бога"),
     (18600, "🦵🌌", "космическая нога"),
     (19200, "🦵🧿", "нога бога"),
-    (19800, PREMIUM_MGG, "нога MGG)"),
+    (19800, PREMIUM_MGG, "нога MGG"),
 ]
 
 ALL_THRESHOLDS = REGULAR_THRESHOLDS + [t for t, _, _ in CUSTOM_LEVELS]
@@ -129,17 +132,29 @@ ITEMS = {
     "orb":    ("🔮", "Шар парадокса", 10, 20),
     "pill":   ("💊", "Таблетка силы", 8, 30),
     "candle": ("🪔", "Свеча солнцестояния", 6, 35),
-    "gift":   ("💮", "Подарок кошко-девочки", 25, 5),
+    "gift":   ("💮", "Подарок кошко-девочки", 45, 5),
     "star":   ("⭐️", "Звезда перерождения", 30, 0),
     "daily_charm": (PREMIUM_DAILY_CHARM, "Дневной амулет", 15, 0),
-    "mk_mgg":       (PREMIUM_MK_MGG, "Амулет MGG", 200, 1),
-    "mk_sandsmoon": (PREMIUM_MK_SANDSMOON, "Амулет SandsMoon", 40, 8),
-    "mk_fixsahal1": (PREMIUM_MK_FIXSAHAL1, "Амулет Fixsahal1", 30, 15),
-    "mk_mk":        (PREMIUM_MK_MK, "Амулет Mk", 50, 5),
-    "mk_panther":   (PREMIUM_MK_PANTHER, "Амулет Panther", 20, 20),
-    "mk_vector":    (PREMIUM_MK_VECTOR, "Амулет Vector", 40, 10),
-    "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 20, 41),
-    "vip_charm":    (PREMIUM_VIP_ITEM, "VIP-амулет", 250, 0),
+    "mk_mgg":       (PREMIUM_MK_MGG, "Амулет MGG", 125, 1),
+    "mk_sandsmoon": (PREMIUM_MK_SANDSMOON, "Амулет SandsMoon", 40, 6),
+    "mk_fixsahal1": (PREMIUM_MK_FIXSAHAL1, "Амулет Fixsahal1", 30, 10),
+    "mk_mk":        (PREMIUM_MK_MK, "Амулет Mk", 50, 3),
+    "mk_panther":   (PREMIUM_MK_PANTHER, "Амулет Panther", 20, 14),
+    "mk_vector":    (PREMIUM_MK_VECTOR, "Амулет Vector", 40, 7),
+    "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 20, 29),
+    "mk_mary":      (PREMIUM_MK_MARY, "Амулет Mary", 45, 10),
+    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 70, 5),
+    "vip_charm":    (PREMIUM_VIP_ITEM, "VIP-амулет", 0, 0),
+    "strange_coin": (PREMIUM_STRANGE_COIN, "Странная монета", 0, 15),
+}
+
+PASSIVE_ITEMS = {"strange_coin"}  # не экипируются, работают пассивно пока лежат в инвентаре
+
+SELL_PRICE = {
+    "amulet": 8, "orb": 6, "pill": 5, "candle": 4, "gift": 20, "star": 15, "daily_charm": 10,
+    "mk_mgg": 60, "mk_sandsmoon": 18, "mk_fixsahal1": 14, "mk_mk": 22, "mk_panther": 10,
+    "mk_vector": 18, "mk_broken": 8, "mk_mary": 20, "mk_veron03": 30, "vip_charm": 50,
+    "strange_coin": 12,
 }
 
 ITEM_FLAT_BONUS = {
@@ -150,7 +165,8 @@ ITEM_FLAT_BONUS = {
 CASES = {
     1: {"name": "Базовый кейс", "price": 20, "pool": ["amulet", "orb", "pill", "candle", "gift"]},
     2: {"name": "Кейс Мк", "price": 50,
-        "pool": ["mk_mgg", "mk_sandsmoon", "mk_fixsahal1", "mk_mk", "mk_panther", "mk_vector", "mk_broken"]},
+        "pool": ["mk_mgg", "mk_sandsmoon", "mk_fixsahal1", "mk_mk", "mk_panther", "mk_vector",
+                 "mk_broken", "mk_mary", "mk_veron03", "strange_coin"]},
 }
 
 # ---------- Regex ----------
@@ -180,12 +196,12 @@ NEWS_PREFIX = "!новость "
 FIXED_COMMANDS = {
     "моя нога", "топ ног", "гл топ ног", "топ эво", "гл топ эво", "топ коин", "гл топ коин",
     "ферма", "фарма", "инвентарь", "эволюция", "кейс", "кейсы", "бонус",
-    "смс выкл", "смс вкл", "вип", "!ивент ноги",
+    "смс выкл", "смс вкл", "вип", "!ивент ноги", "бейджи",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
     "!дать коин", "!снять коин", "!дать б", "!снять б", "!дать вип", "!снять вип", "!сбросить",
-    "передать ", "кейс ", NEWS_PREFIX, "дать ног ", "дать коин ", "инфо ",
+    "передать ", "кейс ", NEWS_PREFIX, "дать ног ", "дать коин ", "инфо ", "продать б ", "продать п ",
 )
 
 
@@ -338,12 +354,17 @@ def roll_case_item(case_num: int) -> str:
     return random.choices(pool, weights=weights, k=1)[0]
 
 
-def find_item_by_name(query: str):
+def find_item_by_name(query: str, only_passive=None):
     q = query.strip().lower()
-    for key, (_, name, _, _) in ITEMS.items():
+    candidates = ITEMS.items()
+    if only_passive is True:
+        candidates = [(k, v) for k, v in candidates if k in PASSIVE_ITEMS]
+    elif only_passive is False:
+        candidates = [(k, v) for k, v in candidates if k not in PASSIVE_ITEMS]
+    for key, (_, name, _, _) in candidates:
         if name.lower() == q:
             return key
-    matches = [key for key, (_, name, _, _) in ITEMS.items() if q in name.lower()]
+    matches = [key for key, (_, name, _, _) in candidates if q in name.lower()]
     if len(matches) == 1:
         return matches[0]
     return None
@@ -465,7 +486,7 @@ async def ensure_user(user_id: int, username: str):
     row = await get_user(user_id)
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
-        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0)
+        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "")
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
@@ -508,13 +529,13 @@ async def get_all_chat_ids():
 async def build_top(chat_id, order_column: str, limit: int = 10):
     if chat_id is None:
         rows = await db_query(
-            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until "
+            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges "
             f"FROM users ORDER BY {order_column} DESC LIMIT ?",
             (limit,),
         )
     else:
         rows = await db_query(
-            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until
+            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges
                 FROM users u JOIN chat_members cm ON u.user_id = cm.user_id
                 WHERE cm.chat_id = ? ORDER BY u.{order_column} DESC LIMIT ?""",
             (chat_id, limit),
@@ -529,6 +550,8 @@ def is_vip_active(vip_until: int) -> bool:
 def inventory_keyboard(inventory_rows, active_item: str, user_id: int) -> InlineKeyboardMarkup:
     rows = []
     for item_key, qty in inventory_rows:
+        if item_key in PASSIVE_ITEMS:
+            continue
         emoji, name, percent, _ = ITEMS[item_key]
         mark = " ✅" if active_item == item_key else ""
         rows.append([InlineKeyboardButton(
@@ -642,6 +665,51 @@ async def vip_info_command(message: Message):
     await message.reply(f"Вы можете купить ВИП у создателя @{ADMIN_USERNAME}")
 
 
+@dp.message(F.text.lower() == "бейджи")
+async def badges_menu(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    row = await ensure_user(user_id, username)
+    evolution_level, cases_opened, total_farmed, vip_until = row[3], row[7], row[8], row[12]
+    hidden = parse_hidden(row[13] if len(row) > 13 else "")
+    vip_active = is_vip_active(vip_until)
+
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active)
+    if not earned:
+        await message.reply("У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!")
+        return
+
+    kb = badges_keyboard(earned, hidden, user_id)
+    await message.reply("🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
+
+
+@dp.callback_query(F.data.startswith("badge:"))
+async def toggle_badge(callback: CallbackQuery):
+    _, owner_str, key = callback.data.split(":")
+    owner_id = int(owner_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer("Это не твои значки!", show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    username, evolution_level, cases_opened, total_farmed, vip_until = row[1], row[3], row[7], row[8], row[12]
+    hidden = parse_hidden(row[13] if len(row) > 13 else "")
+
+    if key in hidden:
+        hidden.discard(key)
+    else:
+        hidden.add(key)
+
+    new_hidden_str = ",".join(sorted(hidden))
+    await db_exec("UPDATE users SET hidden_badges = ? WHERE user_id = ?", (new_hidden_str, owner_id))
+
+    vip_active = is_vip_active(vip_until)
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active)
+    kb = badges_keyboard(earned, hidden, owner_id)
+    await callback.message.edit_text("🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
+    await callback.answer("Готово!")
+
+
 @dp.message(F.text.regexp(r"[🦵🦿]"))
 async def count_legs(message: Message):
     user_id = message.from_user.id
@@ -680,6 +748,13 @@ async def count_legs(message: Message):
 
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify))
 
+    inv = await get_inventory(user_id)
+    has_strange_coin = any(k == "strange_coin" and q > 0 for k, q in inv)
+    coin_bonus = 0
+    if has_strange_coin:
+        coin_bonus = 1
+        await db_exec("UPDATE users SET coins = coins + 1 WHERE user_id = ?", (user_id,))
+
     now = time.monotonic()
     chat_id = message.chat.id
     if now - _last_leg_reply.get(chat_id, 0) < LEG_REPLY_COOLDOWN:
@@ -689,7 +764,8 @@ async def count_legs(message: Message):
     parts = f"+{legs}🦵"
     if mek:
         parts += f" +{mek}🦿"
-    await message.reply(f"Лютый рофл засчитан! {parts} → +{total} очков (Всего: {new_score})")
+    coin_text = f" +{coin_bonus}🪙" if coin_bonus else ""
+    await message.reply(f"Лютый рофл засчитан! {parts} → +{total} очков{coin_text} (Всего: {new_score})")
 
 
 @dp.message(F.text.lower() == "моя нога")
@@ -749,19 +825,25 @@ async def info_player(message: Message):
         await message.reply("Игрок не найден (он ещё не писал ноги в этом боте).")
         return
 
-    _, username, score, evolution_level, last_farm, coins, active_item, cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until = row
+    username = row[1]
+    score, evolution_level, coins, active_item = row[2], row[3], row[5], row[6]
+    cases_opened, total_farmed = row[7], row[8]
+    vip_until = row[12]
+    hidden = parse_hidden(row[13] if len(row) > 13 else "")
     vip_active = is_vip_active(vip_until)
     level = get_level_index(score, evolution_level)
     emoji, name, show_level = get_level_visual(level)
     lvl_part = f" ({level} лвл)" if show_level else ""
     name_part = f" {esc(name)}" if name else ""
-    item_text = ITEMS[active_item][1] if active_item else "нет"
+    item_text = ITEMS[active_item][1] if active_item and active_item in ITEMS else "нет"
     vip_text = "активен" if vip_active else "не активен"
+    badges = get_badges(username, evolution_level, cases_opened, total_farmed, vip_active, hidden)
 
     text = (
-        f"👣 <b>Инфо об игроке {esc(username)}:</b>\n"
+        f"👣 <b>Инфо об игроке {esc(username)}{badges}:</b>\n"
         f"● Нога: {emoji}{name_part}{lvl_part}\n"
         f"● Очки: <code>{score}</code>\n"
+        f"● Монеты: <code>{coins}</code> 🪙\n"
         f"● Уровень эволюции: {evolution_level}\n"
         f"● VIP: {vip_text}\n"
         f"● Экипировано: {esc(item_text)}"
@@ -777,10 +859,10 @@ async def send_legs_top(message: Message, chat_id, title: str):
         return
 
     text = f"🏆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges) in enumerate(rows, 1):
         level = get_level_index(score, evolution_level)
         emoji, name, show_level = get_level_visual(level)
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until))
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         lvl_part = f" ({level} лвл)" if show_level else ""
         name_part = f" {esc(name)}" if name else ""
         text += f"{i}. {esc(username)}{badges} — <code>{score}</code>\n   └ {emoji}{name_part}{lvl_part}\n\n"
@@ -796,8 +878,8 @@ async def send_evo_top(message: Message, chat_id, title: str):
         return
 
     text = f"🎆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until))
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         text += f"{i}. {esc(username)}{badges} — эво {evolution_level} ({score} очков)\n"
 
     await message.reply(text)
@@ -811,8 +893,8 @@ async def send_coin_top(message: Message, chat_id, title: str):
         return
 
     text = f"🪙 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until))
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         text += f"{i}. {esc(username)}{badges} — {coins} 🪙\n"
 
     await message.reply(text)
@@ -1076,7 +1158,69 @@ async def transfer_item(message: Message):
     await message.reply(f"{emoji} {esc(name)} передан игроку {esc(receiver_username)}!")
 
 
+async def sell_item(message: Message, prefix: str, only_passive: bool):
+    item_query = message.text[len(prefix):].strip()
+    item_key = find_item_by_name(item_query, only_passive=only_passive)
+    if not item_key:
+        wrong_cmd = "продать п" if only_passive is False else "продать б"
+        await message.reply(f"Не нашёл такой предмет среди {'предметов' if only_passive else 'бустеров'}. "
+                             f"Если это не то — попробуй «{wrong_cmd} <название>».")
+        return
+
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    await ensure_user(user_id, username)
+
+    removed = await remove_item(user_id, item_key, 1)
+    emoji, name, _, _ = ITEMS[item_key]
+    if not removed:
+        await message.reply(f"У тебя нет предмета «{esc(name)}».")
+        return
+
+    row = await get_user(user_id)
+    if row[6] == item_key:
+        remaining = await get_inventory(user_id)
+        has_more = any(k == item_key and q > 0 for k, q in remaining)
+        if not has_more:
+            await db_exec("UPDATE users SET active_item = NULL WHERE user_id = ?", (user_id,))
+
+    price = SELL_PRICE.get(item_key, 1)
+    await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (price, user_id))
+
+    await message.reply(f"Продал {emoji} {esc(name)} за {price} 🪙.")
+
+
+@dp.message(F.text.lower().startswith("продать б "))
+async def sell_booster(message: Message):
+    await sell_item(message, "продать б ", only_passive=False)
+
+
+@dp.message(F.text.lower().startswith("продать п "))
+async def sell_passive(message: Message):
+    await sell_item(message, "продать п ", only_passive=True)
+
+
 @dp.message(F.text.lower() == "инвентарь")
+def format_inventory_text(rows, active_item):
+    equipped_lines = []
+    passive_lines = []
+    if active_item and active_item in ITEMS:
+        emoji, name, percent, _ = ITEMS[active_item]
+        equipped_lines.append(f"Экипировано: {emoji} {esc(name)} (+{percent}%)")
+    else:
+        equipped_lines.append("Экипировано: ничего")
+
+    for item_key, qty in rows:
+        if item_key in PASSIVE_ITEMS:
+            emoji, name, _, _ = ITEMS[item_key]
+            passive_lines.append(f"{emoji} {esc(name)} x{qty} (нельзя экипировать, действует пассивно)")
+
+    text = f"🎒 Твой инвентарь (можно носить максимум 1 предмет):\n{equipped_lines[0]}"
+    if passive_lines:
+        text += "\n\nПассивные предметы:\n" + "\n".join(passive_lines)
+    return text
+
+
 async def inventory(message: Message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
@@ -1089,14 +1233,8 @@ async def inventory(message: Message):
         await message.reply("🎒 Инвентарь пуст.")
         return
 
-    if active_item and active_item in ITEMS:
-        emoji, name, percent, _ = ITEMS[active_item]
-        equipped_text = f"Экипировано: {plain_emoji(emoji)} {esc(name)} (+{percent}%)"
-    else:
-        equipped_text = "Экипировано: ничего"
-
     kb = inventory_keyboard(rows, active_item, user_id)
-    await message.reply(f"🎒 Твой инвентарь (можно носить максимум 1 предмет):\n{equipped_text}", reply_markup=kb)
+    await message.reply(format_inventory_text(rows, active_item), reply_markup=kb)
 
 
 @dp.callback_query(F.data.startswith("equip:"))
@@ -1106,6 +1244,9 @@ async def toggle_equip(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer("Это не твой инвентарь!", show_alert=True)
         return
+    if item_key in PASSIVE_ITEMS:
+        await callback.answer("Этот предмет нельзя экипировать — он действует пассивно, пока лежит в инвентаре.", show_alert=True)
+        return
 
     row = await get_user(owner_id)
     active_item = row[6]
@@ -1113,16 +1254,8 @@ async def toggle_equip(callback: CallbackQuery):
     await db_exec("UPDATE users SET active_item = ? WHERE user_id = ?", (new_active, owner_id))
     rows = await get_inventory(owner_id)
 
-    if new_active and new_active in ITEMS:
-        emoji, name, percent, _ = ITEMS[new_active]
-        equipped_text = f"Экипировано: {plain_emoji(emoji)} {esc(name)} (+{percent}%)"
-    else:
-        equipped_text = "Экипировано: ничего"
-
     kb = inventory_keyboard(rows, new_active, owner_id)
-    await callback.message.edit_text(
-        f"🎒 Твой инвентарь (можно носить максимум 1 предмет):\n{equipped_text}", reply_markup=kb
-    )
+    await callback.message.edit_text(format_inventory_text(rows, new_active), reply_markup=kb)
     await callback.answer("Готово!")
 
 
