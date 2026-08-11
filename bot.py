@@ -143,9 +143,9 @@ ITEMS = {
     "mk_vector":    (PREMIUM_MK_VECTOR, "Амулет Vector", 40, 7),
     "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 20, 29),
     "mk_mary":      (PREMIUM_MK_MARY, "Амулет Mary", 45, 10),
-    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 70, 5),
+    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 70, 19),
     "vip_charm":    (PREMIUM_VIP_ITEM, "VIP-амулет", 250, 0),
-    "strange_coin": (PREMIUM_STRANGE_COIN, "Странная монета", 0, 15),
+    "strange_coin": (PREMIUM_STRANGE_COIN, "Странная монета", 0, 1),
 }
 
 PASSIVE_ITEMS = {"strange_coin"}  # не экипируются, работают пассивно пока лежат в инвентаре
