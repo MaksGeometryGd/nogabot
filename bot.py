@@ -61,7 +61,7 @@ CUSTOM_LEVELS = [
     (13200, "🦵🏆", "золотая нога"),
     (13800, "🦵💎", "алмазная нога"),
     (14400, "🦵💀", "нога смерти"),
-    (15000, "😎", "нога Fixsahal1"),
+    (15000, "🦵😎", "нога Fixsahal1"),
     (15600, "🦵👼", "нога ангела"),
     (16200, "🦵🫯", "нога Panther"),
     (16800, PREMIUM_MIKU, "нога Мику"),
@@ -69,7 +69,7 @@ CUSTOM_LEVELS = [
     (18000, "🦵👁", "нога полу-бога"),
     (18600, "🦵🌌", "космическая нога"),
     (19200, "🦵🧿", "нога бога"),
-    (19800, PREMIUM_MGG, "нога MGG"),
+    (19800, PREMIUM_MGG, "нога MGG)"),
 ]
 
 ALL_THRESHOLDS = REGULAR_THRESHOLDS + [t for t, _, _ in CUSTOM_LEVELS]
@@ -77,25 +77,25 @@ MAX_LEVEL_SCORE = ALL_THRESHOLDS[-1]  # база (эво 0) для требов�
 
 # ---------- Уровни 40+ (престиж-грайнд для топов) ----------
 EXTRA_TIERS = [
-    (40, 45, "☄️", "нога Метеорита"),
-    (46, 50, "🪐", "нога Планеты"),
-    (51, 55, "⚡🔥", "нога Плазмы"),
-    (56, 60, "📡✨", "нога Пульсара"),
-    (61, 70, "🌠", "нога Квазара"),
-    (71, 80, "🌑🕳️", "нога Тёмной Материи"),
-    (81, 100, "⚫🕳️", "нога Чёрной дыры"),
-    (101, 125, "🌌", "нога галактики"),
-    (126, 150, "🌠🌌", "нога вселенной"),
-    (151, 200, "🌀🌌", "нога Мультивселенной"),
-    (201, 300, "⚛️🌀", "нога Сингулярности"),
-    (301, 500, "☢️⚛️", "нога Антиматерии"),
-    (501, 1000, "⬛🌌", "нога пустоты"),
-    (1001, 1500, "♾️🌀", "нога Парадокса"),
-    (1501, 2000, "🟩💻", "нога Матрицы"),
-    (2001, 3000, "🔷🔁", "нога Фрактала"),
-    (3001, 5000, "🌀⏳🕳️", "нога Разрыва пространственно-временного континуума"),
-    (5001, 10000, "🚀💫", "нога Сверхсветового прыжка"),
-    (10001, 20000, "⏳❌🌀", "нога Стирателя тайм-лайнов"),
+    (40, 45, "🦵☄️", "нога Метеорита"),
+    (46, 50, "🦵🪐", "нога Планеты"),
+    (51, 55, "🦵⚡🔥", "нога Плазмы"),
+    (56, 60, "🦵📡✨", "нога Пульсара"),
+    (61, 70, "🦵🌠", "нога Квазара"),
+    (71, 80, "🦵🌑🕳️", "нога Тёмной Материи"),
+    (81, 100, "🦵⚫🕳️", "нога Чёрной дыры"),
+    (101, 125, "🦵🌌", "нога галактики"),
+    (126, 150, "🦵🌠🌌", "нога вселенной"),
+    (151, 200, "🦵🌀🌌", "нога Мультивселенной"),
+    (201, 300, "🦵⚛️🌀", "нога Сингулярности"),
+    (301, 500, "🦵☢️⚛️", "нога Антиматерии"),
+    (501, 1000, "🦵⬛🌌", "нога пустоты"),
+    (1001, 1500, "🦵♾️🌀", "нога Парадокса"),
+    (1501, 2000, "🦵🟩💻", "нога Матрицы"),
+    (2001, 3000, "🦵🔷🔁", "нога Фрактала"),
+    (3001, 5000, "🦵🌀⏳🕳️", "нога Разрыва пространственно-временного континуума"),
+    (5001, 10000, "🦵🚀💫", "нога Сверхсветового прыжка"),
+    (10001, 20000, "🦵⏳❌🌀", "нога Стирателя тайм-лайнов"),
 ]
 MGG_MEGA_LEVEL = 20001
 MGG_MEGA_EMOJI = PREMIUM_MGG
@@ -118,7 +118,7 @@ DAILY_STREAK_LIMIT = 48 * 3600
 
 BADGE_EVO_TOTAL = 30000
 
-EVO_LEVEL_HARDNESS = 1.10  # +10% к порогу очков за каждый уровень эволюции
+EVO_HARDNESS_RATE = 0.10  # +10% к порогу очков за каждый уровень эволюции (линейно, не по нарастающей)
 EVO_BOOST_STEP = 0.10      # нерф с 0.30/0.20
 
 VIP_BOOST = 2.0  # +200%
@@ -154,22 +154,24 @@ CASES = {
 }
 
 # ---------- Regex ----------
-ADMIN_GIVE_LEGS_RE = re.compile(r"^!дать ног (\d+)(\s+себе)?$", re.IGNORECASE)
-ADMIN_TAKE_LEGS_RE = re.compile(r"^!снять ноги (\d+)(\s+себе)?$", re.IGNORECASE)
-ADMIN_GIVE_EVO_RE = re.compile(r"^!дать эво (\d+)(\s+себе)?$", re.IGNORECASE)
-ADMIN_TAKE_EVO_RE = re.compile(r"^!снять эво (\d+)(\s+себе)?$", re.IGNORECASE)
-ADMIN_GIVE_COIN_RE = re.compile(r"^!дать коин (\d+)(\s+себе)?$", re.IGNORECASE)
-ADMIN_TAKE_COIN_RE = re.compile(r"^!снять коин (\d+)(\s+себе)?$", re.IGNORECASE)
+AMOUNT = r"(\d+(?:\.\d+)?к{0,4})"
+
+ADMIN_GIVE_LEGS_RE = re.compile(rf"^!дать ног {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_TAKE_LEGS_RE = re.compile(rf"^!снять ноги {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_GIVE_EVO_RE = re.compile(rf"^!дать эво {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_TAKE_EVO_RE = re.compile(rf"^!снять эво {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_GIVE_COIN_RE = re.compile(rf"^!дать коин {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_TAKE_COIN_RE = re.compile(rf"^!снять коин {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_BOOST_RE = re.compile(r"^!дать б (.+?)(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_BOOST_RE = re.compile(r"^!снять б (.+?)(\s+себе)?$", re.IGNORECASE)
-ADMIN_GIVE_VIP_RE = re.compile(r"^!дать вип (\d+)(\s+себе)?$", re.IGNORECASE)
+ADMIN_GIVE_VIP_RE = re.compile(rf"^!дать вип {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_VIP_RE = re.compile(r"^!снять вип(\s+себе)?$", re.IGNORECASE)
 ADMIN_RESET_RE = re.compile(r"^!сбросить(\s+себе)?$", re.IGNORECASE)
 
-PEER_GIVE_LEGS_RE = re.compile(r"^дать ног (\d+)$", re.IGNORECASE)
-PEER_GIVE_COIN_RE = re.compile(r"^дать коин (\d+)$", re.IGNORECASE)
+PEER_GIVE_LEGS_RE = re.compile(rf"^дать ног {AMOUNT}$", re.IGNORECASE)
+PEER_GIVE_COIN_RE = re.compile(rf"^дать коин {AMOUNT}$", re.IGNORECASE)
 
-EXCHANGE_RE = re.compile(r"^обменять (\d+)$", re.IGNORECASE)
+EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT}$", re.IGNORECASE)
 CASE_NUM_RE = re.compile(r"^кейс (\d+)$", re.IGNORECASE)
 INFO_RE = re.compile(r"^инфо\s+@?(\w+)$", re.IGNORECASE)
 
@@ -198,6 +200,15 @@ def esc(text: str) -> str:
     return (text or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
+def parse_amount(text: str):
+    m = re.match(r"^(\d+(?:\.\d+)?)(к{0,4})$", text.strip().lower())
+    if not m:
+        return None
+    number = float(m.group(1))
+    k_count = len(m.group(2))
+    return round(number * (1000 ** k_count))
+
+
 TG_EMOJI_RE = re.compile(r"<tg-emoji[^>]*>(.*?)</tg-emoji>")
 
 
@@ -224,7 +235,7 @@ def base_level_threshold(level: int) -> int:
 
 
 def level_threshold(level: int, evolution_level: int) -> int:
-    return round(base_level_threshold(level) * (EVO_LEVEL_HARDNESS ** evolution_level))
+    return round(base_level_threshold(level) * (1 + EVO_HARDNESS_RATE * evolution_level))
 
 
 def get_level_index(score: int, evolution_level: int = 0) -> int:
@@ -275,21 +286,42 @@ def get_multiplier(evolution_level: int, active_item: str, vip_active: bool) -> 
     return mult
 
 
-def get_badges(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool) -> str:
-    badges = ""
+def parse_hidden(hidden_str: str) -> set:
+    return set(h for h in (hidden_str or "").split(",") if h)
+
+
+def badge_list(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool):
+    result = []
     if username and username.lower() == ADMIN_USERNAME.lower():
-        badges += PREMIUM_OWNER_BADGE
+        result.append(("owner", PREMIUM_OWNER_BADGE, "Владелец"))
     if vip_active:
-        badges += PREMIUM_VIP_BADGE
+        result.append(("vip", PREMIUM_VIP_BADGE, "VIP"))
     if evolution_level >= 1:
-        badges += PREMIUM_BADGE_EVO
+        result.append(("evo", PREMIUM_BADGE_EVO, "1+ эволюция"))
     if cases_opened >= 5:
-        badges += PREMIUM_BADGE_CASE
+        result.append(("case", PREMIUM_BADGE_CASE, "5+ кейсов"))
     if total_farmed >= BADGE_EVO_TOTAL:
-        badges += PREMIUM_BADGE_FARM
+        result.append(("farm", PREMIUM_BADGE_FARM, "30k нафармлено"))
     if evolution_level >= 5:
-        badges += PREMIUM_BADGE_EVO5
-    return badges
+        result.append(("evo5", PREMIUM_BADGE_EVO5, "5 эволюция"))
+    return result
+
+
+def get_badges(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool,
+                hidden: set = frozenset()) -> str:
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active)
+    return "".join(emoji for key, emoji, _ in earned if key not in hidden)
+
+
+def badges_keyboard(earned, hidden: set, user_id: int) -> InlineKeyboardMarkup:
+    rows = []
+    for key, emoji, label in earned:
+        state = "🙈 скрыт" if key in hidden else "✅ показан"
+        rows.append([InlineKeyboardButton(
+            text=f"{plain_emoji(emoji)} {label} — {state}",
+            callback_data=f"badge:{user_id}:{key}",
+        )])
+    return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
 def farm_range(evolution_level: int):
@@ -367,7 +399,7 @@ async def db_query_one(sql, params=()):
 
 USER_COLUMNS = (
     "user_id, username, score, evolution_level, last_farm, coins, active_item, "
-    "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until"
+    "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges"
 )
 
 
@@ -413,6 +445,7 @@ async def init_db():
     for stmt in (
         "ALTER TABLE users ADD COLUMN levelup_notify INTEGER DEFAULT 1",
         "ALTER TABLE users ADD COLUMN vip_until INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN hidden_badges TEXT DEFAULT ''",
     ):
         try:
             await db_exec(stmt)
@@ -895,8 +928,8 @@ async def exchange(message: Message):
         await message.reply(f"Формат: обменять <количество монет>. Курс: {EXCHANGE_RATE} очков ноги = 1 монета.")
         return
 
-    coins_wanted = int(match.group(1))
-    if coins_wanted <= 0:
+    coins_wanted = parse_amount(match.group(1))
+    if not coins_wanted or coins_wanted <= 0:
         await message.reply("Количество монет должно быть больше нуля.")
         return
 
@@ -923,10 +956,13 @@ async def exchange(message: Message):
     await message.reply(f"Обменял {spent} очков → +{coins_wanted} 🪙 монет (Всего монет: {new_coins}){warn}")
 
 
-@dp.message(F.text.regexp(r"^дать ног \d+$"))
+@dp.message(F.text.regexp(r"(?i)^дать ног \d+(?:\.\d+)?к{0,4}$"))
 async def peer_give_legs(message: Message):
     match = PEER_GIVE_LEGS_RE.match(message.text.strip().lower())
-    amount = int(match.group(1))
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
 
     if not message.reply_to_message:
         await message.reply("Ответь этой командой на сообщение того, кому передаёшь очки.")
@@ -961,10 +997,13 @@ async def peer_give_legs(message: Message):
                                   receiver_row[3], bool(receiver_row[11]))
 
 
-@dp.message(F.text.regexp(r"^дать коин \d+$"))
+@dp.message(F.text.regexp(r"(?i)^дать коин \d+(?:\.\d+)?к{0,4}$"))
 async def peer_give_coin(message: Message):
     match = PEER_GIVE_COIN_RE.match(message.text.strip().lower())
-    amount = int(match.group(1))
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
 
     if not message.reply_to_message:
         await message.reply("Ответь этой командой на сообщение того, кому передаёшь монеты.")
@@ -1182,7 +1221,7 @@ async def evolve(message: Message):
 
     await message.reply(
         f"🎆 ЭВОЛЮЦИЯ! Прогресс сброшен, теперь у тебя {new_evolution} уровень эволюции навсегда.\n"
-        f"⚠️ Прокачка уровней теперь на {round((EVO_LEVEL_HARDNESS ** new_evolution - 1) * 100)}% сложнее.{unlock_text}"
+        f"⚠️ Прокачка уровней теперь на {round(EVO_HARDNESS_RATE * new_evolution * 100)}% сложнее.{unlock_text}"
     )
 
 
@@ -1254,7 +1293,10 @@ async def admin_give_legs(message: Message):
         await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
         return
 
-    amount = int(match.group(1))
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
     target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
@@ -1279,7 +1321,10 @@ async def admin_take_legs(message: Message):
         await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
         return
 
-    amount = int(match.group(1))
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
     target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
@@ -1303,7 +1348,10 @@ async def admin_give_evo(message: Message):
         await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
         return
 
-    amount = int(match.group(1))
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
     target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
@@ -1327,7 +1375,10 @@ async def admin_take_evo(message: Message):
         await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
         return
 
-    amount = int(match.group(1))
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
     target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
@@ -1351,7 +1402,10 @@ async def admin_give_coin(message: Message):
         await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
         return
 
-    amount = int(match.group(1))
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
     target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
@@ -1375,7 +1429,10 @@ async def admin_take_coin(message: Message):
         await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
         return
 
-    amount = int(match.group(1))
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
     target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
@@ -1456,7 +1513,10 @@ async def admin_give_vip(message: Message):
         await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
         return
 
-    days = int(match.group(1))
+    days = parse_amount(match.group(1))
+    if not days or days <= 0:
+        await message.reply("Некорректное количество дней.")
+        return
     target_username = target.username or target.first_name or "Без имени"
     row = await ensure_user(target.id, target_username)
 
