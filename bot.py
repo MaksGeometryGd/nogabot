@@ -35,7 +35,7 @@ PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="5330393755407111028">📿</tg-emoji>
 PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">📿</tg-emoji>'
 PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5778352775591103997">📿</tg-emoji>'
 PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="5233239138450312962">📿</tg-emoji>'
-PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">📿</tg-emoji>'
+PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">📿🥀</tg-emoji>'
 
 # заглушки — замени на реальные emoji-id, когда достанешь (см. инструкцию про custom_emoji_id)
 PREMIUM_OWNER_BADGE = '<tg-emoji emoji-id="5204056085509477484">💠</tg-emoji>'
@@ -180,6 +180,8 @@ ADMIN_GIVE_COIN_RE = re.compile(rf"^!дать коин {AMOUNT}(\s+себе)?$",
 ADMIN_TAKE_COIN_RE = re.compile(rf"^!снять коин {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_BOOST_RE = re.compile(r"^!дать б (.+?)(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_BOOST_RE = re.compile(r"^!снять б (.+?)(\s+себе)?$", re.IGNORECASE)
+ADMIN_GIVE_ITEM_RE = re.compile(r"^!дать п (.+?)(\s+себе)?$", re.IGNORECASE)
+ADMIN_TAKE_ITEM_RE = re.compile(r"^!снять п (.+?)(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_VIP_RE = re.compile(rf"^!дать вип {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_VIP_RE = re.compile(r"^!снять вип(\s+себе)?$", re.IGNORECASE)
 ADMIN_RESET_RE = re.compile(r"^!сбросить(\s+себе)?$", re.IGNORECASE)
@@ -200,7 +202,7 @@ FIXED_COMMANDS = {
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
-    "!дать коин", "!снять коин", "!дать б", "!снять б", "!дать вип", "!снять вип", "!сбросить",
+    "!дать коин", "!снять коин", "!дать б", "!снять б", "!дать п", "!снять п", "!дать вип", "!снять вип", "!сбросить",
     "передать ", "кейс ", NEWS_PREFIX, "дать ног ", "дать коин ", "инфо ", "продать б ", "продать п ",
 )
 
@@ -1200,27 +1202,60 @@ async def sell_passive(message: Message):
     await sell_item(message, "продать п ", only_passive=True)
 
 
-@dp.message(F.text.lower() == "инвентарь")
-def format_inventory_text(rows, active_item):
-    equipped_lines = []
-    passive_lines = []
+def format_inventory_menu_text(active_item):
     if active_item and active_item in ITEMS:
         emoji, name, percent, _ = ITEMS[active_item]
-        equipped_lines.append(f"Экипировано: {emoji} {esc(name)} (+{percent}%)")
+        equipped_text = f"Экипировано: {emoji} {esc(name)} (+{percent}%)"
     else:
-        equipped_lines.append("Экипировано: ничего")
+        equipped_text = "Экипировано: ничего"
+    return f"🎒 <b>Твой инвентарь</b>\n{equipped_text}\n\nВыбери раздел:"
 
+
+def inventory_menu_keyboard(user_id: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🧪 Бустеры", callback_data=f"inv_cat:{user_id}:boosters")],
+        [InlineKeyboardButton(text="📦 Предметы", callback_data=f"inv_cat:{user_id}:items")],
+    ])
+
+
+def boosters_keyboard(rows, active_item: str, user_id: int) -> InlineKeyboardMarkup:
+    kb_rows = []
     for item_key, qty in rows:
         if item_key in PASSIVE_ITEMS:
-            emoji, name, _, _ = ITEMS[item_key]
-            passive_lines.append(f"{emoji} {esc(name)} x{qty} (нельзя экипировать, действует пассивно)")
+            continue
+        emoji, name, percent, _ = ITEMS[item_key]
+        mark = " ✅" if active_item == item_key else ""
+        kb_rows.append([InlineKeyboardButton(
+            text=f"{name} {plain_emoji(emoji)} (+{percent}%) x{qty}{mark}",
+            callback_data=f"equip:{user_id}:{item_key}",
+        )])
+    kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
+    return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
-    text = f"🎒 Твой инвентарь (можно носить максимум 1 предмет):\n{equipped_lines[0]}"
-    if passive_lines:
-        text += "\n\nПассивные предметы:\n" + "\n".join(passive_lines)
-    return text
+
+def items_keyboard(user_id: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")]])
 
 
+def format_boosters_text(rows):
+    boosters = [(k, q) for k, q in rows if k not in PASSIVE_ITEMS]
+    if not boosters:
+        return "🧪 У тебя нет бустеров. Можно носить только 1 за раз."
+    return "🧪 Твои бустеры (можно носить максимум 1):"
+
+
+def format_items_text(rows):
+    passive = [(k, q) for k, q in rows if k in PASSIVE_ITEMS]
+    if not passive:
+        return "📦 У тебя нет предметов."
+    lines = ["📦 Твои предметы (нельзя экипировать, действуют пассивно):\n"]
+    for item_key, qty in passive:
+        emoji, name, _, _ = ITEMS[item_key]
+        lines.append(f"{emoji} {esc(name)} x{qty}")
+    return "\n".join(lines)
+
+
+@dp.message(F.text.lower() == "инвентарь")
 async def inventory(message: Message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
@@ -1233,8 +1268,38 @@ async def inventory(message: Message):
         await message.reply("🎒 Инвентарь пуст.")
         return
 
-    kb = inventory_keyboard(rows, active_item, user_id)
-    await message.reply(format_inventory_text(rows, active_item), reply_markup=kb)
+    await message.reply(format_inventory_menu_text(active_item), reply_markup=inventory_menu_keyboard(user_id))
+
+
+@dp.callback_query(F.data.startswith("inv_menu:"))
+async def inventory_back_to_menu(callback: CallbackQuery):
+    owner_id = int(callback.data.split(":")[1])
+    if callback.from_user.id != owner_id:
+        await callback.answer("Это не твой инвентарь!", show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    active_item = row[6]
+    await callback.message.edit_text(format_inventory_menu_text(active_item), reply_markup=inventory_menu_keyboard(owner_id))
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("inv_cat:"))
+async def inventory_open_category(callback: CallbackQuery):
+    _, owner_str, category = callback.data.split(":")
+    owner_id = int(owner_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer("Это не твой инвентарь!", show_alert=True)
+        return
+
+    rows = await get_inventory(owner_id)
+    if category == "boosters":
+        row = await get_user(owner_id)
+        active_item = row[6]
+        await callback.message.edit_text(format_boosters_text(rows), reply_markup=boosters_keyboard(rows, active_item, owner_id))
+    else:
+        await callback.message.edit_text(format_items_text(rows), reply_markup=items_keyboard(owner_id))
+    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("equip:"))
@@ -1254,8 +1319,7 @@ async def toggle_equip(callback: CallbackQuery):
     await db_exec("UPDATE users SET active_item = ? WHERE user_id = ?", (new_active, owner_id))
     rows = await get_inventory(owner_id)
 
-    kb = inventory_keyboard(rows, new_active, owner_id)
-    await callback.message.edit_text(format_inventory_text(rows, new_active), reply_markup=kb)
+    await callback.message.edit_text(format_boosters_text(rows), reply_markup=boosters_keyboard(rows, new_active, owner_id))
     await callback.answer("Готово!")
 
 
@@ -1581,12 +1645,69 @@ async def admin_give_boost(message: Message):
         return
     match = ADMIN_GIVE_BOOST_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !дать б <название предмета> [себе] (в ответ на сообщение игрока)")
+        await message.reply("Формат: !дать б <название бустера> [себе] (в ответ на сообщение игрока)")
         return
 
-    item_key = find_item_by_name(match.group(1))
+    item_key = find_item_by_name(match.group(1), only_passive=False)
     if not item_key:
-        await message.reply("Не нашёл такой предмет.")
+        await message.reply("Не нашёл такой бустер. Для пассивных предметов используй «!дать п».")
+        return
+
+    target = await resolve_target(message, bool(match.group(2)))
+    if not target:
+        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+    await add_item(target.id, item_key)
+
+    emoji, name, _, _ = ITEMS[item_key]
+    await message.reply(f"Выдан бустер {emoji} {esc(name)} игроку {esc(target_username)}.")
+
+
+@dp.message(F.text.lower().startswith("!снять б "))
+async def admin_take_boost(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_TAKE_BOOST_RE.match(message.text.strip())
+    if not match:
+        await message.reply("Формат: !снять б <название бустера> [себе] (в ответ на сообщение игрока)")
+        return
+
+    item_key = find_item_by_name(match.group(1), only_passive=False)
+    if not item_key:
+        await message.reply("Не нашёл такой бустер. Для пассивных предметов используй «!снять п».")
+        return
+
+    target = await resolve_target(message, bool(match.group(2)))
+    if not target:
+        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+    removed = await remove_item(target.id, item_key)
+
+    emoji, name, _, _ = ITEMS[item_key]
+    if removed:
+        await message.reply(f"Снят бустер {emoji} {esc(name)} у игрока {esc(target_username)}.")
+    else:
+        await message.reply(f"У игрока {esc(target_username)} нет предмета «{esc(name)}».")
+
+
+@dp.message(F.text.lower().startswith("!дать п "))
+async def admin_give_passive(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_GIVE_ITEM_RE.match(message.text.strip())
+    if not match:
+        await message.reply("Формат: !дать п <название предмета> [себе] (в ответ на сообщение игрока)")
+        return
+
+    item_key = find_item_by_name(match.group(1), only_passive=True)
+    if not item_key:
+        await message.reply("Не нашёл такой пассивный предмет. Для бустеров используй «!дать б».")
         return
 
     target = await resolve_target(message, bool(match.group(2)))
@@ -1602,18 +1723,18 @@ async def admin_give_boost(message: Message):
     await message.reply(f"Выдан предмет {emoji} {esc(name)} игроку {esc(target_username)}.")
 
 
-@dp.message(F.text.lower().startswith("!снять б "))
-async def admin_take_boost(message: Message):
+@dp.message(F.text.lower().startswith("!снять п "))
+async def admin_take_passive(message: Message):
     if not is_admin(message):
         return
-    match = ADMIN_TAKE_BOOST_RE.match(message.text.strip())
+    match = ADMIN_TAKE_ITEM_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !снять б <название предмета> [себе] (в ответ на сообщение игрока)")
+        await message.reply("Формат: !снять п <название предмета> [себе] (в ответ на сообщение игрока)")
         return
 
-    item_key = find_item_by_name(match.group(1))
+    item_key = find_item_by_name(match.group(1), only_passive=True)
     if not item_key:
-        await message.reply("Не нашёл такой предмет.")
+        await message.reply("Не нашёл такой пассивный предмет. Для бустеров используй «!снять б».")
         return
 
     target = await resolve_target(message, bool(match.group(2)))
