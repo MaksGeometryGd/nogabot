@@ -144,7 +144,7 @@ ITEMS = {
     "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 20, 29),
     "mk_mary":      (PREMIUM_MK_MARY, "Амулет Mary", 45, 10),
     "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 70, 5),
-    "vip_charm":    (PREMIUM_VIP_ITEM, "VIP-амулет", 0, 0),
+    "vip_charm":    (PREMIUM_VIP_ITEM, "VIP-амулет", 250, 0),
     "strange_coin": (PREMIUM_STRANGE_COIN, "Странная монета", 0, 15),
 }
 
