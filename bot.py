@@ -10,7 +10,10 @@ from aiogram import Bot, Dispatcher, F, BaseMiddleware
 from aiogram.exceptions import TelegramRetryAfter
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import (
+    Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton,
+    LabeledPrice, PreCheckoutQuery,
+)
 from aiohttp import web
 
 TOKEN = os.environ.get("BOT_TOKEN")
@@ -143,7 +146,7 @@ ITEMS = {
     "mk_vector":    (PREMIUM_MK_VECTOR, "Амулет Vector", 40, 7),
     "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 20, 29),
     "mk_mary":      (PREMIUM_MK_MARY, "Амулет Mary", 45, 10),
-    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 70, 19),
+    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 60, 19),  # нерф буста: было 75% -> 60%
     "vip_charm":    (PREMIUM_VIP_ITEM, "VIP-амулет", 250, 0),
     "strange_coin": (PREMIUM_STRANGE_COIN, "Странная монета", 0, 1),
 }
@@ -164,7 +167,7 @@ ITEM_FLAT_BONUS = {
 
 CASES = {
     1: {"name": "Базовый кейс", "price": 20, "pool": ["amulet", "orb", "pill", "candle", "gift"]},
-    2: {"name": "Кейс Мк", "price": 50,
+    2: {"name": "Кейс Сапортов", "price": 50,
         "pool": ["mk_mgg", "mk_sandsmoon", "mk_fixsahal1", "mk_mk", "mk_panther", "mk_vector",
                  "mk_broken", "mk_mary", "mk_veron03", "strange_coin"]},
 }
@@ -224,7 +227,7 @@ UPGRADES = {
     },
     "equip_slots": {
         "name": "Слоты экипировки",
-        "desc": "+1 слот экипировки бустеров за лвл",
+        "desc": "+1 слот экипировки за лвл (база 1, макс 3 слота на 2 лвл)",
         "max_level": 2,
         "cost": _linear_cost(5, 5),
         "category": 2,
@@ -287,7 +290,7 @@ FIXED_COMMANDS = {
     "моя нога", "топ ног", "гл топ ног", "топ эво", "гл топ эво", "топ коин", "гл топ коин",
     "ферма", "фарма", "инвентарь", "эволюция", "кейс", "кейсы", "бонус",
     "смс выкл", "смс вкл", "вип", "!ивент ноги", "бейджи",
-    "перерождение", "апгрейд", "прокачка", "апг", "баланс", "топ очкп", "гл топ очкп",
+    "перерождение", "апгрейд", "прокачка", "апг", "баланс", "топ очкп", "гл топ очкп", "помощь",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
@@ -302,6 +305,178 @@ def is_command_text(text: str) -> bool:
     if t in FIXED_COMMANDS:
         return True
     return any(t.startswith(p) for p in PREFIX_COMMANDS)
+
+
+# ---------- Алиасы команд ----------
+# Полный явный словарь "фраза целиком (нижний регистр) -> канонический текст команды".
+# Строится из групп синонимов, но раскладывается только в те КОНКРЕТНЫЕ фразы, которые реально
+# соответствуют существующим хендлерам — так синонимы никогда не пересекаются с другими командами
+# ("б"/"п" в "дать б"/"продать б", "кейсы" как отдельная команда от "кейс", и т.п.).
+
+_TOP_WORDS = ["топ", "топчик", "ладдер", "лидеры", "лиддеры", "рейтинг", "top", "ladder", "lider", "liders", "leaders", "rating"]
+_LEG_WORDS = ["ног", "ноги", "ногой", "leg", "legs", "foot", "feet"]
+_COIN_WORDS = ["коин", "коины", "коинов", "монета", "монеты", "монет", "coin", "coins", "money", "валюта"]
+_EVO_WORDS = ["эво", "эволюция", "эволюции", "эволюционировать", "evolution", "evolutions", "evo"]
+_BALANCE_WORDS = ["баланс", "бал", "кошелек", "кошелёк", "деньги", "bal", "balance", "cash", "счет", "счёт"]
+_REBIRTH_WORDS = ["перерождение", "перерождения", "ребёрт", "реберт", "ребёрты", "ребирты", "рб", "rebirth", "rb"]
+_CASE_WORDS = ["кейс", "сундук", "коробка", "case", "box"]
+_CASES_WORDS = ["кейсы", "сундуки", "коробки", "cases", "boxes"]
+_VIP_WORDS = ["вип", "vip", "випка", "premium", "премиум"]
+_EXCHANGE_WORDS = ["обменять", "обмен", "обменник", "свап", "swap", "exchange"]
+_HELP_WORDS = ["помощь", "команды", "хелп", "help", "cmds", "commands"]
+
+ALIAS_PHRASES = {}
+
+
+def _register_phrases(canon: str, words):
+    for w in words:
+        ALIAS_PHRASES[w.lower()] = canon
+
+
+# Одиночные слова-команды (весь текст = ровно одно из этих слов)
+_register_phrases("вип", _VIP_WORDS)
+_register_phrases("баланс", _BALANCE_WORDS)
+_register_phrases("перерождение", _REBIRTH_WORDS)
+_register_phrases("эволюция", _EVO_WORDS)
+_register_phrases("кейс", _CASE_WORDS)
+_register_phrases("кейсы", _CASES_WORDS)
+_register_phrases("помощь", _HELP_WORDS)
+ALIAS_PHRASES["моя ношка"] = "моя нога"
+ALIAS_PHRASES["моя ножка"] = "моя нога"
+ALIAS_PHRASES["моя ноги"] = "моя нога"
+
+# "топ <термин>" и "гл топ <термин>" — декартово произведение топ-синонимов на синонимы термина
+for _top in _TOP_WORDS:
+    for _leg in _LEG_WORDS:
+        ALIAS_PHRASES[f"{_top} {_leg}"] = "топ ног"
+        ALIAS_PHRASES[f"гл {_top} {_leg}"] = "гл топ ног"
+    for _coin in _COIN_WORDS:
+        ALIAS_PHRASES[f"{_top} {_coin}"] = "топ коин"
+        ALIAS_PHRASES[f"гл {_top} {_coin}"] = "гл топ коин"
+    for _evo in _EVO_WORDS:
+        ALIAS_PHRASES[f"{_top} {_evo}"] = "топ эво"
+        ALIAS_PHRASES[f"гл {_top} {_evo}"] = "гл топ эво"
+    for _rb in _REBIRTH_WORDS:
+        ALIAS_PHRASES[f"{_top} {_rb}"] = "топ очкп"
+        ALIAS_PHRASES[f"гл {_top} {_rb}"] = "гл топ очкп"
+# сами канонические фразы не должны затираться (на случай, если слово входит в несколько списков)
+ALIAS_PHRASES.pop("топ топ", None)
+
+
+def normalize_alias_text(text: str) -> str:
+    """Заменяет известную фразу-алиас на канонический текст команды. Не трогает команды
+    с параметрами (числа, названия предметов, юзернеймы) — под них есть отдельная токенная
+    замена ниже (normalize_alias_prefix), не полнофразовая."""
+    if not text:
+        return text
+    stripped = text.strip()
+    if not stripped:
+        return text
+    lowered = stripped.lower()
+    return ALIAS_PHRASES.get(lowered, text)
+
+
+# ---------- Алиасы для команд с параметрами (дать/снять/передать/обменять/кейс N и т.д.) ----------
+# Тут заменяем только ПЕРВОЕ слово (глагол/термин сразу после "!дать"/"!снять"/само по себе),
+# аргументы (числа, юзернеймы, названия предметов) не трогаем.
+_PARAM_TERM_TO_CANON = {}
+for _w in _LEG_WORDS:
+    _PARAM_TERM_TO_CANON[_w.lower()] = "ног"
+for _w in _COIN_WORDS:
+    _PARAM_TERM_TO_CANON[_w.lower()] = "коин"
+for _w in _EVO_WORDS:
+    _PARAM_TERM_TO_CANON[_w.lower()] = "эво"
+for _w in _REBIRTH_WORDS:
+    _PARAM_TERM_TO_CANON[_w.lower()] = "очкп"
+for _w in _EXCHANGE_WORDS:
+    _PARAM_TERM_TO_CANON[_w.lower()] = "обменять"
+for _w in _CASE_WORDS:
+    _PARAM_TERM_TO_CANON[_w.lower()] = "кейс"
+
+# Защищённые токены — никогда не алиасятся, даже если случайно совпали с чем-то (бустер "б"/предмет "п")
+_PARAM_PROTECTED = {"б", "п"}
+
+
+_CASE_WORDS_SET = {w.lower() for w in _CASE_WORDS}
+
+
+def normalize_case_number(text: str) -> str:
+    """'сундук 2' / 'box 2' -> 'кейс 2'. Первое слово само является термином кейса,
+    число (аргумент) не трогаем."""
+    if not text:
+        return text
+    stripped = text.strip()
+    if not stripped:
+        return text
+    parts = stripped.split(" ", 1)
+    if len(parts) != 2:
+        return text
+    first, rest = parts[0].lower(), parts[1]
+    if first in _CASE_WORDS_SET and first != "кейс" and rest.strip().isdigit():
+        return "кейс " + rest
+    return text
+
+
+def normalize_alias_prefix(text: str) -> str:
+    """Для команд вида '<преф> <термин> <аргументы...>' заменяет только термин сразу после
+    известного префикса (!дать/!снять/дать/продать/обменять/кейс), не трогая аргументы."""
+    if not text:
+        return text
+    stripped = text.strip()
+    if not stripped:
+        return text
+
+    lowered = stripped.lower()
+    known_prefixes = ("!дать ", "!снять ", "дать ")
+    matched_prefix = None
+    for p in known_prefixes:
+        if lowered.startswith(p):
+            matched_prefix = p
+            break
+    if matched_prefix is None:
+        return text
+
+    original_prefix = stripped[:len(matched_prefix)]
+    rest = stripped[len(matched_prefix):]
+    if not rest:
+        return text
+
+    rest_words = rest.split(" ", 1)
+    term = rest_words[0]
+    tail = rest_words[1] if len(rest_words) > 1 else ""
+    lterm = term.lower()
+
+    if lterm in _PARAM_PROTECTED:
+        return text
+    if lterm not in _PARAM_TERM_TO_CANON:
+        return text
+
+    canon_term = _PARAM_TERM_TO_CANON[lterm]
+    # спецслучай: реальный хендлер несимметричен — "!дать ног" / "!снять ноги" (разные словоформы)
+    if matched_prefix == "!снять " and canon_term == "ног":
+        canon_term = "ноги"
+
+    if canon_term == lterm:
+        return text  # уже канонический вид, нечего менять
+
+    new_text = original_prefix + canon_term + (" " + tail if tail else "")
+    return new_text
+
+
+def apply_command_aliases(text: str) -> str:
+    """Единая точка входа: применяет все виды алиасинга по порядку. Возвращает исходный текст,
+    если ни один нормализатор не нашёл, что менять (в т.ч. для обычных сообщений с ногами 🦵/🦿 —
+    там нет алиасов, и текст останется как есть)."""
+    if not text:
+        return text
+    result = normalize_alias_text(text)
+    if result != text:
+        return result
+    result = normalize_case_number(text)
+    if result != text:
+        return result
+    result = normalize_alias_prefix(text)
+    return result
 
 
 def esc(text: str) -> str:
@@ -382,19 +557,63 @@ def next_level_text(score: int, evolution_level: int, rebirth_count: int = 0) ->
     return f"До {level + 1} уровня осталось {nxt - score} очков"
 
 
-def get_multiplier(evolution_level: int, active_item: str, vip_active: bool, upgrades: dict = None) -> float:
+def equipped_slots_max(upgrades: dict) -> int:
+    return 1 + upgrade_level(upgrades, "equip_slots")  # база 1 слот + купленные уровни прокачки (0/1/2 -> 1/2/3 слота)
+
+
+def parse_equipped(equipped_str: str) -> list:
+    """Очередь экипированных предметов: индекс 0 = надет раньше всех (первым вылетит при переполнении)."""
+    return [k for k in (equipped_str or "").split(",") if k]
+
+
+def format_equipped(items: list) -> str:
+    return ",".join(items)
+
+
+def equip_item(equipped_str: str, item_key: str, max_slots: int) -> list:
+    """Добавляет item_key в конец очереди. Если он уже был в очереди — переставляет в конец
+    (эквивалент «снял и заново надел»). При переполнении вылетает элемент с индекса 0."""
+    items = [k for k in parse_equipped(equipped_str) if k != item_key]
+    items.append(item_key)
+    while len(items) > max_slots:
+        items.pop(0)
+    return items
+
+
+def unequip_item(equipped_str: str, item_key: str) -> list:
+    """Убирает item_key из очереди, если он там есть."""
+    return [k for k in parse_equipped(equipped_str) if k != item_key]
+
+
+def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrades: dict = None) -> float:
     mult = 1.0
     if evolution_level >= 2:
         mult += EVO_BOOST_STEP
     if evolution_level >= 3:
         mult += EVO_BOOST_STEP * (evolution_level - 2)
-    if active_item and active_item in ITEMS:
-        mult += ITEMS[active_item][2] / 100
+    for item_key in _normalize_active_items(active_items):
+        if item_key in ITEMS:
+            mult += ITEMS[item_key][2] / 100
     if vip_active:
         mult += VIP_BOOST
     if upgrades:
         mult += 0.05 * upgrade_level(upgrades, "booster")
     return mult
+
+
+def _normalize_active_items(active_items):
+    """Принимает список/кортеж ключей предметов, либо None. Строки сюда не передаём —
+    для строки очереди сначала вызывай parse_equipped()."""
+    if active_items is None:
+        return []
+    if isinstance(active_items, str):
+        # подстраховка на случай передачи "сырого" item_key одной строкой
+        return [active_items] if active_items in ITEMS else parse_equipped(active_items)
+    return [k for k in active_items if k]
+
+
+def total_flat_bonus(active_items) -> int:
+    return sum(ITEM_FLAT_BONUS.get(k, 0) for k in _normalize_active_items(active_items))
 
 
 def parse_hidden(hidden_str: str) -> set:
@@ -616,12 +835,14 @@ async def db_query_one(sql, params=()):
 USER_COLUMNS = (
     "user_id, username, score, evolution_level, last_farm, coins, active_item, "
     "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
-    "rebirth_points, rebirth_count, upgrades, last_auto_claim"
+    "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items"
 )
 # Индексы полей выше при обращении по row[...]:
-#  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item,
+#  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
 #  7 cases_opened, 8 total_farmed, 9 last_bonus, 10 bonus_streak, 11 levelup_notify, 12 vip_until,
-#  13 hidden_badges, 14 rebirth_points, 15 rebirth_count, 16 upgrades (строка "key:lvl,key:lvl"), 17 last_auto_claim
+#  13 hidden_badges, 14 rebirth_points, 15 rebirth_count, 16 upgrades (строка "key:lvl,key:lvl"), 17 last_auto_claim,
+#  18 equipped_items — очередь экипированных предметов "key1,key2,key3" (индекс 0 = надет раньше всех,
+#     последний = надет позже всех; новый/повторный клик уходит в конец, при переполнении вылетает индекс 0)
 
 
 async def init_db():
@@ -671,6 +892,8 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN rebirth_count INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN upgrades TEXT DEFAULT ''",
         "ALTER TABLE users ADD COLUMN last_auto_claim INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN active_item2 TEXT DEFAULT NULL",
+        "ALTER TABLE users ADD COLUMN equipped_items TEXT DEFAULT ''",
     ):
         try:
             await db_exec(stmt)
@@ -691,7 +914,7 @@ async def ensure_user(user_id: int, username: str):
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
         now = int(time.time())
-        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now)
+        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "")
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
@@ -774,6 +997,17 @@ def get_chat(event):
     return None
 
 
+class AliasNormalizeMiddleware(BaseMiddleware):
+    """Переписывает message.text на канонический вид команды ДО того, как текст попадёт
+    в остальные middleware/хендлеры (is_command_text, ThrottleMiddleware, сами @dp.message)."""
+    async def __call__(self, handler, event, data):
+        if isinstance(event, Message) and event.text:
+            new_text = apply_command_aliases(event.text)
+            if new_text != event.text:
+                event = event.model_copy(update={"text": new_text})
+        return await handler(event, data)
+
+
 class PrivateBlockMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
         chat = get_chat(event)
@@ -814,6 +1048,7 @@ class ThrottleMiddleware(BaseMiddleware):
         return await handler(event, data)
 
 
+dp.message.middleware(AliasNormalizeMiddleware())
 dp.message.middleware(PrivateBlockMiddleware())
 dp.callback_query.middleware(PrivateBlockMiddleware())
 dp.message.middleware(TrackMembershipMiddleware())
@@ -868,6 +1103,26 @@ async def notify_on(message: Message):
 @dp.message(F.text.lower() == "вип")
 async def vip_info_command(message: Message):
     await message.reply(f"Вы можете купить ВИП у создателя @{ADMIN_USERNAME}")
+
+
+@dp.message(F.text.lower() == "помощь")
+async def help_command(message: Message):
+    await message.reply(
+        "📜 <b>Команды:</b>\n"
+        "● моя нога — твой профиль\n"
+        "● ферма — фарм очков (по кулдауну)\n"
+        "● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n"
+        "● инвентарь — бустеры и предметы\n"
+        "● кейс, кейсы — открытие кейсов\n"
+        "● эволюция — перейти на след. уровень эволюции\n"
+        "● перерождение — сброс ног/эво за 🉑\n"
+        "● апгрейд / прокачка — меню прокачки за 🉑\n"
+        "● баланс — монеты и 🉑\n"
+        "● обменять <число> — очки в монеты\n"
+        "● вип — про VIP-статус\n"
+        "● бонус — ежедневный бонус\n"
+        "● бейджи — управление бейджами"
+    )
 
 
 @dp.message(F.text.lower() == "бейджи")
@@ -926,9 +1181,10 @@ async def count_legs(message: Message):
     levelup_notify, vip_until = row[11], row[12]
     rebirth_count = row[15]
     upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
     vip_active = is_vip_active(vip_until)
 
-    flat_bonus = ITEM_FLAT_BONUS.get(active_item, 0)
+    flat_bonus = total_flat_bonus(active_items)
 
     legs = min(text.count("🦵"), LEG_LIMIT)
     gained = legs * LEG_POINT
@@ -944,7 +1200,7 @@ async def count_legs(message: Message):
     gained += flat_bonus  # гарант-бонус применяется один раз к итогу, а не за каждую ногу
     gained = round(gained * farm_yield_multiplier(upgrades))
 
-    mult = get_multiplier(evolution_level, active_item, vip_active, upgrades)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades)
     event_mult = 2 if await is_event_active() else 1
     total = round(gained * mult * event_mult)
     new_score = score + total
@@ -986,13 +1242,14 @@ async def my_profile(message: Message):
     vip_until = row[12]
     rebirth_points, rebirth_count = row[14], row[15]
     upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
     vip_active = is_vip_active(vip_until)
 
     level = get_level_index(score, evolution_level, rebirth_count)
     emoji, name, show_level = get_level_visual(level)
     nxt = next_level_text(score, evolution_level, rebirth_count)
-    mult = get_multiplier(evolution_level, active_item, vip_active, upgrades)
-    flat_bonus = ITEM_FLAT_BONUS.get(active_item, 0)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades)
+    flat_bonus = total_flat_bonus(active_items)
 
     if vip_active:
         left = vip_until - int(time.time())
@@ -1006,6 +1263,8 @@ async def my_profile(message: Message):
     name_part = f" {esc(name)}" if name else ""
     guarant_line = f"● Гарант-буст с предмета: +{flat_bonus} к итогу\n" if flat_bonus else ""
     rebirth_line = f"● Перерождений: {rebirth_count} (🉑 {rebirth_points})\n" if rebirth_count else ""
+    equipped_names = [ITEMS[k][1] for k in (active_items) if k and k in ITEMS]
+    equip_line = f"● Экипировано: {', '.join(equipped_names)}\n" if equipped_names else ""
 
     text = (
         f"👣 <b>ТВОЯ ЛЮТАЯ НОГОСТЬ:</b>\n"
@@ -1016,6 +1275,7 @@ async def my_profile(message: Message):
         f"{lvl_line}"
         f"● Уровень эволюции: {evolution_level}\n"
         f"{rebirth_line}"
+        f"{equip_line}"
         f"● Процентовый буст: +{round((mult - 1) * 100)}%\n"
         f"{guarant_line}"
         f"{vip_line}"
@@ -1179,6 +1439,7 @@ async def farm(message: Message):
     last_farm, levelup_notify, vip_until = row[4], row[11], row[12]
     rebirth_count = row[15]
     upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
     vip_active = is_vip_active(vip_until)
 
     cooldown = farm_cd_seconds(upgrades)
@@ -1192,7 +1453,7 @@ async def farm(message: Message):
     auto_legs, auto_coins, score, _coins_after = await claim_offline_auto_farm(user_id, row)
 
     low, high = farm_range(evolution_level)
-    mult = get_multiplier(evolution_level, active_item, vip_active, upgrades)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades)
     event_mult = 2 if await is_event_active() else 1
     gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult)
     new_score = score + gained
@@ -1400,11 +1661,11 @@ async def transfer_item(message: Message):
         return
 
     sender_row = await get_user(sender_id)
-    if sender_row[6] == item_key:
-        remaining = await get_inventory(sender_id)
-        has_more = any(k == item_key and q > 0 for k, q in remaining)
-        if not has_more:
-            await db_exec("UPDATE users SET active_item = NULL WHERE user_id = ?", (sender_id,))
+    remaining = await get_inventory(sender_id)
+    has_more = any(k == item_key and q > 0 for k, q in remaining)
+    if not has_more:
+        new_equipped = unequip_item(sender_row[18], item_key)
+        await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), sender_id))
 
     await add_item(receiver.id, item_key)
 
@@ -1431,11 +1692,11 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
         return
 
     row = await get_user(user_id)
-    if row[6] == item_key:
-        remaining = await get_inventory(user_id)
-        has_more = any(k == item_key and q > 0 for k, q in remaining)
-        if not has_more:
-            await db_exec("UPDATE users SET active_item = NULL WHERE user_id = ?", (user_id,))
+    remaining = await get_inventory(user_id)
+    has_more = any(k == item_key and q > 0 for k, q in remaining)
+    if not has_more:
+        new_equipped = unequip_item(row[18], item_key)
+        await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), user_id))
 
     price = SELL_PRICE.get(item_key, 1)
     await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (price, user_id))
@@ -1453,12 +1714,11 @@ async def sell_passive(message: Message):
     await sell_item(message, "продать п ", only_passive=True)
 
 
-def format_inventory_menu_text(active_item):
-    if active_item and active_item in ITEMS:
-        emoji, name, percent, _ = ITEMS[active_item]
-        equipped_text = f"Экипировано: {emoji} {esc(name)} (+{percent}%)"
-    else:
-        equipped_text = "Экипировано: ничего"
+def format_inventory_menu_text(active_items, upgrades: dict = None):
+    items = _normalize_active_items(active_items)
+    max_slots = equipped_slots_max(upgrades or {})
+    equipped = [f"{ITEMS[k][0]} {esc(ITEMS[k][1])} (+{ITEMS[k][2]}%)" for k in items if k in ITEMS]
+    equipped_text = f"Экипировано ({len(equipped)}/{max_slots}): " + (", ".join(equipped) if equipped else "ничего")
     return f"🎒 <b>Твой инвентарь</b>\n{equipped_text}\n\nВыбери раздел:"
 
 
@@ -1469,13 +1729,14 @@ def inventory_menu_keyboard(user_id: int) -> InlineKeyboardMarkup:
     ])
 
 
-def boosters_keyboard(rows, active_item: str, user_id: int) -> InlineKeyboardMarkup:
+def boosters_keyboard(rows, active_items, user_id: int) -> InlineKeyboardMarkup:
+    equipped = set(_normalize_active_items(active_items))
     kb_rows = []
     for item_key, qty in rows:
         if item_key in PASSIVE_ITEMS:
             continue
         emoji, name, percent, _ = ITEMS[item_key]
-        mark = " ✅" if active_item == item_key else ""
+        mark = " ✅" if item_key in equipped else ""
         kb_rows.append([InlineKeyboardButton(
             text=f"{name} {plain_emoji(emoji)} (+{percent}%) x{qty}{mark}",
             callback_data=f"equip:{user_id}:{item_key}",
@@ -1488,11 +1749,11 @@ def items_keyboard(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")]])
 
 
-def format_boosters_text(rows):
+def format_boosters_text(rows, max_slots: int = 1):
     boosters = [(k, q) for k, q in rows if k not in PASSIVE_ITEMS]
     if not boosters:
-        return "🧪 У тебя нет бустеров. Можно носить только 1 за раз."
-    return "🧪 Твои бустеры (можно носить максимум 1):"
+        return f"🧪 У тебя нет бустеров. Можно носить одновременно {max_slots}."
+    return f"🧪 Твои бустеры (можно носить одновременно {max_slots}):"
 
 
 def format_items_text(rows):
@@ -1512,14 +1773,15 @@ async def inventory(message: Message):
     username = message.from_user.username or message.from_user.first_name or "Без имени"
 
     row = await ensure_user(user_id, username)
-    active_item = row[6]
+    upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
     rows = await get_inventory(user_id)
 
     if not rows:
         await message.reply("🎒 Инвентарь пуст.")
         return
 
-    await message.reply(format_inventory_menu_text(active_item), reply_markup=inventory_menu_keyboard(user_id))
+    await message.reply(format_inventory_menu_text(active_items, upgrades), reply_markup=inventory_menu_keyboard(user_id))
 
 
 @dp.callback_query(F.data.startswith("inv_menu:"))
@@ -1530,8 +1792,9 @@ async def inventory_back_to_menu(callback: CallbackQuery):
         return
 
     row = await get_user(owner_id)
-    active_item = row[6]
-    await callback.message.edit_text(format_inventory_menu_text(active_item), reply_markup=inventory_menu_keyboard(owner_id))
+    upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
+    await callback.message.edit_text(format_inventory_menu_text(active_items, upgrades), reply_markup=inventory_menu_keyboard(owner_id))
     await callback.answer()
 
 
@@ -1546,8 +1809,10 @@ async def inventory_open_category(callback: CallbackQuery):
     rows = await get_inventory(owner_id)
     if category == "boosters":
         row = await get_user(owner_id)
-        active_item = row[6]
-        await callback.message.edit_text(format_boosters_text(rows), reply_markup=boosters_keyboard(rows, active_item, owner_id))
+        upgrades = parse_upgrades(row[16])
+        active_items = parse_equipped(row[18])
+        max_slots = equipped_slots_max(upgrades)
+        await callback.message.edit_text(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, owner_id))
     else:
         await callback.message.edit_text(format_items_text(rows), reply_markup=items_keyboard(owner_id))
     await callback.answer()
@@ -1565,13 +1830,21 @@ async def toggle_equip(callback: CallbackQuery):
         return
 
     row = await get_user(owner_id)
-    active_item = row[6]
-    new_active = None if active_item == item_key else item_key
-    await db_exec("UPDATE users SET active_item = ? WHERE user_id = ?", (new_active, owner_id))
+    upgrades = parse_upgrades(row[16])
+    max_slots = equipped_slots_max(upgrades)
+
+    before = parse_equipped(row[18])
+    kicked = before[0] if item_key not in before and len(before) >= max_slots else None
+    new_equipped = equip_item(row[18], item_key, max_slots)
+
+    await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), owner_id))
     rows = await get_inventory(owner_id)
 
-    await callback.message.edit_text(format_boosters_text(rows), reply_markup=boosters_keyboard(rows, new_active, owner_id))
-    await callback.answer("Готово!")
+    await callback.message.edit_text(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, new_equipped, owner_id))
+    if kicked and kicked in ITEMS:
+        await callback.answer(f"Надел! {ITEMS[item_key][1]} вытеснил {ITEMS[kicked][1]} (слоты заняты).")
+    else:
+        await callback.answer("Готово!")
 
 
 def case_offer_keyboard(case_num: int, user_id: int) -> InlineKeyboardMarkup:
@@ -2291,7 +2564,7 @@ async def admin_reset(message: Message):
     await ensure_user(target.id, target_username)
 
     await db_exec(
-        "UPDATE users SET score = 0, evolution_level = 0, coins = 0, active_item = NULL, "
+        "UPDATE users SET score = 0, evolution_level = 0, coins = 0, active_item = NULL, equipped_items = '', "
         "cases_opened = 0, total_farmed = 0, last_bonus = 0, bonus_streak = 0, vip_until = 0 "
         "WHERE user_id = ?",
         (target.id,),
