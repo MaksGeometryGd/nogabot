@@ -117,6 +117,7 @@ FARM_BASE = (70, 170)      # нерф с (100, 250)
 FARM_EVOLVED = (500, 900)  # нерф с (700, 1250)
 
 EXCHANGE_RATE = 200
+REVERSE_EXCHANGE_RATE = 150  # 1 коин = 150 очков ног (обратный обменник, п.5 ТЗ)
 
 DAILY_TABLE = [100, 250, 500, 750, 1000]
 DAILY_MIN_GAP = 20 * 3600
@@ -260,6 +261,7 @@ AUTO_FARM_COINS_RATES = {1: (1, 300), 2: (5, 300), 3: (10, 180)}       # лвл:
 
 # ---------- Regex ----------
 AMOUNT = r"(\d+(?:\.\d+)?к{0,4})"
+_AMOUNT_TOKEN_RE = re.compile(r"^\d+(?:\.\d+)?к{0,4}$", re.IGNORECASE)
 
 ADMIN_GIVE_LEGS_RE = re.compile(rf"^!дать ног {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_LEGS_RE = re.compile(rf"^!снять ноги {AMOUNT}(\s+себе)?$", re.IGNORECASE)
@@ -281,6 +283,7 @@ PEER_GIVE_LEGS_RE = re.compile(rf"^дать ног {AMOUNT}$", re.IGNORECASE)
 PEER_GIVE_COIN_RE = re.compile(rf"^дать коин {AMOUNT}$", re.IGNORECASE)
 
 EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT}$", re.IGNORECASE)
+REVERSE_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} коин$", re.IGNORECASE)
 CASE_NUM_RE = re.compile(r"^кейс (\d+)$", re.IGNORECASE)
 INFO_RE = re.compile(r"^инфо\s+@?(\w+)$", re.IGNORECASE)
 
@@ -291,12 +294,13 @@ FIXED_COMMANDS = {
     "ферма", "фарма", "инвентарь", "эволюция", "кейс", "кейсы", "бонус",
     "смс выкл", "смс вкл", "вип", "!ивент ноги", "бейджи",
     "перерождение", "апгрейд", "прокачка", "апг", "баланс", "топ очкп", "гл топ очкп", "помощь",
+    "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
     "!дать коин", "!снять коин", "!дать б", "!снять б", "!дать п", "!снять п", "!дать вип", "!снять вип", "!сбросить",
-    "передать ", "кейс ", NEWS_PREFIX, "дать ног ", "дать коин ", "инфо ", "продать б ", "продать п ",
-    "!дать очкп", "!снять очкп",
+    "передать ", "дать ", "кейс ", NEWS_PREFIX, "инфо ", "продать б ", "продать п ",
+    "!дать очкп", "!снять очкп", "открыть кейс", "осмотреть кейс", "осмотр кейс",
 )
 
 
@@ -350,15 +354,20 @@ for _top in _TOP_WORDS:
     for _leg in _LEG_WORDS:
         ALIAS_PHRASES[f"{_top} {_leg}"] = "топ ног"
         ALIAS_PHRASES[f"гл {_top} {_leg}"] = "гл топ ног"
+        ALIAS_PHRASES[f"{_top} {_leg} вся"] = "топ ноги вся"
     for _coin in _COIN_WORDS:
         ALIAS_PHRASES[f"{_top} {_coin}"] = "топ коин"
         ALIAS_PHRASES[f"гл {_top} {_coin}"] = "гл топ коин"
+        ALIAS_PHRASES[f"{_top} {_coin} вся"] = "топ коин вся"
     for _evo in _EVO_WORDS:
         ALIAS_PHRASES[f"{_top} {_evo}"] = "топ эво"
         ALIAS_PHRASES[f"гл {_top} {_evo}"] = "гл топ эво"
+        ALIAS_PHRASES[f"{_top} {_evo} вся"] = "топ эво вся"
     for _rb in _REBIRTH_WORDS:
         ALIAS_PHRASES[f"{_top} {_rb}"] = "топ очкп"
         ALIAS_PHRASES[f"гл {_top} {_rb}"] = "гл топ очкп"
+        ALIAS_PHRASES[f"{_top} {_rb} вся"] = "топ очкп вся"
+    ALIAS_PHRASES[f"{_top} вся"] = "топ вся"
 # сами канонические фразы не должны затираться (на случай, если слово входит в несколько списков)
 ALIAS_PHRASES.pop("топ топ", None)
 
@@ -463,6 +472,33 @@ def normalize_alias_prefix(text: str) -> str:
     return new_text
 
 
+def normalize_exchange_suffix(text: str) -> str:
+    """'обменять 10 монет' / 'обменять 10 coin' -> 'обменять 10 коин'. Не трогает 'обменять 10'
+    (старая команда очки->монеты, без термина в хвосте)."""
+    if not text:
+        return text
+    stripped = text.strip()
+    lowered = stripped.lower()
+    if not lowered.startswith("обменять "):
+        return text
+    rest = stripped[len("обменять "):].strip()
+    if not rest:
+        return text
+    parts = rest.split(" ", 1)
+    if len(parts) != 2:
+        return text  # только число, без термина — не трогаем (старая команда)
+    amount_word, term = parts[0], parts[1].strip()
+    if not _AMOUNT_TOKEN_RE.match(amount_word):
+        return text
+    lterm = term.lower()
+    if lterm not in _PARAM_TERM_TO_CANON:
+        return text
+    canon_term = _PARAM_TERM_TO_CANON[lterm]
+    if canon_term != "коин" or canon_term == lterm:
+        return text
+    return f"обменять {amount_word} {canon_term}"
+
+
 def apply_command_aliases(text: str) -> str:
     """Единая точка входа: применяет все виды алиасинга по порядку. Возвращает исходный текст,
     если ни один нормализатор не нашёл, что менять (в т.ч. для обычных сообщений с ногами 🦵/🦿 —
@@ -473,6 +509,9 @@ def apply_command_aliases(text: str) -> str:
     if result != text:
         return result
     result = normalize_case_number(text)
+    if result != text:
+        return result
+    result = normalize_exchange_suffix(text)
     if result != text:
         return result
     result = normalize_alias_prefix(text)
@@ -716,6 +755,11 @@ def case_discount(upgrades: dict) -> float:
     return 0.10 * upgrade_level(upgrades, "discount")
 
 
+def case_price_with_discount(base_price: int, upgrades: dict) -> int:
+    discount = case_discount(upgrades)
+    return max(1, round(base_price * (1 - discount)))
+
+
 def sell_bonus_coins(upgrades: dict) -> int:
     return 2 * upgrade_level(upgrades, "sell_boost")
 
@@ -766,6 +810,21 @@ def roll_case_item(case_num: int) -> str:
     pool = CASES[case_num]["pool"]
     weights = [ITEMS[k][3] for k in pool]
     return random.choices(pool, weights=weights, k=1)[0]
+
+
+def case_drop_table(case_num: int) -> list:
+    """Список (item_key, эмодзи, имя, буст%, шанс_в_процентах) для конкретного кейса,
+    отсортированный по убыванию шанса."""
+    pool = CASES[case_num]["pool"]
+    weights = [ITEMS[k][3] for k in pool]
+    total = sum(weights)
+    rows = []
+    for k, w in zip(pool, weights):
+        emoji, name, percent, _ = ITEMS[k]
+        chance = round(w / total * 100, 2) if total else 0
+        rows.append((k, emoji, name, percent, chance))
+    rows.sort(key=lambda r: r[4], reverse=True)
+    return rows
 
 
 def find_item_by_name(query: str, only_passive=None):
@@ -1014,6 +1073,11 @@ class PrivateBlockMiddleware(BaseMiddleware):
         if chat is not None and chat.type == "private":
             user = event.from_user
             if not (user and (user.username or "").lower() == ADMIN_USERNAME.lower()):
+                if isinstance(event, CallbackQuery):
+                    try:
+                        await event.answer()
+                    except Exception:
+                        pass
                 return
         return await handler(event, data)
 
@@ -1026,6 +1090,7 @@ class TrackMembershipMiddleware(BaseMiddleware):
 
 
 class ThrottleMiddleware(BaseMiddleware):
+    """Троттлинг для текстовых команд."""
     def __init__(self, rate: float = 1.5):
         self.rate = rate
         self.last_call = {}
@@ -1036,8 +1101,7 @@ class ThrottleMiddleware(BaseMiddleware):
             return await handler(event, data)
 
         text = getattr(event, "text", None)
-        is_button = isinstance(event, CallbackQuery)
-        if not is_button and (not text or not is_command_text(text)):
+        if not text or not is_command_text(text):
             return await handler(event, data)
 
         now = time.monotonic()
@@ -1048,12 +1112,37 @@ class ThrottleMiddleware(BaseMiddleware):
         return await handler(event, data)
 
 
-dp.message.middleware(AliasNormalizeMiddleware())
+class CallbackThrottleMiddleware(BaseMiddleware):
+    """Троттлинг для инлайн-кнопок. Короткий кулдаун (350-500мс) и, что критично,
+    ВСЕГДА отвечает на callback_query — иначе Telegram держит кнопку в состоянии
+    "загрузка" до собственного таймаута, что выглядит как зависшая/незажимаемая кнопка."""
+    def __init__(self, rate: float = 0.4):
+        self.rate = rate
+        self.last_call = {}
+
+    async def __call__(self, handler, event: CallbackQuery, data):
+        user_id = event.from_user.id if event.from_user else None
+        if user_id is None:
+            return await handler(event, data)
+
+        now = time.monotonic()
+        key = (user_id, event.data)  # троттлим повтор ТОЙ ЖЕ кнопки, а не любых кнопок подряд
+        if now - self.last_call.get(key, 0) < self.rate:
+            try:
+                await event.answer()  # гасим "часики" немедленно, без show_alert — не мешаем игроку
+            except Exception:
+                pass
+            return
+        self.last_call[key] = now
+        return await handler(event, data)
+
+
+dp.message.outer_middleware(AliasNormalizeMiddleware())
 dp.message.middleware(PrivateBlockMiddleware())
 dp.callback_query.middleware(PrivateBlockMiddleware())
 dp.message.middleware(TrackMembershipMiddleware())
 dp.message.middleware(ThrottleMiddleware(1.5))
-dp.callback_query.middleware(ThrottleMiddleware(1.5))
+dp.callback_query.middleware(CallbackThrottleMiddleware(0.4))
 
 LEG_REPLY_COOLDOWN = 2
 _last_leg_reply = {}
@@ -1428,6 +1517,31 @@ async def top_rebirth_global(message: Message):
     await send_rebirth_top(message, None, "ТОП ОЧКОВ ПЕРЕРОЖДЕНИЯ ВЕЗДЕ")
 
 
+@dp.message(F.text.lower() == "топ ноги вся")
+async def top_legs_global_suffix(message: Message):
+    await send_legs_top(message, None, "ТОП-10 НОГ ВЕЗДЕ")
+
+
+@dp.message(F.text.lower() == "топ коин вся")
+async def top_coin_global_suffix(message: Message):
+    await send_coin_top(message, None, "ТОП МОНЕТ ВЕЗДЕ")
+
+
+@dp.message(F.text.lower() == "топ эво вся")
+async def top_evo_global_suffix(message: Message):
+    await send_evo_top(message, None, "ТОП ЭВОЛЮЦИЙ ВЕЗДЕ")
+
+
+@dp.message(F.text.lower() == "топ очкп вся")
+async def top_rebirth_global_suffix(message: Message):
+    await send_rebirth_top(message, None, "ТОП ОЧКОВ ПЕРЕРОЖДЕНИЯ ВЕЗДЕ")
+
+
+@dp.message(F.text.lower().in_({"топ вся", "гл топ"}))
+async def top_overall_global(message: Message):
+    await send_legs_top(message, None, "ОБЩИЙ ТОП ВЕЗДЕ (по очкам ноги)")
+
+
 @dp.message(F.text.lower().in_({"ферма", "фарма"}))
 async def farm(message: Message):
     user_id = message.from_user.id
@@ -1516,6 +1630,37 @@ async def daily_bonus(message: Message):
     await message.reply(f"🎁 День {streak}: +{reward} очков ноги (Всего: {new_score}){item_text}")
 
 
+@dp.message(F.text.regexp(REVERSE_EXCHANGE_RE))
+async def reverse_exchange(message: Message):
+    """обменять <кол-во> коин -> списывает коины, начисляет очки ног (1 коин = 150 очков)."""
+    match = REVERSE_EXCHANGE_RE.match(message.text.strip())
+    coins_wanted = parse_amount(match.group(1))
+    if not coins_wanted or coins_wanted <= 0:
+        await message.reply("Количество монет должно быть больше нуля.")
+        return
+
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    score, coins, evolution_level = row[2], row[5], row[3]
+    rebirth_count = row[15]
+    levelup_notify = row[11]
+
+    if coins_wanted > coins:
+        await message.reply(f"Недостаточно монет. У тебя {coins} 🪙.")
+        return
+
+    gained = coins_wanted * REVERSE_EXCHANGE_RATE
+    new_coins = coins - coins_wanted
+    new_score = score + gained
+
+    await db_exec("UPDATE users SET score = ?, coins = ? WHERE user_id = ?", (new_score, new_coins, user_id))
+
+    await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count)
+    await message.reply(f"Обменял {coins_wanted} 🪙 → +{gained} очков ноги (Всего очков: {new_score})")
+
+
 @dp.message(F.text.lower().startswith("обменять "))
 async def exchange(message: Message):
     match = EXCHANGE_RE.match(message.text.strip().lower())
@@ -1552,22 +1697,16 @@ async def exchange(message: Message):
     await message.reply(f"Обменял {spent} очков → +{coins_wanted} 🪙 монет (Всего монет: {new_coins}){warn}")
 
 
-@dp.message(F.text.regexp(r"(?i)^дать ног \d+(?:\.\d+)?к{0,4}$"))
-async def peer_give_legs(message: Message):
-    match = PEER_GIVE_LEGS_RE.match(message.text.strip().lower())
-    amount = parse_amount(match.group(1))
-    if not amount or amount <= 0:
-        await message.reply("Некорректное количество.")
-        return
-
+async def transfer_currency(message: Message, currency: str, amount: int):
+    """currency: 'ног' или 'коин'. Общая логика для дать/передать <число> <валюта>."""
     if not message.reply_to_message:
-        await message.reply("Ответь этой командой на сообщение того, кому передаёшь очки.")
+        await message.reply("Ответь этой командой на сообщение того, кому передаёшь.")
         return
 
     receiver = message.reply_to_message.from_user
     sender = message.from_user
     if receiver.id == sender.id:
-        await message.reply("Нельзя передать очки самому себе.")
+        await message.reply("Нельзя передать самому себе.")
         return
 
     sender_username = sender.username or sender.first_name or "Без имени"
@@ -1575,70 +1714,40 @@ async def peer_give_legs(message: Message):
 
     sender_row = await ensure_user(sender.id, sender_username)
     if sender_row[3] < 1:
-        await message.reply("Передавать очки могут только игроки хотя бы с 1 уровнем эволюции.")
-        return
-    if sender_row[2] < amount:
-        await message.reply(f"Недостаточно очков. У тебя {sender_row[2]}.")
+        await message.reply("Передавать можно только с 1 уровня эволюции.")
         return
 
-    receiver_row = await ensure_user(receiver.id, receiver_username)
-
-    new_sender_score = sender_row[2] - amount
-    new_receiver_score = receiver_row[2] + amount
-    await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (new_sender_score, sender.id))
-    await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (new_receiver_score, receiver.id))
-
-    await message.reply(f"{esc(sender_username)} передал {amount} очков игроку {esc(receiver_username)}.")
-    await maybe_announce_levelup(message, receiver_username, receiver_row[2], new_receiver_score,
-                                  receiver_row[3], bool(receiver_row[11]))
-
-
-@dp.message(F.text.regexp(r"(?i)^дать коин \d+(?:\.\d+)?к{0,4}$"))
-async def peer_give_coin(message: Message):
-    match = PEER_GIVE_COIN_RE.match(message.text.strip().lower())
-    amount = parse_amount(match.group(1))
-    if not amount or amount <= 0:
-        await message.reply("Некорректное количество.")
-        return
-
-    if not message.reply_to_message:
-        await message.reply("Ответь этой командой на сообщение того, кому передаёшь монеты.")
-        return
-
-    receiver = message.reply_to_message.from_user
-    sender = message.from_user
-    if receiver.id == sender.id:
-        await message.reply("Нельзя передать монеты самому себе.")
-        return
-
-    sender_username = sender.username or sender.first_name or "Без имени"
-    receiver_username = receiver.username or receiver.first_name or "Без имени"
-
-    sender_row = await ensure_user(sender.id, sender_username)
-    if sender_row[3] < 1:
-        await message.reply("Передавать монеты могут только игроки хотя бы с 1 уровнем эволюции.")
-        return
-    if sender_row[5] < amount:
-        await message.reply(f"Недостаточно монет. У тебя {sender_row[5]}.")
-        return
-
-    await ensure_user(receiver.id, receiver_username)
-    await db_exec("UPDATE users SET coins = coins - ? WHERE user_id = ?", (amount, sender.id))
-    await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (amount, receiver.id))
-
-    await message.reply(f"{esc(sender_username)} передал {amount} 🪙 игроку {esc(receiver_username)}.")
+    if currency == "ног":
+        if sender_row[2] < amount:
+            await message.reply(f"Недостаточно очков. У тебя {sender_row[2]}.")
+            return
+        receiver_row = await ensure_user(receiver.id, receiver_username)
+        new_sender = sender_row[2] - amount
+        new_receiver = receiver_row[2] + amount
+        await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (new_sender, sender.id))
+        await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (new_receiver, receiver.id))
+        await message.reply(f"{esc(sender_username)} передал {amount} очков игроку {esc(receiver_username)}.")
+        await maybe_announce_levelup(message, receiver_username, receiver_row[2], new_receiver,
+                                      receiver_row[3], bool(receiver_row[11]), receiver_row[15])
+    else:  # коин
+        if sender_row[5] < amount:
+            await message.reply(f"Недостаточно монет. У тебя {sender_row[5]}.")
+            return
+        await ensure_user(receiver.id, receiver_username)
+        await db_exec("UPDATE users SET coins = coins - ? WHERE user_id = ?", (amount, sender.id))
+        await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (amount, receiver.id))
+        await message.reply(f"{esc(sender_username)} передал {amount} 🪙 игроку {esc(receiver_username)}.")
 
 
-@dp.message(F.text.lower().startswith("передать "))
-async def transfer_item(message: Message):
+async def transfer_item_direct(message: Message, item_query: str):
+    """Прямой поиск предмета по вхождению строки, без разделения на бустеры/пассивки (п.2 ТЗ)."""
     if not message.reply_to_message:
         await message.reply("Ответь этой командой на сообщение того, кому передаёшь предмет.")
         return
 
-    item_query = message.text[len("передать "):].strip()
     item_key = find_item_by_name(item_query)
     if not item_key:
-        await message.reply("Не нашёл такой предмет. Проверь название (см. инвентарь).")
+        await message.reply(f"❌ Такого предмета не существует: «{esc(item_query)}». Проверь название в «инвентарь».")
         return
 
     sender_id = message.from_user.id
@@ -1672,6 +1781,53 @@ async def transfer_item(message: Message):
     await message.reply(f"{emoji} {esc(name)} передан игроку {esc(receiver_username)}!")
 
 
+# Токены-валюты для распознавания синтаксиса "[число] [валюта]" в дать/передать
+_TRANSFER_CURRENCY_TOKENS = {"ног": "ног", "коин": "коин"}
+
+
+@dp.message(F.text.regexp(r"(?i)^(дать|передать)\s+(.+)$"))
+async def give_or_transfer(message: Message):
+    """Умный хендлер: 'дать 888 коин' -> валюта, 'дать свеча' / 'передать свеча' -> предмет.
+    Синтаксис определяется автоматически по структуре аргументов."""
+    text = message.text.strip()
+    verb, _, args = text.partition(" ")
+    args = args.strip()
+    if not args:
+        await message.reply("Укажи, что передать: число+валюту («дать 100 коин») или название предмета («передать свеча»).")
+        return
+
+    parts = args.split(" ", 1)
+    first_word = parts[0]
+    rest = parts[1].strip() if len(parts) > 1 else ""
+
+    # Синтаксис 1: [число] [валюта] — "888 коин" / "50 ног"
+    if _AMOUNT_TOKEN_RE.match(first_word) and rest:
+        currency_word = rest.split(" ", 1)[0].lower()
+        if currency_word in _TRANSFER_CURRENCY_TOKENS:
+            amount = parse_amount(first_word)
+            if not amount or amount <= 0:
+                await message.reply("Некорректное количество.")
+                return
+            await transfer_currency(message, _TRANSFER_CURRENCY_TOKENS[currency_word], amount)
+            return
+        else:
+            await message.reply(f"❌ Такой валюты не существует: «{esc(currency_word)}». Доступно: ног, коин.")
+            return
+
+    # Синтаксис 2: [валюта] [число] — "коин 50" (на случай другого порядка слов)
+    if first_word.lower() in _TRANSFER_CURRENCY_TOKENS and rest and _AMOUNT_TOKEN_RE.match(rest.split(" ", 1)[0]):
+        amount_word = rest.split(" ", 1)[0]
+        amount = parse_amount(amount_word)
+        if not amount or amount <= 0:
+            await message.reply("Некорректное количество.")
+            return
+        await transfer_currency(message, _TRANSFER_CURRENCY_TOKENS[first_word.lower()], amount)
+        return
+
+    # Синтаксис 3: название предмета целиком (прямой поиск по вхождению, без фильтров б/п)
+    await transfer_item_direct(message, args)
+
+
 async def sell_item(message: Message, prefix: str, only_passive: bool):
     item_query = message.text[len(prefix):].strip()
     item_key = find_item_by_name(item_query, only_passive=only_passive)
@@ -1698,10 +1854,24 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
         new_equipped = unequip_item(row[18], item_key)
         await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), user_id))
 
-    price = SELL_PRICE.get(item_key, 1)
-    await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (price, user_id))
+    upgrades = parse_upgrades(row[16])
+    sell_lvl = upgrade_level(upgrades, "sell_boost")
+    price = SELL_PRICE.get(item_key, 1) + sell_bonus_coins(upgrades)
 
-    await message.reply(f"Продал {emoji} {esc(name)} за {price} 🪙.")
+    bonus_rebirth = 0
+    if sell_lvl >= 3 and random.random() < 0.01:
+        bonus_rebirth = 1
+
+    if bonus_rebirth:
+        await db_exec(
+            "UPDATE users SET coins = coins + ?, rebirth_points = rebirth_points + ? WHERE user_id = ?",
+            (price, bonus_rebirth, user_id),
+        )
+    else:
+        await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (price, user_id))
+
+    bonus_text = " 🎉 Повезло! +1 🉑!" if bonus_rebirth else ""
+    await message.reply(f"Продал {emoji} {esc(name)} за {price} 🪙.{bonus_text}")
 
 
 @dp.message(F.text.lower().startswith("продать б "))
@@ -1847,40 +2017,126 @@ async def toggle_equip(callback: CallbackQuery):
         await callback.answer("Готово!")
 
 
-def case_offer_keyboard(case_num: int, user_id: int) -> InlineKeyboardMarkup:
+def case_offer_keyboard(case_num: int, user_id: int, price: int) -> InlineKeyboardMarkup:
     case = CASES[case_num]
     return InlineKeyboardMarkup(inline_keyboard=[[
-        InlineKeyboardButton(text=f"🎁 Купить {case['name']} ({case['price']} 🪙)", callback_data=f"buy_case:{case_num}:{user_id}")
+        InlineKeyboardButton(text=f"🎁 Открыть {case['name']} ({price} 🪙)", callback_data=f"buy_case:{case_num}:{user_id}")
     ]])
 
 
-async def send_case_offer(message: Message, case_num: int):
+def format_case_inspect_text(case_num: int, price: int, base_price: int) -> str:
+    case = CASES[case_num]
+    discount_line = f" (скидка, было {base_price} 🪙)" if price != base_price else ""
+    lines = [f"📦 <b>{esc(case['name'])}</b>", f"Цена: {price} 🪙{discount_line}", "", "Возможный дроп:"]
+    for _k, emoji, name, percent, chance in case_drop_table(case_num):
+        boost_part = f" (+{percent}%)" if percent else ""
+        lines.append(f"{plain_emoji(emoji)} {esc(name)}{boost_part} — {chance}%")
+    return "\n".join(lines)
+
+
+async def send_case_inspect(message: Message, case_num: int):
+    """Меню осмотра кейса: список дропа с процентами + кнопка открытия."""
     case = CASES.get(case_num)
     if not case:
         await message.reply("Такого кейса нет.")
         return
-    await message.reply(f"{case['name']}. Что выпадет — решает удача!", reply_markup=case_offer_keyboard(case_num, message.from_user.id))
+    row = await ensure_user(message.from_user.id, message.from_user.username or message.from_user.first_name or "Без имени")
+    upgrades = parse_upgrades(row[16])
+    price = case_price_with_discount(case["price"], upgrades)
+    await message.reply(
+        format_case_inspect_text(case_num, price, case["price"]),
+        reply_markup=case_offer_keyboard(case_num, message.from_user.id, price),
+    )
+
+
+async def open_case_instant(message: Message, case_num: int):
+    """'открыть кейс N' — мгновенная рулетка, минуя меню осмотра."""
+    case = CASES.get(case_num)
+    if not case:
+        await message.reply("Такого кейса нет.")
+        return
+
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    row = await ensure_user(user_id, username)
+    coins = row[5]
+    upgrades = parse_upgrades(row[16])
+    price = case_price_with_discount(case["price"], upgrades)
+
+    if coins < price:
+        await message.reply(f"Не хватает монет. Нужно {price} 🪙, у тебя {coins} 🪙.")
+        return
+
+    item_key = roll_case_item(case_num)
+    emoji, name, percent, _ = ITEMS[item_key]
+
+    await db_exec(
+        "UPDATE users SET coins = coins - ?, cases_opened = cases_opened + 1 WHERE user_id = ?",
+        (price, user_id),
+    )
+    await add_item(user_id, item_key)
+    new_coins = coins - price
+
+    await message.reply(f"🎉 Выпало: {emoji} {esc(name)} (+{percent}%)!\nОстаток монет: {new_coins} 🪙")
 
 
 @dp.message(F.text.lower() == "кейс")
 async def case_default(message: Message):
-    await send_case_offer(message, 1)
+    await send_case_inspect(message, 1)
 
 
 @dp.message(F.text.lower().regexp(r"^кейс \d+$"))
 async def case_numbered(message: Message):
     match = CASE_NUM_RE.match(message.text.strip().lower())
-    await send_case_offer(message, int(match.group(1)))
+    await send_case_inspect(message, int(match.group(1)))
+
+
+@dp.message(F.text.lower().regexp(r"^(осмотреть кейс|осмотр кейс)\s+(\d+)$"))
+async def case_inspect_command(message: Message):
+    match = re.match(r"^(?:осмотреть кейс|осмотр кейс)\s+(\d+)$", message.text.strip().lower())
+    await send_case_inspect(message, int(match.group(1)))
+
+
+@dp.message(F.text.lower().regexp(r"^открыть кейс\s+(\d+)$"))
+async def case_open_command(message: Message):
+    match = re.match(r"^открыть кейс\s+(\d+)$", message.text.strip().lower())
+    await open_case_instant(message, int(match.group(1)))
 
 
 @dp.message(F.text.lower() == "кейсы")
 async def case_list(message: Message):
     user_id = message.from_user.id
+    row = await ensure_user(user_id, message.from_user.username or message.from_user.first_name or "Без имени")
+    upgrades = parse_upgrades(row[16])
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=f"{case['name']} ({case['price']} 🪙)", callback_data=f"buy_case:{num}:{user_id}")]
+        [InlineKeyboardButton(
+            text=f"{case['name']} ({case_price_with_discount(case['price'], upgrades)} 🪙)",
+            callback_data=f"inspect_case:{num}:{user_id}",
+        )]
         for num, case in CASES.items()
     ])
     await message.reply("Доступные кейсы:", reply_markup=kb)
+
+
+@dp.callback_query(F.data.startswith("inspect_case:"))
+async def inspect_case_callback(callback: CallbackQuery):
+    _, case_num_str, owner_str = callback.data.split(":")
+    case_num = int(case_num_str)
+    owner_id = int(owner_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer("Это не твоё меню!", show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    upgrades = parse_upgrades(row[16])
+    case = CASES[case_num]
+    price = case_price_with_discount(case["price"], upgrades)
+
+    await callback.message.edit_text(
+        format_case_inspect_text(case_num, price, case["price"]),
+        reply_markup=case_offer_keyboard(case_num, owner_id, price),
+    )
+    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("buy_case:"))
@@ -1896,8 +2152,11 @@ async def buy_case(callback: CallbackQuery):
 
     row = await get_user(owner_id)
     coins = row[5]
-    if coins < case["price"]:
-        await callback.answer(f"Не хватает монет. Нужно {case['price']} 🪙", show_alert=True)
+    upgrades = parse_upgrades(row[16])
+    price = case_price_with_discount(case["price"], upgrades)
+
+    if coins < price:
+        await callback.answer(f"Не хватает монет. Нужно {price} 🪙", show_alert=True)
         return
 
     item_key = roll_case_item(case_num)
@@ -1905,14 +2164,14 @@ async def buy_case(callback: CallbackQuery):
 
     await db_exec(
         "UPDATE users SET coins = coins - ?, cases_opened = cases_opened + 1 WHERE user_id = ?",
-        (case["price"], owner_id),
+        (price, owner_id),
     )
     await add_item(owner_id, item_key)
-    new_coins = coins - case["price"]
+    new_coins = coins - price
 
     await callback.message.edit_text(
         f"🎉 Выпало: {emoji} {esc(name)} (+{percent}%)!\nОстаток монет: {new_coins} 🪙",
-        reply_markup=case_offer_keyboard(case_num, owner_id),
+        reply_markup=case_offer_keyboard(case_num, owner_id, price),
     )
     await callback.answer("Кейс открыт!")
 
@@ -2123,9 +2382,21 @@ async def show_balance(message: Message):
     username = message.from_user.username or message.from_user.first_name or "Без имени"
 
     row = await ensure_user(user_id, username)
-    coins, rebirth_points = row[5], row[14]
+    score, coins = row[2], row[5]
+    vip_until = row[12]
+    rebirth_points, rebirth_count = row[14], row[15]
+    vip_active = is_vip_active(vip_until)
 
-    await message.reply(f"коин: {coins}\nОчки перерождение: {rebirth_points}")
+    vip_line = f"{PREMIUM_VIP_BADGE} VIP активен" if vip_active else "VIP не активен"
+
+    await message.reply(
+        f"💰 <b>Твой баланс</b>\n"
+        f"━━━━━━━━━━━━━━━━━━\n"
+        f"👣 Очки ноги: <code>{score}</code>\n"
+        f"🪙 Монеты: <code>{coins}</code>\n"
+        f"🉑 Очки перерождения: <code>{rebirth_points}</code> (перерождений: {rebirth_count})\n"
+        f"{vip_line}"
+    )
 
 
 @dp.message(F.text.lower().startswith("!дать очкп"))
