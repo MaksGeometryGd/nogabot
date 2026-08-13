@@ -59,7 +59,7 @@ PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌌</tg
 PREMIUM_HYBRID_AMULET = '<tg-emoji emoji-id="5204242195032336769">🧬</tg-emoji>'
 PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🔅</tg-emoji>'
 PREMIUM_TIME_PARTICLE = '<tg-emoji emoji-id="5985570245950053733">⏳</tg-emoji>'
-PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5364047860713143546">🧿</tg-emoji>'
+PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5046631025711515524">👑</tg-emoji>'
 PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">⚛️</tg-emoji>'
 PREMIUM_OLD_VASE = '<tg-emoji emoji-id="6334461494649948210">🏺</tg-emoji>'
 PREMIUM_GOLDEN_VASE = '<tg-emoji emoji-id="5954115825324527429">⚱️</tg-emoji>'
