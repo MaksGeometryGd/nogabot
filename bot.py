@@ -54,20 +54,20 @@ PREMIUM_STRANGE_COIN = '<tg-emoji emoji-id="5035428694441592026">🪙</tg-emoji>
 # в том числе валидных (кейс, вип и т.д.). Когда появятся настоящие emoji-id, верни
 # обёртку '<tg-emoji emoji-id="...">...</tg-emoji>' по аналогии с PREMIUM_MK_* выше.
 PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">📿💪</tg-emoji>'
-PREMIUM_GALAXY_POWER_AMULET = '🌌📿'
-PREMIUM_GALAXY_MIGHT_AMULET = '🌌⚡'
-PREMIUM_HYBRID_AMULET = '🧬📿'
-PREMIUM_FRIENDSHIP_ESSENCE = '🤝✨'
-PREMIUM_TIME_PARTICLE = '⏳'
-PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5046631025711515524">🌌🧿</tg-emoji>'
-PREMIUM_DEVOTION_COIN = '🪙✨'
-PREMIUM_OLD_VASE = '🏺'
-PREMIUM_GOLDEN_VASE = '🏺✨'
-PREMIUM_GODLY_VASE = '🏺🌌'
-PREMIUM_LUCKY_CHARM = '🍀📿'
-PREMIUM_SWIFT_PILL = '💨💊'
-PREMIUM_PARTY_SET = '🎉💮'
-PREMIUM_WARM_CANDLE = '🕯️'
+PREMIUM_GALAXY_POWER_AMULET = '<tg-emoji emoji-id="5451648825431175858">🌌✨</tg-emoji>'
+PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌌💥</tg-emoji>'
+PREMIUM_HYBRID_AMULET = '<tg-emoji emoji-id="5204242195032336769">🧬</tg-emoji>'
+PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🤝🔅</tg-emoji>'
+PREMIUM_TIME_PARTICLE = '<tg-emoji emoji-id="5985570245950053733">⏳</tg-emoji>'
+PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5364047860713143546">🌌🧿</tg-emoji>'
+PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">🪙⚛️</tg-emoji>'
+PREMIUM_OLD_VASE = '<tg-emoji emoji-id="6334461494649948210">🏺</tg-emoji>'
+PREMIUM_GOLDEN_VASE = '<tg-emoji emoji-id="5954115825324527429">⚱️</tg-emoji>'
+PREMIUM_GODLY_VASE = '<tg-emoji emoji-id="5283163228413641567">⚱️🌌</tg-emoji>'
+PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀📿</tg-emoji>'
+PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">💊☢️</tg-emoji>'
+PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎁✨</tg-emoji>'
+PREMIUM_WARM_CANDLE = '<tg-emoji emoji-id="5253717838870363235">🕯</tg-emoji>'
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
@@ -529,7 +529,7 @@ _LEG_WORDS = ["ног", "ноги", "ногой", "leg", "legs", "foot", "feet"]
 _COIN_WORDS = ["коин", "коины", "коинов", "монета", "монеты", "монет", "coin", "coins", "money", "валюта"]
 _EVO_WORDS = ["эво", "эволюция", "эволюции", "эволюционировать", "evolution", "evolutions", "evo"]
 _BALANCE_WORDS = ["баланс", "бал", "кошелек", "кошелёк", "деньги", "bal", "balance", "cash", "счет", "счёт"]
-_REBIRTH_WORDS = ["перерождение", "перерождения", "ребёрт", "реберт", "ребёрты", "ребирты", "рб", "rebirth", "rb"]
+_REBIRTH_WORDS = ["перерождение", "перерождения", "ребёрт", "реберт", "ребёрты", "ребирты", "рб", "rebirth", "rb", "rebith"]
 _CASE_WORDS = ["кейс", "сундук", "коробка", "case", "box"]
 _CASES_WORDS = ["кейсы", "сундуки", "коробки", "cases", "boxes"]
 _VIP_WORDS = ["вип", "vip", "випка", "premium", "премиум"]
@@ -1707,7 +1707,7 @@ async def count_legs(message: Message):
         god_extra = f" +{bonus['rebirth']}🉑 +{bonus['evo']}эво" if (bonus["rebirth"] or bonus["evo"]) else ""
         await safe_reply(
             message,
-            f"{GOD_ESSENCE_FLAVOR} {parts} → +{total} очков{coin_text} (Всего: {new_score}){god_extra}{vase_text}"
+            f"{GOD_ESSENCE_FLAVOR} {parts} → +{total} очков{coin_text} {god_extra}(Всего: {new_score}){vase_text}"
         )
         return
 
@@ -1802,8 +1802,7 @@ async def info_player(message: Message):
         f"● Очки: <code>{score}</code>\n"
         f"● Монеты: <code>{coins}</code> 🪙\n"
         f"● Уровень эволюции: {evolution_level}\n"
-        f"● VIP: {vip_text}\n"
-        f"● Экипировано: {esc(item_text)}"
+        f"● VIP: {vip_text}"
     )
     await message.reply(text)
 
