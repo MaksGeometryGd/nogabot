@@ -7,7 +7,7 @@ import time
 import libsql
 import aiohttp
 from aiogram import Bot, Dispatcher, F, BaseMiddleware
-from aiogram.exceptions import TelegramRetryAfter
+from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 from aiogram.types import (
@@ -315,7 +315,7 @@ GOD_ESSENCE_TIMER_CUT = 5         # -5 сек к кулдауну фермы, п
 GOD_ESSENCE_FARM_SPEED = 5        # фарм в 5 раз быстрее
 TIME_PARTICLE_FARM_SPEED = 4      # фарм в 4 раза быстрее (пассивно, лежит в инвентаре)
 
-GOD_ESSENCE_FLAVOR = "⭐️ Сила бога активирована."  # заменяет обычный префикс ответа фермы
+GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активирована."  # заменяет обычный префикс ответа фермы
 
 
 def get_active_unique_tier(active_items):
@@ -740,6 +740,28 @@ TG_EMOJI_RE = re.compile(r"<tg-emoji[^>]*>(.*?)</tg-emoji>")
 def plain_emoji(emoji_html: str) -> str:
     m = TG_EMOJI_RE.match(emoji_html or "")
     return m.group(1) if m else (emoji_html or "")
+
+
+def strip_premium_emoji(text: str) -> str:
+    """Убирает все <tg-emoji> обёртки из готового текста, оставляя фолбэк-символы."""
+    return TG_EMOJI_RE.sub(lambda m: m.group(1), text or "")
+
+
+async def safe_reply(message: Message, text: str, reply_markup=None):
+    """Как message.reply(), но если Telegram отклонил сообщение из-за невалидного
+    emoji-id в premium-эмодзи (битый/непризнанный custom_emoji_id) — повторяет
+    отправку с обычными эмодзи вместо того, чтобы command тихо "не открывался"."""
+    try:
+        return await message.reply(text, reply_markup=reply_markup)
+    except TelegramBadRequest:
+        return await message.reply(strip_premium_emoji(text), reply_markup=reply_markup)
+
+
+async def safe_edit_text(callback: CallbackQuery, text: str, reply_markup=None):
+    try:
+        return await callback.message.edit_text(text, reply_markup=reply_markup)
+    except TelegramBadRequest:
+        return await callback.message.edit_text(strip_premium_emoji(text), reply_markup=reply_markup)
 
 
 def build_regular_visual(level: int) -> str:
@@ -1667,13 +1689,6 @@ async def count_legs(message: Message):
         return
     _last_leg_reply[chat_id] = now
 
-    if bonus["is_god"]:
-        await message.reply(
-            f"{GOD_ESSENCE_FLAVOR} 🦵 +{total}очков +{bonus['coins']}коинов "
-            f"+{bonus['rebirth']}🉑 +{bonus['evo']}эво{vase_text}"
-        )
-        return
-
     parts = f"+{legs}🦵"
     if mek:
         parts += f" +{mek}🦿"
@@ -1681,6 +1696,15 @@ async def count_legs(message: Message):
         parts += f" +{galaxy}🌌"
     if star:
         parts += f" +{star}⭐️"
+
+    if bonus["is_god"]:
+        await safe_reply(
+            message,
+            f"{GOD_ESSENCE_FLAVOR} {parts} → +{total}очков +{bonus['coins']}коинов "
+            f"+{bonus['rebirth']}🉑 +{bonus['evo']}эво{vase_text}"
+        )
+        return
+
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
     await message.reply(
         f"Лютый рофл засчитан! {parts} → +{total} очков{coin_text} (Всего: {new_score}){vase_text}"
@@ -1961,9 +1985,10 @@ async def farm(message: Message):
         auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
 
     if bonus["is_god"]:
-        await message.reply(
-            f"{GOD_ESSENCE_FLAVOR} 🦵 +{gained}очков +{bonus['coins']}коинов "
-            f"+{bonus['rebirth']}🉑 +{bonus['evo']}эво{auto_text}{vase_text}"
+        await safe_reply(
+            message,
+            f"{GOD_ESSENCE_FLAVOR} 🦵 +{gained} очков +{bonus['coins']} коинов "
+            f"+{bonus['rebirth']} 🉑 +{bonus['evo']} эво {auto_text} {vase_text}"
         )
         return
 
@@ -2167,7 +2192,7 @@ async def transfer_item_direct(message: Message, item_query: str):
 
     await add_item(receiver.id, item_key)
 
-    await message.reply(f"{emoji} {esc(name)} передан игроку {esc(receiver_username)}!")
+    await safe_reply(message, f"{emoji} {esc(name)} передан игроку {esc(receiver_username)}!")
 
 
 # Токены-валюты для распознавания синтаксиса "[число] [валюта]" в дать/передать
@@ -2265,7 +2290,7 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
         await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (price, user_id))
 
     bonus_text = " 🎉 Повезло! +1 🉑!" if bonus_rebirth else ""
-    await message.reply(f"Продал {emoji} {esc(name)} за {price} 🪙.{bonus_text}")
+    await safe_reply(message, f"Продал {emoji} {esc(name)} за {price} 🪙.{bonus_text}")
 
 
 @dp.message(F.text.lower().startswith("продать б "))
@@ -2320,7 +2345,7 @@ async def destroy_item(message: Message, prefix: str, only_passive: bool):
         new_equipped = unequip_item(row[18], item_key)
         await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), user_id))
 
-    await message.reply(f"🗑 Уничтожил {emoji} {esc(name)}. Без награды — назад не вернуть.")
+    await safe_reply(message, f"🗑 Уничтожил {emoji} {esc(name)}. Без награды — назад не вернуть.")
 
 
 @dp.message(F.text.lower().startswith("уничтожение б "))
@@ -2410,7 +2435,7 @@ async def inventory(message: Message):
         await message.reply("🎒 Инвентарь пуст.")
         return
 
-    await message.reply(format_inventory_menu_text(active_items, upgrades), reply_markup=inventory_menu_keyboard(user_id))
+    await safe_reply(message, format_inventory_menu_text(active_items, upgrades), reply_markup=inventory_menu_keyboard(user_id))
 
 
 @dp.message(F.text.lower().in_({"мои предметы", "предметы"}))
@@ -2419,7 +2444,7 @@ async def my_items_tab(message: Message):
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     await ensure_user(user_id, username)
     rows = await get_inventory(user_id)
-    await message.reply(format_items_text(rows), reply_markup=items_keyboard(user_id))
+    await safe_reply(message, format_items_text(rows), reply_markup=items_keyboard(user_id))
 
 
 @dp.message(F.text.lower().in_({"мои бустеры", "бустеры"}))
@@ -2444,7 +2469,7 @@ async def inventory_back_to_menu(callback: CallbackQuery):
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
-    await callback.message.edit_text(format_inventory_menu_text(active_items, upgrades), reply_markup=inventory_menu_keyboard(owner_id))
+    await safe_edit_text(callback, format_inventory_menu_text(active_items, upgrades), reply_markup=inventory_menu_keyboard(owner_id))
     await callback.answer()
 
 
@@ -2464,7 +2489,7 @@ async def inventory_open_category(callback: CallbackQuery):
         max_slots = equipped_slots_max(upgrades)
         await callback.message.edit_text(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, owner_id))
     else:
-        await callback.message.edit_text(format_items_text(rows), reply_markup=items_keyboard(owner_id))
+        await safe_edit_text(callback, format_items_text(rows), reply_markup=items_keyboard(owner_id))
     await callback.answer()
 
 
@@ -3266,7 +3291,7 @@ async def admin_give_boost(message: Message):
     await add_item(target.id, item_key)
 
     emoji, name, _, _ = ITEMS[item_key]
-    await message.reply(f"Выдан бустер {emoji} {esc(name)} игроку {esc(target_username)}.")
+    await safe_reply(message, f"Выдан бустер {emoji} {esc(name)} игроку {esc(target_username)}.")
 
 
 @dp.message(F.text.lower().startswith("!снять б "))
@@ -3294,7 +3319,7 @@ async def admin_take_boost(message: Message):
 
     emoji, name, _, _ = ITEMS[item_key]
     if removed:
-        await message.reply(f"Снят бустер {emoji} {esc(name)} у игрока {esc(target_username)}.")
+        await safe_reply(message, f"Снят бустер {emoji} {esc(name)} у игрока {esc(target_username)}.")
     else:
         await message.reply(f"У игрока {esc(target_username)} нет предмета «{esc(name)}».")
 
@@ -3323,7 +3348,7 @@ async def admin_give_passive(message: Message):
     await add_item(target.id, item_key)
 
     emoji, name, _, _ = ITEMS[item_key]
-    await message.reply(f"Выдан предмет {emoji} {esc(name)} игроку {esc(target_username)}.")
+    await safe_reply(message, f"Выдан предмет {emoji} {esc(name)} игроку {esc(target_username)}.")
 
 
 @dp.message(F.text.lower().startswith("!снять п "))
@@ -3351,7 +3376,7 @@ async def admin_take_passive(message: Message):
 
     emoji, name, _, _ = ITEMS[item_key]
     if removed:
-        await message.reply(f"Снят предмет {emoji} {esc(name)} у игрока {esc(target_username)}.")
+        await safe_reply(message, f"Снят предмет {emoji} {esc(name)} у игрока {esc(target_username)}.")
     else:
         await message.reply(f"У игрока {esc(target_username)} нет предмета «{esc(name)}».")
 
