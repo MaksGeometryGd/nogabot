@@ -48,22 +48,26 @@ PREMIUM_MK_MARY = '<tg-emoji emoji-id="5224652622652266008">📿</tg-emoji>'
 PREMIUM_MK_VERON03 = '<tg-emoji emoji-id="5429446558930182229">📿</tg-emoji>'
 PREMIUM_STRANGE_COIN = '<tg-emoji emoji-id="5035428694441592026">🪙</tg-emoji>'
 
-# заглушки для крафтовых предметов — замени на реальные emoji-id, когда достанешь
-PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">💪📿</tg-emoji>'
-PREMIUM_GALAXY_POWER_AMULET = '<tg-emoji emoji-id="5451648825431175858">🌌📿</tg-emoji>'
-PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌌⚡</tg-emoji>'
-PREMIUM_HYBRID_AMULET = '<tg-emoji emoji-id="5204242195032336769">🧬📿</tg-emoji>'
-PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🤝✨</tg-emoji>'
-PREMIUM_TIME_PARTICLE = '<tg-emoji emoji-id="5985570245950053733">⏳</tg-emoji>'
-PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5046631025711515524">🌌⭐️</tg-emoji>'
-PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">🪙✨</tg-emoji>'
-PREMIUM_OLD_VASE = '<tg-emoji emoji-id="6334461494649948210">🏺</tg-emoji>'
-PREMIUM_GOLDEN_VASE = '<tg-emoji emoji-id="5300738874539009027">🏺✨</tg-emoji>'
-PREMIUM_GODLY_VASE = '<tg-emoji emoji-id="5433946421936010206">🏺🌌</tg-emoji>'
-PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀📿</tg-emoji>'
-PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">💨💊</tg-emoji>'
-PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎉💮</tg-emoji>'
-PREMIUM_WARM_CANDLE = '<tg-emoji emoji-id="5402430909695673442">🕯️</tg-emoji>'
+# Крафтовые предметы: реальных emoji-id для них ещё нет, поэтому используем обычные
+# emoji без обёртки <tg-emoji>. С фейковым emoji-id Telegram отклонял всё сообщение
+# (Bad Request), из-за чего падал показ ЛЮБЫХ премиум-иконок в этом же сообщении —
+# в том числе валидных (кейс, вип и т.д.). Когда появятся настоящие emoji-id, верни
+# обёртку '<tg-emoji emoji-id="...">...</tg-emoji>' по аналогии с PREMIUM_MK_* выше.
+PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">📿💪</tg-emoji>'
+PREMIUM_GALAXY_POWER_AMULET = '🌌📿'
+PREMIUM_GALAXY_MIGHT_AMULET = '🌌⚡'
+PREMIUM_HYBRID_AMULET = '🧬📿'
+PREMIUM_FRIENDSHIP_ESSENCE = '🤝✨'
+PREMIUM_TIME_PARTICLE = '⏳'
+PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5046631025711515524">🌌🧿</tg-emoji>'
+PREMIUM_DEVOTION_COIN = '🪙✨'
+PREMIUM_OLD_VASE = '🏺'
+PREMIUM_GOLDEN_VASE = '🏺✨'
+PREMIUM_GODLY_VASE = '🏺🌌'
+PREMIUM_LUCKY_CHARM = '🍀📿'
+PREMIUM_SWIFT_PILL = '💨💊'
+PREMIUM_PARTY_SET = '🎉💮'
+PREMIUM_WARM_CANDLE = '🕯️'
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
@@ -1269,27 +1273,27 @@ async def apply_vase_proc(user_id: int, inventory_map: dict) -> str:
         roll = random.random()
         if roll < 0.01:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 5, evolution_level = evolution_level + 5 WHERE user_id = ?", (user_id,))
-            return " 🏺 Боготворная ваза взорвалась удачей: +5🉑 +5 эволюций!"
+            return "\n🏺 Боготворная ваза взорвалась удачей: +5🉑 +5 эволюций!"
         if roll < 0.06:
             await db_exec("UPDATE users SET evolution_level = evolution_level + 1 WHERE user_id = ?", (user_id,))
-            return " 🏺 Боготворная ваза: +1 эволюция!"
+            return "\n🏺 Боготворная ваза: +1 эволюция!"
         if roll < 0.16:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
-            return " 🏺 Боготворная ваза: +1🉑!"
+            return "\n🏺 Боготворная ваза: +1🉑!"
         return ""
     if inventory_map.get("golden_vase", 0) > 0:
         roll = random.random()
         if roll < 0.01:
             await db_exec("UPDATE users SET evolution_level = evolution_level + 1 WHERE user_id = ?", (user_id,))
-            return " 🏺 Золотая ваза: +1 эволюция!"
+            return "\n🏺 Золотая ваза: +1 эволюция!"
         if roll < 0.06:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
-            return " 🏺 Золотая ваза: +1🉑!"
+            return "\n🏺 Золотая ваза: +1🉑!"
         return ""
     if inventory_map.get("old_vase", 0) > 0:
         if random.random() < 0.01:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
-            return " 🏺 Старая ваза: +1🉑!"
+            return "\n🏺 Старая ваза: +1🉑!"
         return ""
     return ""
 
@@ -1697,15 +1701,16 @@ async def count_legs(message: Message):
     if star:
         parts += f" +{star}⭐️"
 
+    coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
+
     if bonus["is_god"]:
+        god_extra = f" +{bonus['rebirth']}🉑 +{bonus['evo']}эво" if (bonus["rebirth"] or bonus["evo"]) else ""
         await safe_reply(
             message,
-            f"{GOD_ESSENCE_FLAVOR} {parts} → +{total}очков +{bonus['coins']}коинов "
-            f"+{bonus['rebirth']}🉑 +{bonus['evo']}эво{vase_text}"
+            f"{GOD_ESSENCE_FLAVOR} {parts} → +{total} очков{coin_text} (Всего: {new_score}){god_extra}{vase_text}"
         )
         return
 
-    coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
     await message.reply(
         f"Лютый рофл засчитан! {parts} → +{total} очков{coin_text} (Всего: {new_score}){vase_text}"
     )
@@ -1984,15 +1989,16 @@ async def farm(message: Message):
             bits.append(f"+{auto_coins} 🪙")
         auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
 
+    coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
+
     if bonus["is_god"]:
+        god_extra = f" +{bonus['rebirth']}🉑 +{bonus['evo']}эво" if (bonus["rebirth"] or bonus["evo"]) else ""
         await safe_reply(
             message,
-            f"{GOD_ESSENCE_FLAVOR} 🦵 +{gained} очков +{bonus['coins']} коинов "
-            f"+{bonus['rebirth']} 🉑 +{bonus['evo']} эво {auto_text} {vase_text}"
+            f"{GOD_ESSENCE_FLAVOR} 🦵 +{gained} очков (Всего: {new_score}){coin_text}{god_extra}{auto_text}{vase_text}"
         )
         return
 
-    coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
     await message.reply(
         f"Наферметил ногу! 🦵 +{gained} очков (Всего: {new_score}){coin_text}{auto_text}{vase_text}"
     )
