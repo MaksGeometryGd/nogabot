@@ -38,7 +38,7 @@ PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="5330393755407111028">📿</tg-emoji>
 PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">📿</tg-emoji>'
 PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5778352775591103997">📿</tg-emoji>'
 PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="5233239138450312962">📿</tg-emoji>'
-PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">📿🥀</tg-emoji>'
+PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">📿</tg-emoji>'
 
 # заглушки — замени на реальные emoji-id, когда достанешь (см. инструкцию про custom_emoji_id)
 PREMIUM_OWNER_BADGE = '<tg-emoji emoji-id="5204056085509477484">💠</tg-emoji>'
@@ -53,20 +53,20 @@ PREMIUM_STRANGE_COIN = '<tg-emoji emoji-id="5035428694441592026">🪙</tg-emoji>
 # (Bad Request), из-за чего падал показ ЛЮБЫХ премиум-иконок в этом же сообщении —
 # в том числе валидных (кейс, вип и т.д.). Когда появятся настоящие emoji-id, верни
 # обёртку '<tg-emoji emoji-id="...">...</tg-emoji>' по аналогии с PREMIUM_MK_* выше.
-PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">📿💪</tg-emoji>'
-PREMIUM_GALAXY_POWER_AMULET = '<tg-emoji emoji-id="5451648825431175858">🌌✨</tg-emoji>'
-PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌌💥</tg-emoji>'
+PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">💪</tg-emoji>'
+PREMIUM_GALAXY_POWER_AMULET = '<tg-emoji emoji-id="5451648825431175858">🌌</tg-emoji>'
+PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌌</tg-emoji>'
 PREMIUM_HYBRID_AMULET = '<tg-emoji emoji-id="5204242195032336769">🧬</tg-emoji>'
-PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🤝🔅</tg-emoji>'
+PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🔅</tg-emoji>'
 PREMIUM_TIME_PARTICLE = '<tg-emoji emoji-id="5985570245950053733">⏳</tg-emoji>'
-PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5364047860713143546">🌌🧿</tg-emoji>'
-PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">🪙⚛️</tg-emoji>'
+PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5364047860713143546">🧿</tg-emoji>'
+PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">⚛️</tg-emoji>'
 PREMIUM_OLD_VASE = '<tg-emoji emoji-id="6334461494649948210">🏺</tg-emoji>'
 PREMIUM_GOLDEN_VASE = '<tg-emoji emoji-id="5954115825324527429">⚱️</tg-emoji>'
-PREMIUM_GODLY_VASE = '<tg-emoji emoji-id="5283163228413641567">⚱️🌌</tg-emoji>'
-PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀📿</tg-emoji>'
-PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">💊☢️</tg-emoji>'
-PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎁✨</tg-emoji>'
+PREMIUM_GODLY_VASE = '<tg-emoji emoji-id="5283163228413641567">⚱️</tg-emoji>'
+PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀</tg-emoji>'
+PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">💊</tg-emoji>'
+PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎁</tg-emoji>'
 PREMIUM_WARM_CANDLE = '<tg-emoji emoji-id="5253717838870363235">🕯</tg-emoji>'
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
