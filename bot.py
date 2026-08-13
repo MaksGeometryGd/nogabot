@@ -59,7 +59,7 @@ PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌌💥
 PREMIUM_HYBRID_AMULET = '<tg-emoji emoji-id="5204242195032336769">🧬</tg-emoji>'
 PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🤝🔅</tg-emoji>'
 PREMIUM_TIME_PARTICLE = '<tg-emoji emoji-id="5985570245950053733">⏳</tg-emoji>'
-PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5046631025711515524">🌌🧿</tg-emoji>'
+PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5364047860713143546">🌌🧿</tg-emoji>'
 PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">🪙⚛️</tg-emoji>'
 PREMIUM_OLD_VASE = '<tg-emoji emoji-id="6334461494649948210">🏺</tg-emoji>'
 PREMIUM_GOLDEN_VASE = '<tg-emoji emoji-id="5954115825324527429">⚱️</tg-emoji>'
@@ -150,6 +150,242 @@ EVO_HARDNESS_RATE = 0.10  # +10% к порогу очков за каждый у
 EVO_BOOST_STEP = 0.10      # нерф с 0.30/0.20
 
 VIP_BOOST = 2.0  # +200%
+
+# ---------- Прочие настройки (собраны сюда из разных мест файла) ----------
+LEG_REPLY_COOLDOWN = 2                       # сек. между повторными реакциями бота на "нога"
+VIP_STARS_PRICE = 15                         # цена VIP навсегда в звёздах Telegram
+VIP_FOREVER_SECONDS = 100 * 365 * 86400      # "навсегда" — технически 100 лет
+PING_INTERVAL = 600                          # сек. между self-ping запросами (анти-сон Render)
+
+# ---------- ТЕКСТЫ БОТА ----------
+# Все ответные фразы бота собраны здесь по функциям, в которых они используются.
+# Чтобы поменять формулировку — не ищи по всему файлу, а найди нужный ключ ниже.
+# {v0}, {v1}... — места подстановки переменных (что именно подставляется см. в коде вызова).
+
+TEXTS = {
+    "maybe_announce_levelup_1": '🎉 {v0} поднялся до нового уровня! {v1}{v2}{v3}',
+    "notify_off_1": 'Уведомления о новом уровне выключены.',
+    "notify_on_1": 'Уведомления о новом уровне включены.',
+    "vip_info_command_1": 'У тебя уже есть VIP-статус! 💎',
+    "vip_info_command_2": '💎 VIP даёт постоянный буст +{v0}% к добыче.\nМожно купить прямо в боте за {v1} звёзд Telegram — выдаётся навсегда.',
+    "buy_vip_invoice_1": 'Это не твоя покупка!',
+    "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры и предметы\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> — временный ивент\n● !рестарт — перезапуск бота',
+    "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
+    "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
+    "toggle_badge_1": 'Это не твои значки!',
+    "toggle_badge_2": 'Готово!',
+    "count_legs_1": '{v0} {v1} → +{v2} очков{v3} {v4}(Всего: {v5}){v6}',
+    "count_legs_2": 'Лютый рофл засчитан! {v0} → +{v1} очков{v2} (Всего: {v3}){v4}',
+    "info_player_1": 'Игрок не найден (он ещё не писал ноги в этом боте).',
+    "send_legs_top_1": 'В топе пока пусто, никто еще не кинул ногу... 🧍',
+    "send_evo_top_1": 'В топе пока пусто.',
+    "send_coin_top_1": 'В топе пока пусто.',
+    "send_rebirth_top_1": 'В топе пока пусто.',
+    "farm_1": 'Ферма на кулдауне ⏳ Осталось {v0} мин {v1} сек',
+    "farm_2": '{v0} 🦵 +{v1} очков (Всего: {v2}){v3}{v4}{v5}{v6}',
+    "farm_3": 'Наферметил ногу! 🦵 +{v0} очков (Всего: {v1}){v2}{v3}{v4}',
+    "daily_bonus_1": 'Бонус уже забирал сегодня ⏳ Приходи через {v0} ч {v1} мин',
+    "daily_bonus_2": '🎁 День {v0}: +{v1} очков ноги (Всего: {v2}){v3}',
+    "reverse_exchange_1": 'Количество монет должно быть больше нуля.',
+    "reverse_exchange_2": 'Недостаточно монет. У тебя {v0} 🪙.',
+    "reverse_exchange_3": 'Обменял {v0} 🪙 → +{v1} очков ноги (Всего очков: {v2})',
+    "exchange_1": 'Формат: обменять <количество монет>. Курс: {v0} очков ноги = 1 монета.',
+    "exchange_2": 'Количество монет должно быть больше нуля.',
+    "exchange_3": 'Недостаточно очков. У тебя {v0}, максимум можешь обменять на {v1} 🪙.',
+    "exchange_4": 'Обменял {v0} очков → +{v1} 🪙 монет (Всего монет: {v2}){v3}',
+    "transfer_currency_1": 'Ответь этой командой на сообщение того, кому передаёшь.',
+    "transfer_currency_2": 'Нельзя передать самому себе.',
+    "transfer_currency_3": 'Передавать можно только с 1 уровня эволюции.',
+    "transfer_currency_4": 'Недостаточно очков. У тебя {v0}.',
+    "transfer_currency_5": '{v0} передал {v1} очков игроку {v2}.',
+    "transfer_currency_6": 'Недостаточно монет. У тебя {v0}.',
+    "transfer_currency_7": '{v0} передал {v1} 🪙 игроку {v2}.',
+    "transfer_item_direct_1": 'Ответь этой командой на сообщение того, кому передаёшь предмет.',
+    "transfer_item_direct_2": '❌ Такого предмета не существует: «{v0}». Проверь название в «инвентарь».',
+    "transfer_item_direct_3": '🚫 {v0} {v1} нельзя передать — это личный значок, не предмет.',
+    "transfer_item_direct_4": 'Нельзя передать предмет самому себе.',
+    "transfer_item_direct_5": 'У тебя нет предмета «{v0}».',
+    "transfer_item_direct_6": '{v0} {v1} передан игроку {v2}!',
+    "give_or_transfer_1": 'Укажи, что передать: число+валюту («дать 100 коин») или название предмета («передать свеча»).',
+    "give_or_transfer_2": 'Некорректное количество.',
+    "give_or_transfer_3": '❌ Такой валюты не существует: «{v0}». Доступно: ног, коин.',
+    "give_or_transfer_4": 'Некорректное количество.',
+    "sell_item_1": 'Не нашёл такой предмет среди {v0}. Если это не то — попробуй «{v1} <название>».',
+    "sell_item_2": '🚫 {v0} {v1} нельзя продать — это личный значок, не предмет.',
+    "sell_item_3": 'У тебя нет предмета «{v0}».',
+    "sell_item_4": 'Продал {v0} {v1} за {v2} 🪙.{v3}',
+    "sell_wrong_format_1": 'Не понял формат. Укажи тип: «продать б <название>» — для бустеров, «продать п <название>» — для предметов.',
+    "destroy_item_1": 'Не нашёл такой предмет среди {v0}. Если это не то — попробуй «{v1} <название>».',
+    "destroy_item_2": '🚫 {v0} {v1} нельзя уничтожить — это личный значок, не предмет.',
+    "destroy_item_3": 'У тебя нет предмета «{v0}».',
+    "destroy_item_4": '🗑 Уничтожил {v0} {v1}. Без награды — назад не вернуть.',
+    "destroy_wrong_format_1": 'Не понял формат. Укажи тип: «уничтожение б <название>» — для бустеров, «уничтожение п <название>» — для предметов.',
+    "inventory_1": '🎒 Инвентарь пуст.',
+    "inventory_back_to_menu_1": 'Это не твой инвентарь!',
+    "inventory_open_category_1": 'Это не твой инвентарь!',
+    "toggle_equip_1": 'Это не твой инвентарь!',
+    "toggle_equip_2": 'Этот предмет нельзя экипировать — он действует пассивно, пока лежит в инвентаре.',
+    "toggle_equip_3": 'Надел! {v0} вытеснил {v1} (слоты заняты).',
+    "toggle_equip_4": 'Готово!',
+    "craft_do_1": 'Это не твой крафт!',
+    "craft_do_2": 'Рецепт не найден.',
+    "craft_do_3": 'Нужен уровень крафта {v0}, у тебя {v1}.',
+    "craft_do_4": 'Готово!',
+    "send_case_inspect_1": 'Такого кейса нет.',
+    "open_case_instant_1": 'Такого кейса нет.',
+    "open_case_instant_2": 'Не хватает монет. Нужно {v0} 🪙, у тебя {v1} 🪙.',
+    "open_case_instant_3": '🎉 Выпало: {v0} {v1} (+{v2}%)!\nОстаток монет: {v3} 🪙',
+    "case_list_1": 'Доступные кейсы:',
+    "inspect_case_callback_1": 'Это не твоё меню!',
+    "buy_case_1": 'Это не твой кейс!',
+    "buy_case_2": 'Не хватает монет. Нужно {v0} 🪙',
+    "buy_case_3": 'Кейс открыт!',
+    "evolve_1": 'Нужно достичь «ногу мгг» (39 ур, {v0} очков), чтобы эволюционировать.',
+    "evolve_2": '🎆 ЭВОЛЮЦИЯ! Прогресс сброшен, теперь у тебя {v0} уровень эволюции навсегда.\n⚠️ Прокачка уровней теперь на {v1}% сложнее.{v2}',
+    "toggle_event_1": '🌟 Ивент «Золотая ногость» запущен! Х2 к фарме ног во всех чатах.',
+    "toggle_event_2": 'Ивент «Золотая ногость» окончен.',
+    "upgrade_change_page_1": 'Это не твоё меню прокачки!',
+    "upgrade_buy_1": 'Это не твоё меню прокачки!',
+    "upgrade_buy_2": 'Этот раздел ещё в разработке.',
+    "upgrade_buy_3": 'Максимальный уровень уже достигнут.',
+    "upgrade_buy_4": 'Не хватает 🉑. Нужно {v0}, у тебя {v1}.',
+    "upgrade_buy_5": 'Улучшено! {v0} → {v1} лвл',
+    "rebirth_1": 'Перерождение доступно с {v0} уровня эволюции (сейчас у тебя {v1}). Каждые {v2} уровней эво = 1 🉑.',
+    "rebirth_2": '🉑 <b>ПЕРЕРОЖДЕНИЕ!</b>\nОчки ноги и эволюция сброшены. Получено: +{v0} 🉑 (Всего: {v1}).\n⚠️ Эволюции теперь на {v2}% сложнее, чем с нуля.\nПрокачки из меню «апгрейд» остались с тобой навсегда.',
+    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n{v4}',
+    "admin_give_rebirth_1": 'Формат: !дать очкп <количество> [себе] (в ответ на сообщение игрока)',
+    "admin_give_rebirth_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_rebirth_3": 'Некорректное количество.',
+    "admin_give_rebirth_4": 'Выдано {v0} 🉑 игроку {v1} (Всего: {v2})',
+    "admin_take_rebirth_1": 'Формат: !снять очкп <количество> [себе] (в ответ на сообщение игрока)',
+    "admin_take_rebirth_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_take_rebirth_3": 'Некорректное количество.',
+    "admin_take_rebirth_4": 'Снято {v0} 🉑 у игрока {v1} (Осталось: {v2})',
+    "broadcast_news_1": 'Напиши текст новости после команды: !новость <текст>',
+    "broadcast_news_2": 'Разослано в {v0} чатов. Не удалось: {v1}.',
+    "admin_give_legs_1": 'Формат: !дать ног <количество> [себе] (в ответ на сообщение игрока)',
+    "admin_give_legs_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_legs_3": 'Некорректное количество.',
+    "admin_give_legs_4": 'Выдано {v0} очков ноги игроку {v1}. Теперь у него: {v2}',
+    "admin_take_legs_1": 'Формат: !снять ноги <количество> [себе] (в ответ на сообщение игрока)',
+    "admin_take_legs_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_take_legs_3": 'Некорректное количество.',
+    "admin_take_legs_4": 'Снято очков у {v0}. Теперь у него: {v1}',
+    "admin_give_evo_1": 'Формат: !дать эво <количество> [себе] (в ответ на сообщение игрока)',
+    "admin_give_evo_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_evo_3": 'Некорректное количество.',
+    "admin_give_evo_4": 'Выдано {v0} уровней эволюции игроку {v1}. Теперь: {v2}',
+    "admin_take_evo_1": 'Формат: !снять эво <количество> [себе] (в ответ на сообщение игрока)',
+    "admin_take_evo_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_take_evo_3": 'Некорректное количество.',
+    "admin_take_evo_4": 'Снято {v0} уровней эволюции у {v1}. Теперь: {v2}',
+    "admin_give_coin_1": 'Формат: !дать коин <количество> [себе] (в ответ на сообщение игрока)',
+    "admin_give_coin_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_coin_3": 'Некорректное количество.',
+    "admin_give_coin_4": 'Выдано {v0} 🪙 игроку {v1}. Теперь: {v2}',
+    "admin_take_coin_1": 'Формат: !снять коин <количество> [себе] (в ответ на сообщение игрока)',
+    "admin_take_coin_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_take_coin_3": 'Некорректное количество.',
+    "admin_take_coin_4": 'Снято {v0} 🪙 у {v1}. Теперь: {v2}',
+    "admin_give_boost_1": 'Формат: !дать б <название бустера> [себе] (в ответ на сообщение игрока)',
+    "admin_give_boost_2": 'Не нашёл такой бустер. Для пассивных предметов используй «!дать п».',
+    "admin_give_boost_3": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_boost_4": 'Выдан бустер {v0} {v1} игроку {v2}.',
+    "admin_take_boost_1": 'Формат: !снять б <название бустера> [себе] (в ответ на сообщение игрока)',
+    "admin_take_boost_2": 'Не нашёл такой бустер. Для пассивных предметов используй «!снять п».',
+    "admin_take_boost_3": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_take_boost_4": 'Снят бустер {v0} {v1} у игрока {v2}.',
+    "admin_take_boost_5": 'У игрока {v0} нет предмета «{v1}».',
+    "admin_give_passive_1": 'Формат: !дать п <название предмета> [себе] (в ответ на сообщение игрока)',
+    "admin_give_passive_2": 'Не нашёл такой пассивный предмет. Для бустеров используй «!дать б».',
+    "admin_give_passive_3": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_passive_4": 'Выдан предмет {v0} {v1} игроку {v2}.',
+    "admin_take_passive_1": 'Формат: !снять п <название предмета> [себе] (в ответ на сообщение игрока)',
+    "admin_take_passive_2": 'Не нашёл такой пассивный предмет. Для бустеров используй «!снять б».',
+    "admin_take_passive_3": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_take_passive_4": 'Снят предмет {v0} {v1} у игрока {v2}.',
+    "admin_take_passive_5": 'У игрока {v0} нет предмета «{v1}».',
+    "admin_give_vip_1": 'Формат: !дать вип <дней> [себе] (в ответ на сообщение игрока)',
+    "admin_give_vip_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_vip_3": 'Некорректное количество дней.',
+    "admin_give_vip_4": 'Выдан VIP на {v0} дн. игроку {v1}.',
+    "admin_take_vip_1": 'Формат: !снять вип [себе] (в ответ на сообщение игрока)',
+    "admin_take_vip_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_take_vip_3": 'VIP снят у игрока {v0}.',
+    "admin_reset_1": 'Формат: !сбросить [себе] (в ответ на сообщение игрока)',
+    "admin_reset_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_reset_3": 'Полный сброс прогресса игрока {v0} выполнен.',
+
+    "admin_ban_top_1": 'Формат: !бан топ [себе] (в ответ на сообщение игрока)',
+    "admin_ban_top_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_ban_top_3": 'Игрок {v0} забанен из топов — теперь не будет в них появляться.',
+    "admin_unban_top_1": 'Формат: !разбан топ [себе] (в ответ на сообщение игрока)',
+    "admin_unban_top_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_unban_top_3": 'Игрок {v0} разбанен — снова может попадать в топы.',
+
+    "nick_set_too_long": 'Слишком длинный ник — максимум 50 символов (у тебя {v0}).',
+    "nick_set_empty": 'Укажи сам ник: +ник <текст>',
+    "nick_set_taken": 'Этот ник уже занят другим игроком.',
+    "nick_set_ok": 'Ник установлен: {v0}',
+    "nick_clear_ok": 'Ник сброшен, теперь отображается твой обычный юзернейм.',
+
+    "admin_set_legs_1": 'Формат: !установить ног <число> [себе] (в ответ на сообщение игрока)',
+    "admin_set_legs_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_set_legs_3": 'Некорректное число.',
+    "admin_set_legs_4": 'Игроку {v0} установлено очков: {v1} (было {v2}).',
+
+    "admin_set_evo_1": 'Формат: !установить эво <число> [себе] (в ответ на сообщение игрока)',
+    "admin_set_evo_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_set_evo_3": 'Некорректное число.',
+    "admin_set_evo_4": 'Игроку {v0} установлен уровень эволюции: {v1} (было {v2}).',
+
+    "admin_reset_cd_1": 'Формат: !сброс кд [себе] (в ответ на сообщение игрока)',
+    "admin_reset_cd_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_reset_cd_3": 'Кулдаун фермы сброшен у игрока {v0}.',
+
+    "admin_reset_bonus_1": 'Формат: !сброс бонус [себе] (в ответ на сообщение игрока)',
+    "admin_reset_bonus_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_reset_bonus_3": 'Ежедневный бонус сброшен у игрока {v0} — можно забрать снова.',
+
+    "admin_give_case_1": 'Формат: !дать кейс <номер> <кол-во> [себе] (в ответ на сообщение игрока)',
+    "admin_give_case_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_case_3": 'Нет кейса с таким номером.',
+    "admin_give_case_4": 'Количество должно быть от 1 до 100.',
+    "admin_give_case_5": '🎁 Игроку {v0} бесплатно открыт кейс «{v1}» {v2} раз(а):\n{v3}',
+
+    "admin_debug_1": 'Формат: !дебаг @username',
+    "admin_debug_2": 'Игрок не найден (он ещё не писал ноги в этом боте).',
+    "admin_debug_3": '🛠 <b>Дебаг {v0}:</b>\n<code>{v1}</code>',
+
+    "admin_show_text_1": 'Формат: !текст <ключ>',
+    "admin_show_text_2": 'Нет такого ключа в TEXTS.',
+    "admin_show_text_3": '🔑 <code>{v0}</code>:\n{v1}',
+
+    "admin_simulate_evo_1": 'Формат: !симулировать эволюция @username',
+    "admin_simulate_evo_2": 'Игрок не найден (он ещё не писал ноги в этом боте).',
+    "admin_simulate_evo_3": '🔬 Симуляция эволюции для {v0}:\nОчков: {v1} / нужно {v2}\nТекущая эво: {v3}\n{v4}',
+    "admin_simulate_evo_ok": '✅ Условие выполнено — может эволюционировать.',
+    "admin_simulate_evo_fail": '❌ Не хватает {v0} очков.',
+
+    "admin_stats_1": (
+        '📊 <b>Статистика бота:</b>\n'
+        '● Игроков всего: <code>{v0}</code>\n'
+        '● Суммарно очков в экономике: <code>{v1}</code>\n'
+        '● Суммарно монет в обороте: <code>{v2}</code>\n'
+        '● Суммарно 🉑 очков перерождения: <code>{v3}</code>\n'
+        '● Открыто кейсов всего: <code>{v4}</code>\n'
+        '● Активных VIP: <code>{v5}</code>\n'
+        '● Забанено из топов: <code>{v6}</code>'
+    ),
+
+    "admin_restart_1": '♻️ Перезапускаю бота...',
+
+    "admin_event_custom_1": 'Формат: !ивент х<множитель> <минуты>, например: !ивент х3 30',
+    "admin_event_custom_2": 'Множитель и время должны быть положительными числами.',
+    "admin_event_custom_3": '🌟 Ивент запущен! Множитель х{v0} на {v1} мин. (для всех чатов).',
+}
+
 
 # ---------- Предметы (нерф % и шансов дропа) ----------
 ITEMS = {
@@ -482,6 +718,8 @@ ADMIN_TAKE_ITEM_RE = re.compile(r"^!снять п (.+?)(\s+себе)?$", re.IGNO
 ADMIN_GIVE_VIP_RE = re.compile(rf"^!дать вип {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_VIP_RE = re.compile(r"^!снять вип(\s+себе)?$", re.IGNORECASE)
 ADMIN_RESET_RE = re.compile(r"^!сбросить(\s+себе)?$", re.IGNORECASE)
+ADMIN_BAN_TOP_RE = re.compile(r"^!бан топ(\s+себе)?$", re.IGNORECASE)
+ADMIN_UNBAN_TOP_RE = re.compile(r"^!разбан топ(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_REBIRTH_RE = re.compile(rf"^!дать очкп {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_REBIRTH_RE = re.compile(rf"^!снять очкп {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 
@@ -492,6 +730,17 @@ EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT}$", re.IGNORECASE)
 REVERSE_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} коин$", re.IGNORECASE)
 CASE_NUM_RE = re.compile(r"^кейс (\d+)$", re.IGNORECASE)
 INFO_RE = re.compile(r"^инфо\s+@?(\w+)$", re.IGNORECASE)
+NICK_SET_RE = re.compile(r"^\+ник\s+(.+)$", re.IGNORECASE)
+NICK_CLEAR_RE = re.compile(r"^-ник$", re.IGNORECASE)
+ADMIN_SET_LEGS_RE = re.compile(rf"^!установить ног {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_SET_EVO_RE = re.compile(rf"^!установить эво {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_RESET_CD_RE = re.compile(r"^!сброс кд(\s+себе)?$", re.IGNORECASE)
+ADMIN_RESET_BONUS_RE = re.compile(r"^!сброс бонус(\s+себе)?$", re.IGNORECASE)
+ADMIN_GIVE_CASE_RE = re.compile(r"^!дать кейс\s+(\d+)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
+ADMIN_DEBUG_RE = re.compile(r"^!дебаг\s+@?(\w+)$", re.IGNORECASE)
+ADMIN_SHOW_TEXT_RE = re.compile(r"^!текст\s+(\S+)$", re.IGNORECASE)
+ADMIN_SIMULATE_EVO_RE = re.compile(r"^!симулировать эволюция\s+@?(\w+)$", re.IGNORECASE)
+ADMIN_EVENT_CUSTOM_RE = re.compile(r"^!ивент\s+х(\d+(?:\.\d+)?)\s+(\d+)$", re.IGNORECASE)
 
 NEWS_PREFIX = "!новость "
 
@@ -501,13 +750,15 @@ FIXED_COMMANDS = {
     "смс выкл", "смс вкл", "вип", "!ивент ноги", "бейджи",
     "перерождение", "апгрейд", "прокачка", "апг", "баланс", "топ очкп", "гл топ очкп", "помощь",
     "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ", "крафты", "крафт",
-    "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь",
+    "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
     "!дать коин", "!снять коин", "!дать б", "!снять б", "!дать п", "!снять п", "!дать вип", "!снять вип", "!сбросить",
     "передать ", "дать ", "кейс ", NEWS_PREFIX, "инфо ", "продать",
     "!дать очкп", "!снять очкп", "открыть кейс", "осмотреть кейс", "осмотр кейс", "крафты ", "крафт ", "уничтожение",
+    "+ник ", "!бан топ", "!разбан топ", "!установить ног", "!установить эво",
+    "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
 )
 
 
@@ -1131,14 +1382,21 @@ async def db_query_one(sql, params=()):
 USER_COLUMNS = (
     "user_id, username, score, evolution_level, last_farm, coins, active_item, "
     "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
-    "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items"
+    "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned"
 )
 # Индексы полей выше при обращении по row[...]:
 #  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
 #  7 cases_opened, 8 total_farmed, 9 last_bonus, 10 bonus_streak, 11 levelup_notify, 12 vip_until,
 #  13 hidden_badges, 14 rebirth_points, 15 rebirth_count, 16 upgrades (строка "key:lvl,key:lvl"), 17 last_auto_claim,
 #  18 equipped_items — очередь экипированных предметов "key1,key2,key3" (индекс 0 = надет раньше всех,
-#     последний = надет позже всех; новый/повторный клик уходит в конец, при переполнении вылетает индекс 0)
+#     последний = надет позже всех; новый/повторный клик уходит в конец, при переполнении вылетает индекс 0),
+#  19 nickname — кастомный ник для отображения в топах/профиле (NULL = показывать обычный username),
+#  20 top_banned — 1 если игрок забанен из топов (не попадает в списки топ), 0/NULL иначе
+
+
+def display_name(username: str, nickname: str = None) -> str:
+    """Имя для отображения: ник, если задан, иначе обычный telegram-username."""
+    return nickname if nickname else username
 
 
 async def init_db():
@@ -1190,6 +1448,8 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN last_auto_claim INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN active_item2 TEXT DEFAULT NULL",
         "ALTER TABLE users ADD COLUMN equipped_items TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN nickname TEXT DEFAULT NULL",
+        "ALTER TABLE users ADD COLUMN top_banned INTEGER DEFAULT 0",
     ):
         try:
             await db_exec(stmt)
@@ -1210,7 +1470,7 @@ async def ensure_user(user_id: int, username: str):
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
         now = int(time.time())
-        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "")
+        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0)
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
@@ -1299,8 +1559,31 @@ async def apply_vase_proc(user_id: int, inventory_map: dict) -> str:
 
 
 async def is_event_active() -> bool:
-    row = await db_query_one("SELECT value FROM settings WHERE key = 'event_active'")
-    return bool(row and row[0] == "1")
+    active, _ = await get_event_state()
+    return active
+
+
+async def get_event_state():
+    """Возвращает (активен: bool, множитель: float) с учётом автоистечения по времени."""
+    rows = await db_query(
+        "SELECT key, value FROM settings WHERE key IN ('event_active', 'event_multiplier', 'event_until')"
+    )
+    d = {k: v for k, v in rows}
+    if d.get("event_active") != "1":
+        return False, 1.0
+
+    until = int(d.get("event_until") or 0)
+    if until and int(time.time()) > until:
+        await db_exec("UPDATE settings SET value = '0' WHERE key = 'event_active'")
+        return False, 1.0
+
+    mult = float(d.get("event_multiplier") or 2)
+    return True, mult
+
+
+async def get_event_multiplier() -> float:
+    active, mult = await get_event_state()
+    return mult if active else 1.0
 
 
 async def track_membership(user_id: int, chat_id: int):
@@ -1315,15 +1598,15 @@ async def get_all_chat_ids():
 async def build_top(chat_id, order_column: str, limit: int = 10):
     if chat_id is None:
         rows = await db_query(
-            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count "
-            f"FROM users ORDER BY {order_column} DESC LIMIT ?",
+            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname "
+            f"FROM users WHERE (top_banned IS NULL OR top_banned = 0) ORDER BY {order_column} DESC LIMIT ?",
             (limit,),
         )
     else:
         rows = await db_query(
-            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges, u.rebirth_points, u.rebirth_count
+            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges, u.rebirth_points, u.rebirth_count, u.nickname
                 FROM users u JOIN chat_members cm ON u.user_id = cm.user_id
-                WHERE cm.chat_id = ? ORDER BY u.{order_column} DESC LIMIT ?""",
+                WHERE cm.chat_id = ? AND (u.top_banned IS NULL OR u.top_banned = 0) ORDER BY u.{order_column} DESC LIMIT ?""",
             (chat_id, limit),
         )
     return rows
@@ -1443,7 +1726,6 @@ dp.message.middleware(TrackMembershipMiddleware())
 dp.message.middleware(ThrottleMiddleware(1.5))
 dp.callback_query.middleware(CallbackThrottleMiddleware(0.4))
 
-LEG_REPLY_COOLDOWN = 2
 _last_leg_reply = {}
 
 
@@ -1467,7 +1749,7 @@ async def maybe_announce_levelup(message: Message, username: str, old_score: int
     emoji, name, show_level = get_level_visual(new_level)
     lvl_part = f" ({new_level} лвл)" if show_level else ""
     name_part = f" {esc(name)}" if name else ""
-    await message.reply(f"🎉 {esc(username)} поднялся до нового уровня! {emoji}{name_part}{lvl_part}")
+    await message.reply(TEXTS["maybe_announce_levelup_1"].format(v0=esc(username), v1=emoji, v2=name_part, v3=lvl_part))
 
 
 @dp.message(F.text.lower() == "смс выкл")
@@ -1476,7 +1758,7 @@ async def notify_off(message: Message):
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     await ensure_user(user_id, username)
     await db_exec("UPDATE users SET levelup_notify = 0 WHERE user_id = ?", (user_id,))
-    await message.reply("Уведомления о новом уровне выключены.")
+    await message.reply(TEXTS["notify_off_1"])
 
 
 @dp.message(F.text.lower() == "смс вкл")
@@ -1485,11 +1767,47 @@ async def notify_on(message: Message):
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     await ensure_user(user_id, username)
     await db_exec("UPDATE users SET levelup_notify = 1 WHERE user_id = ?", (user_id,))
-    await message.reply("Уведомления о новом уровне включены.")
+    await message.reply(TEXTS["notify_on_1"])
 
 
-VIP_STARS_PRICE = 15
-VIP_FOREVER_SECONDS = 100 * 365 * 86400  # "навсегда" — технически 100 лет
+@dp.message(F.text.regexp(r"(?i)^\+ник\s+.+$"))
+async def set_nickname(message: Message):
+    match = NICK_SET_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["nick_set_empty"])
+        return
+
+    nickname = match.group(1).strip().strip('"').strip("'").strip()
+    if not nickname:
+        await message.reply(TEXTS["nick_set_empty"])
+        return
+    if len(nickname) > 50:
+        await message.reply(TEXTS["nick_set_too_long"].format(v0=len(nickname)))
+        return
+
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    await ensure_user(user_id, username)
+
+    taken = await db_query_one(
+        "SELECT user_id FROM users WHERE lower(nickname) = lower(?) AND user_id != ?",
+        (nickname, user_id),
+    )
+    if taken:
+        await message.reply(TEXTS["nick_set_taken"])
+        return
+
+    await db_exec("UPDATE users SET nickname = ? WHERE user_id = ?", (nickname, user_id))
+    await safe_reply(message, TEXTS["nick_set_ok"].format(v0=esc(nickname)))
+
+
+@dp.message(F.text.lower() == "-ник")
+async def clear_nickname(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    await ensure_user(user_id, username)
+    await db_exec("UPDATE users SET nickname = NULL WHERE user_id = ?", (user_id,))
+    await message.reply(TEXTS["nick_clear_ok"])
 
 
 def buy_vip_keyboard(user_id: int) -> InlineKeyboardMarkup:
@@ -1506,12 +1824,11 @@ async def vip_info_command(message: Message):
     vip_until = row[12]
 
     if is_vip_active(vip_until):
-        await message.reply("У тебя уже есть VIP-статус! 💎")
+        await message.reply(TEXTS["vip_info_command_1"])
         return
 
     await message.reply(
-        f"💎 VIP даёт постоянный буст +{round(VIP_BOOST * 100)}% к добыче.\n"
-        f"Можно купить прямо в боте за {VIP_STARS_PRICE} звёзд Telegram — выдаётся навсегда.",
+        TEXTS["vip_info_command_2"].format(v0=round(VIP_BOOST * 100), v1=VIP_STARS_PRICE),
         reply_markup=buy_vip_keyboard(user_id),
     )
 
@@ -1520,7 +1837,7 @@ async def vip_info_command(message: Message):
 async def buy_vip_invoice(callback: CallbackQuery):
     owner_id = int(callback.data.split(":")[1])
     if callback.from_user.id != owner_id:
-        await callback.answer("Это не твоя покупка!", show_alert=True)
+        await callback.answer(TEXTS["buy_vip_invoice_1"], show_alert=True)
         return
 
     await bot.send_invoice(
@@ -1559,29 +1876,13 @@ async def process_successful_payment(message: Message):
     if not was_vip_before:
         await add_item(target_id, "vip_charm")
 
-    await message.reply("💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!")
+    await message.reply(TEXTS["process_successful_payment_1"])
 
 
 @dp.message(F.text.lower() == "помощь")
 async def help_command(message: Message):
     await message.reply(
-        "📜 <b>Команды:</b>\n"
-        "● моя нога — твой профиль\n"
-        "● ферма — фарм очков (по кулдауну)\n"
-        "● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n"
-        "● инвентарь — бустеры и предметы\n"
-        "● кейс, кейсы — открытие кейсов\n"
-        "● эволюция — перейти на след. уровень эволюции\n"
-        "● перерождение — сброс ног/эво за 🉑\n"
-        "● апгрейд / прокачка — меню прокачки за 🉑\n"
-        "● баланс — монеты и 🉑\n"
-        "● обменять <число> — очки в монеты\n"
-        "● вип — купить VIP-статус за звёзды\n"
-        "● крафты [предмет] — доступные рецепты крафта\n"
-        "● продать б/п <название> — продать бустер/предмет\n"
-        "● уничтожение б/п <название> — уничтожить без награды\n"
-        "● бонус — ежедневный бонус\n"
-        "● бейджи — управление бейджами"
+        TEXTS["help_command_1"]
     )
 
 
@@ -1596,11 +1897,11 @@ async def badges_menu(message: Message):
 
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active)
     if not earned:
-        await message.reply("У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!")
+        await message.reply(TEXTS["badges_menu_1"])
         return
 
     kb = badges_keyboard(earned, hidden, user_id)
-    await message.reply("🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
+    await message.reply(TEXTS["badges_menu_2"], reply_markup=kb)
 
 
 @dp.callback_query(F.data.startswith("badge:"))
@@ -1608,7 +1909,7 @@ async def toggle_badge(callback: CallbackQuery):
     _, owner_str, key = callback.data.split(":")
     owner_id = int(owner_str)
     if callback.from_user.id != owner_id:
-        await callback.answer("Это не твои значки!", show_alert=True)
+        await callback.answer(TEXTS["toggle_badge_1"], show_alert=True)
         return
 
     row = await get_user(owner_id)
@@ -1627,7 +1928,7 @@ async def toggle_badge(callback: CallbackQuery):
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active)
     kb = badges_keyboard(earned, hidden, owner_id)
     await callback.message.edit_text("🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
-    await callback.answer("Готово!")
+    await callback.answer(TEXTS["toggle_badge_2"])
 
 
 @dp.message(F.text.regexp(r"[🦵🦿]"))
@@ -1667,7 +1968,7 @@ async def count_legs(message: Message):
     gained = round(gained * farm_yield_multiplier(upgrades))
 
     mult = get_multiplier(evolution_level, active_items, vip_active, upgrades)
-    event_mult = 2 if await is_event_active() else 1
+    event_mult = await get_event_multiplier()
     total = round(gained * mult * event_mult)
     if galaxy:
         total = round(total * (1 + 0.20 * galaxy))   # 🌌: +20% к итогу за каждую штуку
@@ -1707,12 +2008,12 @@ async def count_legs(message: Message):
         god_extra = f" +{bonus['rebirth']}🉑 +{bonus['evo']}эво" if (bonus["rebirth"] or bonus["evo"]) else ""
         await safe_reply(
             message,
-            f"{GOD_ESSENCE_FLAVOR} {parts} → +{total} очков{coin_text} {god_extra}(Всего: {new_score}){vase_text}"
+            TEXTS["count_legs_1"].format(v0=GOD_ESSENCE_FLAVOR, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text)
         )
         return
 
     await message.reply(
-        f"Лютый рофл засчитан! {parts} → +{total} очков{coin_text} (Всего: {new_score}){vase_text}"
+        TEXTS["count_legs_2"].format(v0=parts, v1=total, v2=coin_text, v3=new_score, v4=vase_text)
     )
 
 
@@ -1727,7 +2028,9 @@ async def my_profile(message: Message):
     rebirth_points, rebirth_count = row[14], row[15]
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
+    nickname = row[19] if len(row) > 19 else None
     vip_active = is_vip_active(vip_until)
+    shown_name = display_name(username, nickname)
 
     level = get_level_index(score, evolution_level, rebirth_count)
     emoji, name, show_level = get_level_visual(level)
@@ -1751,7 +2054,7 @@ async def my_profile(message: Message):
     equip_line = f"● Экипировано: {', '.join(equipped_names)}\n" if equipped_names else ""
 
     text = (
-        f"👣 <b>ТВОЯ ЛЮТАЯ НОГОСТЬ:</b>\n"
+        f"👣 <b>ТВОЯ ЛЮТАЯ НОГОСТЬ, {esc(shown_name)}:</b>\n"
         f"━━━━━━━━━━━━━━━━━━\n"
         f"● Очки: <code>{score}</code>\n"
         f"● Монеты: <code>{coins}</code> 🪙\n"
@@ -1778,7 +2081,7 @@ async def info_player(message: Message):
 
     row = await get_user_by_username(target_username)
     if not row:
-        await message.reply("Игрок не найден (он ещё не писал ноги в этом боте).")
+        await message.reply(TEXTS["info_player_1"])
         return
 
     username = row[1]
@@ -1787,6 +2090,8 @@ async def info_player(message: Message):
     vip_until = row[12]
     rebirth_count = row[15] if len(row) > 15 else 0
     hidden = parse_hidden(row[13] if len(row) > 13 else "")
+    nickname = row[19] if len(row) > 19 else None
+    shown_name = display_name(username, nickname)
     vip_active = is_vip_active(vip_until)
     level = get_level_index(score, evolution_level, rebirth_count)
     emoji, name, show_level = get_level_visual(level)
@@ -1797,7 +2102,7 @@ async def info_player(message: Message):
     badges = get_badges(username, evolution_level, cases_opened, total_farmed, vip_active, hidden)
 
     text = (
-        f"👣 <b>Инфо об игроке {esc(username)}{badges}:</b>\n"
+        f"👣 <b>Инфо об игроке {esc(shown_name)}{badges}:</b>\n"
         f"● Нога: {emoji}{name_part}{lvl_part}\n"
         f"● Очки: <code>{score}</code>\n"
         f"● Монеты: <code>{coins}</code> 🪙\n"
@@ -1811,17 +2116,17 @@ async def send_legs_top(message: Message, chat_id, title: str):
     rows = await build_top(chat_id, "score")
 
     if not rows:
-        await message.reply("В топе пока пусто, никто еще не кинул ногу... 🧍")
+        await message.reply(TEXTS["send_legs_top_1"])
         return
 
     text = f"🏆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname) in enumerate(rows, 1):
         level = get_level_index(score, evolution_level, rebirth_count)
         emoji, name, show_level = get_level_visual(level)
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         lvl_part = f" ({level} лвл)" if show_level else ""
         name_part = f" {esc(name)}" if name else ""
-        text += f"{i}. {esc(username)}{badges} — <code>{score}</code>\n   └ {emoji}{name_part}{lvl_part} · эво {evolution_level}\n\n"
+        text += f"{i}. {esc(display_name(username, nickname))}{badges} — <code>{score}</code>\n   └ {emoji}{name_part}{lvl_part} · эво {evolution_level}\n\n"
 
     await message.reply(text)
 
@@ -1830,13 +2135,13 @@ async def send_evo_top(message: Message, chat_id, title: str):
     rows = await build_top(chat_id, "evolution_level")
 
     if not rows:
-        await message.reply("В топе пока пусто.")
+        await message.reply(TEXTS["send_evo_top_1"])
         return
 
     text = f"🎆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname) in enumerate(rows, 1):
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
-        text += f"{i}. {esc(username)}{badges} — эво {evolution_level} ({score} очков)\n"
+        text += f"{i}. {esc(display_name(username, nickname))}{badges} — эво {evolution_level} ({score} очков)\n"
 
     await message.reply(text)
 
@@ -1845,13 +2150,13 @@ async def send_coin_top(message: Message, chat_id, title: str):
     rows = await build_top(chat_id, "coins")
 
     if not rows:
-        await message.reply("В топе пока пусто.")
+        await message.reply(TEXTS["send_coin_top_1"])
         return
 
     text = f"🪙 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname) in enumerate(rows, 1):
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
-        text += f"{i}. {esc(username)}{badges} — {coins} 🪙\n"
+        text += f"{i}. {esc(display_name(username, nickname))}{badges} — {coins} 🪙\n"
 
     await message.reply(text)
 
@@ -1860,13 +2165,13 @@ async def send_rebirth_top(message: Message, chat_id, title: str):
     rows = await build_top(chat_id, "rebirth_points")
 
     if not rows:
-        await message.reply("В топе пока пусто.")
+        await message.reply(TEXTS["send_rebirth_top_1"])
         return
 
     text = f"🉑 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname) in enumerate(rows, 1):
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
-        text += f"{i}. {esc(username)}{badges} — {rebirth_points} 🉑 (перерождений: {rebirth_count})\n"
+        text += f"{i}. {esc(display_name(username, nickname))}{badges} — {rebirth_points} 🉑 (перерождений: {rebirth_count})\n"
 
     await message.reply(text)
 
@@ -1958,7 +2263,7 @@ async def farm(message: Message):
     if now - last_farm < cooldown:
         left = cooldown - (now - last_farm)
         m, s = divmod(left, 60)
-        await message.reply(f"Ферма на кулдауне ⏳ Осталось {m} мин {s} сек")
+        await message.reply(TEXTS["farm_1"].format(v0=m, v1=s))
         return
 
     # оффлайн-доход от Авто-Фермы — начисляем при действии игрока
@@ -1966,7 +2271,7 @@ async def farm(message: Message):
 
     low, high = farm_range(evolution_level)
     mult = get_multiplier(evolution_level, active_items, vip_active, upgrades)
-    event_mult = 2 if await is_event_active() else 1
+    event_mult = await get_event_multiplier()
     gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult)
     new_score = score + gained
 
@@ -1994,12 +2299,12 @@ async def farm(message: Message):
         god_extra = f" +{bonus['rebirth']}🉑 +{bonus['evo']}эво" if (bonus["rebirth"] or bonus["evo"]) else ""
         await safe_reply(
             message,
-            f"{GOD_ESSENCE_FLAVOR} 🦵 +{gained} очков (Всего: {new_score}){coin_text}{god_extra}{auto_text}{vase_text}"
+            TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=vase_text)
         )
         return
 
     await message.reply(
-        f"Наферметил ногу! 🦵 +{gained} очков (Всего: {new_score}){coin_text}{auto_text}{vase_text}"
+        TEXTS["farm_3"].format(v0=gained, v1=new_score, v2=coin_text, v3=auto_text, v4=vase_text)
     )
 
 
@@ -2018,7 +2323,7 @@ async def daily_bonus(message: Message):
         left = DAILY_MIN_GAP - elapsed
         h, rem = divmod(left, 3600)
         m = rem // 60
-        await message.reply(f"Бонус уже забирал сегодня ⏳ Приходи через {h} ч {m} мин")
+        await message.reply(TEXTS["daily_bonus_1"].format(v0=h, v1=m))
         return
 
     if last_bonus and elapsed <= DAILY_STREAK_LIMIT:
@@ -2041,7 +2346,7 @@ async def daily_bonus(message: Message):
         item_text = f"\n{PREMIUM_DAILY_CHARM} Плюс Дневной амулет (+15% буст) в инвентарь!"
 
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify))
-    await message.reply(f"🎁 День {streak}: +{reward} очков ноги (Всего: {new_score}){item_text}")
+    await message.reply(TEXTS["daily_bonus_2"].format(v0=streak, v1=reward, v2=new_score, v3=item_text))
 
 
 @dp.message(F.text.regexp(REVERSE_EXCHANGE_RE))
@@ -2050,7 +2355,7 @@ async def reverse_exchange(message: Message):
     match = REVERSE_EXCHANGE_RE.match(message.text.strip())
     coins_wanted = parse_amount(match.group(1))
     if not coins_wanted or coins_wanted <= 0:
-        await message.reply("Количество монет должно быть больше нуля.")
+        await message.reply(TEXTS["reverse_exchange_1"])
         return
 
     user_id = message.from_user.id
@@ -2062,7 +2367,7 @@ async def reverse_exchange(message: Message):
     levelup_notify = row[11]
 
     if coins_wanted > coins:
-        await message.reply(f"Недостаточно монет. У тебя {coins} 🪙.")
+        await message.reply(TEXTS["reverse_exchange_2"].format(v0=coins))
         return
 
     gained = coins_wanted * REVERSE_EXCHANGE_RATE
@@ -2072,19 +2377,19 @@ async def reverse_exchange(message: Message):
     await db_exec("UPDATE users SET score = ?, coins = ? WHERE user_id = ?", (new_score, new_coins, user_id))
 
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count)
-    await message.reply(f"Обменял {coins_wanted} 🪙 → +{gained} очков ноги (Всего очков: {new_score})")
+    await message.reply(TEXTS["reverse_exchange_3"].format(v0=coins_wanted, v1=gained, v2=new_score))
 
 
 @dp.message(F.text.lower().startswith("обменять "))
 async def exchange(message: Message):
     match = EXCHANGE_RE.match(message.text.strip().lower())
     if not match:
-        await message.reply(f"Формат: обменять <количество монет>. Курс: {EXCHANGE_RATE} очков ноги = 1 монета.")
+        await message.reply(TEXTS["exchange_1"].format(v0=EXCHANGE_RATE))
         return
 
     coins_wanted = parse_amount(match.group(1))
     if not coins_wanted or coins_wanted <= 0:
-        await message.reply("Количество монет должно быть больше нуля.")
+        await message.reply(TEXTS["exchange_2"])
         return
 
     user_id = message.from_user.id
@@ -2097,7 +2402,7 @@ async def exchange(message: Message):
     spent = coins_wanted * EXCHANGE_RATE
     if spent > score:
         max_coins = score // EXCHANGE_RATE
-        await message.reply(f"Недостаточно очков. У тебя {score}, максимум можешь обменять на {max_coins} 🪙.")
+        await message.reply(TEXTS["exchange_3"].format(v0=score, v1=max_coins))
         return
 
     old_level = get_level_index(score, evolution_level, rebirth_count)
@@ -2108,19 +2413,19 @@ async def exchange(message: Message):
     await db_exec("UPDATE users SET score = ?, coins = ? WHERE user_id = ?", (new_score, new_coins, user_id))
 
     warn = f"\n⚠️ Уровень упал с {old_level} до {new_level}!" if new_level < old_level else ""
-    await message.reply(f"Обменял {spent} очков → +{coins_wanted} 🪙 монет (Всего монет: {new_coins}){warn}")
+    await message.reply(TEXTS["exchange_4"].format(v0=spent, v1=coins_wanted, v2=new_coins, v3=warn))
 
 
 async def transfer_currency(message: Message, currency: str, amount: int):
     """currency: 'ног' или 'коин'. Общая логика для дать/передать <число> <валюта>."""
     if not message.reply_to_message:
-        await message.reply("Ответь этой командой на сообщение того, кому передаёшь.")
+        await message.reply(TEXTS["transfer_currency_1"])
         return
 
     receiver = message.reply_to_message.from_user
     sender = message.from_user
     if receiver.id == sender.id:
-        await message.reply("Нельзя передать самому себе.")
+        await message.reply(TEXTS["transfer_currency_2"])
         return
 
     sender_username = sender.username or sender.first_name or "Без имени"
@@ -2128,45 +2433,45 @@ async def transfer_currency(message: Message, currency: str, amount: int):
 
     sender_row = await ensure_user(sender.id, sender_username)
     if sender_row[3] < 1:
-        await message.reply("Передавать можно только с 1 уровня эволюции.")
+        await message.reply(TEXTS["transfer_currency_3"])
         return
 
     if currency == "ног":
         if sender_row[2] < amount:
-            await message.reply(f"Недостаточно очков. У тебя {sender_row[2]}.")
+            await message.reply(TEXTS["transfer_currency_4"].format(v0=sender_row[2]))
             return
         receiver_row = await ensure_user(receiver.id, receiver_username)
         new_sender = sender_row[2] - amount
         new_receiver = receiver_row[2] + amount
         await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (new_sender, sender.id))
         await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (new_receiver, receiver.id))
-        await message.reply(f"{esc(sender_username)} передал {amount} очков игроку {esc(receiver_username)}.")
+        await message.reply(TEXTS["transfer_currency_5"].format(v0=esc(sender_username), v1=amount, v2=esc(receiver_username)))
         await maybe_announce_levelup(message, receiver_username, receiver_row[2], new_receiver,
                                       receiver_row[3], bool(receiver_row[11]), receiver_row[15])
     else:  # коин
         if sender_row[5] < amount:
-            await message.reply(f"Недостаточно монет. У тебя {sender_row[5]}.")
+            await message.reply(TEXTS["transfer_currency_6"].format(v0=sender_row[5]))
             return
         await ensure_user(receiver.id, receiver_username)
         await db_exec("UPDATE users SET coins = coins - ? WHERE user_id = ?", (amount, sender.id))
         await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (amount, receiver.id))
-        await message.reply(f"{esc(sender_username)} передал {amount} 🪙 игроку {esc(receiver_username)}.")
+        await message.reply(TEXTS["transfer_currency_7"].format(v0=esc(sender_username), v1=amount, v2=esc(receiver_username)))
 
 
 async def transfer_item_direct(message: Message, item_query: str):
     """Прямой поиск предмета по вхождению строки, без разделения на бустеры/пассивки (п.2 ТЗ)."""
     if not message.reply_to_message:
-        await message.reply("Ответь этой командой на сообщение того, кому передаёшь предмет.")
+        await message.reply(TEXTS["transfer_item_direct_1"])
         return
 
     item_key = find_item_by_name(item_query)
     if not item_key:
-        await message.reply(f"❌ Такого предмета не существует: «{esc(item_query)}». Проверь название в «инвентарь».")
+        await message.reply(TEXTS["transfer_item_direct_2"].format(v0=esc(item_query)))
         return
 
     if item_key in NON_TRADABLE_ITEMS:
         emoji, name, _, _ = ITEMS[item_key]
-        await message.reply(f"🚫 {emoji} {esc(name)} нельзя передать — это личный значок, не предмет.")
+        await message.reply(TEXTS["transfer_item_direct_3"].format(v0=emoji, v1=esc(name)))
         return
 
     sender_id = message.from_user.id
@@ -2175,7 +2480,7 @@ async def transfer_item_direct(message: Message, item_query: str):
     receiver_username = receiver.username or receiver.first_name or "Без имени"
 
     if receiver.id == sender_id:
-        await message.reply("Нельзя передать предмет самому себе.")
+        await message.reply(TEXTS["transfer_item_direct_4"])
         return
 
     emoji, name, _, _ = ITEMS[item_key]
@@ -2185,7 +2490,7 @@ async def transfer_item_direct(message: Message, item_query: str):
 
     removed = await remove_item(sender_id, item_key, 1)
     if not removed:
-        await message.reply(f"У тебя нет предмета «{esc(name)}».")
+        await message.reply(TEXTS["transfer_item_direct_5"].format(v0=esc(name)))
         return
 
     sender_row = await get_user(sender_id)
@@ -2197,7 +2502,7 @@ async def transfer_item_direct(message: Message, item_query: str):
 
     await add_item(receiver.id, item_key)
 
-    await safe_reply(message, f"{emoji} {esc(name)} передан игроку {esc(receiver_username)}!")
+    await safe_reply(message, TEXTS["transfer_item_direct_6"].format(v0=emoji, v1=esc(name), v2=esc(receiver_username)))
 
 
 # Токены-валюты для распознавания синтаксиса "[число] [валюта]" в дать/передать
@@ -2212,7 +2517,7 @@ async def give_or_transfer(message: Message):
     verb, _, args = text.partition(" ")
     args = args.strip()
     if not args:
-        await message.reply("Укажи, что передать: число+валюту («дать 100 коин») или название предмета («передать свеча»).")
+        await message.reply(TEXTS["give_or_transfer_1"])
         return
 
     parts = args.split(" ", 1)
@@ -2225,12 +2530,12 @@ async def give_or_transfer(message: Message):
         if currency_word in _TRANSFER_CURRENCY_TOKENS:
             amount = parse_amount(first_word)
             if not amount or amount <= 0:
-                await message.reply("Некорректное количество.")
+                await message.reply(TEXTS["give_or_transfer_2"])
                 return
             await transfer_currency(message, _TRANSFER_CURRENCY_TOKENS[currency_word], amount)
             return
         else:
-            await message.reply(f"❌ Такой валюты не существует: «{esc(currency_word)}». Доступно: ног, коин.")
+            await message.reply(TEXTS["give_or_transfer_3"].format(v0=esc(currency_word)))
             return
 
     # Синтаксис 2: [валюта] [число] — "коин 50" (на случай другого порядка слов)
@@ -2238,7 +2543,7 @@ async def give_or_transfer(message: Message):
         amount_word = rest.split(" ", 1)[0]
         amount = parse_amount(amount_word)
         if not amount or amount <= 0:
-            await message.reply("Некорректное количество.")
+            await message.reply(TEXTS["give_or_transfer_4"])
             return
         await transfer_currency(message, _TRANSFER_CURRENCY_TOKENS[first_word.lower()], amount)
         return
@@ -2252,13 +2557,12 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
     item_key = find_item_by_name(item_query, only_passive=only_passive)
     if not item_key:
         wrong_cmd = "продать п" if only_passive is False else "продать б"
-        await message.reply(f"Не нашёл такой предмет среди {'предметов' if only_passive else 'бустеров'}. "
-                             f"Если это не то — попробуй «{wrong_cmd} <название>».")
+        await message.reply(TEXTS["sell_item_1"].format(v0='предметов' if only_passive else 'бустеров', v1=wrong_cmd))
         return
 
     if item_key in NON_TRADABLE_ITEMS:
         emoji, name, _, _ = ITEMS[item_key]
-        await message.reply(f"🚫 {emoji} {esc(name)} нельзя продать — это личный значок, не предмет.")
+        await message.reply(TEXTS["sell_item_2"].format(v0=emoji, v1=esc(name)))
         return
 
     user_id = message.from_user.id
@@ -2268,7 +2572,7 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
     removed = await remove_item(user_id, item_key, 1)
     emoji, name, _, _ = ITEMS[item_key]
     if not removed:
-        await message.reply(f"У тебя нет предмета «{esc(name)}».")
+        await message.reply(TEXTS["sell_item_3"].format(v0=esc(name)))
         return
 
     row = await get_user(user_id)
@@ -2295,7 +2599,7 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
         await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (price, user_id))
 
     bonus_text = " 🎉 Повезло! +1 🉑!" if bonus_rebirth else ""
-    await safe_reply(message, f"Продал {emoji} {esc(name)} за {price} 🪙.{bonus_text}")
+    await safe_reply(message, TEXTS["sell_item_4"].format(v0=emoji, v1=esc(name), v2=price, v3=bonus_text))
 
 
 @dp.message(F.text.lower().startswith("продать б "))
@@ -2315,7 +2619,7 @@ async def sell_wrong_format(message: Message):
     if lower.startswith("продать б ") or lower.startswith("продать п "):
         return  # уже обработано специализированными хендлерами выше
     await message.reply(
-        "Не понял формат. Укажи тип: «продать б <название>» — для бустеров, «продать п <название>» — для предметов."
+        TEXTS["sell_wrong_format_1"]
     )
 
 
@@ -2324,13 +2628,12 @@ async def destroy_item(message: Message, prefix: str, only_passive: bool):
     item_key = find_item_by_name(item_query, only_passive=only_passive)
     if not item_key:
         wrong_cmd = "уничтожение п" if only_passive is False else "уничтожение б"
-        await message.reply(f"Не нашёл такой предмет среди {'предметов' if only_passive else 'бустеров'}. "
-                             f"Если это не то — попробуй «{wrong_cmd} <название>».")
+        await message.reply(TEXTS["destroy_item_1"].format(v0='предметов' if only_passive else 'бустеров', v1=wrong_cmd))
         return
 
     if item_key in NON_TRADABLE_ITEMS:
         emoji, name, _, _ = ITEMS[item_key]
-        await message.reply(f"🚫 {emoji} {esc(name)} нельзя уничтожить — это личный значок, не предмет.")
+        await message.reply(TEXTS["destroy_item_2"].format(v0=emoji, v1=esc(name)))
         return
 
     user_id = message.from_user.id
@@ -2340,7 +2643,7 @@ async def destroy_item(message: Message, prefix: str, only_passive: bool):
     removed = await remove_item(user_id, item_key, 1)
     emoji, name, _, _ = ITEMS[item_key]
     if not removed:
-        await message.reply(f"У тебя нет предмета «{esc(name)}».")
+        await message.reply(TEXTS["destroy_item_3"].format(v0=esc(name)))
         return
 
     row = await get_user(user_id)
@@ -2350,7 +2653,7 @@ async def destroy_item(message: Message, prefix: str, only_passive: bool):
         new_equipped = unequip_item(row[18], item_key)
         await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), user_id))
 
-    await safe_reply(message, f"🗑 Уничтожил {emoji} {esc(name)}. Без награды — назад не вернуть.")
+    await safe_reply(message, TEXTS["destroy_item_4"].format(v0=emoji, v1=esc(name)))
 
 
 @dp.message(F.text.lower().startswith("уничтожение б "))
@@ -2369,7 +2672,7 @@ async def destroy_wrong_format(message: Message):
     if lower.startswith("уничтожение б ") or lower.startswith("уничтожение п "):
         return
     await message.reply(
-        "Не понял формат. Укажи тип: «уничтожение б <название>» — для бустеров, «уничтожение п <название>» — для предметов."
+        TEXTS["destroy_wrong_format_1"]
     )
 
 
@@ -2437,7 +2740,7 @@ async def inventory(message: Message):
     rows = await get_inventory(user_id)
 
     if not rows:
-        await message.reply("🎒 Инвентарь пуст.")
+        await message.reply(TEXTS["inventory_1"])
         return
 
     await safe_reply(message, format_inventory_menu_text(active_items, upgrades), reply_markup=inventory_menu_keyboard(user_id))
@@ -2468,7 +2771,7 @@ async def my_boosters_tab(message: Message):
 async def inventory_back_to_menu(callback: CallbackQuery):
     owner_id = int(callback.data.split(":")[1])
     if callback.from_user.id != owner_id:
-        await callback.answer("Это не твой инвентарь!", show_alert=True)
+        await callback.answer(TEXTS["inventory_back_to_menu_1"], show_alert=True)
         return
 
     row = await get_user(owner_id)
@@ -2483,7 +2786,7 @@ async def inventory_open_category(callback: CallbackQuery):
     _, owner_str, category = callback.data.split(":")
     owner_id = int(owner_str)
     if callback.from_user.id != owner_id:
-        await callback.answer("Это не твой инвентарь!", show_alert=True)
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
         return
 
     rows = await get_inventory(owner_id)
@@ -2503,10 +2806,10 @@ async def toggle_equip(callback: CallbackQuery):
     _, owner_str, item_key = callback.data.split(":")
     owner_id = int(owner_str)
     if callback.from_user.id != owner_id:
-        await callback.answer("Это не твой инвентарь!", show_alert=True)
+        await callback.answer(TEXTS["toggle_equip_1"], show_alert=True)
         return
     if item_key in PASSIVE_ITEMS:
-        await callback.answer("Этот предмет нельзя экипировать — он действует пассивно, пока лежит в инвентаре.", show_alert=True)
+        await callback.answer(TEXTS["toggle_equip_2"], show_alert=True)
         return
 
     row = await get_user(owner_id)
@@ -2522,9 +2825,9 @@ async def toggle_equip(callback: CallbackQuery):
 
     await callback.message.edit_text(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, new_equipped, owner_id))
     if kicked and kicked in ITEMS:
-        await callback.answer(f"Надел! {ITEMS[item_key][1]} вытеснил {ITEMS[kicked][1]} (слоты заняты).")
+        await callback.answer(TEXTS["toggle_equip_3"].format(v0=ITEMS[item_key][1], v1=ITEMS[kicked][1]))
     else:
-        await callback.answer("Готово!")
+        await callback.answer(TEXTS["toggle_equip_4"])
 
 
 # ---------- Крафты ("крафты [предмет]") ----------
@@ -2596,10 +2899,10 @@ async def craft_do(callback: CallbackQuery):
     _, owner_str, recipe_key = callback.data.split(":")
     owner_id = int(owner_str)
     if callback.from_user.id != owner_id:
-        await callback.answer("Это не твой крафт!", show_alert=True)
+        await callback.answer(TEXTS["craft_do_1"], show_alert=True)
         return
     if recipe_key not in RECIPES:
-        await callback.answer("Рецепт не найден.", show_alert=True)
+        await callback.answer(TEXTS["craft_do_2"], show_alert=True)
         return
 
     row = await get_user(owner_id)
@@ -2608,7 +2911,7 @@ async def craft_do(callback: CallbackQuery):
     recipe = RECIPES[recipe_key]
 
     if recipe["level"] > craft_level:
-        await callback.answer(f"Нужен уровень крафта {recipe['level']}, у тебя {craft_level}.", show_alert=True)
+        await callback.answer(TEXTS["craft_do_3"].format(v0=recipe['level'], v1=craft_level), show_alert=True)
         return
 
     coins, score = row[5], row[2]
@@ -2637,7 +2940,7 @@ async def craft_do(callback: CallbackQuery):
     result_text = f"✅ Скрафтил {plain_emoji(emoji)} {name}!"
 
     await callback.message.reply(result_text)
-    await callback.answer("Готово!")
+    await callback.answer(TEXTS["craft_do_4"])
 
 
 def case_offer_keyboard(case_num: int, user_id: int, price: int) -> InlineKeyboardMarkup:
@@ -2661,7 +2964,7 @@ async def send_case_inspect(message: Message, case_num: int):
     """Меню осмотра кейса: список дропа с процентами + кнопка открытия."""
     case = CASES.get(case_num)
     if not case:
-        await message.reply("Такого кейса нет.")
+        await message.reply(TEXTS["send_case_inspect_1"])
         return
     row = await ensure_user(message.from_user.id, message.from_user.username or message.from_user.first_name or "Без имени")
     upgrades = parse_upgrades(row[16])
@@ -2676,7 +2979,7 @@ async def open_case_instant(message: Message, case_num: int):
     """'открыть кейс N' — мгновенная рулетка, минуя меню осмотра."""
     case = CASES.get(case_num)
     if not case:
-        await message.reply("Такого кейса нет.")
+        await message.reply(TEXTS["open_case_instant_1"])
         return
 
     user_id = message.from_user.id
@@ -2687,7 +2990,7 @@ async def open_case_instant(message: Message, case_num: int):
     price = case_price_with_discount(case["price"], upgrades)
 
     if coins < price:
-        await message.reply(f"Не хватает монет. Нужно {price} 🪙, у тебя {coins} 🪙.")
+        await message.reply(TEXTS["open_case_instant_2"].format(v0=price, v1=coins))
         return
 
     item_key = roll_case_item(case_num)
@@ -2700,7 +3003,7 @@ async def open_case_instant(message: Message, case_num: int):
     await add_item(user_id, item_key)
     new_coins = coins - price
 
-    await message.reply(f"🎉 Выпало: {emoji} {esc(name)} (+{percent}%)!\nОстаток монет: {new_coins} 🪙")
+    await message.reply(TEXTS["open_case_instant_3"].format(v0=emoji, v1=esc(name), v2=percent, v3=new_coins))
 
 
 @dp.message(F.text.lower() == "кейс")
@@ -2738,7 +3041,7 @@ async def case_list(message: Message):
         )]
         for num, case in CASES.items()
     ])
-    await message.reply("Доступные кейсы:", reply_markup=kb)
+    await message.reply(TEXTS["case_list_1"], reply_markup=kb)
 
 
 @dp.callback_query(F.data.startswith("inspect_case:"))
@@ -2747,7 +3050,7 @@ async def inspect_case_callback(callback: CallbackQuery):
     case_num = int(case_num_str)
     owner_id = int(owner_str)
     if callback.from_user.id != owner_id:
-        await callback.answer("Это не твоё меню!", show_alert=True)
+        await callback.answer(TEXTS["inspect_case_callback_1"], show_alert=True)
         return
 
     row = await get_user(owner_id)
@@ -2768,7 +3071,7 @@ async def buy_case(callback: CallbackQuery):
     case_num = int(case_num_str)
     owner_id = int(owner_str)
     if callback.from_user.id != owner_id:
-        await callback.answer("Это не твой кейс!", show_alert=True)
+        await callback.answer(TEXTS["buy_case_1"], show_alert=True)
         return
 
     case = CASES[case_num]
@@ -2779,7 +3082,7 @@ async def buy_case(callback: CallbackQuery):
     price = case_price_with_discount(case["price"], upgrades)
 
     if coins < price:
-        await callback.answer(f"Не хватает монет. Нужно {price} 🪙", show_alert=True)
+        await callback.answer(TEXTS["buy_case_2"].format(v0=price), show_alert=True)
         return
 
     item_key = roll_case_item(case_num)
@@ -2796,7 +3099,7 @@ async def buy_case(callback: CallbackQuery):
         f"🎉 Выпало: {emoji} {esc(name)} (+{percent}%)!\nОстаток монет: {new_coins} 🪙",
         reply_markup=case_offer_keyboard(case_num, owner_id, price),
     )
-    await callback.answer("Кейс открыт!")
+    await callback.answer(TEXTS["buy_case_3"])
 
 
 @dp.message(F.text.lower() == "эволюция")
@@ -2810,7 +3113,7 @@ async def evolve(message: Message):
 
     required = level_threshold(39, evolution_level, rebirth_count)
     if score < required:
-        await message.reply(f"Нужно достичь «ногу мгг» (39 ур, {required} очков), чтобы эволюционировать.")
+        await message.reply(TEXTS["evolve_1"].format(v0=required))
         return
 
     new_evolution = evolution_level + 1
@@ -2824,8 +3127,7 @@ async def evolve(message: Message):
         unlock_text = "\nПолучена ⭐️ Звезда перерождения — экипируй в инвентарь!"
 
     await message.reply(
-        f"🎆 ЭВОЛЮЦИЯ! Прогресс сброшен, теперь у тебя {new_evolution} уровень эволюции навсегда.\n"
-        f"⚠️ Прокачка уровней теперь на {round(EVO_HARDNESS_RATE * new_evolution * 100)}% сложнее.{unlock_text}"
+        TEXTS["evolve_2"].format(v0=new_evolution, v1=round(EVO_HARDNESS_RATE * new_evolution * 100), v2=unlock_text)
     )
 
 
@@ -2841,11 +3143,18 @@ async def toggle_event(message: Message):
         "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
         (new_value,),
     )
+    if new_value == "1":
+        # ручной тумблер всегда даёт классический х2 без ограничения по времени
+        for key, value in (("event_multiplier", "2"), ("event_until", "0")):
+            await db_exec(
+                "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                (key, value),
+            )
 
     if new_value == "1":
-        await message.reply("🌟 Ивент «Золотая ногость» запущен! Х2 к фарме ног во всех чатах.")
+        await message.reply(TEXTS["toggle_event_1"])
     else:
-        await message.reply("Ивент «Золотая ногость» окончен.")
+        await message.reply(TEXTS["toggle_event_2"])
 
 
 # ---------- Меню прокачки ("апгрейд" / "прокачка" / "апг") ----------
@@ -2912,7 +3221,7 @@ async def upgrade_change_page(callback: CallbackQuery):
     owner_id = int(owner_str)
     category = int(category_str)
     if callback.from_user.id != owner_id:
-        await callback.answer("Это не твоё меню прокачки!", show_alert=True)
+        await callback.answer(TEXTS["upgrade_change_page_1"], show_alert=True)
         return
 
     row = await get_user(owner_id)
@@ -2931,10 +3240,10 @@ async def upgrade_buy(callback: CallbackQuery):
     owner_id = int(owner_str)
     category = int(category_str)
     if callback.from_user.id != owner_id:
-        await callback.answer("Это не твоё меню прокачки!", show_alert=True)
+        await callback.answer(TEXTS["upgrade_buy_1"], show_alert=True)
         return
     if key not in UPGRADES or UPGRADES[key].get("wip"):
-        await callback.answer("Этот раздел ещё в разработке.", show_alert=True)
+        await callback.answer(TEXTS["upgrade_buy_2"], show_alert=True)
         return
 
     row = await get_user(owner_id)
@@ -2943,10 +3252,10 @@ async def upgrade_buy(callback: CallbackQuery):
     cost = upgrade_next_cost(key, upgrades)
 
     if cost is None:
-        await callback.answer("Максимальный уровень уже достигнут.", show_alert=True)
+        await callback.answer(TEXTS["upgrade_buy_3"], show_alert=True)
         return
     if rebirth_points < cost:
-        await callback.answer(f"Не хватает 🉑. Нужно {cost}, у тебя {rebirth_points}.", show_alert=True)
+        await callback.answer(TEXTS["upgrade_buy_4"].format(v0=cost, v1=rebirth_points), show_alert=True)
         return
 
     upgrades[key] = upgrade_level(upgrades, key) + 1
@@ -2960,7 +3269,7 @@ async def upgrade_buy(callback: CallbackQuery):
         format_upgrade_page_text(upgrades, new_points, category),
         reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
     )
-    await callback.answer(f"Улучшено! {UPGRADES[key]['name']} → {upgrades[key]} лвл")
+    await callback.answer(TEXTS["upgrade_buy_5"].format(v0=UPGRADES[key]['name'], v1=upgrades[key]))
 
 
 # ---------- Перерождение ----------
@@ -2976,8 +3285,7 @@ async def rebirth(message: Message):
 
     if evolution_level < REBIRTH_EVO_PER_POINT:
         await message.reply(
-            f"Перерождение доступно с {REBIRTH_EVO_PER_POINT} уровня эволюции "
-            f"(сейчас у тебя {evolution_level}). Каждые {REBIRTH_EVO_PER_POINT} уровней эво = 1 🉑."
+            TEXTS["rebirth_1"].format(v0=REBIRTH_EVO_PER_POINT, v1=evolution_level, v2=REBIRTH_EVO_PER_POINT)
         )
         return
 
@@ -2992,10 +3300,7 @@ async def rebirth(message: Message):
 
     new_hardness = round(REBIRTH_HARDNESS_STEP * new_rebirth_count * 100)
     await message.reply(
-        f"🉑 <b>ПЕРЕРОЖДЕНИЕ!</b>\n"
-        f"Очки ноги и эволюция сброшены. Получено: +{points_gained} 🉑 (Всего: {new_rebirth_points}).\n"
-        f"⚠️ Эволюции теперь на {new_hardness}% сложнее, чем с нуля.\n"
-        f"Прокачки из меню «апгрейд» остались с тобой навсегда."
+        TEXTS["rebirth_2"].format(v0=points_gained, v1=new_rebirth_points, v2=new_hardness)
     )
 
 
@@ -3013,12 +3318,7 @@ async def show_balance(message: Message):
     vip_line = f"{PREMIUM_VIP_BADGE} VIP активен" if vip_active else "VIP не активен"
 
     await message.reply(
-        f"💰 <b>Твой баланс</b>\n"
-        f"━━━━━━━━━━━━━━━━━━\n"
-        f"👣 Очки ноги: <code>{score}</code>\n"
-        f"🪙 Монеты: <code>{coins}</code>\n"
-        f"🉑 Очки перерождения: <code>{rebirth_points}</code> (перерождений: {rebirth_count})\n"
-        f"{vip_line}"
+        TEXTS["show_balance_1"].format(v0=score, v1=coins, v2=rebirth_points, v3=rebirth_count, v4=vip_line)
     )
 
 
@@ -3028,24 +3328,24 @@ async def admin_give_rebirth(message: Message):
         return
     match = ADMIN_GIVE_REBIRTH_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !дать очкп <количество> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_give_rebirth_1"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_give_rebirth_2"])
         return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
-        await message.reply("Некорректное количество.")
+        await message.reply(TEXTS["admin_give_rebirth_3"])
         return
     target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
     new_points = row[14] + amount
     await db_exec("UPDATE users SET rebirth_points = ? WHERE user_id = ?", (new_points, target.id))
-    await message.reply(f"Выдано {amount} 🉑 игроку {esc(target_username)} (Всего: {new_points})")
+    await message.reply(TEXTS["admin_give_rebirth_4"].format(v0=amount, v1=esc(target_username), v2=new_points))
 
 
 @dp.message(F.text.lower().startswith("!снять очкп"))
@@ -3054,24 +3354,24 @@ async def admin_take_rebirth(message: Message):
         return
     match = ADMIN_TAKE_REBIRTH_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !снять очкп <количество> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_take_rebirth_1"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_take_rebirth_2"])
         return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
-        await message.reply("Некорректное количество.")
+        await message.reply(TEXTS["admin_take_rebirth_3"])
         return
     target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
     new_points = max(0, row[14] - amount)
     await db_exec("UPDATE users SET rebirth_points = ? WHERE user_id = ?", (new_points, target.id))
-    await message.reply(f"Снято {amount} 🉑 у игрока {esc(target_username)} (Осталось: {new_points})")
+    await message.reply(TEXTS["admin_take_rebirth_4"].format(v0=amount, v1=esc(target_username), v2=new_points))
 
 
 @dp.message(F.text.lower().startswith(NEWS_PREFIX))
@@ -3083,7 +3383,7 @@ async def broadcast_news(message: Message):
 
     text = message.text[len(NEWS_PREFIX):].strip()
     if not text:
-        await message.reply("Напиши текст новости после команды: !новость <текст>")
+        await message.reply(TEXTS["broadcast_news_1"])
         return
 
     chat_ids = await get_all_chat_ids()
@@ -3106,7 +3406,7 @@ async def broadcast_news(message: Message):
             failed += 1
         await asyncio.sleep(0.05)
 
-    await message.reply(f"Разослано в {sent} чатов. Не удалось: {failed}.")
+    await message.reply(TEXTS["broadcast_news_2"].format(v0=sent, v1=failed))
 
 
 @dp.message(F.text.lower().startswith("!дать ног"))
@@ -3115,17 +3415,17 @@ async def admin_give_legs(message: Message):
         return
     match = ADMIN_GIVE_LEGS_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !дать ног <количество> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_give_legs_1"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_give_legs_2"])
         return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
-        await message.reply("Некорректное количество.")
+        await message.reply(TEXTS["admin_give_legs_3"])
         return
     target_username = target.username or target.first_name or "Без имени"
 
@@ -3134,7 +3434,7 @@ async def admin_give_legs(message: Message):
     await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (new_score, target.id))
     await maybe_announce_levelup(message, target_username, row[2], new_score, row[3], bool(row[11]))
 
-    await message.reply(f"Выдано {amount} очков ноги игроку {esc(target_username)}. Теперь у него: {new_score}")
+    await message.reply(TEXTS["admin_give_legs_4"].format(v0=amount, v1=esc(target_username), v2=new_score))
 
 
 @dp.message(F.text.lower().startswith("!снять ноги"))
@@ -3143,17 +3443,17 @@ async def admin_take_legs(message: Message):
         return
     match = ADMIN_TAKE_LEGS_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !снять ноги <количество> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_take_legs_1"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_take_legs_2"])
         return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
-        await message.reply("Некорректное количество.")
+        await message.reply(TEXTS["admin_take_legs_3"])
         return
     target_username = target.username or target.first_name or "Без имени"
 
@@ -3161,7 +3461,7 @@ async def admin_take_legs(message: Message):
     new_score = max(0, row[2] - amount)
     await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (new_score, target.id))
 
-    await message.reply(f"Снято очков у {esc(target_username)}. Теперь у него: {new_score}")
+    await message.reply(TEXTS["admin_take_legs_4"].format(v0=esc(target_username), v1=new_score))
 
 
 @dp.message(F.text.lower().startswith("!дать эво"))
@@ -3170,17 +3470,17 @@ async def admin_give_evo(message: Message):
         return
     match = ADMIN_GIVE_EVO_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !дать эво <количество> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_give_evo_1"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_give_evo_2"])
         return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
-        await message.reply("Некорректное количество.")
+        await message.reply(TEXTS["admin_give_evo_3"])
         return
     target_username = target.username or target.first_name or "Без имени"
 
@@ -3188,7 +3488,7 @@ async def admin_give_evo(message: Message):
     new_evo = row[3] + amount
     await db_exec("UPDATE users SET evolution_level = ? WHERE user_id = ?", (new_evo, target.id))
 
-    await message.reply(f"Выдано {amount} уровней эволюции игроку {esc(target_username)}. Теперь: {new_evo}")
+    await message.reply(TEXTS["admin_give_evo_4"].format(v0=amount, v1=esc(target_username), v2=new_evo))
 
 
 @dp.message(F.text.lower().startswith("!снять эво"))
@@ -3197,17 +3497,17 @@ async def admin_take_evo(message: Message):
         return
     match = ADMIN_TAKE_EVO_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !снять эво <количество> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_take_evo_1"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_take_evo_2"])
         return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
-        await message.reply("Некорректное количество.")
+        await message.reply(TEXTS["admin_take_evo_3"])
         return
     target_username = target.username or target.first_name or "Без имени"
 
@@ -3215,7 +3515,7 @@ async def admin_take_evo(message: Message):
     new_evo = max(0, row[3] - amount)
     await db_exec("UPDATE users SET evolution_level = ? WHERE user_id = ?", (new_evo, target.id))
 
-    await message.reply(f"Снято {amount} уровней эволюции у {esc(target_username)}. Теперь: {new_evo}")
+    await message.reply(TEXTS["admin_take_evo_4"].format(v0=amount, v1=esc(target_username), v2=new_evo))
 
 
 @dp.message(F.text.lower().startswith("!дать коин"))
@@ -3224,17 +3524,17 @@ async def admin_give_coin(message: Message):
         return
     match = ADMIN_GIVE_COIN_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !дать коин <количество> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_give_coin_1"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_give_coin_2"])
         return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
-        await message.reply("Некорректное количество.")
+        await message.reply(TEXTS["admin_give_coin_3"])
         return
     target_username = target.username or target.first_name or "Без имени"
 
@@ -3242,7 +3542,7 @@ async def admin_give_coin(message: Message):
     new_coins = row[5] + amount
     await db_exec("UPDATE users SET coins = ? WHERE user_id = ?", (new_coins, target.id))
 
-    await message.reply(f"Выдано {amount} 🪙 игроку {esc(target_username)}. Теперь: {new_coins}")
+    await message.reply(TEXTS["admin_give_coin_4"].format(v0=amount, v1=esc(target_username), v2=new_coins))
 
 
 @dp.message(F.text.lower().startswith("!снять коин"))
@@ -3251,17 +3551,17 @@ async def admin_take_coin(message: Message):
         return
     match = ADMIN_TAKE_COIN_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !снять коин <количество> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_take_coin_1"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_take_coin_2"])
         return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
-        await message.reply("Некорректное количество.")
+        await message.reply(TEXTS["admin_take_coin_3"])
         return
     target_username = target.username or target.first_name or "Без имени"
 
@@ -3269,7 +3569,7 @@ async def admin_take_coin(message: Message):
     new_coins = max(0, row[5] - amount)
     await db_exec("UPDATE users SET coins = ? WHERE user_id = ?", (new_coins, target.id))
 
-    await message.reply(f"Снято {amount} 🪙 у {esc(target_username)}. Теперь: {new_coins}")
+    await message.reply(TEXTS["admin_take_coin_4"].format(v0=amount, v1=esc(target_username), v2=new_coins))
 
 
 @dp.message(F.text.lower().startswith("!дать б "))
@@ -3278,17 +3578,17 @@ async def admin_give_boost(message: Message):
         return
     match = ADMIN_GIVE_BOOST_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !дать б <название бустера> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_give_boost_1"])
         return
 
     item_key = find_item_by_name(match.group(1), only_passive=False)
     if not item_key:
-        await message.reply("Не нашёл такой бустер. Для пассивных предметов используй «!дать п».")
+        await message.reply(TEXTS["admin_give_boost_2"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_give_boost_3"])
         return
 
     target_username = target.username or target.first_name or "Без имени"
@@ -3296,7 +3596,7 @@ async def admin_give_boost(message: Message):
     await add_item(target.id, item_key)
 
     emoji, name, _, _ = ITEMS[item_key]
-    await safe_reply(message, f"Выдан бустер {emoji} {esc(name)} игроку {esc(target_username)}.")
+    await safe_reply(message, TEXTS["admin_give_boost_4"].format(v0=emoji, v1=esc(name), v2=esc(target_username)))
 
 
 @dp.message(F.text.lower().startswith("!снять б "))
@@ -3305,17 +3605,17 @@ async def admin_take_boost(message: Message):
         return
     match = ADMIN_TAKE_BOOST_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !снять б <название бустера> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_take_boost_1"])
         return
 
     item_key = find_item_by_name(match.group(1), only_passive=False)
     if not item_key:
-        await message.reply("Не нашёл такой бустер. Для пассивных предметов используй «!снять п».")
+        await message.reply(TEXTS["admin_take_boost_2"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_take_boost_3"])
         return
 
     target_username = target.username or target.first_name or "Без имени"
@@ -3324,9 +3624,9 @@ async def admin_take_boost(message: Message):
 
     emoji, name, _, _ = ITEMS[item_key]
     if removed:
-        await safe_reply(message, f"Снят бустер {emoji} {esc(name)} у игрока {esc(target_username)}.")
+        await safe_reply(message, TEXTS["admin_take_boost_4"].format(v0=emoji, v1=esc(name), v2=esc(target_username)))
     else:
-        await message.reply(f"У игрока {esc(target_username)} нет предмета «{esc(name)}».")
+        await message.reply(TEXTS["admin_take_boost_5"].format(v0=esc(target_username), v1=esc(name)))
 
 
 @dp.message(F.text.lower().startswith("!дать п "))
@@ -3335,17 +3635,17 @@ async def admin_give_passive(message: Message):
         return
     match = ADMIN_GIVE_ITEM_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !дать п <название предмета> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_give_passive_1"])
         return
 
     item_key = find_item_by_name(match.group(1), only_passive=True)
     if not item_key:
-        await message.reply("Не нашёл такой пассивный предмет. Для бустеров используй «!дать б».")
+        await message.reply(TEXTS["admin_give_passive_2"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_give_passive_3"])
         return
 
     target_username = target.username or target.first_name or "Без имени"
@@ -3353,7 +3653,7 @@ async def admin_give_passive(message: Message):
     await add_item(target.id, item_key)
 
     emoji, name, _, _ = ITEMS[item_key]
-    await safe_reply(message, f"Выдан предмет {emoji} {esc(name)} игроку {esc(target_username)}.")
+    await safe_reply(message, TEXTS["admin_give_passive_4"].format(v0=emoji, v1=esc(name), v2=esc(target_username)))
 
 
 @dp.message(F.text.lower().startswith("!снять п "))
@@ -3362,17 +3662,17 @@ async def admin_take_passive(message: Message):
         return
     match = ADMIN_TAKE_ITEM_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !снять п <название предмета> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_take_passive_1"])
         return
 
     item_key = find_item_by_name(match.group(1), only_passive=True)
     if not item_key:
-        await message.reply("Не нашёл такой пассивный предмет. Для бустеров используй «!снять б».")
+        await message.reply(TEXTS["admin_take_passive_2"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_take_passive_3"])
         return
 
     target_username = target.username or target.first_name or "Без имени"
@@ -3381,9 +3681,9 @@ async def admin_take_passive(message: Message):
 
     emoji, name, _, _ = ITEMS[item_key]
     if removed:
-        await safe_reply(message, f"Снят предмет {emoji} {esc(name)} у игрока {esc(target_username)}.")
+        await safe_reply(message, TEXTS["admin_take_passive_4"].format(v0=emoji, v1=esc(name), v2=esc(target_username)))
     else:
-        await message.reply(f"У игрока {esc(target_username)} нет предмета «{esc(name)}».")
+        await message.reply(TEXTS["admin_take_passive_5"].format(v0=esc(target_username), v1=esc(name)))
 
 
 @dp.message(F.text.lower().startswith("!дать вип"))
@@ -3392,17 +3692,17 @@ async def admin_give_vip(message: Message):
         return
     match = ADMIN_GIVE_VIP_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !дать вип <дней> [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_give_vip_1"])
         return
 
     target = await resolve_target(message, bool(match.group(2)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_give_vip_2"])
         return
 
     days = parse_amount(match.group(1))
     if not days or days <= 0:
-        await message.reply("Некорректное количество дней.")
+        await message.reply(TEXTS["admin_give_vip_3"])
         return
     target_username = target.username or target.first_name or "Без имени"
     row = await ensure_user(target.id, target_username)
@@ -3416,7 +3716,7 @@ async def admin_give_vip(message: Message):
     if not was_vip_before:
         await add_item(target.id, "vip_charm")
 
-    await message.reply(f"Выдан VIP на {days} дн. игроку {esc(target_username)}.")
+    await message.reply(TEXTS["admin_give_vip_4"].format(v0=days, v1=esc(target_username)))
 
 
 @dp.message(F.text.lower().startswith("!снять вип"))
@@ -3425,19 +3725,19 @@ async def admin_take_vip(message: Message):
         return
     match = ADMIN_TAKE_VIP_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !снять вип [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_take_vip_1"])
         return
 
     target = await resolve_target(message, bool(match.group(1)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_take_vip_2"])
         return
 
     target_username = target.username or target.first_name or "Без имени"
     await ensure_user(target.id, target_username)
     await db_exec("UPDATE users SET vip_until = 0 WHERE user_id = ?", (target.id,))
 
-    await message.reply(f"VIP снят у игрока {esc(target_username)}.")
+    await message.reply(TEXTS["admin_take_vip_3"].format(v0=esc(target_username)))
 
 
 @dp.message(F.text.lower().startswith("!сбросить"))
@@ -3446,12 +3746,12 @@ async def admin_reset(message: Message):
         return
     match = ADMIN_RESET_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !сбросить [себе] (в ответ на сообщение игрока)")
+        await message.reply(TEXTS["admin_reset_1"])
         return
 
     target = await resolve_target(message, bool(match.group(1)))
     if not target:
-        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        await message.reply(TEXTS["admin_reset_2"])
         return
 
     target_username = target.username or target.first_name or "Без имени"
@@ -3465,14 +3765,306 @@ async def admin_reset(message: Message):
     )
     await db_exec("DELETE FROM inventory WHERE user_id = ?", (target.id,))
 
-    await message.reply(f"Полный сброс прогресса игрока {esc(target_username)} выполнен.")
+    await message.reply(TEXTS["admin_reset_3"].format(v0=esc(target_username)))
+
+
+@dp.message(F.text.lower().startswith("!бан топ"))
+async def admin_ban_top(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_BAN_TOP_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_ban_top_1"])
+        return
+
+    target = await resolve_target(message, bool(match.group(1)))
+    if not target:
+        await message.reply(TEXTS["admin_ban_top_2"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+    await db_exec("UPDATE users SET top_banned = 1 WHERE user_id = ?", (target.id,))
+
+    await message.reply(TEXTS["admin_ban_top_3"].format(v0=esc(target_username)))
+
+
+@dp.message(F.text.lower().startswith("!разбан топ"))
+async def admin_unban_top(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_UNBAN_TOP_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_unban_top_1"])
+        return
+
+    target = await resolve_target(message, bool(match.group(1)))
+    if not target:
+        await message.reply(TEXTS["admin_unban_top_2"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+    await db_exec("UPDATE users SET top_banned = 0 WHERE user_id = ?", (target.id,))
+
+    await message.reply(TEXTS["admin_unban_top_3"].format(v0=esc(target_username)))
+
+
+@dp.message(F.text.lower().startswith("!установить ног"))
+async def admin_set_legs(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_SET_LEGS_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_set_legs_1"])
+        return
+
+    target = await resolve_target(message, bool(match.group(2)))
+    if not target:
+        await message.reply(TEXTS["admin_set_legs_2"])
+        return
+
+    amount = parse_amount(match.group(1))
+    if amount is None or amount < 0:
+        await message.reply(TEXTS["admin_set_legs_3"])
+        return
+    target_username = target.username or target.first_name or "Без имени"
+
+    row = await ensure_user(target.id, target_username)
+    old_score = row[2]
+    await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (amount, target.id))
+    await maybe_announce_levelup(message, target_username, old_score, amount, row[3], bool(row[11]))
+
+    await message.reply(TEXTS["admin_set_legs_4"].format(v0=esc(target_username), v1=amount, v2=old_score))
+
+
+@dp.message(F.text.lower().startswith("!установить эво"))
+async def admin_set_evo(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_SET_EVO_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_set_evo_1"])
+        return
+
+    target = await resolve_target(message, bool(match.group(2)))
+    if not target:
+        await message.reply(TEXTS["admin_set_evo_2"])
+        return
+
+    amount = parse_amount(match.group(1))
+    if amount is None or amount < 0:
+        await message.reply(TEXTS["admin_set_evo_3"])
+        return
+    target_username = target.username or target.first_name or "Без имени"
+
+    row = await ensure_user(target.id, target_username)
+    old_evo = row[3]
+    await db_exec("UPDATE users SET evolution_level = ? WHERE user_id = ?", (amount, target.id))
+
+    await message.reply(TEXTS["admin_set_evo_4"].format(v0=esc(target_username), v1=amount, v2=old_evo))
+
+
+@dp.message(F.text.lower().startswith("!сброс кд"))
+async def admin_reset_cd(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_RESET_CD_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_reset_cd_1"])
+        return
+
+    target = await resolve_target(message, bool(match.group(1)))
+    if not target:
+        await message.reply(TEXTS["admin_reset_cd_2"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+    await db_exec("UPDATE users SET last_farm = 0 WHERE user_id = ?", (target.id,))
+
+    await message.reply(TEXTS["admin_reset_cd_3"].format(v0=esc(target_username)))
+
+
+@dp.message(F.text.lower().startswith("!сброс бонус"))
+async def admin_reset_bonus(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_RESET_BONUS_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_reset_bonus_1"])
+        return
+
+    target = await resolve_target(message, bool(match.group(1)))
+    if not target:
+        await message.reply(TEXTS["admin_reset_bonus_2"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+    await db_exec("UPDATE users SET last_bonus = 0 WHERE user_id = ?", (target.id,))
+
+    await message.reply(TEXTS["admin_reset_bonus_3"].format(v0=esc(target_username)))
+
+
+@dp.message(F.text.lower().startswith("!дать кейс"))
+async def admin_give_case(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_GIVE_CASE_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_give_case_1"])
+        return
+
+    case_num = int(match.group(1))
+    count = int(match.group(2))
+    case = CASES.get(case_num)
+    if not case:
+        await message.reply(TEXTS["admin_give_case_3"])
+        return
+    if count < 1 or count > 100:
+        await message.reply(TEXTS["admin_give_case_4"])
+        return
+
+    target = await resolve_target(message, bool(match.group(3)))
+    if not target:
+        await message.reply(TEXTS["admin_give_case_2"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+
+    won = {}
+    for _ in range(count):
+        item_key = roll_case_item(case_num)
+        await add_item(target.id, item_key)
+        won[item_key] = won.get(item_key, 0) + 1
+    await db_exec("UPDATE users SET cases_opened = cases_opened + ? WHERE user_id = ?", (count, target.id))
+
+    loot_lines = "\n".join(f"● {ITEMS[k][0]} {esc(ITEMS[k][1])} × {qty}" for k, qty in won.items())
+    await safe_reply(
+        message,
+        TEXTS["admin_give_case_5"].format(v0=esc(target_username), v1=esc(case["name"]), v2=count, v3=loot_lines),
+    )
+
+
+@dp.message(F.text.regexp(r"(?i)^!дебаг\s+"))
+async def admin_debug(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_DEBUG_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_debug_1"])
+        return
+
+    row = await get_user_by_username(match.group(1))
+    if not row:
+        await message.reply(TEXTS["admin_debug_2"])
+        return
+
+    fields = USER_COLUMNS.split(", ")
+    dump = "\n".join(f"{name} = {value}" for name, value in zip(fields, row))
+    await message.reply(TEXTS["admin_debug_3"].format(v0=esc(row[1]), v1=esc(dump)))
+
+
+@dp.message(F.text.regexp(r"(?i)^!текст\s+"))
+async def admin_show_text(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_SHOW_TEXT_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_show_text_1"])
+        return
+
+    key = match.group(1)
+    if key not in TEXTS:
+        await message.reply(TEXTS["admin_show_text_2"])
+        return
+
+    await message.reply(TEXTS["admin_show_text_3"].format(v0=esc(key), v1=esc(TEXTS[key])))
+
+
+@dp.message(F.text.regexp(r"(?i)^!симулировать эволюция\s+"))
+async def admin_simulate_evolution(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_SIMULATE_EVO_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_simulate_evo_1"])
+        return
+
+    row = await get_user_by_username(match.group(1))
+    if not row:
+        await message.reply(TEXTS["admin_simulate_evo_2"])
+        return
+
+    username, score, evolution_level = row[1], row[2], row[3]
+    rebirth_count = row[15] if len(row) > 15 else 0
+    required = level_threshold(39, evolution_level, rebirth_count)
+    verdict = TEXTS["admin_simulate_evo_ok"] if score >= required else TEXTS["admin_simulate_evo_fail"].format(v0=required - score)
+
+    await message.reply(
+        TEXTS["admin_simulate_evo_3"].format(v0=esc(username), v1=score, v2=required, v3=evolution_level, v4=verdict)
+    )
+
+
+@dp.message(F.text.lower() == "!стата")
+async def admin_stats(message: Message):
+    if not is_admin(message):
+        return
+
+    row = await db_query_one(
+        "SELECT COUNT(*), COALESCE(SUM(score),0), COALESCE(SUM(coins),0), COALESCE(SUM(rebirth_points),0), "
+        "COALESCE(SUM(cases_opened),0), SUM(CASE WHEN vip_until > ? THEN 1 ELSE 0 END), "
+        "SUM(CASE WHEN top_banned = 1 THEN 1 ELSE 0 END) FROM users",
+        (int(time.time()),),
+    )
+    players, total_score, total_coins, total_rebirth, total_cases, vip_count, banned_count = row
+
+    await message.reply(
+        TEXTS["admin_stats_1"].format(
+            v0=players, v1=total_score, v2=total_coins, v3=total_rebirth,
+            v4=total_cases, v5=vip_count or 0, v6=banned_count or 0,
+        )
+    )
+
+
+@dp.message(F.text.lower() == "!рестарт")
+async def admin_restart(message: Message):
+    if not is_admin(message):
+        return
+    await message.reply(TEXTS["admin_restart_1"])
+    await bot.session.close()
+    os._exit(0)
+
+
+@dp.message(F.text.regexp(r"(?i)^!ивент\s+х\d"))
+async def admin_event_custom(message: Message):
+    if not is_admin(message):
+        return
+    match = ADMIN_EVENT_CUSTOM_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_event_custom_1"])
+        return
+
+    mult = float(match.group(1))
+    minutes = int(match.group(2))
+    if mult <= 0 or minutes <= 0:
+        await message.reply(TEXTS["admin_event_custom_2"])
+        return
+
+    until = int(time.time()) + minutes * 60
+    for key, value in (("event_active", "1"), ("event_multiplier", str(mult)), ("event_until", str(until))):
+        await db_exec(
+            "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+            (key, value),
+        )
+
+    await message.reply(TEXTS["admin_event_custom_3"].format(v0=mult, v1=minutes))
 
 
 async def handle(request):
     return web.Response(text="Бот Нога Работает!")
-
-
-PING_INTERVAL = 600
 
 
 async def keep_alive():
