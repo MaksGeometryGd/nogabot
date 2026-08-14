@@ -132,18 +132,18 @@ MGG_MEGA_NAME = "нога кошко-девочки MGG"
 # ---------- Ультра перерождение (Ultra Rebirth) — эндгейм-механика ----------
 # Условия активации (обязательны все три):
 #   evolution_level >= ULTRA_REQUIRED_EVO (50)
-#   уровень ноги (get_level_index) >= ULTRA_REQUIRED_LEG_LEVEL (20001, т.е. MGG_MEGA_LEVEL)
+#   уровень ноги (get_level_index) >= ULTRA_REQUIRED_LEG_LEVEL (20001 = MGG_MEGA_LEVEL,
+#   максимум для тех, кто ещё НЕ прошёл Ультра перерождение)
 #   rebirth_count >= ULTRA_REQUIRED_REBIRTHS (5, текущий максимум обычных перерождений)
-# Это Boolean-статус (0/1) в колонке ultra_rebirth, а НЕ уровень — повторно недоступен
-# (в отличие от обычного перерождения, у которого есть rebirth_count).
+# Это Boolean-статус (0/1) в колонке ultra_rebirth — повторно недоступен (в отличие
+# от обычного перерождения, у которого есть счётчик rebirth_count).
 ULTRA_REQUIRED_EVO = 50
 ULTRA_REQUIRED_LEG_LEVEL = MGG_MEGA_LEVEL  # 20001
 ULTRA_REQUIRED_REBIRTHS = 5
 
-# Уровень 20002 существует только в фазе "После Ультра перерождения" (ultra_rebirth = 1)
-# и открывается сразу же по активации. Это не часть обычной лестницы уровней —
-# level_threshold/get_level_index её не считают; отображается отдельным финальным
-# статус-уровнем поверх обычной ноги в профиле игрока.
+# Уровень 20002 — следующий уровень ноги после 20001, открыт только тем, у кого
+# ultra_rebirth = 1. После активации прогрессия ноги идёт как обычно (0-20000+),
+# просто верхняя граница для таких игроков поднимается на один уровень выше.
 ULTRA_LEG_LEVEL = 20002
 ULTRA_LEG_EMOJI = "🦵🧪"
 ULTRA_LEG_NAME = "тест нога"
@@ -279,29 +279,26 @@ TEXTS = {
     "rebirth_1": 'Перерождение доступно с {v0} уровня эволюции (сейчас у тебя {v1}). Каждые {v2} уровней эво = 1 🉑.',
     "rebirth_2": '🉑 <b>ПЕРЕРОЖДЕНИЕ!</b>\nОчки ноги и эволюция сброшены. Получено: +{v0} 🉑 (Всего: {v1}).\n⚠️ Эволюции теперь на {v2}% сложнее, чем с нуля.\nПрокачки из меню «апгрейд» остались с тобой навсегда.',
     "ultra_rebirth_locked_1": (
-        '🌌 <b>УЛЬТРА ПЕРЕРОЖДЕНИЕ</b> заблокировано. Условия:\n'
+        '🌌 <b>Ультра перерождение</b> заблокировано:\n'
         '● Эволюция: {v0}/{v1}\n'
         '● Уровень ноги: {v2}/{v3}\n'
-        '● Обычных перерождений: {v4}/{v5}\n'
-        '⚠️ Нужны ВСЕ три условия одновременно.'
+        '● Перерождений: {v4}/{v5}\n'
+        '⚠️ Нужны все три условия сразу.'
     ),
-    "ultra_rebirth_already_1": '🌌 Ты уже прошёл Ультра перерождение. Это можно сделать только один раз за всю игру.',
+    "ultra_rebirth_already_1": '🌌 Ты уже прошёл Ультра перерождение — второй раз нельзя.',
     "ultra_rebirth_confirm_1": (
-        '🌌 <b>ВНИМАНИЕ! ТОЧКА НЕВОЗВРАТА.</b>\n'
-        'Ультра перерождение доступно ({v0}). Оно:\n'
-        '● Полностью обнулит очки, эволюцию (0/{v1}) и счётчик перерождений (0/{v2})\n'
-        '● Необратимо — второй раз пройти нельзя\n'
-        '● Откроет новую фазу игры и {v3} {v4} ({v5} уровень)\n'
-        '● Даст постоянный буст добычи +{v6}%\n'
-        'Прокачки и предметы останутся с тобой.\n\n'
-        'Напиши «ультра перерождение подтверждаю», чтобы продолжить.'
+        '🌌 <b>Точка невозврата.</b>\n'
+        'Ультра перерождение обнулит очки, эволюцию и перерождения — необратимо, один раз за игру.\n'
+        'Взамен: {v0} {v1} ({v2} лвл) и постоянный буст +{v3}% к добыче.\n'
+        'Прокачки и предметы остаются с тобой.'
     ),
     "ultra_rebirth_success_1": (
-        '🌌✨ <b>УЛЬТРА ПЕРЕРОЖДЕНИЕ СВЕРШИЛОСЬ!</b> ✨🌌\n'
-        'Игра для тебя началась заново — с чистого листа и абсолютно новыми законами.\n'
-        'Открыта {v0} {v1} ({v2} уровень) и постоянный буст добычи +{v3}%.\n'
+        '🌌✨ <b>Ультра перерождение свершилось!</b>\n'
+        'Открыт {v0} {v1} ({v2} лвл) и постоянный буст добычи +{v3}%.\n'
         'Прокачки и предметы остались с тобой навсегда.'
     ),
+    "ultra_rebirth_cancelled_1": 'Ультра перерождение отменено — прогресс не тронут.',
+    "ultra_rebirth_not_owner_1": 'Это не твоё подтверждение!',
     "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n{v4}',
     "admin_give_rebirth_1": 'Формат: !дать очкп <количество> [себе] (в ответ на сообщение игрока)',
     "admin_give_rebirth_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
@@ -1171,8 +1168,12 @@ def level_threshold(level: int, evolution_level: int, rebirth_count: int = 0) ->
     return round(base_level_threshold(level) * hardness)
 
 
-def get_level_index(score: int, evolution_level: int = 0, rebirth_count: int = 0) -> int:
-    lo, hi = 0, 200000
+def get_level_index(score: int, evolution_level: int = 0, rebirth_count: int = 0,
+                     ultra_rebirth: bool = False) -> int:
+    # Потолок прогрессии: 20001 лвл — для всех, кто ещё не прошёл Ультра перерождение;
+    # 20002 лвл — открывается только после него (ultra_rebirth = 1).
+    cap = ULTRA_LEG_LEVEL if ultra_rebirth else ULTRA_REQUIRED_LEG_LEVEL
+    lo, hi = 0, cap
     while lo < hi:
         mid = (lo + hi + 1) // 2
         if level_threshold(mid, evolution_level, rebirth_count) <= score:
@@ -1201,9 +1202,11 @@ def get_level_visual(level: int):
     return "❓", "неизвестный уровень", True
 
 
-def next_level_text(score: int, evolution_level: int, rebirth_count: int = 0) -> str:
-    level = get_level_index(score, evolution_level, rebirth_count)
-    if level >= MGG_MEGA_LEVEL:
+def next_level_text(score: int, evolution_level: int, rebirth_count: int = 0,
+                     ultra_rebirth: bool = False) -> str:
+    level = get_level_index(score, evolution_level, rebirth_count, ultra_rebirth)
+    cap = ULTRA_LEG_LEVEL if ultra_rebirth else ULTRA_REQUIRED_LEG_LEVEL
+    if level >= cap:
         return "Ты достиг абсолютного предела ноги — дальше только легенды 🌌"
     nxt = level_threshold(level + 1, evolution_level, rebirth_count)
     return f"До {level + 1} уровня осталось {nxt - score} очков"
@@ -1912,11 +1915,12 @@ async def error_handler(event, exception):
 
 
 async def maybe_announce_levelup(message: Message, username: str, old_score: int, new_score: int,
-                                  evolution_level: int, notify: bool, rebirth_count: int = 0):
+                                  evolution_level: int, notify: bool, rebirth_count: int = 0,
+                                  ultra_rebirth: bool = False):
     if not notify:
         return
-    old_level = get_level_index(old_score, evolution_level, rebirth_count)
-    new_level = get_level_index(new_score, evolution_level, rebirth_count)
+    old_level = get_level_index(old_score, evolution_level, rebirth_count, ultra_rebirth)
+    new_level = get_level_index(new_score, evolution_level, rebirth_count, ultra_rebirth)
     if new_level <= old_level:
         return
     emoji, name, show_level = get_level_visual(new_level)
@@ -2156,7 +2160,7 @@ async def count_legs(message: Message):
         (new_score, total, user_id),
     )
 
-    await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count)
+    await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count, ultra_rebirth)
 
     inv = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv}
@@ -2208,17 +2212,13 @@ async def my_profile(message: Message):
     vip_active = is_vip_active(vip_until)
     shown_name = display_name(username, nickname)
 
-    level = get_level_index(score, evolution_level, rebirth_count)
-    if ultra_rebirth:
-        # После Ультра перерождения "тест нога" 20002 лвл — постоянный статус-уровень,
-        # который отображается сверх обычной ноги, а не заменяет её (у него нет своей
-        # шкалы очков — это флаг фазы, не уровень для прокачки).
-        emoji, name, show_level = ULTRA_LEG_EMOJI, ULTRA_LEG_NAME, False
-        display_level = ULTRA_LEG_LEVEL
-    else:
-        emoji, name, show_level = get_level_visual(level)
-        display_level = level
-    nxt = next_level_text(score, evolution_level, rebirth_count)
+    # Обычная прогрессия (0-20000+) работает как раньше и после Ультра перерождения —
+    # 20002 лвл ("тест нога") просто становится доступен как следующий уровень поверх
+    # обычной лестницы, а не подменяет вид ноги статичной заглушкой.
+    level = get_level_index(score, evolution_level, rebirth_count, ultra_rebirth)
+    emoji, name, show_level = get_level_visual(level)
+    display_level = level
+    nxt = next_level_text(score, evolution_level, rebirth_count, ultra_rebirth)
     mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth)
     flat_bonus = total_flat_bonus(active_items)
 
@@ -2471,7 +2471,7 @@ async def farm(message: Message):
     vase_text = await apply_vase_proc(user_id, inventory_map)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map)
 
-    await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count)
+    await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count, ultra_rebirth)
     auto_text = ""
     if auto_legs or auto_coins:
         bits = []
@@ -3592,11 +3592,17 @@ def ultra_rebirth_eligible(evolution_level: int, leg_level: int, rebirth_count: 
     )
 
 
+def ultra_rebirth_confirm_keyboard(user_id: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text="🌌 Подтвердить", callback_data=f"ultra_ok:{user_id}"),
+        InlineKeyboardButton(text="Отмена", callback_data=f"ultra_no:{user_id}"),
+    ]])
+
+
 @dp.message(F.text.lower() == "ультра перерождение")
 async def ultra_rebirth_info(message: Message):
-    """Показывает статус условий и, если всё готово, просит явное подтверждение —
-    Ультра перерождение необратимо и выполняется только один раз за игру, поэтому
-    тут нет ни одного пути "случайно нажал и сбросил прогресс"."""
+    """Показывает статус условий и, если всё готово, просит подтверждение кнопкой —
+    Ультра перерождение необратимо и выполняется только один раз за игру."""
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
 
@@ -3623,18 +3629,32 @@ async def ultra_rebirth_info(message: Message):
 
     await message.reply(
         TEXTS["ultra_rebirth_confirm_1"].format(
-            v0="условия выполнены ✅",
-            v1=ULTRA_REQUIRED_EVO, v2=ULTRA_REQUIRED_REBIRTHS,
-            v3=ULTRA_LEG_EMOJI, v4=esc(ULTRA_LEG_NAME), v5=ULTRA_LEG_LEVEL,
-            v6=round(ULTRA_REBIRTH_BOOST * 100),
-        )
+            v0=ULTRA_LEG_EMOJI, v1=esc(ULTRA_LEG_NAME), v2=ULTRA_LEG_LEVEL,
+            v3=round(ULTRA_REBIRTH_BOOST * 100),
+        ),
+        reply_markup=ultra_rebirth_confirm_keyboard(user_id),
     )
 
 
-@dp.message(F.text.lower() == "ультра перерождение подтверждаю")
-async def ultra_rebirth_confirm(message: Message):
-    user_id = message.from_user.id
-    username = message.from_user.username or message.from_user.first_name or "Без имени"
+@dp.callback_query(F.data.startswith("ultra_no:"))
+async def ultra_rebirth_cancel(callback: CallbackQuery):
+    owner_id = int(callback.data.split(":")[1])
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["ultra_rebirth_not_owner_1"], show_alert=True)
+        return
+    await safe_edit_text(callback, TEXTS["ultra_rebirth_cancelled_1"])
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("ultra_ok:"))
+async def ultra_rebirth_confirm(callback: CallbackQuery):
+    owner_id = int(callback.data.split(":")[1])
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["ultra_rebirth_not_owner_1"], show_alert=True)
+        return
+
+    user_id = callback.from_user.id
+    username = callback.from_user.username or callback.from_user.first_name or "Без имени"
 
     row = await ensure_user(user_id, username)
     score, evolution_level = row[2], row[3]
@@ -3642,19 +3662,22 @@ async def ultra_rebirth_confirm(message: Message):
     ultra_rebirth = bool(row[21])
 
     if ultra_rebirth:
-        await message.reply(TEXTS["ultra_rebirth_already_1"])
+        await safe_edit_text(callback, TEXTS["ultra_rebirth_already_1"])
+        await callback.answer()
         return
 
     leg_level = get_level_index(score, evolution_level, rebirth_count)
 
     if not ultra_rebirth_eligible(evolution_level, leg_level, rebirth_count):
-        await message.reply(
+        await safe_edit_text(
+            callback,
             TEXTS["ultra_rebirth_locked_1"].format(
                 v0=evolution_level, v1=ULTRA_REQUIRED_EVO,
                 v2=leg_level, v3=ULTRA_REQUIRED_LEG_LEVEL,
                 v4=rebirth_count, v5=ULTRA_REQUIRED_REBIRTHS,
-            )
+            ),
         )
+        await callback.answer()
         return
 
     # Мягкий хард-ресет: обнуляются очки, уровень ноги (через score=0), эволюции и
@@ -3666,12 +3689,14 @@ async def ultra_rebirth_confirm(message: Message):
         (user_id,),
     )
 
-    await message.reply(
+    await safe_edit_text(
+        callback,
         TEXTS["ultra_rebirth_success_1"].format(
             v0=ULTRA_LEG_EMOJI, v1=esc(ULTRA_LEG_NAME), v2=ULTRA_LEG_LEVEL,
             v3=round(ULTRA_REBIRTH_BOOST * 100),
-        )
+        ),
     )
+    await callback.answer()
 
 
 @dp.message(F.text.lower() == "баланс")
