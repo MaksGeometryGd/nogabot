@@ -193,9 +193,18 @@ TEXTS = {
     "notify_on_1": 'Уведомления о новом уровне включены.',
     "vip_info_command_1": 'У тебя уже есть VIP-статус! 💎',
     "vip_info_command_2": '💎 VIP даёт постоянный буст +{v0}% к добыче.\nМожно купить прямо в боте за {v1} звёзд Telegram — выдаётся навсегда.',
+    "auto_evolve_not_vip_1": '⚠️ Авто-эволюция доступна только с VIP-статусом. Команда «вип» — как получить.',
+    "auto_evolve_on_1": '⚙️💎 Авто-эволюция включена. Как только хватит очков — эволюция сработает сама.',
+    "auto_evolve_off_1": '⚙️ Авто-эволюция выключена.',
+    "vip_case_open_1": 'Формат: вип открыть кейс <номер> <кол-во> (максимум 20 за раз).',
+    "vip_case_open_2": '⚠️ Авто-эволюция VIP-only. Команда «вип» — как получить.',
+    "vip_case_open_3": 'Такого кейса нет. Посмотри «кейсы» — список номеров.',
+    "vip_case_open_4": 'Максимум 20 кейсов за одну команду.',
+    "vip_case_open_5": 'Не хватает монет: нужно {v0} 🪙, у тебя {v1} 🪙.',
+    "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры и предметы\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры и предметы\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -876,6 +885,7 @@ FIXED_COMMANDS = {
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
     "!список вип", "!список банов топ", "!список ников", "!логи", "!пинг", "!ивент стоп", "!ивент статус",
     "ультра перерождение", "ультра перерождение подтверждаю",
+    "авто эво вкл", "авто эво выкл", "авто эволюция вкл", "авто эволюция выкл",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
@@ -886,6 +896,7 @@ PREFIX_COMMANDS = (
     "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
     "!установить очкп", "!обнулить экономику", "!мультипликатор ферма", "!дать предмет",
     "!очистить инвентарь", "!дать апгрейд", "!вип навсегда", "!сброс ник", "!найти ", "!ультра навсегда",
+    "вип открыть кейс",
 )
 
 
@@ -1521,7 +1532,8 @@ async def db_query_one(sql, params=()):
 USER_COLUMNS = (
     "user_id, username, score, evolution_level, last_farm, coins, active_item, "
     "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
-    "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, ultra_rebirth"
+    "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
+    "ultra_rebirth, auto_evolve"
 )
 # Индексы полей выше при обращении по row[...]:
 #  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
@@ -1532,6 +1544,8 @@ USER_COLUMNS = (
 #     последний = надет позже всех; новый/повторный клик уходит в конец, при переполнении вылетает индекс 0),
 #  19 nickname — кастомный ник для отображения в топах/профиле (NULL = показывать обычный username),
 #  20 top_banned — 1 если игрок забанен из топов (не попадает в списки топ), 0/NULL иначе
+#  22 auto_evolve — Boolean (0/1), VIP-only: при включении эволюция срабатывает автоматически
+#     сразу же, как только хватает очков (см. try_auto_evolve). Не имеет эффекта без активного VIP.
 
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -1606,6 +1620,7 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN nickname TEXT DEFAULT NULL",
         "ALTER TABLE users ADD COLUMN top_banned INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN ultra_rebirth INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN auto_evolve INTEGER DEFAULT 0",
     ):
         try:
             await db_exec(stmt)
@@ -2010,6 +2025,91 @@ async def vip_info_command(message: Message):
     )
 
 
+@dp.message(F.text.lower().in_({"авто эво вкл", "авто эволюция вкл"}))
+async def auto_evolve_on(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    row = await ensure_user(user_id, username)
+    vip_until = row[12]
+
+    if not is_vip_active(vip_until):
+        await message.reply(TEXTS["auto_evolve_not_vip_1"])
+        return
+
+    await db_exec("UPDATE users SET auto_evolve = 1 WHERE user_id = ?", (user_id,))
+    await message.reply(TEXTS["auto_evolve_on_1"])
+
+
+@dp.message(F.text.lower().in_({"авто эво выкл", "авто эволюция выкл"}))
+async def auto_evolve_off(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    await ensure_user(user_id, username)
+
+    await db_exec("UPDATE users SET auto_evolve = 0 WHERE user_id = ?", (user_id,))
+    await message.reply(TEXTS["auto_evolve_off_1"])
+
+
+VIP_CASE_OPEN_RE = re.compile(r"^вип открыть кейс\s+(\d+)\s+(\d+)$", re.IGNORECASE)
+VIP_CASE_OPEN_LIMIT = 20
+
+
+@dp.message(F.text.regexp(r"(?i)^вип открыть кейс\s+"))
+async def vip_open_case_bulk(message: Message):
+    """VIP-версия owner-команды '!дать кейс' — открывает несколько кейсов разом,
+    но платно (списывает монеты за каждый кейс) и только себе, лимит 20 за раз."""
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    match = VIP_CASE_OPEN_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["vip_case_open_1"])
+        return
+
+    row = await ensure_user(user_id, username)
+    vip_until = row[12]
+    if not is_vip_active(vip_until):
+        await message.reply(TEXTS["vip_case_open_2"])
+        return
+
+    case_num = int(match.group(1))
+    count = int(match.group(2))
+    case = CASES.get(case_num)
+    if not case:
+        await message.reply(TEXTS["vip_case_open_3"])
+        return
+    if count < 1 or count > VIP_CASE_OPEN_LIMIT:
+        await message.reply(TEXTS["vip_case_open_4"])
+        return
+
+    coins = row[5]
+    upgrades = parse_upgrades(row[16])
+    unit_price = case_price_with_discount(case["price"], upgrades)
+    total_price = unit_price * count
+
+    if coins < total_price:
+        await message.reply(TEXTS["vip_case_open_5"].format(v0=total_price, v1=coins))
+        return
+
+    won = {}
+    for _ in range(count):
+        item_key = roll_case_item(case_num)
+        await add_item(user_id, item_key)
+        won[item_key] = won.get(item_key, 0) + 1
+
+    new_coins = coins - total_price
+    await db_exec(
+        "UPDATE users SET coins = coins - ?, cases_opened = cases_opened + ? WHERE user_id = ?",
+        (total_price, count, user_id),
+    )
+
+    loot_lines = "\n".join(f"● {ITEMS[k][0]} {esc(ITEMS[k][1])} × {qty}" for k, qty in won.items())
+    await safe_reply(
+        message,
+        TEXTS["vip_case_open_6"].format(v0=count, v1=esc(case["name"]), v2=total_price, v3=new_coins, v4=loot_lines),
+    )
+
+
 @dp.callback_query(F.data.startswith("buy_vip:"))
 async def buy_vip_invoice(callback: CallbackQuery):
     owner_id = int(callback.data.split(":")[1])
@@ -2121,6 +2221,7 @@ async def count_legs(message: Message):
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     ultra_rebirth = bool(row[21])
+    auto_evolve_enabled = bool(row[22])
     vip_active = is_vip_active(vip_until)
 
     flat_bonus = total_flat_bonus(active_items)
@@ -2162,6 +2263,10 @@ async def count_legs(message: Message):
 
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count, ultra_rebirth)
 
+    auto_evo_text = ""
+    if vip_active and auto_evolve_enabled:
+        evolution_level, new_score, auto_evo_text = await try_auto_evolve(user_id, new_score, evolution_level, rebirth_count)
+
     inv = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv}
     vase_text = await apply_vase_proc(user_id, inventory_map)
@@ -2187,12 +2292,12 @@ async def count_legs(message: Message):
         god_extra = f" +{bonus['rebirth']}🉑 +{bonus['evo']}эво" if (bonus["rebirth"] or bonus["evo"]) else ""
         await safe_reply(
             message,
-            TEXTS["count_legs_1"].format(v0=GOD_ESSENCE_FLAVOR, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text)
+            TEXTS["count_legs_1"].format(v0=GOD_ESSENCE_FLAVOR, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text + auto_evo_text)
         )
         return
 
     await message.reply(
-        TEXTS["count_legs_2"].format(v0=parts, v1=total, v2=coin_text, v3=new_score, v4=vase_text)
+        TEXTS["count_legs_2"].format(v0=parts, v1=total, v2=coin_text, v3=new_score, v4=vase_text + auto_evo_text)
     )
 
 
@@ -2440,6 +2545,7 @@ async def farm(message: Message):
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     ultra_rebirth = bool(row[21])
+    auto_evolve_enabled = bool(row[22])
     vip_active = is_vip_active(vip_until)
 
     inv_rows = await get_inventory(user_id)
@@ -2472,6 +2578,11 @@ async def farm(message: Message):
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map)
 
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count, ultra_rebirth)
+
+    auto_evo_text = ""
+    if vip_active and auto_evolve_enabled:
+        evolution_level, new_score, auto_evo_text = await try_auto_evolve(user_id, new_score, evolution_level, rebirth_count)
+
     auto_text = ""
     if auto_legs or auto_coins:
         bits = []
@@ -2487,12 +2598,12 @@ async def farm(message: Message):
         god_extra = f" +{bonus['rebirth']}🉑 +{bonus['evo']}эво" if (bonus["rebirth"] or bonus["evo"]) else ""
         await safe_reply(
             message,
-            TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=vase_text)
+            TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=vase_text + auto_evo_text)
         )
         return
 
     await message.reply(
-        TEXTS["farm_3"].format(v0=gained, v1=new_score, v2=coin_text, v3=auto_text, v4=vase_text)
+        TEXTS["farm_3"].format(v0=gained, v1=new_score, v2=coin_text, v3=auto_text, v4=vase_text + auto_evo_text)
     )
 
 
@@ -3378,6 +3489,34 @@ async def buy_case(callback: CallbackQuery):
         reply_markup=case_offer_keyboard(case_num, owner_id, price),
     )
     await callback.answer(TEXTS["buy_case_3"])
+
+
+async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirth_count: int) -> tuple[int, int, str]:
+    """VIP авто-эво: каскадно эволюционирует, пока очков хватает на след. эволюцию —
+    например, если фарм разом принёс очков на 2 эволюции вперёд, сработают обе.
+    Возвращает (итоговый evolution_level, итоговый score, текст для добавления к ответу)."""
+    evolutions_done = 0
+    unlock_text = ""
+    while True:
+        required = level_threshold(39, evolution_level, rebirth_count)
+        if score < required:
+            break
+        score = 0
+        evolution_level += 1
+        evolutions_done += 1
+        if evolution_level == 1:
+            unlock_text += f"\nОткрыта фарма {FARM_EVOLVED[0]}-{FARM_EVOLVED[1]} очков и эмодзи 🦿 ({MEK_POINT} очков, до {MEK_LIMIT} раз в соо)!"
+        elif evolution_level == 2:
+            await add_item(user_id, "star")
+            unlock_text += "\nПолучена ⭐️ Звезда перерождения — экипируй в инвентарь!"
+
+    if evolutions_done == 0:
+        return evolution_level, score, ""
+
+    await db_exec("UPDATE users SET score = ?, evolution_level = ? WHERE user_id = ?", (score, evolution_level, user_id))
+    times = f" ×{evolutions_done}" if evolutions_done > 1 else ""
+    text = f"\n\n⚙️💎 Авто-эволюция{times}! Теперь {evolution_level} уровень эволюции.{unlock_text}"
+    return evolution_level, score, text
 
 
 @dp.message(F.text.lower() == "эволюция")
