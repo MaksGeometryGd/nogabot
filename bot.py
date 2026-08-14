@@ -1669,8 +1669,8 @@ async def remove_item(user_id: int, item_key: str, qty: int = 1) -> bool:
 
 async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict) -> dict:
     """Считает все монетные пассивки (Странная монета, Тёплая свеча, Монета боготворства) одним
-    общим числом монет + гарант Эссенции Бога (монеты/очки перерождения/эволюция). Один UPDATE.
-    Возвращает {'coins': N, 'rebirth': N, 'evo': N, 'is_god': bool}."""
+    общим числом монет + бонус Эссенции Бога (монеты гарант, очки перерождения — 30% шанс). Один UPDATE.
+    Возвращает {'coins': N, 'rebirth': N, 'evo': 0 (не используется), 'is_god': bool}."""
     coin_bonus = 0
     if inventory_map.get("strange_coin", 0) > 0:
         coin_bonus += 1
@@ -1682,42 +1682,43 @@ async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict) ->
             coin_bonus += 20
 
     rebirth_bonus = 0
-    evo_bonus = 0
     is_god = get_active_unique_tier(active_items) == "god_essence"
     if is_god:
-        coin_bonus += random.randint(1, 200)
-        rebirth_bonus += random.randint(1, 5)
-        evo_bonus += 1
+        coin_bonus += random.randint(1, 50)
+        if random.random() < 0.30:
+            rebirth_bonus += random.randint(1, 3)
 
-    if coin_bonus or rebirth_bonus or evo_bonus:
+    if coin_bonus or rebirth_bonus:
         await db_exec(
-            "UPDATE users SET coins = coins + ?, rebirth_points = rebirth_points + ?, evolution_level = evolution_level + ? "
+            "UPDATE users SET coins = coins + ?, rebirth_points = rebirth_points + ? "
             "WHERE user_id = ?",
-            (coin_bonus, rebirth_bonus, evo_bonus, user_id),
+            (coin_bonus, rebirth_bonus, user_id),
         )
-    return {"coins": coin_bonus, "rebirth": rebirth_bonus, "evo": evo_bonus, "is_god": is_god}
+    return {"coins": coin_bonus, "rebirth": rebirth_bonus, "evo": 0, "is_god": is_god}
 
 
 async def apply_vase_proc(user_id: int, inventory_map: dict) -> str:
     """Проки пассивных ваз при фарме ног. Срабатывает только самая сильная имеющаяся ваза."""
     if inventory_map.get("godly_vase", 0) > 0:
         roll = random.random()
-        if roll < 0.01:
-            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 5, evolution_level = evolution_level + 5 WHERE user_id = ?", (user_id,))
-            return "\n🏺 Боготворная ваза взорвалась удачей: +5🉑 +5 эволюций!"
-        if roll < 0.06:
-            await db_exec("UPDATE users SET evolution_level = evolution_level + 1 WHERE user_id = ?", (user_id,))
-            return "\n🏺 Боготворная ваза: +1 эволюция!"
-        if roll < 0.16:
+        if roll < 0.001:
+            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 200 WHERE user_id = ?", (user_id,))
+            return "\n🏺✨ Боготворная ваза: СУПЕР УДАЧА! +200🉑!"
+        if roll < 0.011:
+            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 10 WHERE user_id = ?", (user_id,))
+            return "\n🏺 Боготворная ваза: +10🉑!"
+        if roll < 0.061:
+            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 5 WHERE user_id = ?", (user_id,))
+            return "\n🏺 Боготворная ваза: +5🉑!"
+        if roll < 0.161:
+            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 3 WHERE user_id = ?", (user_id,))
+            return "\n🏺 Боготворная ваза: +3🉑!"
+        if roll < 0.561:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
             return "\n🏺 Боготворная ваза: +1🉑!"
         return ""
     if inventory_map.get("golden_vase", 0) > 0:
-        roll = random.random()
-        if roll < 0.01:
-            await db_exec("UPDATE users SET evolution_level = evolution_level + 1 WHERE user_id = ?", (user_id,))
-            return "\n🏺 Золотая ваза: +1 эволюция!"
-        if roll < 0.06:
+        if random.random() < 0.06:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
             return "\n🏺 Золотая ваза: +1🉑!"
         return ""
@@ -2289,7 +2290,7 @@ async def count_legs(message: Message):
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
 
     if bonus["is_god"]:
-        god_extra = f" +{bonus['rebirth']}🉑 +{bonus['evo']}эво" if (bonus["rebirth"] or bonus["evo"]) else ""
+        god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
             TEXTS["count_legs_1"].format(v0=GOD_ESSENCE_FLAVOR, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text + auto_evo_text)
@@ -2595,7 +2596,7 @@ async def farm(message: Message):
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
 
     if bonus["is_god"]:
-        god_extra = f" +{bonus['rebirth']}🉑 +{bonus['evo']}эво" if (bonus["rebirth"] or bonus["evo"]) else ""
+        god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
             TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=vase_text + auto_evo_text)
