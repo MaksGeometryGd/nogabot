@@ -3,6 +3,7 @@ import os
 import random
 import re
 import time
+from datetime import datetime
 
 import libsql
 import aiohttp
@@ -38,7 +39,7 @@ PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="5330393755407111028">📿</tg-emoji>
 PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">📿</tg-emoji>'
 PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5778352775591103997">📿</tg-emoji>'
 PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="5233239138450312962">📿</tg-emoji>'
-PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">📿</tg-emoji>'
+PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">📿🥀</tg-emoji>'
 
 # заглушки — замени на реальные emoji-id, когда достанешь (см. инструкцию про custom_emoji_id)
 PREMIUM_OWNER_BADGE = '<tg-emoji emoji-id="5204056085509477484">💠</tg-emoji>'
@@ -53,20 +54,20 @@ PREMIUM_STRANGE_COIN = '<tg-emoji emoji-id="5035428694441592026">🪙</tg-emoji>
 # (Bad Request), из-за чего падал показ ЛЮБЫХ премиум-иконок в этом же сообщении —
 # в том числе валидных (кейс, вип и т.д.). Когда появятся настоящие emoji-id, верни
 # обёртку '<tg-emoji emoji-id="...">...</tg-emoji>' по аналогии с PREMIUM_MK_* выше.
-PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">💪</tg-emoji>'
-PREMIUM_GALAXY_POWER_AMULET = '<tg-emoji emoji-id="5451648825431175858">🌌</tg-emoji>'
-PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌌</tg-emoji>'
+PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">📿💪</tg-emoji>'
+PREMIUM_GALAXY_POWER_AMULET = '<tg-emoji emoji-id="5451648825431175858">🌌✨</tg-emoji>'
+PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌌💥</tg-emoji>'
 PREMIUM_HYBRID_AMULET = '<tg-emoji emoji-id="5204242195032336769">🧬</tg-emoji>'
-PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🔅</tg-emoji>'
+PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🤝🔅</tg-emoji>'
 PREMIUM_TIME_PARTICLE = '<tg-emoji emoji-id="5985570245950053733">⏳</tg-emoji>'
-PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5046631025711515524">👑</tg-emoji>'
-PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">⚛️</tg-emoji>'
+PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5364047860713143546">🌌🧿</tg-emoji>'
+PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">🪙⚛️</tg-emoji>'
 PREMIUM_OLD_VASE = '<tg-emoji emoji-id="6334461494649948210">🏺</tg-emoji>'
 PREMIUM_GOLDEN_VASE = '<tg-emoji emoji-id="5954115825324527429">⚱️</tg-emoji>'
-PREMIUM_GODLY_VASE = '<tg-emoji emoji-id="5283163228413641567">⚱️</tg-emoji>'
-PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀</tg-emoji>'
-PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">💊</tg-emoji>'
-PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎁</tg-emoji>'
+PREMIUM_GODLY_VASE = '<tg-emoji emoji-id="5283163228413641567">⚱️🌌</tg-emoji>'
+PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀📿</tg-emoji>'
+PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">💊☢️</tg-emoji>'
+PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎁✨</tg-emoji>'
 PREMIUM_WARM_CANDLE = '<tg-emoji emoji-id="5253717838870363235">🕯</tg-emoji>'
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
@@ -170,7 +171,7 @@ TEXTS = {
     "vip_info_command_2": '💎 VIP даёт постоянный буст +{v0}% к добыче.\nМожно купить прямо в боте за {v1} звёзд Telegram — выдаётся навсегда.',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры и предметы\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> — временный ивент\n● !рестарт — перезапуск бота',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры и предметы\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -384,6 +385,70 @@ TEXTS = {
     "admin_event_custom_1": 'Формат: !ивент х<множитель> <минуты>, например: !ивент х3 30',
     "admin_event_custom_2": 'Множитель и время должны быть положительными числами.',
     "admin_event_custom_3": '🌟 Ивент запущен! Множитель х{v0} на {v1} мин. (для всех чатов).',
+
+    "admin_set_rebirth_1": 'Формат: !установить очкп <число> [себе] (в ответ на сообщение игрока)',
+    "admin_set_rebirth_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_set_rebirth_3": 'Некорректное число.',
+    "admin_set_rebirth_4": 'Игроку {v0} установлено очков перерождения: {v1} (было {v2}).',
+
+    "admin_wipe_economy_1": 'Формат: !обнулить экономику @username',
+    "admin_wipe_economy_2": 'Игрок не найден (он ещё не писал ноги в этом боте).',
+    "admin_wipe_economy_3": 'Экономика игрока {v0} обнулена: очки, монеты и 🉑 сброшены в 0. Инвентарь и апгрейды не тронуты.',
+
+    "admin_personal_boost_1": 'Формат: !мультипликатор ферма <число> <минуты> [себе] (в ответ на сообщение игрока)',
+    "admin_personal_boost_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_personal_boost_3": 'Множитель и время должны быть положительными числами.',
+    "admin_personal_boost_4": '🚀 Игроку {v0} выдан личный буст фермы х{v1} на {v2} мин.',
+
+    "admin_give_item_1": 'Формат: !дать предмет <ключ> <кол-во> [себе] (в ответ на сообщение игрока)',
+    "admin_give_item_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_item_3": 'Нет предмета с таким ключом.',
+    "admin_give_item_4": 'Количество должно быть от 1 до 1000.',
+    "admin_give_item_5": 'Игроку {v0} выдано: {v1} {v2} × {v3}.',
+
+    "admin_clear_inventory_1": 'Формат: !очистить инвентарь @username',
+    "admin_clear_inventory_2": 'Игрок не найден (он ещё не писал ноги в этом боте).',
+    "admin_clear_inventory_3": 'Инвентарь игрока {v0} полностью очищен.',
+
+    "admin_set_upgrade_1": 'Формат: !дать апгрейд <ключ> <уровень> [себе] (в ответ на сообщение игрока)',
+    "admin_set_upgrade_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_set_upgrade_3": 'Нет апгрейда с таким ключом.',
+    "admin_set_upgrade_4": 'Уровень должен быть от 0 до {v0}.',
+    "admin_set_upgrade_5": 'Игроку {v0} установлен апгрейд «{v1}»: уровень {v2}.',
+
+    "admin_vip_forever_1": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_vip_forever_2": '👑 Игроку {v0} выдан VIP навсегда.',
+
+    "admin_reset_nick_1": 'Формат: !сброс ник @username',
+    "admin_reset_nick_2": 'Игрок не найден (он ещё не писал ноги в этом боте).',
+    "admin_reset_nick_3": 'У игрока не было установлено ника.',
+    "admin_reset_nick_4": 'Ник игрока {v0} сброшен (был: {v1}).',
+
+    "admin_list_vip_1": 'Сейчас нет игроков с активным VIP.',
+    "admin_list_vip_2": '👑 <b>Активный VIP ({v0}):</b>\n{v1}',
+
+    "admin_list_top_banned_1": 'Сейчас никто не забанен из топов.',
+    "admin_list_top_banned_2": '🚫 <b>Забанены из топов ({v0}):</b>\n{v1}',
+
+    "admin_list_nicknames_1": 'Сейчас ни у кого не установлен ник.',
+    "admin_list_nicknames_2": '📛 <b>Установленные ники ({v0}):</b>\n{v1}',
+
+    "admin_find_1": 'Формат: !найти @username',
+    "admin_find_2": 'Игрок не найден (он ещё не писал ноги в этом боте).',
+    "admin_find_3": '🔎 {v0} — бот видел его в {v1} чате(ах):\n{v2}',
+    "admin_find_4": 'Бот не встречал этого игрока ни в одном чате.',
+
+    "admin_logs_1": 'Лог пуст.',
+    "admin_logs_2": '📜 <b>Последние действия ({v0}):</b>\n{v1}',
+
+    "admin_ping_1": '🏓 Понг! Ответ БД за {v0} мс.',
+
+    "admin_event_stop_1": 'Ивент остановлен.',
+    "admin_event_stop_2": 'Ивент и так не активен.',
+
+    "admin_event_status_1": '🌟 Ивент активен. Множитель х{v0}. Осталось: {v1}',
+    "admin_event_status_2": 'Ивент сейчас не активен.',
+    "admin_event_status_forever": 'без ограничения по времени',
 }
 
 
@@ -742,6 +807,16 @@ ADMIN_SHOW_TEXT_RE = re.compile(r"^!текст\s+(\S+)$", re.IGNORECASE)
 ADMIN_SIMULATE_EVO_RE = re.compile(r"^!симулировать эволюция\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_EVENT_CUSTOM_RE = re.compile(r"^!ивент\s+х(\d+(?:\.\d+)?)\s+(\d+)$", re.IGNORECASE)
 
+ADMIN_SET_REBIRTH_RE = re.compile(rf"^!установить очкп {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_WIPE_ECONOMY_RE = re.compile(r"^!обнулить экономику\s+@?(\w+)$", re.IGNORECASE)
+ADMIN_PERSONAL_BOOST_RE = re.compile(r"^!мультипликатор ферма\s+(\d+(?:\.\d+)?)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
+ADMIN_GIVE_ITEM_RE = re.compile(r"^!дать предмет\s+(\S+)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
+ADMIN_CLEAR_INVENTORY_RE = re.compile(r"^!очистить инвентарь\s+@?(\w+)$", re.IGNORECASE)
+ADMIN_SET_UPGRADE_RE = re.compile(r"^!дать апгрейд\s+(\S+)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
+ADMIN_VIP_FOREVER_RE = re.compile(r"^!вип навсегда(\s+себе)?$", re.IGNORECASE)
+ADMIN_RESET_NICK_RE = re.compile(r"^!сброс ник\s+@?(\w+)$", re.IGNORECASE)
+ADMIN_FIND_RE = re.compile(r"^!найти\s+@?(\w+)$", re.IGNORECASE)
+
 NEWS_PREFIX = "!новость "
 
 FIXED_COMMANDS = {
@@ -751,6 +826,7 @@ FIXED_COMMANDS = {
     "перерождение", "апгрейд", "прокачка", "апг", "баланс", "топ очкп", "гл топ очкп", "помощь",
     "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ", "крафты", "крафт",
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
+    "!список вип", "!список банов топ", "!список ников", "!логи", "!пинг", "!ивент стоп", "!ивент статус",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
@@ -759,6 +835,8 @@ PREFIX_COMMANDS = (
     "!дать очкп", "!снять очкп", "открыть кейс", "осмотреть кейс", "осмотр кейс", "крафты ", "крафт ", "уничтожение",
     "+ник ", "!бан топ", "!разбан топ", "!установить ног", "!установить эво",
     "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
+    "!установить очкп", "!обнулить экономику", "!мультипликатор ферма", "!дать предмет",
+    "!очистить инвентарь", "!дать апгрейд", "!вип навсегда", "!сброс ник", "!найти ",
 )
 
 
@@ -1438,6 +1516,21 @@ async def init_db():
             value TEXT
         )
     """)
+    await db_exec("""
+        CREATE TABLE IF NOT EXISTS personal_boosts (
+            user_id INTEGER PRIMARY KEY,
+            multiplier REAL DEFAULT 1,
+            until INTEGER DEFAULT 0
+        )
+    """)
+    await db_exec("""
+        CREATE TABLE IF NOT EXISTS audit_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ts INTEGER,
+            admin_username TEXT,
+            command TEXT
+        )
+    """)
     for stmt in (
         "ALTER TABLE users ADD COLUMN levelup_notify INTEGER DEFAULT 1",
         "ALTER TABLE users ADD COLUMN vip_until INTEGER DEFAULT 0",
@@ -1584,6 +1677,26 @@ async def get_event_state():
 async def get_event_multiplier() -> float:
     active, mult = await get_event_state()
     return mult if active else 1.0
+
+
+async def get_personal_multiplier(user_id: int) -> float:
+    """Личный временный буст фермы игроку (!мультипликатор ферма), с автоистечением."""
+    row = await db_query_one("SELECT multiplier, until FROM personal_boosts WHERE user_id = ?", (user_id,))
+    if not row:
+        return 1.0
+    multiplier, until = row
+    if until and int(time.time()) > until:
+        await db_exec("DELETE FROM personal_boosts WHERE user_id = ?", (user_id,))
+        return 1.0
+    return float(multiplier)
+
+
+async def log_admin_action(message: Message):
+    admin_username = message.from_user.username or str(message.from_user.id)
+    await db_exec(
+        "INSERT INTO audit_log (ts, admin_username, command) VALUES (?, ?, ?)",
+        (int(time.time()), admin_username, message.text.strip()[:200]),
+    )
 
 
 async def track_membership(user_id: int, chat_id: int):
@@ -1969,7 +2082,8 @@ async def count_legs(message: Message):
 
     mult = get_multiplier(evolution_level, active_items, vip_active, upgrades)
     event_mult = await get_event_multiplier()
-    total = round(gained * mult * event_mult)
+    personal_mult = await get_personal_multiplier(user_id)
+    total = round(gained * mult * event_mult * personal_mult)
     if galaxy:
         total = round(total * (1 + 0.20 * galaxy))   # 🌌: +20% к итогу за каждую штуку
     if star:
@@ -2272,7 +2386,8 @@ async def farm(message: Message):
     low, high = farm_range(evolution_level)
     mult = get_multiplier(evolution_level, active_items, vip_active, upgrades)
     event_mult = await get_event_multiplier()
-    gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult)
+    personal_mult = await get_personal_multiplier(user_id)
+    gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult * personal_mult)
     new_score = score + gained
 
     await db_exec(
@@ -3135,6 +3250,7 @@ async def evolve(message: Message):
 async def toggle_event(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
 
     active = await is_event_active()
     new_value = "0" if active else "1"
@@ -3326,6 +3442,7 @@ async def show_balance(message: Message):
 async def admin_give_rebirth(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_GIVE_REBIRTH_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_give_rebirth_1"])
@@ -3352,6 +3469,7 @@ async def admin_give_rebirth(message: Message):
 async def admin_take_rebirth(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_TAKE_REBIRTH_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_take_rebirth_1"])
@@ -3378,6 +3496,7 @@ async def admin_take_rebirth(message: Message):
 async def broadcast_news(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     if message.chat.type != "private":
         return
 
@@ -3413,6 +3532,7 @@ async def broadcast_news(message: Message):
 async def admin_give_legs(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_GIVE_LEGS_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_give_legs_1"])
@@ -3441,6 +3561,7 @@ async def admin_give_legs(message: Message):
 async def admin_take_legs(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_TAKE_LEGS_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_take_legs_1"])
@@ -3468,6 +3589,7 @@ async def admin_take_legs(message: Message):
 async def admin_give_evo(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_GIVE_EVO_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_give_evo_1"])
@@ -3495,6 +3617,7 @@ async def admin_give_evo(message: Message):
 async def admin_take_evo(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_TAKE_EVO_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_take_evo_1"])
@@ -3522,6 +3645,7 @@ async def admin_take_evo(message: Message):
 async def admin_give_coin(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_GIVE_COIN_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_give_coin_1"])
@@ -3549,6 +3673,7 @@ async def admin_give_coin(message: Message):
 async def admin_take_coin(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_TAKE_COIN_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_take_coin_1"])
@@ -3576,6 +3701,7 @@ async def admin_take_coin(message: Message):
 async def admin_give_boost(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_GIVE_BOOST_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_give_boost_1"])
@@ -3603,6 +3729,7 @@ async def admin_give_boost(message: Message):
 async def admin_take_boost(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_TAKE_BOOST_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_take_boost_1"])
@@ -3633,6 +3760,7 @@ async def admin_take_boost(message: Message):
 async def admin_give_passive(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_GIVE_ITEM_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_give_passive_1"])
@@ -3660,6 +3788,7 @@ async def admin_give_passive(message: Message):
 async def admin_take_passive(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_TAKE_ITEM_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_take_passive_1"])
@@ -3690,6 +3819,7 @@ async def admin_take_passive(message: Message):
 async def admin_give_vip(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_GIVE_VIP_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_give_vip_1"])
@@ -3723,6 +3853,7 @@ async def admin_give_vip(message: Message):
 async def admin_take_vip(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_TAKE_VIP_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_take_vip_1"])
@@ -3744,6 +3875,7 @@ async def admin_take_vip(message: Message):
 async def admin_reset(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_RESET_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_reset_1"])
@@ -3772,6 +3904,7 @@ async def admin_reset(message: Message):
 async def admin_ban_top(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_BAN_TOP_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_ban_top_1"])
@@ -3793,6 +3926,7 @@ async def admin_ban_top(message: Message):
 async def admin_unban_top(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_UNBAN_TOP_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_unban_top_1"])
@@ -3814,6 +3948,7 @@ async def admin_unban_top(message: Message):
 async def admin_set_legs(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_SET_LEGS_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_set_legs_1"])
@@ -3842,6 +3977,7 @@ async def admin_set_legs(message: Message):
 async def admin_set_evo(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_SET_EVO_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_set_evo_1"])
@@ -3869,6 +4005,7 @@ async def admin_set_evo(message: Message):
 async def admin_reset_cd(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_RESET_CD_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_reset_cd_1"])
@@ -3890,6 +4027,7 @@ async def admin_reset_cd(message: Message):
 async def admin_reset_bonus(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_RESET_BONUS_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_reset_bonus_1"])
@@ -3911,6 +4049,7 @@ async def admin_reset_bonus(message: Message):
 async def admin_give_case(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_GIVE_CASE_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_give_case_1"])
@@ -3952,6 +4091,7 @@ async def admin_give_case(message: Message):
 async def admin_debug(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_DEBUG_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_debug_1"])
@@ -3971,6 +4111,7 @@ async def admin_debug(message: Message):
 async def admin_show_text(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_SHOW_TEXT_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_show_text_1"])
@@ -3988,6 +4129,7 @@ async def admin_show_text(message: Message):
 async def admin_simulate_evolution(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_SIMULATE_EVO_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_simulate_evo_1"])
@@ -4012,6 +4154,7 @@ async def admin_simulate_evolution(message: Message):
 async def admin_stats(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
 
     row = await db_query_one(
         "SELECT COUNT(*), COALESCE(SUM(score),0), COALESCE(SUM(coins),0), COALESCE(SUM(rebirth_points),0), "
@@ -4033,6 +4176,7 @@ async def admin_stats(message: Message):
 async def admin_restart(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     await message.reply(TEXTS["admin_restart_1"])
     await bot.session.close()
     os._exit(0)
@@ -4042,6 +4186,7 @@ async def admin_restart(message: Message):
 async def admin_event_custom(message: Message):
     if not is_admin(message):
         return
+    await log_admin_action(message)
     match = ADMIN_EVENT_CUSTOM_RE.match(message.text.strip())
     if not match:
         await message.reply(TEXTS["admin_event_custom_1"])
@@ -4061,6 +4206,378 @@ async def admin_event_custom(message: Message):
         )
 
     await message.reply(TEXTS["admin_event_custom_3"].format(v0=mult, v1=minutes))
+
+
+@dp.message(F.text.lower().startswith("!установить очкп"))
+async def admin_set_rebirth(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_SET_REBIRTH_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_set_rebirth_1"])
+        return
+
+    target = await resolve_target(message, bool(match.group(2)))
+    if not target:
+        await message.reply(TEXTS["admin_set_rebirth_2"])
+        return
+
+    amount = parse_amount(match.group(1))
+    if amount is None or amount < 0:
+        await message.reply(TEXTS["admin_set_rebirth_3"])
+        return
+    target_username = target.username or target.first_name or "Без имени"
+
+    row = await ensure_user(target.id, target_username)
+    old_rp = row[14]
+    await db_exec("UPDATE users SET rebirth_points = ? WHERE user_id = ?", (amount, target.id))
+
+    await message.reply(TEXTS["admin_set_rebirth_4"].format(v0=esc(target_username), v1=amount, v2=old_rp))
+
+
+@dp.message(F.text.regexp(r"(?i)^!обнулить экономику\s+"))
+async def admin_wipe_economy(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_WIPE_ECONOMY_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_wipe_economy_1"])
+        return
+
+    row = await get_user_by_username(match.group(1))
+    if not row:
+        await message.reply(TEXTS["admin_wipe_economy_2"])
+        return
+
+    await db_exec(
+        "UPDATE users SET score = 0, coins = 0, rebirth_points = 0 WHERE user_id = ?",
+        (row[0],),
+    )
+    await message.reply(TEXTS["admin_wipe_economy_3"].format(v0=esc(row[1])))
+
+
+@dp.message(F.text.regexp(r"(?i)^!мультипликатор ферма\s+"))
+async def admin_personal_boost(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_PERSONAL_BOOST_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_personal_boost_1"])
+        return
+
+    target = await resolve_target(message, bool(match.group(3)))
+    if not target:
+        await message.reply(TEXTS["admin_personal_boost_2"])
+        return
+
+    mult = float(match.group(1))
+    minutes = int(match.group(2))
+    if mult <= 0 or minutes <= 0:
+        await message.reply(TEXTS["admin_personal_boost_3"])
+        return
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+
+    until = int(time.time()) + minutes * 60
+    await db_exec(
+        "INSERT INTO personal_boosts (user_id, multiplier, until) VALUES (?, ?, ?) "
+        "ON CONFLICT(user_id) DO UPDATE SET multiplier = excluded.multiplier, until = excluded.until",
+        (target.id, mult, until),
+    )
+
+    await message.reply(TEXTS["admin_personal_boost_4"].format(v0=esc(target_username), v1=mult, v2=minutes))
+
+
+@dp.message(F.text.regexp(r"(?i)^!дать предмет\s+"))
+async def admin_give_item(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_GIVE_ITEM_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_give_item_1"])
+        return
+
+    item_key = match.group(1)
+    count = int(match.group(2))
+    if item_key not in ITEMS:
+        await message.reply(TEXTS["admin_give_item_3"])
+        return
+    if count < 1 or count > 1000:
+        await message.reply(TEXTS["admin_give_item_4"])
+        return
+
+    target = await resolve_target(message, bool(match.group(3)))
+    if not target:
+        await message.reply(TEXTS["admin_give_item_2"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+    await add_item(target.id, item_key, count)
+
+    emoji, name, _, _ = ITEMS[item_key]
+    await message.reply(TEXTS["admin_give_item_5"].format(v0=esc(target_username), v1=emoji, v2=esc(name), v3=count))
+
+
+@dp.message(F.text.regexp(r"(?i)^!очистить инвентарь\s+"))
+async def admin_clear_inventory(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_CLEAR_INVENTORY_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_clear_inventory_1"])
+        return
+
+    row = await get_user_by_username(match.group(1))
+    if not row:
+        await message.reply(TEXTS["admin_clear_inventory_2"])
+        return
+
+    await db_exec("DELETE FROM inventory WHERE user_id = ?", (row[0],))
+    await db_exec("UPDATE users SET equipped_items = '' WHERE user_id = ?", (row[0],))
+    await message.reply(TEXTS["admin_clear_inventory_3"].format(v0=esc(row[1])))
+
+
+@dp.message(F.text.regexp(r"(?i)^!дать апгрейд\s+"))
+async def admin_set_upgrade(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_SET_UPGRADE_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_set_upgrade_1"])
+        return
+
+    upgrade_key = match.group(1)
+    level = int(match.group(2))
+    if upgrade_key not in UPGRADES:
+        await message.reply(TEXTS["admin_set_upgrade_3"])
+        return
+    max_level = UPGRADES[upgrade_key]["max_level"]
+    if level < 0 or level > max_level:
+        await message.reply(TEXTS["admin_set_upgrade_4"].format(v0=max_level))
+        return
+
+    target = await resolve_target(message, bool(match.group(3)))
+    if not target:
+        await message.reply(TEXTS["admin_set_upgrade_2"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    row = await ensure_user(target.id, target_username)
+    upgrades = parse_upgrades(row[16])
+    if level > 0:
+        upgrades[upgrade_key] = level
+    else:
+        upgrades.pop(upgrade_key, None)
+    await db_exec("UPDATE users SET upgrades = ? WHERE user_id = ?", (format_upgrades(upgrades), target.id))
+
+    await message.reply(
+        TEXTS["admin_set_upgrade_5"].format(v0=esc(target_username), v1=esc(UPGRADES[upgrade_key]["name"]), v2=level)
+    )
+
+
+@dp.message(F.text.lower().startswith("!вип навсегда"))
+async def admin_vip_forever(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_VIP_FOREVER_RE.match(message.text.strip())
+    target = await resolve_target(message, bool(match.group(1))) if match else None
+    if not target:
+        await message.reply(TEXTS["admin_vip_forever_1"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    row = await ensure_user(target.id, target_username)
+    new_vip_until = int(time.time()) + VIP_FOREVER_SECONDS
+    await db_exec("UPDATE users SET vip_until = ? WHERE user_id = ?", (new_vip_until, target.id))
+    if not is_vip_active(row[12]):
+        await add_item(target.id, "vip_charm")
+
+    await message.reply(TEXTS["admin_vip_forever_2"].format(v0=esc(target_username)))
+
+
+@dp.message(F.text.regexp(r"(?i)^!сброс ник\s+"))
+async def admin_reset_nick(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_RESET_NICK_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_reset_nick_1"])
+        return
+
+    row = await get_user_by_username(match.group(1))
+    if not row:
+        await message.reply(TEXTS["admin_reset_nick_2"])
+        return
+
+    old_nick = row[19] if len(row) > 19 else None
+    if not old_nick:
+        await message.reply(TEXTS["admin_reset_nick_3"])
+        return
+
+    await db_exec("UPDATE users SET nickname = NULL WHERE user_id = ?", (row[0],))
+    await message.reply(TEXTS["admin_reset_nick_4"].format(v0=esc(row[1]), v1=esc(old_nick)))
+
+
+@dp.message(F.text.lower() == "!список вип")
+async def admin_list_vip(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    now = int(time.time())
+    rows = await db_query(
+        "SELECT username, nickname, vip_until FROM users WHERE vip_until > ? ORDER BY vip_until DESC LIMIT 30",
+        (now,),
+    )
+    if not rows:
+        await message.reply(TEXTS["admin_list_vip_1"])
+        return
+
+    lines = []
+    for username, nickname, vip_until in rows:
+        left = vip_until - now
+        if left > 50 * 365 * 86400:
+            left_text = "навсегда"
+        else:
+            days = left // 86400
+            left_text = f"{days} дн."
+        lines.append(f"● {esc(display_name(username, nickname))} — {left_text}")
+
+    await message.reply(TEXTS["admin_list_vip_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+
+@dp.message(F.text.lower() == "!список банов топ")
+async def admin_list_top_banned(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    rows = await db_query("SELECT username, nickname FROM users WHERE top_banned = 1 LIMIT 50")
+    if not rows:
+        await message.reply(TEXTS["admin_list_top_banned_1"])
+        return
+
+    lines = [f"● {esc(display_name(username, nickname))}" for username, nickname in rows]
+    await message.reply(TEXTS["admin_list_top_banned_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+
+@dp.message(F.text.lower() == "!список ников")
+async def admin_list_nicknames(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    rows = await db_query(
+        "SELECT username, nickname FROM users WHERE nickname IS NOT NULL AND nickname != '' LIMIT 50"
+    )
+    if not rows:
+        await message.reply(TEXTS["admin_list_nicknames_1"])
+        return
+
+    lines = [f"● {esc(nickname)} (@{esc(username)})" for username, nickname in rows]
+    await message.reply(TEXTS["admin_list_nicknames_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+
+@dp.message(F.text.regexp(r"(?i)^!найти\s+"))
+async def admin_find(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_FIND_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_find_1"])
+        return
+
+    row = await get_user_by_username(match.group(1))
+    if not row:
+        await message.reply(TEXTS["admin_find_2"])
+        return
+
+    chat_rows = await db_query("SELECT chat_id FROM chat_members WHERE user_id = ? LIMIT 20", (row[0],))
+    if not chat_rows:
+        await message.reply(TEXTS["admin_find_4"])
+        return
+
+    lines = []
+    for (chat_id,) in chat_rows:
+        try:
+            chat = await bot.get_chat(chat_id)
+            title = chat.title or chat.full_name or str(chat_id)
+        except Exception:
+            title = f"chat_id {chat_id} (недоступен)"
+        lines.append(f"● {esc(title)}")
+
+    await message.reply(TEXTS["admin_find_3"].format(v0=esc(row[1]), v1=len(chat_rows), v2="\n".join(lines)))
+
+
+@dp.message(F.text.lower() == "!логи")
+async def admin_logs(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    rows = await db_query("SELECT ts, admin_username, command FROM audit_log ORDER BY id DESC LIMIT 20")
+    if not rows:
+        await message.reply(TEXTS["admin_logs_1"])
+        return
+
+    lines = []
+    for ts, admin_username, command in rows:
+        dt = datetime.fromtimestamp(ts).strftime("%d.%m %H:%M")
+        lines.append(f"● [{dt}] @{esc(admin_username)}: {esc(command)}")
+
+    await message.reply(TEXTS["admin_logs_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+
+@dp.message(F.text.lower() == "!пинг")
+async def admin_ping(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    start = time.monotonic()
+    await db_query_one("SELECT 1")
+    elapsed_ms = round((time.monotonic() - start) * 1000)
+    await message.reply(TEXTS["admin_ping_1"].format(v0=elapsed_ms))
+
+
+@dp.message(F.text.lower() == "!ивент стоп")
+async def admin_event_stop(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    active = await is_event_active()
+    await db_exec(
+        "INSERT INTO settings (key, value) VALUES ('event_active', '0') "
+        "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+    )
+    await message.reply(TEXTS["admin_event_stop_1"] if active else TEXTS["admin_event_stop_2"])
+
+
+@dp.message(F.text.lower() == "!ивент статус")
+async def admin_event_status(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    active, mult = await get_event_state()
+    if not active:
+        await message.reply(TEXTS["admin_event_status_2"])
+        return
+
+    row = await db_query_one("SELECT value FROM settings WHERE key = 'event_until'")
+    until = int(row[0]) if row and row[0] else 0
+    if until:
+        left = max(0, until - int(time.time()))
+        m, s = divmod(left, 60)
+        left_text = f"{m} мин. {s} сек."
+    else:
+        left_text = TEXTS["admin_event_status_forever"]
+
+    await message.reply(TEXTS["admin_event_status_1"].format(v0=mult, v1=left_text))
 
 
 async def handle(request):
