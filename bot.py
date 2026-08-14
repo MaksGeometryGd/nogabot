@@ -2799,25 +2799,55 @@ def format_inventory_menu_text(active_items, upgrades: dict = None):
     return f"🎒 <b>Твой инвентарь</b>\n{equipped_text}\n\nВыбери раздел:"
 
 
+INV_PAGE_SIZE = 5  # кнопок на вкладку — меняй тут, всё остальное посчитается само
+
+
 def inventory_menu_keyboard(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="🧪 Бустеры", callback_data=f"inv_cat:{user_id}:boosters")],
-        [InlineKeyboardButton(text="📦 Предметы", callback_data=f"inv_cat:{user_id}:items")],
+        [InlineKeyboardButton(text="🧪 Бустеры", callback_data=f"inv_cat:{user_id}:boosters:0")],
+        [InlineKeyboardButton(text="📦 Предметы", callback_data=f"inv_cat:{user_id}:items:0")],
     ])
 
 
-def boosters_keyboard(rows, active_items, user_id: int) -> InlineKeyboardMarkup:
+def _paginate(items: list, page: int, page_size: int = INV_PAGE_SIZE):
+    """Возвращает (нарезка_страницы, страница_в_границах, всего_страниц)."""
+    total_pages = max(1, (len(items) + page_size - 1) // page_size)
+    page = max(0, min(page, total_pages - 1))
+    start = page * page_size
+    return items[start:start + page_size], page, total_pages
+
+
+def _pagination_row(callback_prefix: str, user_id: int, page: int, total_pages: int, extra: str = "") -> list:
+    """Строка навигации ◀️ n/N ▶️. extra — доп. часть callback_data (например поисковый запрос)."""
+    if total_pages <= 1:
+        return []
+    suffix = f":{extra}" if extra else ""
+    nav = []
+    if page > 0:
+        nav.append(InlineKeyboardButton(text="◀️", callback_data=f"{callback_prefix}:{user_id}:{page - 1}{suffix}"))
+    nav.append(InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="noop"))
+    if page < total_pages - 1:
+        nav.append(InlineKeyboardButton(text="▶️", callback_data=f"{callback_prefix}:{user_id}:{page + 1}{suffix}"))
+    return nav
+
+
+def boosters_keyboard(rows, active_items, user_id: int, page: int = 0) -> InlineKeyboardMarkup:
     equipped = set(_normalize_active_items(active_items))
+    boosters = [(k, q) for k, q in rows if k not in PASSIVE_ITEMS]
+    page_items, page, total_pages = _paginate(boosters, page)
+
     kb_rows = []
-    for item_key, qty in rows:
-        if item_key in PASSIVE_ITEMS:
-            continue
+    for item_key, qty in page_items:
         emoji, name, percent, _ = ITEMS[item_key]
         mark = " ✅" if item_key in equipped else ""
         kb_rows.append([InlineKeyboardButton(
             text=f"{name} {plain_emoji(emoji)} (+{percent}%) x{qty}{mark}",
-            callback_data=f"equip:{user_id}:{item_key}",
+            callback_data=f"equip:{user_id}:{item_key}:{page}",
         )])
+
+    nav_row = _pagination_row("inv_boost_page", user_id, page, total_pages)
+    if nav_row:
+        kb_rows.append(nav_row)
     kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
     return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
@@ -2826,11 +2856,13 @@ def items_keyboard(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")]])
 
 
-def format_boosters_text(rows, max_slots: int = 1):
+def format_boosters_text(rows, max_slots: int = 1, page: int = 0):
     boosters = [(k, q) for k, q in rows if k not in PASSIVE_ITEMS]
     if not boosters:
         return f"🧪 У тебя нет бустеров. Можно носить одновременно {max_slots}."
-    return f"🧪 Твои бустеры (можно носить одновременно {max_slots}):"
+    _, page, total_pages = _paginate(boosters, page)
+    page_suffix = f" (стр. {page + 1}/{total_pages})" if total_pages > 1 else ""
+    return f"🧪 Твои бустеры (можно носить одновременно {max_slots}){page_suffix}:"
 
 
 def format_items_text(rows):
@@ -2879,7 +2911,7 @@ async def my_boosters_tab(message: Message):
     active_items = parse_equipped(row[18])
     max_slots = equipped_slots_max(upgrades)
     rows = await get_inventory(user_id)
-    await message.reply(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, user_id))
+    await message.reply(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, user_id, 0))
 
 
 @dp.callback_query(F.data.startswith("inv_menu:"))
@@ -2898,8 +2930,10 @@ async def inventory_back_to_menu(callback: CallbackQuery):
 
 @dp.callback_query(F.data.startswith("inv_cat:"))
 async def inventory_open_category(callback: CallbackQuery):
-    _, owner_str, category = callback.data.split(":")
-    owner_id = int(owner_str)
+    parts = callback.data.split(":")
+    owner_id = int(parts[1])
+    category = parts[2]
+    page = int(parts[3]) if len(parts) > 3 else 0
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
         return
@@ -2910,16 +2944,41 @@ async def inventory_open_category(callback: CallbackQuery):
         upgrades = parse_upgrades(row[16])
         active_items = parse_equipped(row[18])
         max_slots = equipped_slots_max(upgrades)
-        await callback.message.edit_text(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, owner_id))
+        await callback.message.edit_text(format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
     else:
         await safe_edit_text(callback, format_items_text(rows), reply_markup=items_keyboard(owner_id))
     await callback.answer()
 
 
+@dp.callback_query(F.data.startswith("inv_boost_page:"))
+async def inventory_boosters_page(callback: CallbackQuery):
+    _, owner_str, page_str = callback.data.split(":")
+    owner_id = int(owner_str)
+    page = int(page_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
+    max_slots = equipped_slots_max(upgrades)
+    rows = await get_inventory(owner_id)
+    await callback.message.edit_text(format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
+    await callback.answer()
+
+
+@dp.callback_query(F.data == "noop")
+async def noop_callback(callback: CallbackQuery):
+    await callback.answer()
+
+
 @dp.callback_query(F.data.startswith("equip:"))
 async def toggle_equip(callback: CallbackQuery):
-    _, owner_str, item_key = callback.data.split(":")
-    owner_id = int(owner_str)
+    parts = callback.data.split(":")
+    owner_id = int(parts[1])
+    item_key = parts[2]
+    page = int(parts[3]) if len(parts) > 3 else 0
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["toggle_equip_1"], show_alert=True)
         return
@@ -2938,7 +2997,7 @@ async def toggle_equip(callback: CallbackQuery):
     await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), owner_id))
     rows = await get_inventory(owner_id)
 
-    await callback.message.edit_text(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, new_equipped, owner_id))
+    await callback.message.edit_text(format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, new_equipped, owner_id, page))
     if kicked and kicked in ITEMS:
         await callback.answer(TEXTS["toggle_equip_3"].format(v0=ITEMS[item_key][1], v1=ITEMS[kicked][1]))
     else:
@@ -2966,24 +3025,33 @@ def available_recipes(craft_level: int, query: str = None) -> list:
     return result
 
 
-def crafts_keyboard(recipe_keys: list, user_id: int) -> InlineKeyboardMarkup:
+def crafts_keyboard(recipe_keys: list, user_id: int, page: int = 0, query: str = "") -> InlineKeyboardMarkup:
+    page_items, page, total_pages = _paginate(recipe_keys, page)
+
     rows = []
-    for key in recipe_keys:
+    for key in page_items:
         emoji, name, _, _ = ITEMS[key]
         rows.append([InlineKeyboardButton(
             text=f"{plain_emoji(emoji)} Скрафтить {name}",
             callback_data=f"craft:{user_id}:{key}",
         )])
+
+    nav_row = _pagination_row("craft_page", user_id, page, total_pages, extra=query)
+    if nav_row:
+        rows.append(nav_row)
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
-def format_crafts_text(recipe_keys: list, craft_level: int, query: str) -> str:
+def format_crafts_text(recipe_keys: list, craft_level: int, query: str, page: int = 0) -> str:
     if not recipe_keys:
         if query:
             return f"🔨 Нет доступных рецептов по запросу «{esc(query)}» (либо не хватает уровня крафта {craft_level}/2)."
         return f"🔨 Нет доступных рецептов на твоём уровне крафта ({craft_level}/2). Качай апгрейд «Крафты» в прокачке!"
-    lines = [f"🔨 <b>Доступные рецепты</b> (уровень крафта {craft_level}/2):\n"]
-    for key in recipe_keys:
+
+    page_keys, page, total_pages = _paginate(recipe_keys, page)
+    page_suffix = f" — стр. {page + 1}/{total_pages}" if total_pages > 1 else ""
+    lines = [f"🔨 <b>Доступные рецепты</b> (уровень крафта {craft_level}/2){page_suffix}:\n"]
+    for key in page_keys:
         emoji, name, _, _ = ITEMS[key]
         lines.append(f"{plain_emoji(emoji)} <b>{esc(name)}</b> = {esc(format_recipe_requirements(RECIPES[key]))}")
     return "\n".join(lines)
@@ -3004,9 +3072,31 @@ async def crafts_command(message: Message):
 
     recipe_keys = available_recipes(craft_level, query)
     await message.reply(
-        format_crafts_text(recipe_keys, craft_level, query or ""),
-        reply_markup=crafts_keyboard(recipe_keys, user_id) if recipe_keys else None,
+        format_crafts_text(recipe_keys, craft_level, query or "", 0),
+        reply_markup=crafts_keyboard(recipe_keys, user_id, 0, query or "") if recipe_keys else None,
     )
+
+
+@dp.callback_query(F.data.startswith("craft_page:"))
+async def crafts_page_nav(callback: CallbackQuery):
+    parts = callback.data.split(":", 3)
+    owner_id = int(parts[1])
+    page = int(parts[2])
+    query = parts[3] if len(parts) > 3 and parts[3] else None
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["craft_do_1"], show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    upgrades = parse_upgrades(row[16])
+    craft_level = craft_level_of(upgrades)
+    recipe_keys = available_recipes(craft_level, query)
+
+    await callback.message.edit_text(
+        format_crafts_text(recipe_keys, craft_level, query or "", page),
+        reply_markup=crafts_keyboard(recipe_keys, owner_id, page, query or "") if recipe_keys else None,
+    )
+    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("craft:"))
