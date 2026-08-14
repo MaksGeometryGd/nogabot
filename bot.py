@@ -129,6 +129,30 @@ MGG_MEGA_LEVEL = 20001
 MGG_MEGA_EMOJI = PREMIUM_MGG
 MGG_MEGA_NAME = "нога кошко-девочки MGG"
 
+# ---------- Ультра перерождение (Ultra Rebirth) — эндгейм-механика ----------
+# Условия активации (обязательны все три):
+#   evolution_level >= ULTRA_REQUIRED_EVO (50)
+#   уровень ноги (get_level_index) >= ULTRA_REQUIRED_LEG_LEVEL (20001, т.е. MGG_MEGA_LEVEL)
+#   rebirth_count >= ULTRA_REQUIRED_REBIRTHS (5, текущий максимум обычных перерождений)
+# Это Boolean-статус (0/1) в колонке ultra_rebirth, а НЕ уровень — повторно недоступен
+# (в отличие от обычного перерождения, у которого есть rebirth_count).
+ULTRA_REQUIRED_EVO = 50
+ULTRA_REQUIRED_LEG_LEVEL = MGG_MEGA_LEVEL  # 20001
+ULTRA_REQUIRED_REBIRTHS = 5
+
+# Уровень 20002 существует только в фазе "После Ультра перерождения" (ultra_rebirth = 1)
+# и открывается сразу же по активации. Это не часть обычной лестницы уровней —
+# level_threshold/get_level_index её не считают; отображается отдельным финальным
+# статус-уровнем поверх обычной ноги в профиле игрока.
+ULTRA_LEG_LEVEL = 20002
+ULTRA_LEG_EMOJI = "🦵🧪"
+ULTRA_LEG_NAME = "тест нога"
+
+# Пост-ультра буст: постоянный множитель добычи за сам факт статуса (не за уровни —
+# у Ультра перерождения их нет), выдаётся один раз и держится вечно, применяется
+# поверх всех обычных бустов (эво/VIP/предметы/прокачки).
+ULTRA_REBIRTH_BOOST = 5.0  # +500% к добыче
+
 LEG_POINT = 1
 LEG_LIMIT = 5
 MEK_POINT = 18  # нерф с 25
@@ -171,7 +195,7 @@ TEXTS = {
     "vip_info_command_2": '💎 VIP даёт постоянный буст +{v0}% к добыче.\nМожно купить прямо в боте за {v1} звёзд Telegram — выдаётся навсегда.',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры и предметы\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры и предметы\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -254,6 +278,30 @@ TEXTS = {
     "upgrade_buy_5": 'Улучшено! {v0} → {v1} лвл',
     "rebirth_1": 'Перерождение доступно с {v0} уровня эволюции (сейчас у тебя {v1}). Каждые {v2} уровней эво = 1 🉑.',
     "rebirth_2": '🉑 <b>ПЕРЕРОЖДЕНИЕ!</b>\nОчки ноги и эволюция сброшены. Получено: +{v0} 🉑 (Всего: {v1}).\n⚠️ Эволюции теперь на {v2}% сложнее, чем с нуля.\nПрокачки из меню «апгрейд» остались с тобой навсегда.',
+    "ultra_rebirth_locked_1": (
+        '🌌 <b>УЛЬТРА ПЕРЕРОЖДЕНИЕ</b> заблокировано. Условия:\n'
+        '● Эволюция: {v0}/{v1}\n'
+        '● Уровень ноги: {v2}/{v3}\n'
+        '● Обычных перерождений: {v4}/{v5}\n'
+        '⚠️ Нужны ВСЕ три условия одновременно.'
+    ),
+    "ultra_rebirth_already_1": '🌌 Ты уже прошёл Ультра перерождение. Это можно сделать только один раз за всю игру.',
+    "ultra_rebirth_confirm_1": (
+        '🌌 <b>ВНИМАНИЕ! ТОЧКА НЕВОЗВРАТА.</b>\n'
+        'Ультра перерождение доступно ({v0}). Оно:\n'
+        '● Полностью обнулит очки, эволюцию (0/{v1}) и счётчик перерождений (0/{v2})\n'
+        '● Необратимо — второй раз пройти нельзя\n'
+        '● Откроет новую фазу игры и {v3} {v4} ({v5} уровень)\n'
+        '● Даст постоянный буст добычи +{v6}%\n'
+        'Прокачки и предметы останутся с тобой.\n\n'
+        'Напиши «ультра перерождение подтверждаю», чтобы продолжить.'
+    ),
+    "ultra_rebirth_success_1": (
+        '🌌✨ <b>УЛЬТРА ПЕРЕРОЖДЕНИЕ СВЕРШИЛОСЬ!</b> ✨🌌\n'
+        'Игра для тебя началась заново — с чистого листа и абсолютно новыми законами.\n'
+        'Открыта {v0} {v1} ({v2} уровень) и постоянный буст добычи +{v3}%.\n'
+        'Прокачки и предметы остались с тобой навсегда.'
+    ),
     "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n{v4}',
     "admin_give_rebirth_1": 'Формат: !дать очкп <количество> [себе] (в ответ на сообщение игрока)',
     "admin_give_rebirth_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
@@ -416,6 +464,8 @@ TEXTS = {
     "admin_set_upgrade_4": 'Уровень должен быть от 0 до {v0}.',
     "admin_set_upgrade_5": 'Игроку {v0} установлен апгрейд «{v1}»: уровень {v2}.',
 
+    "admin_ultra_rebirth_1": 'Формат: !ультра навсегда себе (или ответом на сообщение игрока)',
+    "admin_ultra_rebirth_2": 'Игроку {v0} выдан статус Ультра перерождения (принудительно, без сброса прогресса).',
     "admin_vip_forever_1": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
     "admin_vip_forever_2": '👑 Игроку {v0} выдан VIP навсегда.',
 
@@ -814,6 +864,7 @@ ADMIN_GIVE_ITEM_RE = re.compile(r"^!дать предмет\s+(\S+)\s+(\d+)(\s+�
 ADMIN_CLEAR_INVENTORY_RE = re.compile(r"^!очистить инвентарь\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_SET_UPGRADE_RE = re.compile(r"^!дать апгрейд\s+(\S+)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
 ADMIN_VIP_FOREVER_RE = re.compile(r"^!вип навсегда(\s+себе)?$", re.IGNORECASE)
+ADMIN_ULTRA_REBIRTH_RE = re.compile(r"^!ультра навсегда(\s+себе)?$", re.IGNORECASE)
 ADMIN_RESET_NICK_RE = re.compile(r"^!сброс ник\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_FIND_RE = re.compile(r"^!найти\s+@?(\w+)$", re.IGNORECASE)
 
@@ -827,6 +878,7 @@ FIXED_COMMANDS = {
     "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ", "крафты", "крафт",
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
     "!список вип", "!список банов топ", "!список ников", "!логи", "!пинг", "!ивент стоп", "!ивент статус",
+    "ультра перерождение", "ультра перерождение подтверждаю",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
@@ -836,7 +888,7 @@ PREFIX_COMMANDS = (
     "+ник ", "!бан топ", "!разбан топ", "!установить ног", "!установить эво",
     "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
     "!установить очкп", "!обнулить экономику", "!мультипликатор ферма", "!дать предмет",
-    "!очистить инвентарь", "!дать апгрейд", "!вип навсегда", "!сброс ник", "!найти ",
+    "!очистить инвентарь", "!дать апгрейд", "!вип навсегда", "!сброс ник", "!найти ", "!ультра навсегда",
 )
 
 
@@ -1138,6 +1190,9 @@ def get_level_visual(level: int):
     if level <= 39:
         _, emoji, name = CUSTOM_LEVELS[level - 21]
         return emoji, name, True
+    if level >= ULTRA_LEG_LEVEL:
+        # Доступна только тем, у кого ultra_rebirth = 1 (проверяется на вызывающей стороне).
+        return ULTRA_LEG_EMOJI, ULTRA_LEG_NAME, False
     if level >= MGG_MEGA_LEVEL:
         return MGG_MEGA_EMOJI, MGG_MEGA_NAME, False
     for start, end, emoji, name in EXTRA_TIERS:
@@ -1182,7 +1237,8 @@ def unequip_item(equipped_str: str, item_key: str) -> list:
     return [k for k in parse_equipped(equipped_str) if k != item_key]
 
 
-def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrades: dict = None) -> float:
+def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrades: dict = None,
+                    ultra_rebirth: bool = False) -> float:
     mult = 1.0
     if evolution_level >= 2:
         mult += EVO_BOOST_STEP
@@ -1195,6 +1251,8 @@ def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrade
         mult += VIP_BOOST
     if upgrades:
         mult += 0.05 * upgrade_level(upgrades, "booster")
+    if ultra_rebirth:
+        mult += ULTRA_REBIRTH_BOOST
     return mult
 
 
@@ -1460,12 +1518,13 @@ async def db_query_one(sql, params=()):
 USER_COLUMNS = (
     "user_id, username, score, evolution_level, last_farm, coins, active_item, "
     "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
-    "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned"
+    "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, ultra_rebirth"
 )
 # Индексы полей выше при обращении по row[...]:
 #  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
 #  7 cases_opened, 8 total_farmed, 9 last_bonus, 10 bonus_streak, 11 levelup_notify, 12 vip_until,
 #  13 hidden_badges, 14 rebirth_points, 15 rebirth_count, 16 upgrades (строка "key:lvl,key:lvl"), 17 last_auto_claim,
+#  21 ultra_rebirth — Boolean (0/1): статус "Ультра перерождение". Разово, необратимо, без уровней.
 #  18 equipped_items — очередь экипированных предметов "key1,key2,key3" (индекс 0 = надет раньше всех,
 #     последний = надет позже всех; новый/повторный клик уходит в конец, при переполнении вылетает индекс 0),
 #  19 nickname — кастомный ник для отображения в топах/профиле (NULL = показывать обычный username),
@@ -1543,6 +1602,7 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN equipped_items TEXT DEFAULT ''",
         "ALTER TABLE users ADD COLUMN nickname TEXT DEFAULT NULL",
         "ALTER TABLE users ADD COLUMN top_banned INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN ultra_rebirth INTEGER DEFAULT 0",
     ):
         try:
             await db_exec(stmt)
@@ -2056,6 +2116,7 @@ async def count_legs(message: Message):
     rebirth_count = row[15]
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
+    ultra_rebirth = bool(row[21])
     vip_active = is_vip_active(vip_until)
 
     flat_bonus = total_flat_bonus(active_items)
@@ -2080,7 +2141,7 @@ async def count_legs(message: Message):
     gained += flat_bonus  # гарант-бонус применяется один раз к итогу, а не за каждую ногу
     gained = round(gained * farm_yield_multiplier(upgrades))
 
-    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth)
     event_mult = await get_event_multiplier()
     personal_mult = await get_personal_multiplier(user_id)
     total = round(gained * mult * event_mult * personal_mult)
@@ -2143,13 +2204,22 @@ async def my_profile(message: Message):
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     nickname = row[19] if len(row) > 19 else None
+    ultra_rebirth = bool(row[21])
     vip_active = is_vip_active(vip_until)
     shown_name = display_name(username, nickname)
 
     level = get_level_index(score, evolution_level, rebirth_count)
-    emoji, name, show_level = get_level_visual(level)
+    if ultra_rebirth:
+        # После Ультра перерождения "тест нога" 20002 лвл — постоянный статус-уровень,
+        # который отображается сверх обычной ноги, а не заменяет её (у него нет своей
+        # шкалы очков — это флаг фазы, не уровень для прокачки).
+        emoji, name, show_level = ULTRA_LEG_EMOJI, ULTRA_LEG_NAME, False
+        display_level = ULTRA_LEG_LEVEL
+    else:
+        emoji, name, show_level = get_level_visual(level)
+        display_level = level
     nxt = next_level_text(score, evolution_level, rebirth_count)
-    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth)
     flat_bonus = total_flat_bonus(active_items)
 
     if vip_active:
@@ -2160,16 +2230,18 @@ async def my_profile(message: Message):
     else:
         vip_line = "● VIP статус: не активен\n"
 
-    lvl_line = f"● Уровень ноги: {level} лвл\n" if show_level else ""
+    lvl_line = f"● Уровень ноги: {display_level} лвл\n" if (show_level or ultra_rebirth) else ""
     name_part = f" {esc(name)}" if name else ""
     guarant_line = f"● Гарант-буст с предмета: +{flat_bonus} к итогу\n" if flat_bonus else ""
     rebirth_line = f"● Перерождений: {rebirth_count} (🉑 {rebirth_points})\n" if rebirth_count else ""
+    ultra_line = "🌌 <b>Статус: После Ультра перерождения</b>\n" if ultra_rebirth else ""
     equipped_names = [ITEMS[k][1] for k in (active_items) if k and k in ITEMS]
     equip_line = f"● Экипировано: {', '.join(equipped_names)}\n" if equipped_names else ""
 
     text = (
         f"👣 <b>ТВОЯ ЛЮТАЯ НОГОСТЬ, {esc(shown_name)}:</b>\n"
         f"━━━━━━━━━━━━━━━━━━\n"
+        f"{ultra_line}"
         f"● Очки: <code>{score}</code>\n"
         f"● Монеты: <code>{coins}</code> 🪙\n"
         f"● Вид ног: {emoji}{name_part}\n"
@@ -2367,6 +2439,7 @@ async def farm(message: Message):
     rebirth_count = row[15]
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
+    ultra_rebirth = bool(row[21])
     vip_active = is_vip_active(vip_until)
 
     inv_rows = await get_inventory(user_id)
@@ -2384,7 +2457,7 @@ async def farm(message: Message):
     auto_legs, auto_coins, score, _coins_after = await claim_offline_auto_farm(user_id, row)
 
     low, high = farm_range(evolution_level)
-    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth)
     event_mult = await get_event_multiplier()
     personal_mult = await get_personal_multiplier(user_id)
     gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult * personal_mult)
@@ -3510,6 +3583,97 @@ async def rebirth(message: Message):
     )
 
 
+def ultra_rebirth_eligible(evolution_level: int, leg_level: int, rebirth_count: int) -> bool:
+    """Все три условия обязательны одновременно (см. константы ULTRA_REQUIRED_*)."""
+    return (
+        evolution_level >= ULTRA_REQUIRED_EVO
+        and leg_level >= ULTRA_REQUIRED_LEG_LEVEL
+        and rebirth_count >= ULTRA_REQUIRED_REBIRTHS
+    )
+
+
+@dp.message(F.text.lower() == "ультра перерождение")
+async def ultra_rebirth_info(message: Message):
+    """Показывает статус условий и, если всё готово, просит явное подтверждение —
+    Ультра перерождение необратимо и выполняется только один раз за игру, поэтому
+    тут нет ни одного пути "случайно нажал и сбросил прогресс"."""
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    score, evolution_level = row[2], row[3]
+    rebirth_count = row[15]
+    ultra_rebirth = bool(row[21])
+
+    if ultra_rebirth:
+        await message.reply(TEXTS["ultra_rebirth_already_1"])
+        return
+
+    leg_level = get_level_index(score, evolution_level, rebirth_count)
+
+    if not ultra_rebirth_eligible(evolution_level, leg_level, rebirth_count):
+        await message.reply(
+            TEXTS["ultra_rebirth_locked_1"].format(
+                v0=evolution_level, v1=ULTRA_REQUIRED_EVO,
+                v2=leg_level, v3=ULTRA_REQUIRED_LEG_LEVEL,
+                v4=rebirth_count, v5=ULTRA_REQUIRED_REBIRTHS,
+            )
+        )
+        return
+
+    await message.reply(
+        TEXTS["ultra_rebirth_confirm_1"].format(
+            v0="условия выполнены ✅",
+            v1=ULTRA_REQUIRED_EVO, v2=ULTRA_REQUIRED_REBIRTHS,
+            v3=ULTRA_LEG_EMOJI, v4=esc(ULTRA_LEG_NAME), v5=ULTRA_LEG_LEVEL,
+            v6=round(ULTRA_REBIRTH_BOOST * 100),
+        )
+    )
+
+
+@dp.message(F.text.lower() == "ультра перерождение подтверждаю")
+async def ultra_rebirth_confirm(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    score, evolution_level = row[2], row[3]
+    rebirth_count = row[15]
+    ultra_rebirth = bool(row[21])
+
+    if ultra_rebirth:
+        await message.reply(TEXTS["ultra_rebirth_already_1"])
+        return
+
+    leg_level = get_level_index(score, evolution_level, rebirth_count)
+
+    if not ultra_rebirth_eligible(evolution_level, leg_level, rebirth_count):
+        await message.reply(
+            TEXTS["ultra_rebirth_locked_1"].format(
+                v0=evolution_level, v1=ULTRA_REQUIRED_EVO,
+                v2=leg_level, v3=ULTRA_REQUIRED_LEG_LEVEL,
+                v4=rebirth_count, v5=ULTRA_REQUIRED_REBIRTHS,
+            )
+        )
+        return
+
+    # Мягкий хард-ресет: обнуляются очки, уровень ноги (через score=0), эволюции и
+    # обычные перерождения. upgrades/предметы/coins НЕ трогаем — они остаются навсегда,
+    # как и в обычном перерождении. ultra_rebirth ставится в 1 безвозвратно.
+    await db_exec(
+        "UPDATE users SET score = 0, evolution_level = 0, rebirth_points = 0, rebirth_count = 0, "
+        "ultra_rebirth = 1 WHERE user_id = ?",
+        (user_id,),
+    )
+
+    await message.reply(
+        TEXTS["ultra_rebirth_success_1"].format(
+            v0=ULTRA_LEG_EMOJI, v1=esc(ULTRA_LEG_NAME), v2=ULTRA_LEG_LEVEL,
+            v3=round(ULTRA_REBIRTH_BOOST * 100),
+        )
+    )
+
+
 @dp.message(F.text.lower() == "баланс")
 async def show_balance(message: Message):
     user_id = message.from_user.id
@@ -4491,6 +4655,27 @@ async def admin_vip_forever(message: Message):
         await add_item(target.id, "vip_charm")
 
     await message.reply(TEXTS["admin_vip_forever_2"].format(v0=esc(target_username)))
+
+
+@dp.message(F.text.lower().startswith("!ультра навсегда"))
+async def admin_ultra_rebirth_forever(message: Message):
+    """Owner-инструмент для тестирования: выдаёт статус Ультра перерождения напрямую,
+    БЕЗ сброса прогресса игрока (в отличие от реальной активации через игровую команду).
+    Полезно для проверки пост-ультра контента ("тест ноги", буста) без реального гринда."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_ULTRA_REBIRTH_RE.match(message.text.strip())
+    target = await resolve_target(message, bool(match.group(1))) if match else None
+    if not target:
+        await message.reply(TEXTS["admin_ultra_rebirth_1"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+    await db_exec("UPDATE users SET ultra_rebirth = 1 WHERE user_id = ?", (target.id,))
+
+    await message.reply(TEXTS["admin_ultra_rebirth_2"].format(v0=esc(target_username)))
 
 
 @dp.message(F.text.regexp(r"(?i)^!сброс ник\s+"))
