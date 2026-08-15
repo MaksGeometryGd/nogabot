@@ -37,7 +37,7 @@ PREMIUM_DAILY_CHARM = '<tg-emoji emoji-id="5233570349148311519">🧿</tg-emoji>'
 PREMIUM_MK_MGG = '<tg-emoji emoji-id="5420141555233071341">🧿</tg-emoji>'
 PREMIUM_MK_SANDSMOON = '<tg-emoji emoji-id="5197260300490907908">🌙</tg-emoji>'
 PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="5330393755407111028">🔧</tg-emoji>'
-PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">🅼</tg-emoji>'
+PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">🪨</tg-emoji>'
 PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5778352775591103997">🐆</tg-emoji>'
 PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="5233239138450312962">↗️</tg-emoji>'
 PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">💔</tg-emoji>'
@@ -70,6 +70,7 @@ PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀</tg-emoji>'
 PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">⚡</tg-emoji>'
 PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎉</tg-emoji>'
 PREMIUM_WARM_CANDLE = '<tg-emoji emoji-id="5253717838870363235">🕯</tg-emoji>'
+PREMIUM_KOSHKO_AMULET = '<tg-emoji emoji-id="6327920744789444368">🐈</tg-emoji>'
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
@@ -482,6 +483,11 @@ TEXTS = {
     "admin_give_item_3": 'Нет предмета с таким ключом.',
     "admin_give_item_4": 'Количество должно быть от 1 до 1000.',
     "admin_give_item_5": 'Игроку {v0} выдано: {v1} {v2} × {v3}.',
+    "admin_give_key_1": 'Формат: !дать ключ <ключ> <кол-во> [себе] (в ответ на сообщение игрока)',
+    "admin_give_key_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_key_3": 'Нет предмета с таким ключом.',
+    "admin_give_key_4": 'Количество должно быть от 1 до 1000.',
+    "admin_give_key_5": 'Игроку {v0} выдано: {v1} {v2} × {v3}.',
 
     "admin_clear_inventory_1": 'Формат: !очистить инвентарь @username',
     "admin_clear_inventory_2": 'Игрок не найден (он ещё не писал ноги в этом боте).',
@@ -560,6 +566,7 @@ ITEMS = {
     "friendship_essence":  (PREMIUM_FRIENDSHIP_ESSENCE, "Эссенция дружбы", 0, 0),
     "time_particle":       (PREMIUM_TIME_PARTICLE, "Частица времени", 0, 0),
     "god_essence":         (PREMIUM_GOD_ESSENCE, "Эссенция Бога", 700, 0),
+    "koshko_amulet":       (PREMIUM_KOSHKO_AMULET, "Амулет кошко-девочки", 800, 0),
     "devotion_coin":       (PREMIUM_DEVOTION_COIN, "Монета боготворства", 0, 0),
     "old_vase":            (PREMIUM_OLD_VASE, "Старая ваза", 0, 0.4),
     "golden_vase":         (PREMIUM_GOLDEN_VASE, "Золотая ваза", 0, 0),
@@ -589,7 +596,7 @@ SELL_PRICE = {
     "strange_coin": 12,
     "power_amulet": 40, "galaxy_power_amulet": 90, "galaxy_might_amulet": 150,
     "hybrid_amulet": 200, "friendship_essence": 260, "time_particle": 220,
-    "god_essence": 1000, "devotion_coin": 60, "old_vase": 15, "golden_vase": 120, "godly_vase": 500,
+    "god_essence": 1000, "koshko_amulet": 1400, "devotion_coin": 60, "old_vase": 15, "golden_vase": 120, "godly_vase": 500,
     "lucky_charm": 20, "swift_pill": 18, "party_set": 25, "warm_candle": 14,
 }
 
@@ -664,6 +671,10 @@ RECIPES = {
         "level": 2,
         "ingredients": {"time_particle": 1, "friendship_essence": 1, "mk_broken": 1},
     },
+    "koshko_amulet": {
+        "level": 2,
+        "ingredients": {"party_set": 1, "mk_mgg": 1, "god_essence": 1, "time_particle": 1},
+    },
     "devotion_coin": {
         "level": 1,
         "ingredients": {"strange_coin": 1},
@@ -683,23 +694,31 @@ RECIPES = {
 # Иерархия "уникальных" бустеров (от слабого к сильному) — используется для правила
 # "при конфликте активен сильнейший": его сообщение/эмодзи/лимиты, но проценты всех
 # экипированных бустеров всё равно суммируются как обычно через get_multiplier().
-UNIQUE_BOOSTER_TIERS = ["power_amulet", "galaxy_power_amulet", "galaxy_might_amulet", "god_essence"]
+UNIQUE_BOOSTER_TIERS = ["power_amulet", "galaxy_power_amulet", "galaxy_might_amulet", "god_essence", "koshko_amulet"]
 
-# Модификации лимитов эмодзи 🦵/🦿/🌌/⭐️ за сообщение, которые даёт САМЫЙ сильный из
+# Модификации лимитов эмодзи 🦵/🦿/🌌/⭐️/🐾 за сообщение, которые даёт САМЫЙ сильный из
 # экипированных уникальных бустеров (не суммируется с более слабыми).
 # 🌌 и ⭐️ работают ТОЧНО КАК роботноги 🦿 (считаются в сообщении, дают MEK_POINT за штуку),
 # но только пока экипирован соответствующий бустер — иначе их лимит 0 и они не считаются.
+# 🐾 работает как робо-нога 🦿, но даёт втрое больше очков — только пока экипирован
+# Амулет кошко-девочки (см. koshko_amulet), иначе лимит 0 и эмодзи не считается.
 UNIQUE_LIMIT_OVERRIDES = {
     "power_amulet": {"mek_limit": 15},
     "galaxy_power_amulet": {"galaxy_limit": 1},
     "galaxy_might_amulet": {"galaxy_limit": 1},
     "god_essence": {"mek_limit": 30, "leg_limit": 15, "galaxy_limit": 5, "star_limit": 1},
+    # Амулет кошко-девочки полностью наследует бусты Эссенции Бога + даёт лимит на 🐾.
+    "koshko_amulet": {"mek_limit": 30, "leg_limit": 15, "galaxy_limit": 5, "star_limit": 1, "paw_limit": 3},
 }
 GOD_ESSENCE_TIMER_CUT = 5         # -5 сек к кулдауну фермы, пока экипирована
 GOD_ESSENCE_FARM_SPEED = 5        # фарм в 5 раз быстрее
 TIME_PARTICLE_FARM_SPEED = 4      # фарм в 4 раза быстрее (пассивно, лежит в инвентаре)
+PAW_POINT_MULTIPLIER = 3          # 🐾 даёт втрое больше очков, чем обычная робо-нога 🦿
 
 GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активирована."  # заменяет обычный префикс ответа фермы
+KOSHKO_AMULET_FLAVOR = f"{PREMIUM_KOSHKO_AMULET} Сила кошко-девочки активна."  # то же самое, но для амулета кошко-девочки
+# Тиры, полностью наследующие "god_essence"-механики (скорость фарма, гарант монет/очков перерождения).
+GOD_TIER_LIKE = {"god_essence", "koshko_amulet"}
 
 
 def get_active_unique_tier(active_items):
@@ -725,6 +744,7 @@ def active_farm_limits(active_items, prestige_upgrades: dict = None) -> dict:
         "leg_limit": overrides.get("leg_limit", LEG_LIMIT) + leg_bonus,
         "galaxy_limit": overrides.get("galaxy_limit", 0),
         "star_limit": overrides.get("star_limit", 0),
+        "paw_limit": overrides.get("paw_limit", 0),
     }
 
 
@@ -926,49 +946,49 @@ def _slots_milestones(n: int) -> list:
 PRESTIGE_UPGRADES = {
     "p_legs": {
         "name": "Обычные ноги", "emoji": "🦵",
-        "desc": "+1 к лимиту счёта 🦵 за сообщение",
+        "desc": "+1 к лимиту 🦵",
         "cost": _prestige_cost(3, 1.15),
         "bonus": _echelon_bonus,
     },
     "p_mek": {
         "name": "Робо ноги", "emoji": "🦿",
-        "desc": "+1 к лимиту счёта 🦿 за сообщение",
+        "desc": "+1 к лимиту 🦿",
         "cost": _prestige_cost(5, 1.18),
         "bonus": _echelon_bonus,
     },
     "p_slots": {
         "name": "Слоты", "emoji": "🎒",
-        "desc": "+1 слот экипировки (1 ур сразу, дальше каждые 100 ур)",
+        "desc": "+1 слот экипировки",
         "cost": _prestige_cost(10, 1.30),
         "bonus": _milestone_bonus(_slots_milestones(100000)),
     },
     "p_farm_speed": {
         "name": "Скорость фарма", "emoji": "⏱️",
-        "desc": "-1% к кулдауну фермы за ступень",
+        "desc": "-1% к КД фермы",
         "cost": _prestige_cost(4, 1.15),
         "bonus": _echelon_bonus,
     },
     "p_farm_yield": {
         "name": "Добыча", "emoji": "📈",
-        "desc": "+0.5% к итоговому множителю фермы за ступень",
+        "desc": "+0.5% к множителю фермы",
         "cost": _prestige_cost(4, 1.15),
         "bonus": _echelon_bonus,
     },
     "p_brew_speed": {
         "name": "Скорость варки", "emoji": "🔥",
-        "desc": "-2% времени варки зелий за ступень (сверх обычного апгрейда)",
+        "desc": "-2% времени варки зелий",
         "cost": _prestige_cost(4, 1.15),
         "bonus": _echelon_bonus,
     },
     "p_craft_discount": {
         "name": "Скидка крафта", "emoji": "🔨",
-        "desc": "-1% к стоимости крафта за ступень (сверх обычного апгрейда)",
+        "desc": "-1% к стоимости крафта",
         "cost": _prestige_cost(4, 1.15),
         "bonus": _echelon_bonus,
     },
     "p_echo": {
         "name": "Эхо", "emoji": "🔮",
-        "desc": "+1% шанс на бонусное Очко Перерождения при каждом перерождении за ступень",
+        "desc": "+1% шанс бонус-очка перерождения",
         "cost": _prestige_cost(5, 1.17),
         "bonus": _echelon_bonus,
     },
@@ -1054,6 +1074,9 @@ ADMIN_SET_REBIRTH_RE = re.compile(rf"^!установить очкп {AMOUNT}(\s
 ADMIN_WIPE_ECONOMY_RE = re.compile(r"^!обнулить экономику\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_PERSONAL_BOOST_RE = re.compile(r"^!мультипликатор ферма\s+(\d+(?:\.\d+)?)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_ITEM_RE = re.compile(r"^!дать предмет\s+(\S+)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
+# Универсальная выдача чего угодно по техническому ключу ITEMS — удобно сразу после
+# добавления нового предмета/валюты в ITEMS, не дожидаясь отдельной команды под него.
+ADMIN_GIVE_KEY_RE = re.compile(r"^!дать ключ\s+(\S+)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
 ADMIN_CLEAR_INVENTORY_RE = re.compile(r"^!очистить инвентарь\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_SET_UPGRADE_RE = re.compile(r"^!дать апгрейд\s+(\S+)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
 ADMIN_VIP_FOREVER_RE = re.compile(r"^!вип навсегда(\s+себе)?$", re.IGNORECASE)
@@ -1695,7 +1718,7 @@ def farm_cd_seconds(upgrades: dict, active_items=None, has_time_particle: bool =
     cooldown = max(60, FARM_COOLDOWN - reduction)  # не даём КД уйти в ноль/минус
 
     tier = get_active_unique_tier(active_items) if active_items is not None else None
-    if tier == "god_essence":
+    if tier in GOD_TIER_LIKE:
         cooldown = cooldown / GOD_ESSENCE_FARM_SPEED - GOD_ESSENCE_TIMER_CUT
     elif has_time_particle:
         cooldown = cooldown / TIME_PARTICLE_FARM_SPEED
@@ -2036,9 +2059,11 @@ async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict, lu
             coin_bonus += 20
 
     rebirth_bonus = 0
-    is_god = get_active_unique_tier(active_items) == "god_essence"
+    tier = get_active_unique_tier(active_items)
+    is_god = tier in GOD_TIER_LIKE
     if is_god:
-        coin_bonus += random.randint(1, 50)
+        max_coin = 70 if tier == "koshko_amulet" else 50
+        coin_bonus += random.randint(1, max_coin)
         rebirth_chance = 0.60 if luck_boost else 0.30
         if random.random() < rebirth_chance:
             rebirth_bonus += random.randint(1, 3)
@@ -2049,7 +2074,7 @@ async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict, lu
             "WHERE user_id = ?",
             (coin_bonus, rebirth_bonus, user_id),
         )
-    return {"coins": coin_bonus, "rebirth": rebirth_bonus, "evo": 0, "is_god": is_god}
+    return {"coins": coin_bonus, "rebirth": rebirth_bonus, "evo": 0, "is_god": is_god, "tier": tier}
 
 
 async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = False) -> str:
@@ -2595,6 +2620,11 @@ async def count_legs(message: Message):
         mek = min(text.count("🦿"), limits["mek_limit"])
         gained += mek * MEK_POINT
 
+    # 🐾 — отдельные очки (как робо-нога), но втрое больше, работает только пока
+    # экипирован Амулет кошко-девочки — иначе лимит 0 и эмодзи не считается.
+    paw = min(text.count("🐾"), limits["paw_limit"])
+    gained += paw * MEK_POINT * PAW_POINT_MULTIPLIER
+
     # 🌌 и ⭐️ — НЕ отдельные очки, а множители к итогу фарма (работают, только пока
     # экипирован соответствующий бустер — иначе их лимит 0 и они не учитываются).
     galaxy = min(text.count("🌌"), limits["galaxy_limit"])
@@ -2647,6 +2677,8 @@ async def count_legs(message: Message):
     parts = f"+{legs}🦵"
     if mek:
         parts += f" +{mek}🦿"
+    if paw:
+        parts += f" +{paw}🐾"
     if galaxy:
         parts += f" +{galaxy}🌌"
     if star:
@@ -2655,10 +2687,11 @@ async def count_legs(message: Message):
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
 
     if bonus["is_god"]:
+        flavor = KOSHKO_AMULET_FLAVOR if bonus.get("tier") == "koshko_amulet" else GOD_ESSENCE_FLAVOR
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
-            TEXTS["count_legs_1"].format(v0=GOD_ESSENCE_FLAVOR, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text + auto_evo_text + potion_text)
+            TEXTS["count_legs_1"].format(v0=flavor, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text + auto_evo_text + potion_text)
         )
         return
 
@@ -5562,6 +5595,38 @@ async def admin_give_item(message: Message):
 
     emoji, name, _, _ = ITEMS[item_key]
     await message.reply(TEXTS["admin_give_item_5"].format(v0=esc(target_username), v1=emoji, v2=esc(name), v3=count))
+
+
+@dp.message(F.text.regexp(r"(?i)^!дать ключ\s+"))
+async def admin_give_key(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_GIVE_KEY_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_give_key_1"])
+        return
+
+    item_key = match.group(1)
+    count = int(match.group(2))
+    if item_key not in ITEMS:
+        await message.reply(TEXTS["admin_give_key_3"])
+        return
+    if count < 1 or count > 1000:
+        await message.reply(TEXTS["admin_give_key_4"])
+        return
+
+    target = await resolve_target(message, bool(match.group(3)))
+    if not target:
+        await message.reply(TEXTS["admin_give_key_2"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await ensure_user(target.id, target_username)
+    await add_item(target.id, item_key, count)
+
+    emoji, name, _, _ = ITEMS[item_key]
+    await message.reply(TEXTS["admin_give_key_5"].format(v0=esc(target_username), v1=emoji, v2=esc(name), v3=count))
 
 
 @dp.message(F.text.regexp(r"(?i)^!очистить инвентарь\s+"))
