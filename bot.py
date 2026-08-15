@@ -33,20 +33,20 @@ PREMIUM_BADGE_EVO5 = '<tg-emoji emoji-id="5372812377135789260">👑</tg-emoji>'
 
 PREMIUM_DAILY_CHARM = '<tg-emoji emoji-id="5233570349148311519">🧿</tg-emoji>'
 
-PREMIUM_MK_MGG = '<tg-emoji emoji-id="5420141555233071341">📿</tg-emoji>'
-PREMIUM_MK_SANDSMOON = '<tg-emoji emoji-id="5197260300490907908">📿</tg-emoji>'
-PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="5330393755407111028">📿</tg-emoji>'
-PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">📿</tg-emoji>'
-PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5778352775591103997">📿</tg-emoji>'
-PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="5233239138450312962">📿</tg-emoji>'
-PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">📿🥀</tg-emoji>'
+PREMIUM_MK_MGG = '<tg-emoji emoji-id="5420141555233071341">🧿</tg-emoji>'
+PREMIUM_MK_SANDSMOON = '<tg-emoji emoji-id="5197260300490907908">🌙</tg-emoji>'
+PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="5330393755407111028">🔧</tg-emoji>'
+PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">🅼</tg-emoji>'
+PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5778352775591103997">🐆</tg-emoji>'
+PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="5233239138450312962">↗️</tg-emoji>'
+PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">💔</tg-emoji>'
 
 # заглушки — замени на реальные emoji-id, когда достанешь (см. инструкцию про custom_emoji_id)
 PREMIUM_OWNER_BADGE = '<tg-emoji emoji-id="5204056085509477484">💠</tg-emoji>'
 PREMIUM_VIP_BADGE = '<tg-emoji emoji-id="5233333941263437275">💎</tg-emoji>'
 PREMIUM_VIP_ITEM = '<tg-emoji emoji-id="5344025423258864934">🎗️</tg-emoji>'
-PREMIUM_MK_MARY = '<tg-emoji emoji-id="5224652622652266008">📿</tg-emoji>'
-PREMIUM_MK_VERON03 = '<tg-emoji emoji-id="5429446558930182229">📿</tg-emoji>'
+PREMIUM_MK_MARY = '<tg-emoji emoji-id="5224652622652266008">🌹</tg-emoji>'
+PREMIUM_MK_VERON03 = '<tg-emoji emoji-id="5429446558930182229">🔷</tg-emoji>'
 PREMIUM_STRANGE_COIN = '<tg-emoji emoji-id="5035428694441592026">🪙</tg-emoji>'
 
 # Крафтовые предметы: реальных emoji-id для них ещё нет, поэтому используем обычные
@@ -54,20 +54,20 @@ PREMIUM_STRANGE_COIN = '<tg-emoji emoji-id="5035428694441592026">🪙</tg-emoji>
 # (Bad Request), из-за чего падал показ ЛЮБЫХ премиум-иконок в этом же сообщении —
 # в том числе валидных (кейс, вип и т.д.). Когда появятся настоящие emoji-id, верни
 # обёртку '<tg-emoji emoji-id="...">...</tg-emoji>' по аналогии с PREMIUM_MK_* выше.
-PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">📿💪</tg-emoji>'
-PREMIUM_GALAXY_POWER_AMULET = '<tg-emoji emoji-id="5451648825431175858">🌌✨</tg-emoji>'
-PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌌💥</tg-emoji>'
+PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">💪</tg-emoji>'
+PREMIUM_GALAXY_POWER_AMULET = '<tg-emoji emoji-id="5451648825431175858">🌠</tg-emoji>'
+PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌋</tg-emoji>'
 PREMIUM_HYBRID_AMULET = '<tg-emoji emoji-id="5204242195032336769">🧬</tg-emoji>'
-PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🤝🔅</tg-emoji>'
+PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🤝</tg-emoji>'
 PREMIUM_TIME_PARTICLE = '<tg-emoji emoji-id="5985570245950053733">⏳</tg-emoji>'
-PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5364047860713143546">🌌🧿</tg-emoji>'
-PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">🪙⚛️</tg-emoji>'
+PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5364047860713143546">👁️</tg-emoji>'
+PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">🟡</tg-emoji>'
 PREMIUM_OLD_VASE = '<tg-emoji emoji-id="6334461494649948210">🏺</tg-emoji>'
 PREMIUM_GOLDEN_VASE = '<tg-emoji emoji-id="5954115825324527429">⚱️</tg-emoji>'
-PREMIUM_GODLY_VASE = '<tg-emoji emoji-id="5283163228413641567">⚱️🌌</tg-emoji>'
-PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀📿</tg-emoji>'
-PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">💊☢️</tg-emoji>'
-PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎁✨</tg-emoji>'
+PREMIUM_GODLY_VASE = '<tg-emoji emoji-id="5283163228413641567">🏆</tg-emoji>'
+PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀</tg-emoji>'
+PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">⚡</tg-emoji>'
+PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎉</tg-emoji>'
 PREMIUM_WARM_CANDLE = '<tg-emoji emoji-id="5253717838870363235">🕯</tg-emoji>'
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
@@ -530,42 +530,42 @@ TEXTS = {
 
 # ---------- Предметы (нерф % и шансов дропа) ----------
 ITEMS = {
-    "amulet": ("🪬", "Амулет галактики", 12, 10),
-    "orb":    ("🔮", "Шар парадокса", 10, 20),
-    "pill":   ("💊", "Таблетка силы", 8, 30),
+    "amulet": ("🪬", "Амулет галактики", 17, 10),
+    "orb":    ("🔮", "Шар парадокса", 14, 20),
+    "pill":   ("💊", "Таблетка силы", 12, 30),
     "candle": ("🪔", "Свеча солнцестояния", 6, 35),
     "gift":   ("💮", "Подарок кошко-девочки", 45, 5),
     "star":   ("⭐️", "Звезда перерождения", 30, 0),
     "daily_charm": (PREMIUM_DAILY_CHARM, "Дневной амулет", 15, 0),
-    "mk_mgg":       (PREMIUM_MK_MGG, "Амулет MGG", 125, 1),
-    "mk_sandsmoon": (PREMIUM_MK_SANDSMOON, "Амулет SandsMoon", 40, 6),
-    "mk_fixsahal1": (PREMIUM_MK_FIXSAHAL1, "Амулет Fixsahal1", 30, 10),
-    "mk_mk":        (PREMIUM_MK_MK, "Амулет Mk", 50, 3),
-    "mk_panther":   (PREMIUM_MK_PANTHER, "Амулет Panther", 20, 14),
-    "mk_vector":    (PREMIUM_MK_VECTOR, "Амулет Vector", 40, 7),
-    "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 20, 29),
-    "mk_mary":      (PREMIUM_MK_MARY, "Амулет Mary", 45, 10),
-    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 60, 19),  # нерф буста: было 75% -> 60%
+    "mk_mgg":       (PREMIUM_MK_MGG, "Амулет MGG", 125, 0.57),
+    "mk_sandsmoon": (PREMIUM_MK_SANDSMOON, "Амулет SandsMoon", 40, 3.45),
+    "mk_fixsahal1": (PREMIUM_MK_FIXSAHAL1, "Амулет Fixsahal1", 30, 5.75),
+    "mk_mk":        (PREMIUM_MK_MK, "Амулет Mk", 90, 1.72),
+    "mk_panther":   (PREMIUM_MK_PANTHER, "Амулет Panther", 20, 8.04),
+    "mk_vector":    (PREMIUM_MK_VECTOR, "Амулет Vector", 40, 4.02),
+    "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 1, 60),
+    "mk_mary":      (PREMIUM_MK_MARY, "Амулет Mary", 45, 5.75),
+    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 60, 10),  # шанс понижен с 19% до 10%
     "vip_charm":    (PREMIUM_VIP_ITEM, "VIP-амулет", 250, 0),
-    "strange_coin": (PREMIUM_STRANGE_COIN, "Странная монета", 0, 1),
+    "strange_coin": (PREMIUM_STRANGE_COIN, "Странная монета", 0, 0.7),
 
     # ---------- Крафтовые предметы (система крафтов) ----------
     "power_amulet":        (PREMIUM_POWER_AMULET, "Амулет силы", 40, 0),
-    "galaxy_power_amulet": (PREMIUM_GALAXY_POWER_AMULET, "Амулет силы галактики", 80, 0),
-    "galaxy_might_amulet": (PREMIUM_GALAXY_MIGHT_AMULET, "Амулет Мощи галактики", 100, 0),
+    "galaxy_power_amulet": (PREMIUM_GALAXY_POWER_AMULET, "Амулет силы галактики", 85, 0),
+    "galaxy_might_amulet": (PREMIUM_GALAXY_MIGHT_AMULET, "Амулет Мощи галактики", 145, 0),
     "hybrid_amulet":       (PREMIUM_HYBRID_AMULET, "Неактивированный гибридный амулет", 0, 0),
     "friendship_essence":  (PREMIUM_FRIENDSHIP_ESSENCE, "Эссенция дружбы", 0, 0),
     "time_particle":       (PREMIUM_TIME_PARTICLE, "Частица времени", 0, 0),
     "god_essence":         (PREMIUM_GOD_ESSENCE, "Эссенция Бога", 700, 0),
     "devotion_coin":       (PREMIUM_DEVOTION_COIN, "Монета боготворства", 0, 0),
-    "old_vase":            (PREMIUM_OLD_VASE, "Старая ваза", 0, 0.5),
+    "old_vase":            (PREMIUM_OLD_VASE, "Старая ваза", 0, 0.4),
     "golden_vase":         (PREMIUM_GOLDEN_VASE, "Золотая ваза", 0, 0),
     "godly_vase":          (PREMIUM_GODLY_VASE, "Боготворная ваза", 0, 0),
 
     # ---------- Базовые крафты (ур.0) ----------
-    "lucky_charm":  (PREMIUM_LUCKY_CHARM, "Малый амулет удачи", 15, 0),
-    "swift_pill":   (PREMIUM_SWIFT_PILL, "Ускоренная таблетка", 12, 0),
-    "party_set":    (PREMIUM_PARTY_SET, "Праздничный набор", 18, 0),
+    "lucky_charm":  (PREMIUM_LUCKY_CHARM, "Малый амулет удачи", 23, 0),
+    "swift_pill":   (PREMIUM_SWIFT_PILL, "Ускоренная таблетка", 35, 0),
+    "party_set":    (PREMIUM_PARTY_SET, "Праздничный набор", 97, 0),
     "warm_candle":  (PREMIUM_WARM_CANDLE, "Тёплая свеча", 0, 0),
 }
 
@@ -754,7 +754,9 @@ def format_recipe_requirements(recipe: dict) -> str:
 
 
 # ---------- Перерождение (Rebirth) ----------
-REBIRTH_EVO_PER_POINT = 5          # 5 уровней эволюции = 1 Очко Перерождения
+REBIRTH_MIN_EVO = 5                # минимальный уровень эволюции, чтобы перерождение стало доступно
+REBIRTH_EVO_STEP = 3               # каждые 3 уровня эволюции...
+REBIRTH_POINTS_PER_STEP = 2        # ...дают 2 Очка Перерождения
 REBIRTH_HARDNESS_STEP = 0.125      # +12.5% к сложности эволюций за каждое перерождение (середина диапазона 10-15%)
 
 # ---------- Меню прокачки (апгрейды за Очки Перерождения) ----------
@@ -4126,13 +4128,13 @@ async def rebirth(message: Message):
     score, evolution_level = row[2], row[3]
     rebirth_points, rebirth_count = row[14], row[15]
 
-    if evolution_level < REBIRTH_EVO_PER_POINT:
+    if evolution_level < REBIRTH_MIN_EVO:
         await message.reply(
-            TEXTS["rebirth_1"].format(v0=REBIRTH_EVO_PER_POINT, v1=evolution_level, v2=REBIRTH_EVO_PER_POINT)
+            TEXTS["rebirth_1"].format(v0=REBIRTH_MIN_EVO, v1=evolution_level, v2=REBIRTH_MIN_EVO)
         )
         return
 
-    points_gained = evolution_level // REBIRTH_EVO_PER_POINT
+    points_gained = (evolution_level // REBIRTH_EVO_STEP) * REBIRTH_POINTS_PER_STEP
     new_rebirth_points = rebirth_points + points_gained
     new_rebirth_count = rebirth_count + 1
 
