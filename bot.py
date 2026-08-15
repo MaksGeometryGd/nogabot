@@ -143,10 +143,16 @@ ULTRA_REQUIRED_REBIRTHS = 5
 
 # Уровень 20002 — следующий уровень ноги после 20001, открыт только тем, у кого
 # ultra_rebirth = 1. После активации прогрессия ноги идёт как обычно (0-20000+),
-# просто верхняя граница для таких игроков поднимается на один уровень выше.
+# просто верхняя граница для таких игроков поднимается — и дальше уже не ограничена
+# практически ничем (см. ULTRA_LEVEL_CAP), а не жёстко зажата на 20002.
 ULTRA_LEG_LEVEL = 20002
 ULTRA_LEG_EMOJI = "🦵🧪"
 ULTRA_LEG_NAME = "тест нога"
+
+# Потолок для get_level_index после Ультра перерождения — практически бесконечность
+# (пара гуголов), чтобы прогрессия не упиралась в потолок даже при огромном score.
+# Гугол = 10**100.
+ULTRA_LEVEL_CAP = 2 * 10 ** 100
 
 # Пост-ультра буст: постоянный множитель добычи за сам факт статуса (не за уровни —
 # у Ультра перерождения их нет), выдаётся один раз и держится вечно, применяется
@@ -1231,9 +1237,10 @@ def level_threshold(level: int, evolution_level: int, rebirth_count: int = 0) ->
 
 def get_level_index(score: int, evolution_level: int = 0, rebirth_count: int = 0,
                      ultra_rebirth: bool = False) -> int:
-    # Потолок прогрессии: 20001 лвл — для всех, кто ещё не прошёл Ультра перерождение;
-    # 20002 лвл — открывается только после него (ultra_rebirth = 1).
-    cap = ULTRA_LEG_LEVEL if ultra_rebirth else ULTRA_REQUIRED_LEG_LEVEL
+    # Потолок прогрессии: 20001 лвл — для всех, кто ещё не прошёл Ультра перерождение.
+    # После него (ultra_rebirth = 1) потолок практически снят (см. ULTRA_LEVEL_CAP) —
+    # нога растёт и дальше 20002 сколько угодно, без искусственного упора.
+    cap = ULTRA_LEVEL_CAP if ultra_rebirth else ULTRA_REQUIRED_LEG_LEVEL
     lo, hi = 0, cap
     while lo < hi:
         mid = (lo + hi + 1) // 2
@@ -1266,7 +1273,7 @@ def get_level_visual(level: int):
 def next_level_text(score: int, evolution_level: int, rebirth_count: int = 0,
                      ultra_rebirth: bool = False) -> str:
     level = get_level_index(score, evolution_level, rebirth_count, ultra_rebirth)
-    cap = ULTRA_LEG_LEVEL if ultra_rebirth else ULTRA_REQUIRED_LEG_LEVEL
+    cap = ULTRA_LEVEL_CAP if ultra_rebirth else ULTRA_REQUIRED_LEG_LEVEL
     if level >= cap:
         return "Ты достиг абсолютного предела ноги — дальше только легенды 🌌"
     nxt = level_threshold(level + 1, evolution_level, rebirth_count)
