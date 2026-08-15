@@ -210,7 +210,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -255,6 +255,7 @@ TEXTS = {
     "sell_item_2": '🚫 {v0} {v1} нельзя продать — это личный значок, не предмет.',
     "sell_item_3": 'У тебя нет предмета «{v0}».',
     "sell_item_4": 'Продал {v0} {v1} за {v2} 🪙.{v3}',
+    "sell_item_4_all": 'Продал всё: {v0} {v1} x{v2} за {v3} 🪙.{v4}',
     "sell_wrong_format_1": 'Не понял формат. Укажи тип: «продать б <название>» — для бустеров, «продать п <название>» — для предметов.',
     "destroy_item_1": 'Не нашёл такой предмет среди {v0}. Если это не то — попробуй «{v1} <название>».',
     "destroy_item_2": '🚫 {v0} {v1} нельзя уничтожить — это личный значок, не предмет.',
@@ -404,6 +405,10 @@ TEXTS = {
     "admin_set_legs_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
     "admin_set_legs_3": 'Некорректное число.',
     "admin_set_legs_4": 'Игроку {v0} установлено очков: {v1} (было {v2}).',
+    "admin_give_legs_lvl_1": 'Формат: !дать ноги лвл<число> [себе] (в ответ на сообщение игрока), например: !дать ноги лвл20001',
+    "admin_give_legs_lvl_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
+    "admin_give_legs_lvl_3": 'Максимальный доступный уровень для этого игрока: {v0}.',
+    "admin_give_legs_lvl_4": 'Игроку {v1} установлен {v0} лвл ноги (очков: {v2}).',
 
     "admin_set_evo_1": 'Формат: !установить эво <число> [себе] (в ответ на сообщение игрока)',
     "admin_set_evo_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
@@ -883,11 +888,11 @@ AMOUNT = r"(\d+(?:\.\d+)?к{0,4})"
 _AMOUNT_TOKEN_RE = re.compile(r"^\d+(?:\.\d+)?к{0,4}$", re.IGNORECASE)
 
 ADMIN_GIVE_LEGS_RE = re.compile(rf"^!дать ног {AMOUNT}(\s+себе)?$", re.IGNORECASE)
-ADMIN_TAKE_LEGS_RE = re.compile(rf"^!снять ноги {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_TAKE_LEGS_RE = re.compile(rf"^!снять ноги (?:{AMOUNT}|все)(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_EVO_RE = re.compile(rf"^!дать эво {AMOUNT}(\s+себе)?$", re.IGNORECASE)
-ADMIN_TAKE_EVO_RE = re.compile(rf"^!снять эво {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_TAKE_EVO_RE = re.compile(rf"^!снять эво (?:{AMOUNT}|все)(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_COIN_RE = re.compile(rf"^!дать коин {AMOUNT}(\s+себе)?$", re.IGNORECASE)
-ADMIN_TAKE_COIN_RE = re.compile(rf"^!снять коин {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_TAKE_COIN_RE = re.compile(rf"^!снять коин (?:{AMOUNT}|все)(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_BOOST_RE = re.compile(r"^!дать б (.+?)(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_BOOST_RE = re.compile(r"^!снять б (.+?)(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_ITEM_RE = re.compile(r"^!дать п (.+?)(\s+себе)?$", re.IGNORECASE)
@@ -898,7 +903,8 @@ ADMIN_RESET_RE = re.compile(r"^!сбросить(\s+себе)?$", re.IGNORECASE)
 ADMIN_BAN_TOP_RE = re.compile(r"^!бан топ(\s+себе)?$", re.IGNORECASE)
 ADMIN_UNBAN_TOP_RE = re.compile(r"^!разбан топ(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_REBIRTH_RE = re.compile(rf"^!дать очкп {AMOUNT}(\s+себе)?$", re.IGNORECASE)
-ADMIN_TAKE_REBIRTH_RE = re.compile(rf"^!снять очкп {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_TAKE_REBIRTH_RE = re.compile(rf"^!снять очкп (?:{AMOUNT}|все)(\s+себе)?$", re.IGNORECASE)
+ADMIN_GIVE_LEGS_LVL_RE = re.compile(r"^!дать ноги лвл(\d+)(\s+себе)?$", re.IGNORECASE)
 
 PEER_GIVE_LEGS_RE = re.compile(rf"^дать ног {AMOUNT}$", re.IGNORECASE)
 PEER_GIVE_COIN_RE = re.compile(rf"^дать коин {AMOUNT}$", re.IGNORECASE)
@@ -3034,7 +3040,13 @@ async def give_or_transfer(message: Message):
 
 
 async def sell_item(message: Message, prefix: str, only_passive: bool):
-    item_query = message.text[len(prefix):].strip()
+    raw = message.text[len(prefix):].strip()
+    sell_all = False
+    # "продать б/п <название> все" — продаёт всё количество разом
+    if raw.lower().endswith(" все"):
+        sell_all = True
+        raw = raw[:-len(" все")].strip()
+    item_query = raw
     item_key = find_item_by_name(item_query, only_passive=only_passive)
     if not item_key:
         wrong_cmd = "продать п" if only_passive is False else "продать б"
@@ -3050,8 +3062,18 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     await ensure_user(user_id, username)
 
-    removed = await remove_item(user_id, item_key, 1)
     emoji, name, _, _ = ITEMS[item_key]
+
+    if sell_all:
+        owned_row = await db_query_one("SELECT qty FROM inventory WHERE user_id = ? AND item_key = ?", (user_id, item_key))
+        qty = owned_row[0] if owned_row else 0
+        if qty <= 0:
+            await message.reply(TEXTS["sell_item_3"].format(v0=esc(name)))
+            return
+    else:
+        qty = 1
+
+    removed = await remove_item(user_id, item_key, qty)
     if not removed:
         await message.reply(TEXTS["sell_item_3"].format(v0=esc(name)))
         return
@@ -3065,7 +3087,8 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
 
     upgrades = parse_upgrades(row[16])
     sell_lvl = upgrade_level(upgrades, "sell_boost")
-    price = SELL_PRICE.get(item_key, 1) + sell_bonus_coins(upgrades)
+    unit_price = SELL_PRICE.get(item_key, 1) + sell_bonus_coins(upgrades)
+    price = unit_price * qty
 
     bonus_rebirth = 0
     if sell_lvl >= 3 and random.random() < 0.01:
@@ -3080,7 +3103,10 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
         await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (price, user_id))
 
     bonus_text = " 🎉 Повезло! +1 🉑!" if bonus_rebirth else ""
-    await safe_reply(message, TEXTS["sell_item_4"].format(v0=emoji, v1=esc(name), v2=price, v3=bonus_text))
+    if sell_all and qty > 1:
+        await safe_reply(message, TEXTS["sell_item_4_all"].format(v0=emoji, v1=esc(name), v2=qty, v3=price, v4=bonus_text))
+    else:
+        await safe_reply(message, TEXTS["sell_item_4"].format(v0=emoji, v1=esc(name), v2=price, v3=bonus_text))
 
 
 @dp.message(F.text.lower().startswith("продать б "))
@@ -3257,38 +3283,27 @@ def format_time_left(seconds: int) -> str:
 def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_potion: str, brewing_until: int,
                          upgrades: dict, now: int = None) -> str:
     now = now or int(time.time())
-    lines = ["⚗️ <b>Зелья</b>\nВарятся в котле за монеты + время. Один котёл — пока варится одно, начать варку другого нельзя.\n"]
+    lines = ["⚗️ <b>Зелья</b>"]
 
     if brewing_potion and brewing_potion in POTIONS:
         cfg = POTIONS[brewing_potion]
         left = brewing_until - now
         if left > 0:
-            lines.append(f"🔥 Варится: {cfg['emoji']} {esc(cfg['name'])} — готово через {format_time_left(left)}\n")
+            lines.append(f"🔥 {cfg['emoji']} {esc(cfg['name'])} — готово через {format_time_left(left)}")
         else:
-            lines.append(f"✅ Готово: {cfg['emoji']} {esc(cfg['name'])} — забери его ниже!\n")
+            lines.append(f"✅ {cfg['emoji']} {esc(cfg['name'])} готово — забери ниже")
     else:
-        lines.append("🔥 Котёл свободен.\n")
+        lines.append("🔥 Котёл свободен")
 
-    if active_potions:
-        lines.append("Активные эффекты:")
-        for key, val in active_potions.items():
-            cfg = POTIONS[key]
-            if cfg["effect"] == "no_cd":
-                lines.append(f"● {cfg['emoji']} {esc(cfg['name'])} — {val} исп. осталось")
-            else:
-                lines.append(f"● {cfg['emoji']} {esc(cfg['name'])} — {format_time_left(val - now)}")
-        lines.append("")
+    for key, val in active_potions.items():
+        cfg = POTIONS[key]
+        if cfg["effect"] == "no_cd":
+            lines.append(f"● {cfg['emoji']} {val} исп.")
+        else:
+            lines.append(f"● {cfg['emoji']} {format_time_left(val - now)}")
 
-    lines.append("В запасе:")
-    any_owned = False
-    for key in POTION_ORDER:
-        qty = inventory_potions.get(key, 0)
-        if qty > 0:
-            any_owned = True
-            cfg = POTIONS[key]
-            lines.append(f"{cfg['emoji']} {esc(cfg['name'])} x{qty} — {esc(cfg['desc'])}")
-    if not any_owned:
-        lines.append("пусто")
+    owned = [f"{POTIONS[k]['emoji']}x{q}" for k, q in inventory_potions.items() if q > 0]
+    lines.append("В запасе: " + (", ".join(owned) if owned else "пусто"))
 
     return "\n".join(lines)
 
@@ -4307,12 +4322,17 @@ async def admin_take_rebirth(message: Message):
     if not target:
         await message.reply(TEXTS["admin_take_rebirth_2"])
         return
+    target_username = target.username or target.first_name or "Без имени"
+
+    if match.group(1) is None:  # "!снять очкп все"
+        await db_exec("UPDATE users SET rebirth_points = 0 WHERE user_id = ?", (target.id,))
+        await message.reply(TEXTS["admin_take_rebirth_4"].format(v0="все", v1=esc(target_username), v2=0))
+        return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
         await message.reply(TEXTS["admin_take_rebirth_3"])
         return
-    target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
     new_points = max(0, row[14] - amount)
@@ -4356,7 +4376,7 @@ async def broadcast_news(message: Message):
     await message.reply(TEXTS["broadcast_news_2"].format(v0=sent, v1=failed))
 
 
-@dp.message(F.text.lower().startswith("!дать ног"))
+@dp.message(F.text.regexp(r"(?i)^!дать ног(?!и лвл)"))
 async def admin_give_legs(message: Message):
     if not is_admin(message):
         return
@@ -4399,12 +4419,17 @@ async def admin_take_legs(message: Message):
     if not target:
         await message.reply(TEXTS["admin_take_legs_2"])
         return
+    target_username = target.username or target.first_name or "Без имени"
+
+    if match.group(1) is None:  # "!снять ноги все"
+        await db_exec("UPDATE users SET score = 0 WHERE user_id = ?", (target.id,))
+        await message.reply(TEXTS["admin_take_legs_4"].format(v0=esc(target_username), v1=0))
+        return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
         await message.reply(TEXTS["admin_take_legs_3"])
         return
-    target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
     new_score = max(0, row[2] - amount)
@@ -4455,12 +4480,17 @@ async def admin_take_evo(message: Message):
     if not target:
         await message.reply(TEXTS["admin_take_evo_2"])
         return
+    target_username = target.username or target.first_name or "Без имени"
+
+    if match.group(1) is None:  # "!снять эво все"
+        await db_exec("UPDATE users SET evolution_level = 0 WHERE user_id = ?", (target.id,))
+        await message.reply(TEXTS["admin_take_evo_4"].format(v0="все", v1=esc(target_username), v2=0))
+        return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
         await message.reply(TEXTS["admin_take_evo_3"])
         return
-    target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
     new_evo = max(0, row[3] - amount)
@@ -4511,12 +4541,17 @@ async def admin_take_coin(message: Message):
     if not target:
         await message.reply(TEXTS["admin_take_coin_2"])
         return
+    target_username = target.username or target.first_name or "Без имени"
+
+    if match.group(1) is None:  # "!снять коин все"
+        await db_exec("UPDATE users SET coins = 0 WHERE user_id = ?", (target.id,))
+        await message.reply(TEXTS["admin_take_coin_4"].format(v0="все", v1=esc(target_username), v2=0))
+        return
 
     amount = parse_amount(match.group(1))
     if not amount or amount <= 0:
         await message.reply(TEXTS["admin_take_coin_3"])
         return
-    target_username = target.username or target.first_name or "Без имени"
 
     row = await ensure_user(target.id, target_username)
     new_coins = max(0, row[5] - amount)
@@ -4797,6 +4832,43 @@ async def admin_set_legs(message: Message):
     old_score = row[2]
     await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (amount, target.id))
     await maybe_announce_levelup(message, target_username, old_score, amount, row[3], bool(row[11]))
+
+
+@dp.message(F.text.lower().startswith("!дать ноги лвл"))
+async def admin_give_legs_level(message: Message):
+    """Ставит игроку РОВНО указанный уровень ноги (не сырое число очков) — пересчитывает
+    нужный score через level_threshold с учётом его эволюции/перерождений/ultra_rebirth."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_GIVE_LEGS_LVL_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_give_legs_lvl_1"])
+        return
+
+    target = await resolve_target(message, bool(match.group(2)))
+    if not target:
+        await message.reply(TEXTS["admin_give_legs_lvl_2"])
+        return
+
+    level = int(match.group(1))
+    target_username = target.username or target.first_name or "Без имени"
+
+    row = await ensure_user(target.id, target_username)
+    evolution_level, rebirth_count = row[3], row[15]
+    ultra_rebirth = bool(row[21])
+    cap = ULTRA_LEVEL_CAP if ultra_rebirth else ULTRA_REQUIRED_LEG_LEVEL
+
+    if level < 0 or level > cap:
+        await message.reply(TEXTS["admin_give_legs_lvl_3"].format(v0=cap))
+        return
+
+    old_score = row[2]
+    new_score = level_threshold(level, evolution_level, rebirth_count)
+    await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (new_score, target.id))
+    await maybe_announce_levelup(message, target_username, old_score, new_score, evolution_level, bool(row[11]), rebirth_count, ultra_rebirth)
+
+    await message.reply(TEXTS["admin_give_legs_lvl_4"].format(v0=level, v1=esc(target_username), v2=new_score))
 
     await message.reply(TEXTS["admin_set_legs_4"].format(v0=esc(target_username), v1=amount, v2=old_score))
 
