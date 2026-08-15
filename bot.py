@@ -204,7 +204,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры и предметы\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -259,6 +259,15 @@ TEXTS = {
     "inventory_back_to_menu_1": 'Это не твой инвентарь!',
     "inventory_open_category_1": 'Это не твой инвентарь!',
     "toggle_equip_1": 'Это не твой инвентарь!',
+    "potion_brew_busy_1": '🔥 Котёл уже занят — дождись, пока текущее зелье сварится.',
+    "potion_brew_no_coins_1": 'Не хватает монет: нужно {v0} 🪙, у тебя {v1} 🪙.',
+    "potion_brew_started_1": '⚗️ Варка начата: {v0} {v1} будет готово через {v2}.',
+    "potion_collect_none_1": 'Котёл пуст — нечего забирать.',
+    "potion_collect_not_ready_1": 'Зелье ещё варится — подожди {v0}.',
+    "potion_collect_ok_1": '✅ Забрал: {v0} {v1}!',
+    "potion_use_none_1": 'У тебя нет такого зелья в запасе.',
+    "potion_use_ok_1": '{v0} {v1} выпито! Действует {v2}.',
+    "potion_use_ok_charges_1": '{v0} {v1} выпито! Действует следующие {v2} использования фермы.',
     "toggle_equip_2": 'Этот предмет нельзя экипировать — он действует пассивно, пока лежит в инвентаре.',
     "toggle_equip_3": 'Надел! {v0} вытеснил {v1} (слоты заняты).',
     "toggle_equip_4": 'Готово!',
@@ -811,13 +820,54 @@ UPGRADES = {
         "name": "Крафты", "desc": "Открывает уровни рецептов крафта (0/1/2) за 🉑",
         "max_level": 2, "cost": _linear_cost(15, 20), "category": 3,
     },
-    # В разработке — не покупаемы, только отображаются
-    "brew_speed": {"name": "Скорость готовки зелья", "desc": "В разработке", "max_level": 5, "cost": None, "category": 3, "wip": True},
-    "brew_duration": {"name": "Длительность зелья", "desc": "В разработке", "max_level": 3, "cost": None, "category": 3, "wip": True},
+    "brew_speed": {
+        "name": "Скорость готовки зелья",
+        "desc": "-10% времени варки зелья за лвл",
+        "max_level": 5,
+        "cost": _linear_cost(3, 3),
+        "category": 3,
+    },
+    "brew_duration": {
+        "name": "Длительность зелья",
+        "desc": "+20% к длительности эффекта зелий за лвл",
+        "max_level": 3,
+        "cost": _linear_cost(5, 5),
+        "category": 3,
+    },
+    # В разработке — не покупаем, только отображается
     "exchanger": {"name": "Обменник", "desc": "В разработке", "max_level": 2, "cost": None, "category": 3, "wip": True},
 }
 UPGRADE_ORDER = list(UPGRADES.keys())
 UPGRADE_CATEGORIES = {1: "🌾 Ферма", 2: "🎒 Экономика", 3: "🔨 Крафты и прочее"}
+
+# ---------- Зелья (варятся за монеты + время; один котёл на игрока) ----------
+# effect: "farm_x2" (x2 к добыче фермы), "luck_x2" (x2 к шансу проков ваз/эссенции бога),
+# "no_cd" (следующие N фармов без ожидания кулдауна — расходуется по использованиям, а не по времени).
+POTIONS = {
+    "potion_speed": {
+        "emoji": "🧪⚡", "name": "Зелье ускорения",
+        "desc": "x2 к добыче фермы",
+        "effect": "farm_x2",
+        "brew_cost": 40, "brew_seconds": 600,   # 10 мин варки
+        "duration_seconds": 1800,               # 30 мин действия
+    },
+    "potion_luck": {
+        "emoji": "🧪🍀", "name": "Зелье удачи",
+        "desc": "x2 к шансу проков ваз и Эссенции Бога",
+        "effect": "luck_x2",
+        "brew_cost": 50, "brew_seconds": 900,   # 15 мин варки
+        "duration_seconds": 1800,               # 30 мин действия
+    },
+    "potion_haste": {
+        "emoji": "🧪🌀", "name": "Зелье без КД",
+        "desc": "Следующие 3 фарма без ожидания кулдауна",
+        "effect": "no_cd",
+        "brew_cost": 60, "brew_seconds": 1200,  # 20 мин варки
+        "charges": 3,                            # расходуется по использованиям фермы, не по времени
+    },
+}
+POTION_ORDER = list(POTIONS.keys())
+NO_CD_CHARGES_KEY = "potion_haste"
 
 AUTO_FARM_LEGS_RATES = {1: (10, 60), 2: (100, 30), 3: (1000, 10)}     # лвл: (кол-во ног, за X секунд)
 AUTO_FARM_COINS_RATES = {1: (1, 300), 2: (5, 300), 3: (10, 180)}       # лвл: (кол-во коинов, за X секунд)
@@ -1251,6 +1301,95 @@ def unequip_item(equipped_str: str, item_key: str) -> list:
     return [k for k in parse_equipped(equipped_str) if k != item_key]
 
 
+# ---------- Зелья: парсинг активных эффектов ----------
+
+def parse_potions(potions_str: str) -> dict:
+    """'key:value,key:value' -> {key: value}. Для time-based зелий value = unix until_ts,
+    для charge-based (no_cd) value = оставшиеся заряды."""
+    result = {}
+    for part in (potions_str or "").split(","):
+        if not part or ":" not in part:
+            continue
+        key, _, val = part.partition(":")
+        if key in POTIONS:
+            try:
+                result[key] = int(val)
+            except ValueError:
+                pass
+    return result
+
+
+def format_potions(potions: dict) -> str:
+    return ",".join(f"{k}:{v}" for k, v in potions.items() if v > 0)
+
+
+def active_potions_now(potions_str: str, now: int = None) -> dict:
+    """Отфильтровывает истёкшие time-based зелья (charge-based остаются, пока заряды > 0)."""
+    now = now or int(time.time())
+    parsed = parse_potions(potions_str)
+    result = {}
+    for key, val in parsed.items():
+        cfg = POTIONS[key]
+        if cfg["effect"] == "no_cd":
+            if val > 0:
+                result[key] = val
+        else:
+            if val > now:
+                result[key] = val
+    return result
+
+
+def potion_duration_seconds(key: str, upgrades: dict) -> int:
+    base = POTIONS[key]["duration_seconds"]
+    bonus = 1 + 0.20 * upgrade_level(upgrades, "brew_duration")
+    return round(base * bonus)
+
+
+def brew_seconds_for(key: str, upgrades: dict) -> int:
+    base = POTIONS[key]["brew_seconds"]
+    cut = 1 - 0.10 * upgrade_level(upgrades, "brew_speed")
+    return max(30, round(base * cut))
+
+
+def has_potion_effect(potions: dict, effect: str) -> bool:
+    return any(POTIONS[k]["effect"] == effect for k in potions)
+
+
+async def consume_no_cd_charge(user_id: int, potions: dict) -> dict:
+    """Списывает 1 заряд зелья 'без КД', если оно активно. Возвращает обновлённый potions dict."""
+    if NO_CD_CHARGES_KEY not in potions:
+        return potions
+    left = potions[NO_CD_CHARGES_KEY] - 1
+    new_potions = dict(potions)
+    if left > 0:
+        new_potions[NO_CD_CHARGES_KEY] = left
+    else:
+        new_potions.pop(NO_CD_CHARGES_KEY, None)
+    await db_exec("UPDATE users SET active_potions = ? WHERE user_id = ?", (format_potions(new_potions), user_id))
+    return new_potions
+
+
+def parse_potion_stock(stock_str: str) -> dict:
+    """Сваренные, но не выпитые зелья: 'key:qty,key:qty' -> {key: qty}."""
+    result = {}
+    for part in (stock_str or "").split(","):
+        if not part or ":" not in part:
+            continue
+        key, _, qty = part.partition(":")
+        if key in POTIONS:
+            try:
+                q = int(qty)
+                if q > 0:
+                    result[key] = q
+            except ValueError:
+                pass
+    return result
+
+
+def format_potion_stock(stock: dict) -> str:
+    return ",".join(f"{k}:{v}" for k, v in stock.items() if v > 0)
+
+
 def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrades: dict = None,
                     ultra_rebirth: bool = False) -> float:
     mult = 1.0
@@ -1533,7 +1672,7 @@ USER_COLUMNS = (
     "user_id, username, score, evolution_level, last_farm, coins, active_item, "
     "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
     "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
-    "ultra_rebirth, auto_evolve"
+    "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock"
 )
 # Индексы полей выше при обращении по row[...]:
 #  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
@@ -1546,6 +1685,14 @@ USER_COLUMNS = (
 #  20 top_banned — 1 если игрок забанен из топов (не попадает в списки топ), 0/NULL иначе
 #  22 auto_evolve — Boolean (0/1), VIP-only: при включении эволюция срабатывает автоматически
 #     сразу же, как только хватает очков (см. try_auto_evolve). Не имеет эффекта без активного VIP.
+#  23 active_potions — активные зелья "key:until_ts,key:until_ts" (см. parse_potions/POTIONS).
+#     Разные виды зелий стакаются одновременно; повторное использование того же вида освежает
+#     таймер (не суммирует эффект).
+#  24 brewing_potion — ключ зелья, которое варится в котле сейчас, либо NULL/'' если котёл свободен.
+#  25 brewing_until — unix-время, когда варка (brewing_potion) завершится. Один котёл на игрока —
+#     пока он занят, начать варку второго зелья нельзя.
+#  26 potion_stock — сваренные, но ещё не использованные зелья "key:qty,key:qty". Хранится ОТДЕЛЬНО
+#     от таблицы inventory (зелья не предметы ITEMS — не экипируются, не продаются/крафтятся оттуда).
 
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -1621,6 +1768,10 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN top_banned INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN ultra_rebirth INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN auto_evolve INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN active_potions TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN brewing_potion TEXT DEFAULT NULL",
+        "ALTER TABLE users ADD COLUMN brewing_until INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN potion_stock TEXT DEFAULT ''",
     ):
         try:
             await db_exec(stmt)
@@ -1641,7 +1792,7 @@ async def ensure_user(user_id: int, username: str):
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
         now = int(time.time())
-        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0)
+        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "")
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
@@ -1667,10 +1818,10 @@ async def remove_item(user_id: int, item_key: str, qty: int = 1) -> bool:
     return True
 
 
-async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict) -> dict:
+async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict, luck_boost: bool = False) -> dict:
     """Считает все монетные пассивки (Странная монета, Тёплая свеча, Монета боготворства) одним
-    общим числом монет + бонус Эссенции Бога (монеты гарант, очки перерождения — 30% шанс). Один UPDATE.
-    Возвращает {'coins': N, 'rebirth': N, 'evo': 0 (не используется), 'is_god': bool}."""
+    общим числом монет + бонус Эссенции Бога (монеты гарант, очки перерождения — шанс x2 при
+    зелье удачи). Один UPDATE. Возвращает {'coins': N, 'rebirth': N, 'evo': 0 (не используется), 'is_god': bool}."""
     coin_bonus = 0
     if inventory_map.get("strange_coin", 0) > 0:
         coin_bonus += 1
@@ -1685,7 +1836,8 @@ async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict) ->
     is_god = get_active_unique_tier(active_items) == "god_essence"
     if is_god:
         coin_bonus += random.randint(1, 50)
-        if random.random() < 0.30:
+        rebirth_chance = 0.60 if luck_boost else 0.30
+        if random.random() < rebirth_chance:
             rebirth_bonus += random.randint(1, 3)
 
     if coin_bonus or rebirth_bonus:
@@ -1697,10 +1849,12 @@ async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict) ->
     return {"coins": coin_bonus, "rebirth": rebirth_bonus, "evo": 0, "is_god": is_god}
 
 
-async def apply_vase_proc(user_id: int, inventory_map: dict) -> str:
-    """Проки пассивных ваз при фарме ног. Срабатывает только самая сильная имеющаяся ваза."""
+async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = False) -> str:
+    """Проки пассивных ваз при фарме ног. Срабатывает только самая сильная имеющаяся ваза.
+    luck_boost (зелье удачи) удваивает эффективный ролл — вдвое повышает шанс на каждый порог."""
+    roll_scale = 0.5 if luck_boost else 1.0
     if inventory_map.get("godly_vase", 0) > 0:
-        roll = random.random()
+        roll = random.random() * roll_scale
         if roll < 0.001:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 200 WHERE user_id = ?", (user_id,))
             return "\n🏺✨ Боготворная ваза: СУПЕР УДАЧА! +200🉑!"
@@ -1718,12 +1872,12 @@ async def apply_vase_proc(user_id: int, inventory_map: dict) -> str:
             return "\n🏺 Боготворная ваза: +1🉑!"
         return ""
     if inventory_map.get("golden_vase", 0) > 0:
-        if random.random() < 0.06:
+        if random.random() * roll_scale < 0.06:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
             return "\n🏺 Золотая ваза: +1🉑!"
         return ""
     if inventory_map.get("old_vase", 0) > 0:
-        if random.random() < 0.01:
+        if random.random() * roll_scale < 0.01:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
             return "\n🏺 Старая ваза: +1🉑!"
         return ""
@@ -2224,6 +2378,7 @@ async def count_legs(message: Message):
     ultra_rebirth = bool(row[21])
     auto_evolve_enabled = bool(row[22])
     vip_active = is_vip_active(vip_until)
+    potions = active_potions_now(row[23])
 
     flat_bonus = total_flat_bonus(active_items)
     limits = active_farm_limits(active_items)
@@ -2255,6 +2410,10 @@ async def count_legs(message: Message):
         total = round(total * (1 + 0.20 * galaxy))   # 🌌: +20% к итогу за каждую штуку
     if star:
         total = round(total * (2 ** star))            # ⭐️: ×2 к итогу за каждую штуку
+    potion_text = ""
+    if "potion_speed" in potions:
+        total *= 2
+        potion_text += "\n🧪⚡ Зелье ускорения: x2 к добыче!"
     new_score = score + total
 
     await db_exec(
@@ -2270,8 +2429,9 @@ async def count_legs(message: Message):
 
     inv = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv}
-    vase_text = await apply_vase_proc(user_id, inventory_map)
-    bonus = await apply_farm_bonuses(user_id, active_items, inventory_map)
+    luck_boost = "luck_x2" in potions
+    vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
+    bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
 
     now = time.monotonic()
     chat_id = message.chat.id
@@ -2293,12 +2453,12 @@ async def count_legs(message: Message):
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
-            TEXTS["count_legs_1"].format(v0=GOD_ESSENCE_FLAVOR, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text + auto_evo_text)
+            TEXTS["count_legs_1"].format(v0=GOD_ESSENCE_FLAVOR, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text + auto_evo_text + potion_text)
         )
         return
 
     await message.reply(
-        TEXTS["count_legs_2"].format(v0=parts, v1=total, v2=coin_text, v3=new_score, v4=vase_text + auto_evo_text)
+        TEXTS["count_legs_2"].format(v0=parts, v1=total, v2=coin_text, v3=new_score, v4=vase_text + auto_evo_text + potion_text)
     )
 
 
@@ -2548,13 +2708,15 @@ async def farm(message: Message):
     ultra_rebirth = bool(row[21])
     auto_evolve_enabled = bool(row[22])
     vip_active = is_vip_active(vip_until)
+    potions = active_potions_now(row[23], now)
 
     inv_rows = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv_rows}
     has_time_particle = inventory_map.get("time_particle", 0) > 0
 
     cooldown = farm_cd_seconds(upgrades, active_items, has_time_particle)
-    if now - last_farm < cooldown:
+    has_no_cd = NO_CD_CHARGES_KEY in potions
+    if not has_no_cd and now - last_farm < cooldown:
         left = cooldown - (now - last_farm)
         m, s = divmod(left, 60)
         await message.reply(TEXTS["farm_1"].format(v0=m, v1=s))
@@ -2568,6 +2730,10 @@ async def farm(message: Message):
     event_mult = await get_event_multiplier()
     personal_mult = await get_personal_multiplier(user_id)
     gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult * personal_mult)
+    potion_text = ""
+    if "potion_speed" in potions:
+        gained *= 2
+        potion_text += "\n🧪⚡ Зелье ускорения: x2 к добыче!"
     new_score = score + gained
 
     await db_exec(
@@ -2575,8 +2741,14 @@ async def farm(message: Message):
         (new_score, now, gained, user_id),
     )
 
-    vase_text = await apply_vase_proc(user_id, inventory_map)
-    bonus = await apply_farm_bonuses(user_id, active_items, inventory_map)
+    if has_no_cd:
+        potions = await consume_no_cd_charge(user_id, potions)
+        charges_left = potions.get(NO_CD_CHARGES_KEY, 0)
+        potion_text += f"\n🧪🌀 Зелье без КД: заряд использован ({charges_left} ост.)"
+
+    luck_boost = "luck_x2" in potions
+    vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
+    bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
 
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count, ultra_rebirth)
 
@@ -2599,12 +2771,12 @@ async def farm(message: Message):
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
-            TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=vase_text + auto_evo_text)
+            TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=vase_text + auto_evo_text + potion_text)
         )
         return
 
     await message.reply(
-        TEXTS["farm_3"].format(v0=gained, v1=new_score, v2=coin_text, v3=auto_text, v4=vase_text + auto_evo_text)
+        TEXTS["farm_3"].format(v0=gained, v1=new_score, v2=coin_text, v3=auto_text, v4=vase_text + auto_evo_text + potion_text)
     )
 
 
@@ -2991,6 +3163,7 @@ def inventory_menu_keyboard(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="🧪 Бустеры", callback_data=f"inv_cat:{user_id}:boosters:0")],
         [InlineKeyboardButton(text="📦 Предметы", callback_data=f"inv_cat:{user_id}:items:0")],
+        [InlineKeyboardButton(text="⚗️ Зелья", callback_data=f"inv_cat:{user_id}:potions:0")],
     ])
 
 
@@ -3061,6 +3234,93 @@ def format_items_text(rows):
     return "\n".join(lines)
 
 
+def format_time_left(seconds: int) -> str:
+    seconds = max(0, seconds)
+    m, s = divmod(seconds, 60)
+    h, m = divmod(m, 60)
+    if h:
+        return f"{h}ч {m}м"
+    if m:
+        return f"{m}м {s}с"
+    return f"{s}с"
+
+
+def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_potion: str, brewing_until: int,
+                         upgrades: dict, now: int = None) -> str:
+    now = now or int(time.time())
+    lines = ["⚗️ <b>Зелья</b>\nВарятся в котле за монеты + время. Один котёл — пока варится одно, начать варку другого нельзя.\n"]
+
+    if brewing_potion and brewing_potion in POTIONS:
+        cfg = POTIONS[brewing_potion]
+        left = brewing_until - now
+        if left > 0:
+            lines.append(f"🔥 Варится: {cfg['emoji']} {esc(cfg['name'])} — готово через {format_time_left(left)}\n")
+        else:
+            lines.append(f"✅ Готово: {cfg['emoji']} {esc(cfg['name'])} — забери его ниже!\n")
+    else:
+        lines.append("🔥 Котёл свободен.\n")
+
+    if active_potions:
+        lines.append("Активные эффекты:")
+        for key, val in active_potions.items():
+            cfg = POTIONS[key]
+            if cfg["effect"] == "no_cd":
+                lines.append(f"● {cfg['emoji']} {esc(cfg['name'])} — {val} исп. осталось")
+            else:
+                lines.append(f"● {cfg['emoji']} {esc(cfg['name'])} — {format_time_left(val - now)}")
+        lines.append("")
+
+    lines.append("В запасе:")
+    any_owned = False
+    for key in POTION_ORDER:
+        qty = inventory_potions.get(key, 0)
+        if qty > 0:
+            any_owned = True
+            cfg = POTIONS[key]
+            lines.append(f"{cfg['emoji']} {esc(cfg['name'])} x{qty} — {esc(cfg['desc'])}")
+    if not any_owned:
+        lines.append("пусто")
+
+    return "\n".join(lines)
+
+
+def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until: int, user_id: int,
+                      upgrades: dict, now: int = None) -> InlineKeyboardMarkup:
+    now = now or int(time.time())
+    kb_rows = []
+
+    brewing_active = bool(brewing_potion) and brewing_until > now
+    brewing_ready = bool(brewing_potion) and brewing_until <= now
+
+    if brewing_ready:
+        cfg = POTIONS[brewing_potion]
+        kb_rows.append([InlineKeyboardButton(
+            text=f"✅ Забрать {cfg['emoji']} {cfg['name']}",
+            callback_data=f"potion_collect:{user_id}",
+        )])
+    elif not brewing_active:
+        for key in POTION_ORDER:
+            cfg = POTIONS[key]
+            seconds = brew_seconds_for(key, upgrades)
+            kb_rows.append([InlineKeyboardButton(
+                text=f"⚗️ Варить {cfg['emoji']} {cfg['name']} ({cfg['brew_cost']}🪙, {format_time_left(seconds)})",
+                callback_data=f"potion_brew:{user_id}:{key}",
+            )])
+
+    for key in POTION_ORDER:
+        qty = inventory_potions.get(key, 0)
+        if qty > 0:
+            cfg = POTIONS[key]
+            kb_rows.append([InlineKeyboardButton(
+                text=f"▶️ Использовать {cfg['emoji']} {cfg['name']} (x{qty})",
+                callback_data=f"potion_use:{user_id}:{key}",
+            )])
+
+    kb_rows.append([InlineKeyboardButton(text="🔄 Обновить", callback_data=f"inv_cat:{user_id}:potions:0")])
+    kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
+    return InlineKeyboardMarkup(inline_keyboard=kb_rows)
+
+
 @dp.message(F.text.lower().in_({"инвентарь", "мой инвентарь"}))
 async def inventory(message: Message):
     user_id = message.from_user.id
@@ -3123,16 +3383,156 @@ async def inventory_open_category(callback: CallbackQuery):
         await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
         return
 
-    rows = await get_inventory(owner_id)
     if category == "boosters":
+        rows = await get_inventory(owner_id)
         row = await get_user(owner_id)
         upgrades = parse_upgrades(row[16])
         active_items = parse_equipped(row[18])
         max_slots = equipped_slots_max(upgrades)
         await callback.message.edit_text(format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
+    elif category == "potions":
+        row = await get_user(owner_id)
+        upgrades = parse_upgrades(row[16])
+        stock = parse_potion_stock(row[26])
+        active = active_potions_now(row[23])
+        brewing_potion, brewing_until = row[24], row[25]
+        await safe_edit_text(
+            callback,
+            format_potions_text(stock, active, brewing_potion, brewing_until, upgrades),
+            reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades),
+        )
     else:
+        rows = await get_inventory(owner_id)
         await safe_edit_text(callback, format_items_text(rows), reply_markup=items_keyboard(owner_id))
     await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("potion_brew:"))
+async def potion_brew_start(callback: CallbackQuery):
+    parts = callback.data.split(":")
+    owner_id = int(parts[1])
+    potion_key = parts[2]
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+    if potion_key not in POTIONS:
+        await callback.answer()
+        return
+
+    now = int(time.time())
+    row = await get_user(owner_id)
+    coins = row[5]
+    upgrades = parse_upgrades(row[16])
+    brewing_potion, brewing_until = row[24], row[25]
+
+    if brewing_potion and brewing_until > now:
+        await callback.answer(TEXTS["potion_brew_busy_1"], show_alert=True)
+        return
+
+    cfg = POTIONS[potion_key]
+    if coins < cfg["brew_cost"]:
+        await callback.answer(TEXTS["potion_brew_no_coins_1"].format(v0=cfg["brew_cost"], v1=coins), show_alert=True)
+        return
+
+    seconds = brew_seconds_for(potion_key, upgrades)
+    new_until = now + seconds
+    await db_exec(
+        "UPDATE users SET coins = coins - ?, brewing_potion = ?, brewing_until = ? WHERE user_id = ?",
+        (cfg["brew_cost"], potion_key, new_until, owner_id),
+    )
+
+    stock = parse_potion_stock(row[26])
+    await safe_edit_text(
+        callback,
+        format_potions_text(stock, active_potions_now(row[23], now), potion_key, new_until, upgrades, now),
+        reply_markup=potions_keyboard(stock, potion_key, new_until, owner_id, upgrades, now),
+    )
+    await callback.answer(TEXTS["potion_brew_started_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=format_time_left(seconds)))
+
+
+@dp.callback_query(F.data.startswith("potion_collect:"))
+async def potion_collect(callback: CallbackQuery):
+    owner_id = int(callback.data.split(":")[1])
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+
+    now = int(time.time())
+    row = await get_user(owner_id)
+    brewing_potion, brewing_until = row[24], row[25]
+    upgrades = parse_upgrades(row[16])
+
+    if not brewing_potion:
+        await callback.answer(TEXTS["potion_collect_none_1"], show_alert=True)
+        return
+    if brewing_until > now:
+        await callback.answer(TEXTS["potion_collect_not_ready_1"].format(v0=format_time_left(brewing_until - now)), show_alert=True)
+        return
+
+    stock = parse_potion_stock(row[26])
+    stock[brewing_potion] = stock.get(brewing_potion, 0) + 1
+    await db_exec(
+        "UPDATE users SET brewing_potion = NULL, brewing_until = 0, potion_stock = ? WHERE user_id = ?",
+        (format_potion_stock(stock), owner_id),
+    )
+
+    cfg = POTIONS[brewing_potion]
+    await safe_edit_text(
+        callback,
+        format_potions_text(stock, active_potions_now(row[23], now), None, 0, upgrades, now),
+        reply_markup=potions_keyboard(stock, None, 0, owner_id, upgrades, now),
+    )
+    await callback.answer(TEXTS["potion_collect_ok_1"].format(v0=cfg["emoji"], v1=cfg["name"]))
+
+
+@dp.callback_query(F.data.startswith("potion_use:"))
+async def potion_use(callback: CallbackQuery):
+    parts = callback.data.split(":")
+    owner_id = int(parts[1])
+    potion_key = parts[2]
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+    if potion_key not in POTIONS:
+        await callback.answer()
+        return
+
+    now = int(time.time())
+    row = await get_user(owner_id)
+    upgrades = parse_upgrades(row[16])
+    stock = parse_potion_stock(row[26])
+
+    if stock.get(potion_key, 0) <= 0:
+        await callback.answer(TEXTS["potion_use_none_1"], show_alert=True)
+        return
+
+    stock[potion_key] -= 1
+    if stock[potion_key] <= 0:
+        del stock[potion_key]
+
+    active = active_potions_now(row[23], now)
+    cfg = POTIONS[potion_key]
+    if cfg["effect"] == "no_cd":
+        active[potion_key] = cfg["charges"]  # использование освежает заряды (не суммирует)
+    else:
+        duration = potion_duration_seconds(potion_key, upgrades)
+        active[potion_key] = now + duration  # освежает таймер, не продлевает поверх старого
+
+    await db_exec(
+        "UPDATE users SET potion_stock = ?, active_potions = ? WHERE user_id = ?",
+        (format_potion_stock(stock), format_potions(active), owner_id),
+    )
+
+    brewing_potion, brewing_until = row[24], row[25]
+    await safe_edit_text(
+        callback,
+        format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, now),
+        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, now),
+    )
+    if cfg["effect"] == "no_cd":
+        await callback.answer(TEXTS["potion_use_ok_charges_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=cfg["charges"]))
+    else:
+        await callback.answer(TEXTS["potion_use_ok_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=format_time_left(potion_duration_seconds(potion_key, upgrades))))
 
 
 @dp.callback_query(F.data.startswith("inv_boost_page:"))
