@@ -1254,9 +1254,9 @@ def get_level_visual(level: int):
         return emoji, name, True
     if level >= ULTRA_LEG_LEVEL:
         # Доступна только тем, у кого ultra_rebirth = 1 (проверяется на вызывающей стороне).
-        return ULTRA_LEG_EMOJI, ULTRA_LEG_NAME, False
+        return ULTRA_LEG_EMOJI, ULTRA_LEG_NAME, True
     if level >= MGG_MEGA_LEVEL:
-        return MGG_MEGA_EMOJI, MGG_MEGA_NAME, False
+        return MGG_MEGA_EMOJI, MGG_MEGA_NAME, True
     for start, end, emoji, name in EXTRA_TIERS:
         if start <= level <= end:
             return emoji, name, True
@@ -1944,13 +1944,13 @@ async def get_all_chat_ids():
 async def build_top(chat_id, order_column: str, limit: int = 10):
     if chat_id is None:
         rows = await db_query(
-            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname "
+            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth "
             f"FROM users WHERE (top_banned IS NULL OR top_banned = 0) ORDER BY {order_column} DESC LIMIT ?",
             (limit,),
         )
     else:
         rows = await db_query(
-            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges, u.rebirth_points, u.rebirth_count, u.nickname
+            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges, u.rebirth_points, u.rebirth_count, u.nickname, u.ultra_rebirth
                 FROM users u JOIN chat_members cm ON u.user_id = cm.user_id
                 WHERE cm.chat_id = ? AND (u.top_banned IS NULL OR u.top_banned = 0) ORDER BY u.{order_column} DESC LIMIT ?""",
             (chat_id, limit),
@@ -2543,9 +2543,10 @@ async def info_player(message: Message):
     rebirth_count = row[15] if len(row) > 15 else 0
     hidden = parse_hidden(row[13] if len(row) > 13 else "")
     nickname = row[19] if len(row) > 19 else None
+    ultra_rebirth = bool(row[21]) if len(row) > 21 else False
     shown_name = display_name(username, nickname)
     vip_active = is_vip_active(vip_until)
-    level = get_level_index(score, evolution_level, rebirth_count)
+    level = get_level_index(score, evolution_level, rebirth_count, ultra_rebirth)
     emoji, name, show_level = get_level_visual(level)
     lvl_part = f" ({level} лвл)" if show_level else ""
     name_part = f" {esc(name)}" if name else ""
@@ -2572,8 +2573,8 @@ async def send_legs_top(message: Message, chat_id, title: str):
         return
 
     text = f"🏆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname) in enumerate(rows, 1):
-        level = get_level_index(score, evolution_level, rebirth_count)
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth) in enumerate(rows, 1):
+        level = get_level_index(score, evolution_level, rebirth_count, bool(ultra_rebirth))
         emoji, name, show_level = get_level_visual(level)
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         lvl_part = f" ({level} лвл)" if show_level else ""
@@ -2591,7 +2592,7 @@ async def send_evo_top(message: Message, chat_id, title: str):
         return
 
     text = f"🎆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth) in enumerate(rows, 1):
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — эво {evolution_level} ({score} очков)\n"
 
@@ -2606,7 +2607,7 @@ async def send_coin_top(message: Message, chat_id, title: str):
         return
 
     text = f"🪙 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth) in enumerate(rows, 1):
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — {coins} 🪙\n"
 
@@ -2621,7 +2622,7 @@ async def send_rebirth_top(message: Message, chat_id, title: str):
         return
 
     text = f"🉑 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth) in enumerate(rows, 1):
         badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — {rebirth_points} 🉑 (перерождений: {rebirth_count})\n"
 
@@ -2870,6 +2871,7 @@ async def exchange(message: Message):
     row = await ensure_user(user_id, username)
     score, coins, evolution_level = row[2], row[5], row[3]
     rebirth_count = row[15]
+    ultra_rebirth = bool(row[21])
 
     spent = coins_wanted * EXCHANGE_RATE
     if spent > score:
@@ -2877,9 +2879,9 @@ async def exchange(message: Message):
         await message.reply(TEXTS["exchange_3"].format(v0=score, v1=max_coins))
         return
 
-    old_level = get_level_index(score, evolution_level, rebirth_count)
+    old_level = get_level_index(score, evolution_level, rebirth_count, ultra_rebirth)
     new_score = score - spent
-    new_level = get_level_index(new_score, evolution_level, rebirth_count)
+    new_level = get_level_index(new_score, evolution_level, rebirth_count, ultra_rebirth)
     new_coins = coins + coins_wanted
 
     await db_exec("UPDATE users SET score = ?, coins = ? WHERE user_id = ?", (new_score, new_coins, user_id))
