@@ -1,4 +1,5 @@
 import asyncio
+import bisect
 import os
 import random
 import re
@@ -210,7 +211,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -301,8 +302,9 @@ TEXTS = {
     "upgrade_buy_3": 'Максимальный уровень уже достигнут.',
     "upgrade_buy_4": 'Не хватает 🉑. Нужно {v0}, у тебя {v1}.',
     "upgrade_buy_5": 'Улучшено! {v0} → {v1} лвл',
+    "prestige_buy_4": 'Не хватает 🔮. Нужно {v0}, у тебя {v1}.',
     "rebirth_1": 'Перерождение доступно с {v0} уровня эволюции (сейчас у тебя {v1}). Каждые {v2} уровней эво = 1 🉑.',
-    "rebirth_2": '🉑 <b>ПЕРЕРОЖДЕНИЕ!</b>\nОчки ноги и эволюция сброшены. Получено: +{v0} 🉑 (Всего: {v1}).\n⚠️ Эволюции теперь на {v2}% сложнее, чем с нуля.\nПрокачки из меню «апгрейд» остались с тобой навсегда.',
+    "rebirth_2": '🉑 <b>ПЕРЕРОЖДЕНИЕ!</b>\nОчки ноги и эволюция сброшены. Получено: +{v0} 🉑 (Всего: {v1}) и +{v3} 🔮 престижа.\n⚠️ Эволюции теперь на {v2}% сложнее, чем с нуля.\nПрокачки из меню «апгрейд» остались с тобой навсегда.',
     "ultra_rebirth_locked_1": (
         '🌌 <b>Ультра перерождение</b> заблокировано:\n'
         '● Эволюция: {v0}/{v1}\n'
@@ -320,6 +322,7 @@ TEXTS = {
     "ultra_rebirth_success_1": (
         '🌌✨ <b>Ультра перерождение свершилось!</b>\n'
         'Открыт {v0} {v1} ({v2} лвл) и постоянный буст добычи +{v3}%.\n'
+        'Получено +{v4} 🔮 очков престижа.\n'
         'Прокачки и предметы остались с тобой навсегда.'
     ),
     "ultra_rebirth_cancelled_1": 'Ультра перерождение отменено — прогресс не тронут.',
@@ -551,8 +554,8 @@ ITEMS = {
 
     # ---------- Крафтовые предметы (система крафтов) ----------
     "power_amulet":        (PREMIUM_POWER_AMULET, "Амулет силы", 40, 0),
-    "galaxy_power_amulet": (PREMIUM_GALAXY_POWER_AMULET, "Амулет силы галактики", 85, 0),
-    "galaxy_might_amulet": (PREMIUM_GALAXY_MIGHT_AMULET, "Амулет Мощи галактики", 145, 0),
+    "galaxy_power_amulet": (PREMIUM_GALAXY_POWER_AMULET, "Амулет силы галактики", 80, 0),
+    "galaxy_might_amulet": (PREMIUM_GALAXY_MIGHT_AMULET, "Амулет Мощи галактики", 100, 0),
     "hybrid_amulet":       (PREMIUM_HYBRID_AMULET, "Неактивированный гибридный амулет", 0, 0),
     "friendship_essence":  (PREMIUM_FRIENDSHIP_ESSENCE, "Эссенция дружбы", 0, 0),
     "time_particle":       (PREMIUM_TIME_PARTICLE, "Частица времени", 0, 0),
@@ -563,9 +566,9 @@ ITEMS = {
     "godly_vase":          (PREMIUM_GODLY_VASE, "Боготворная ваза", 0, 0),
 
     # ---------- Базовые крафты (ур.0) ----------
-    "lucky_charm":  (PREMIUM_LUCKY_CHARM, "Малый амулет удачи", 23, 0),
-    "swift_pill":   (PREMIUM_SWIFT_PILL, "Ускоренная таблетка", 35, 0),
-    "party_set":    (PREMIUM_PARTY_SET, "Праздничный набор", 97, 0),
+    "lucky_charm":  (PREMIUM_LUCKY_CHARM, "Малый амулет удачи", 15, 0),
+    "swift_pill":   (PREMIUM_SWIFT_PILL, "Ускоренная таблетка", 12, 0),
+    "party_set":    (PREMIUM_PARTY_SET, "Праздничный набор", 18, 0),
     "warm_candle":  (PREMIUM_WARM_CANDLE, "Тёплая свеча", 0, 0),
 }
 
@@ -709,19 +712,24 @@ def get_active_unique_tier(active_items):
     return best
 
 
-def active_farm_limits(active_items) -> dict:
-    """Лимиты за сообщение (🦵/🦿/🌌/⭐️) с учётом сильнейшего уникального бустера."""
+def active_farm_limits(active_items, prestige_upgrades: dict = None) -> dict:
+    """Лимиты за сообщение (🦵/🦿/🌌/⭐️) с учётом сильнейшего уникального бустера
+    + постоянных бонусов дерева престижа (p_legs/p_mek, см. PRESTIGE_UPGRADES)."""
     tier = get_active_unique_tier(active_items)
     overrides = UNIQUE_LIMIT_OVERRIDES.get(tier, {})
+    prestige_upgrades = prestige_upgrades or {}
+    leg_bonus = prestige_bonus(prestige_upgrades, "p_legs")
+    mek_bonus = prestige_bonus(prestige_upgrades, "p_mek")
     return {
-        "mek_limit": overrides.get("mek_limit", MEK_LIMIT),
-        "leg_limit": overrides.get("leg_limit", LEG_LIMIT),
+        "mek_limit": overrides.get("mek_limit", MEK_LIMIT) + mek_bonus,
+        "leg_limit": overrides.get("leg_limit", LEG_LIMIT) + leg_bonus,
         "galaxy_limit": overrides.get("galaxy_limit", 0),
         "star_limit": overrides.get("star_limit", 0),
     }
 
 
-def recipe_missing_ingredients(inventory_map: dict, coins: int, score: int, recipe: dict) -> list:
+def recipe_missing_ingredients(inventory_map: dict, coins: int, score: int, recipe: dict,
+                                prestige_upgrades: dict = None) -> list:
     """Список недостающих требований рецепта в виде читаемых строк. Пустой список = всё есть."""
     missing = []
     for ing_key, qty in recipe.get("ingredients", {}).items():
@@ -733,7 +741,7 @@ def recipe_missing_ingredients(inventory_map: dict, coins: int, score: int, reci
         for ing_key in ALL_PLAYER_AMULETS:
             if inventory_map.get(ing_key, 0) < 1:
                 missing.append(f"{ITEMS[ing_key][1]}: 0/1")
-    coin_cost = recipe.get("coin_cost", 0)
+    coin_cost = craft_coin_cost_with_discount(recipe.get("coin_cost", 0), prestige_upgrades)
     if coin_cost and coins < coin_cost:
         missing.append(f"Монеты: {coins}/{coin_cost} 🪙")
     score_cost = recipe.get("score_cost", 0)
@@ -758,6 +766,8 @@ REBIRTH_MIN_EVO = 5                # минимальный уровень эв�
 REBIRTH_EVO_STEP = 3               # каждые 3 уровня эволюции...
 REBIRTH_POINTS_PER_STEP = 2        # ...дают 2 Очка Перерождения
 REBIRTH_HARDNESS_STEP = 0.125      # +12.5% к сложности эволюций за каждое перерождение (середина диапазона 10-15%)
+PRESTIGE_PER_REBIRTH = 1           # Очков Престижа за каждое обычное перерождение
+PRESTIGE_PER_ULTRA_REBIRTH = 50    # Очков Престижа за Ультра перерождение (разово, крупный бонус)
 
 # ---------- Меню прокачки (апгрейды за Очки Перерождения) ----------
 # Каждый апгрейд: max_level, базовая цена (лвл 1), правило прироста цены за уровень.
@@ -853,6 +863,119 @@ UPGRADES = {
 UPGRADE_ORDER = list(UPGRADES.keys())
 UPGRADE_CATEGORIES = {1: "🌾 Ферма", 2: "🎒 Экономика", 3: "🔨 Крафты и прочее"}
 
+# ---------- Дерево престижа (бесконечные ветки за Очки Престижа) ----------
+# Отдельная валюта prestige_points — НИКОГДА не тратится на обычные UPGRADES и наоборот.
+# Начисляется только за перерождения (см. rebirth()/ultra_rebirth_confirm()).
+#
+# У каждой ветки нет max_level — она бесконечна. Вместо этого есть два независимых правила:
+#   cost(level)   — сколько prestige_points стоит поднять ветку с (level-1) на level (растёт вечно)
+#   bonus(level)  — текущее значение эффекта на данном уровне (НЕ линейно — см. step_gap ниже)
+#
+# "Разреженность" — чем выше уровень, тем РЕЖЕ выдаётся следующий +1 к эффекту (см. _echelon_bonus:
+# 1-5 ур по +1 бонусу за уровень, дальше шаг удваивается на каждой границе, которая тоже удваивается:
+# 5-10 шаг 2, 10-20 шаг 4, 20-40 шаг 8, и так далее — бесконечно, без предзаготовленного списка).
+# "Слоты" — особый случай с гораздо более редкой (штучной) кривой, задан явно.
+
+def _prestige_cost(base: int, growth: float):
+    # Бесконечный рост цены — база растёт в geometric progression с уровнем.
+    return lambda level: round(base * (growth ** (level - 1)))
+
+
+def _echelon_bonus(level: int) -> int:
+    """Общий паттерн разреженности: чем выше уровень, тем реже даётся следующая "ступенька" эффекта.
+    Уровни 1-5: +1 ступень за уровень. С 5 ур эшелоны удваиваются бесконечно — границы [5,10) шаг 2,
+    [10,20) шаг 4, [20,40) шаг 8, [40,80) шаг 16 и т.д. Проверено: с 5 ур нужно пройти 2 уровня ради
+    следующей ступени (5→7), с 10 ур — 4 уровня (10→14). Замкнутая формула — быстрая даже для
+    гигантских уровней (после Ультра перерождения), не цикл по каждому уровню."""
+    if level <= 0:
+        return 0
+    if level <= 5:
+        return level
+    bonus = 5
+    start = 5
+    gap = 2
+    while start < level:
+        end = start * 2
+        span = min(level, end) - start
+        bonus += span // gap
+        if level >= end:
+            start = end
+            gap *= 2
+        else:
+            break
+    return bonus
+
+
+def _milestone_bonus(milestones: list):
+    """Особая кривая для 'штучных' веток (напр. Слоты: +1 на 1 ур, следующий +1 только на 100 ур).
+    milestones — отсортированный список уровней, на которых бонус увеличивается на 1.
+    Использует bisect — быстро даже для больших списков милстоунов."""
+    def _fn(level: int) -> int:
+        return bisect.bisect_right(milestones, level)
+    return _fn
+
+
+def _slots_milestones(n: int) -> list:
+    # 1 ур -> +1 слот сразу; далее следующая ступень каждые 100 уровней (100, 200, 300, ...)
+    result = [1]
+    for i in range(1, n):
+        result.append(100 * i)
+    return result
+
+
+PRESTIGE_UPGRADES = {
+    "p_legs": {
+        "name": "Обычные ноги", "emoji": "🦵",
+        "desc": "+1 к лимиту счёта 🦵 за сообщение",
+        "cost": _prestige_cost(3, 1.15),
+        "bonus": _echelon_bonus,
+    },
+    "p_mek": {
+        "name": "Робо ноги", "emoji": "🦿",
+        "desc": "+1 к лимиту счёта 🦿 за сообщение",
+        "cost": _prestige_cost(5, 1.18),
+        "bonus": _echelon_bonus,
+    },
+    "p_slots": {
+        "name": "Слоты", "emoji": "🎒",
+        "desc": "+1 слот экипировки (1 ур сразу, дальше каждые 100 ур)",
+        "cost": _prestige_cost(10, 1.30),
+        "bonus": _milestone_bonus(_slots_milestones(100000)),
+    },
+    "p_farm_speed": {
+        "name": "Скорость фарма", "emoji": "⏱️",
+        "desc": "-1% к кулдауну фермы за ступень",
+        "cost": _prestige_cost(4, 1.15),
+        "bonus": _echelon_bonus,
+    },
+    "p_farm_yield": {
+        "name": "Добыча", "emoji": "📈",
+        "desc": "+0.5% к итоговому множителю фермы за ступень",
+        "cost": _prestige_cost(4, 1.15),
+        "bonus": _echelon_bonus,
+    },
+    "p_brew_speed": {
+        "name": "Скорость варки", "emoji": "🔥",
+        "desc": "-2% времени варки зелий за ступень (сверх обычного апгрейда)",
+        "cost": _prestige_cost(4, 1.15),
+        "bonus": _echelon_bonus,
+    },
+    "p_craft_discount": {
+        "name": "Скидка крафта", "emoji": "🔨",
+        "desc": "-1% к стоимости крафта за ступень (сверх обычного апгрейда)",
+        "cost": _prestige_cost(4, 1.15),
+        "bonus": _echelon_bonus,
+    },
+    "p_echo": {
+        "name": "Эхо", "emoji": "🔮",
+        "desc": "+1% шанс на бонусное Очко Перерождения при каждом перерождении за ступень",
+        "cost": _prestige_cost(5, 1.17),
+        "bonus": _echelon_bonus,
+    },
+}
+PRESTIGE_ORDER = list(PRESTIGE_UPGRADES.keys())
+PRESTIGE_PAGE_SIZE = 4
+
 # ---------- Зелья (варятся за монеты + время; один котёл на игрока) ----------
 # effect: "farm_x2" (x2 к добыче фермы), "luck_x2" (x2 к шансу проков ваз/эссенции бога),
 # "no_cd" (следующие N фармов без ожидания кулдауна — расходуется по использованиям, а не по времени).
@@ -944,7 +1067,7 @@ FIXED_COMMANDS = {
     "моя нога", "топ ног", "гл топ ног", "топ эво", "гл топ эво", "топ коин", "гл топ коин",
     "ферма", "фарма", "инвентарь", "эволюция", "кейс", "кейсы", "бонус",
     "смс выкл", "смс вкл", "вип", "!ивент ноги", "бейджи",
-    "перерождение", "апгрейд", "прокачка", "апг", "баланс", "топ очкп", "гл топ очкп", "помощь",
+    "перерождение", "апгрейд", "прокачка", "апг", "престиж", "баланс", "топ очкп", "гл топ очкп", "помощь",
     "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ", "крафты", "крафт",
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
     "!список вип", "!список банов топ", "!список ников", "!логи", "!пинг", "!ивент стоп", "!ивент статус",
@@ -1288,8 +1411,9 @@ def next_level_text(score: int, evolution_level: int, rebirth_count: int = 0,
     return f"До {level + 1} уровня осталось {nxt - score} очков"
 
 
-def equipped_slots_max(upgrades: dict) -> int:
-    return 1 + upgrade_level(upgrades, "equip_slots")  # база 1 слот + купленные уровни прокачки (0/1/2 -> 1/2/3 слота)
+def equipped_slots_max(upgrades: dict, prestige_upgrades: dict = None) -> int:
+    prestige_upgrades = prestige_upgrades or {}
+    return 1 + upgrade_level(upgrades, "equip_slots") + prestige_bonus(prestige_upgrades, "p_slots")
 
 
 def parse_equipped(equipped_str: str) -> list:
@@ -1360,9 +1484,14 @@ def potion_duration_seconds(key: str, upgrades: dict) -> int:
     return round(base * bonus)
 
 
-def brew_seconds_for(key: str, upgrades: dict) -> int:
+def brew_seconds_for(key: str, upgrades: dict, prestige_upgrades: dict = None) -> int:
     base = POTIONS[key]["brew_seconds"]
     cut = 1 - 0.10 * upgrade_level(upgrades, "brew_speed")
+    if prestige_upgrades:
+        p_speed = prestige_bonus(prestige_upgrades, "p_brew_speed")
+        if p_speed:
+            cut -= 0.02 * p_speed  # -2% за ступень сверху обычного апгрейда
+    cut = max(0.1, cut)  # не даём варке уйти ниже 10% базового времени
     return max(30, round(base * cut))
 
 
@@ -1475,6 +1604,40 @@ def upgrade_next_cost(key: str, upgrades: dict):
     return cfg["cost"](level + 1)
 
 
+def parse_prestige_upgrades(upgrades_str: str) -> dict:
+    result = {}
+    for part in (upgrades_str or "").split(","):
+        if not part or ":" not in part:
+            continue
+        key, _, lvl = part.partition(":")
+        if key in PRESTIGE_UPGRADES:
+            try:
+                result[key] = int(lvl)
+            except ValueError:
+                pass
+    return result
+
+
+def format_prestige_upgrades(upgrades: dict) -> str:
+    return ",".join(f"{k}:{v}" for k, v in upgrades.items() if v > 0)
+
+
+def prestige_level(upgrades: dict, key: str) -> int:
+    return upgrades.get(key, 0)
+
+
+def prestige_next_cost(key: str, upgrades: dict) -> int:
+    """Бесконечная ветка — цена следующего уровня всегда определена, потолка нет."""
+    level = prestige_level(upgrades, key)
+    return PRESTIGE_UPGRADES[key]["cost"](level + 1)
+
+
+def prestige_bonus(upgrades: dict, key: str) -> int:
+    """Текущий эффект ветки на её нынешнем уровне (0, если ветка ещё не куплена)."""
+    level = prestige_level(upgrades, key)
+    return PRESTIGE_UPGRADES[key]["bonus"](level)
+
+
 async def claim_offline_auto_farm(user_id: int, row) -> tuple:
     """Начисляет оффлайн-доход от Авто-Фермы НОГИ/КОИНЫ по разнице времени.
     Возвращает (legs_gained, coins_gained, new_score, new_coins)."""
@@ -1526,7 +1689,8 @@ def farm_yield_multiplier(upgrades: dict) -> float:
     return 1 + 0.10 * upgrade_level(upgrades, "farm_yield")
 
 
-def farm_cd_seconds(upgrades: dict, active_items=None, has_time_particle: bool = False) -> int:
+def farm_cd_seconds(upgrades: dict, active_items=None, has_time_particle: bool = False,
+                     prestige_upgrades: dict = None) -> int:
     reduction = 120 * upgrade_level(upgrades, "farm_cd")
     cooldown = max(60, FARM_COOLDOWN - reduction)  # не даём КД уйти в ноль/минус
 
@@ -1535,6 +1699,11 @@ def farm_cd_seconds(upgrades: dict, active_items=None, has_time_particle: bool =
         cooldown = cooldown / GOD_ESSENCE_FARM_SPEED - GOD_ESSENCE_TIMER_CUT
     elif has_time_particle:
         cooldown = cooldown / TIME_PARTICLE_FARM_SPEED
+
+    if prestige_upgrades:
+        p_speed = prestige_bonus(prestige_upgrades, "p_farm_speed")
+        if p_speed:
+            cooldown *= max(0.1, 1 - 0.01 * p_speed)  # -1% за ступень, не даём уйти ниже 10% от базы
 
     return max(30, round(cooldown))
 
@@ -1550,6 +1719,18 @@ def case_discount(upgrades: dict) -> float:
 def case_price_with_discount(base_price: int, upgrades: dict) -> int:
     discount = case_discount(upgrades)
     return max(1, round(base_price * (1 - discount)))
+
+
+def craft_coin_cost_with_discount(base_cost: int, prestige_upgrades: dict = None) -> int:
+    """Скидка крафта — целиком за счёт ветки престижа p_craft_discount (обычной скидки крафта
+    в игре не было ранее, эта механика впервые вводится через дерево престижа)."""
+    if not base_cost:
+        return 0
+    if not prestige_upgrades:
+        return base_cost
+    discount = 0.01 * prestige_bonus(prestige_upgrades, "p_craft_discount")
+    discount = min(0.9, discount)  # не даём цене уйти ниже 10% от базовой
+    return max(1, round(base_cost * (1 - discount)))
 
 
 def sell_bonus_coins(upgrades: dict) -> int:
@@ -1687,7 +1868,8 @@ USER_COLUMNS = (
     "user_id, username, score, evolution_level, last_farm, coins, active_item, "
     "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
     "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
-    "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock"
+    "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock, "
+    "prestige_points, prestige_upgrades"
 )
 # Индексы полей выше при обращении по row[...]:
 #  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
@@ -1708,6 +1890,10 @@ USER_COLUMNS = (
 #     пока он занят, начать варку второго зелья нельзя.
 #  26 potion_stock — сваренные, но ещё не использованные зелья "key:qty,key:qty". Хранится ОТДЕЛЬНО
 #     от таблицы inventory (зелья не предметы ITEMS — не экипируются, не продаются/крафтятся оттуда).
+#  27 prestige_points — отдельная валюта "Дерева престижа" (см. PRESTIGE_UPGRADES). Начисляется за
+#     обычные перерождения/ультра-перерождение, НИКОГДА не тратится на обычные апгрейды (upgrades).
+#  28 prestige_upgrades — уровни веток дерева престижа "key:lvl,key:lvl" (тот же формат, что upgrades,
+#     но отдельное поле — ветки бесконечны, без max_level).
 
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -1787,6 +1973,8 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN brewing_potion TEXT DEFAULT NULL",
         "ALTER TABLE users ADD COLUMN brewing_until INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN potion_stock TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN prestige_points INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN prestige_upgrades TEXT DEFAULT ''",
     ):
         try:
             await db_exec(stmt)
@@ -1807,7 +1995,7 @@ async def ensure_user(user_id: int, username: str):
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
         now = int(time.time())
-        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "")
+        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "")
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
@@ -2394,9 +2582,10 @@ async def count_legs(message: Message):
     auto_evolve_enabled = bool(row[22])
     vip_active = is_vip_active(vip_until)
     potions = active_potions_now(row[23])
+    prestige_upgrades = parse_prestige_upgrades(row[28])
 
     flat_bonus = total_flat_bonus(active_items)
-    limits = active_farm_limits(active_items)
+    limits = active_farm_limits(active_items, prestige_upgrades)
 
     legs = min(text.count("🦵"), limits["leg_limit"])
     gained = legs * LEG_POINT
@@ -2420,7 +2609,8 @@ async def count_legs(message: Message):
     mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth)
     event_mult = await get_event_multiplier()
     personal_mult = await get_personal_multiplier(user_id)
-    total = round(gained * mult * event_mult * personal_mult)
+    p_yield_mult = 1 + 0.005 * prestige_bonus(prestige_upgrades, "p_farm_yield")
+    total = round(gained * mult * event_mult * personal_mult * p_yield_mult)
     if galaxy:
         total = round(total * (1 + 0.20 * galaxy))   # 🌌: +20% к итогу за каждую штуку
     if star:
@@ -2725,12 +2915,13 @@ async def farm(message: Message):
     auto_evolve_enabled = bool(row[22])
     vip_active = is_vip_active(vip_until)
     potions = active_potions_now(row[23], now)
+    prestige_upgrades = parse_prestige_upgrades(row[28])
 
     inv_rows = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv_rows}
     has_time_particle = inventory_map.get("time_particle", 0) > 0
 
-    cooldown = farm_cd_seconds(upgrades, active_items, has_time_particle)
+    cooldown = farm_cd_seconds(upgrades, active_items, has_time_particle, prestige_upgrades)
     has_no_cd = NO_CD_CHARGES_KEY in potions
     if not has_no_cd and now - last_farm < cooldown:
         left = cooldown - (now - last_farm)
@@ -2745,7 +2936,8 @@ async def farm(message: Message):
     mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth)
     event_mult = await get_event_multiplier()
     personal_mult = await get_personal_multiplier(user_id)
-    gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult * personal_mult)
+    p_yield_mult = 1 + 0.005 * prestige_bonus(prestige_upgrades, "p_farm_yield")
+    gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult * personal_mult * p_yield_mult)
     potion_text = ""
     if "potion_speed" in potions:
         gained *= 2
@@ -3185,9 +3377,9 @@ async def destroy_wrong_format(message: Message):
     )
 
 
-def format_inventory_menu_text(active_items, upgrades: dict = None):
+def format_inventory_menu_text(active_items, upgrades: dict = None, prestige_upgrades: dict = None):
     items = _normalize_active_items(active_items)
-    max_slots = equipped_slots_max(upgrades or {})
+    max_slots = equipped_slots_max(upgrades or {}, prestige_upgrades or {})
     equipped = [f"{ITEMS[k][0]} {esc(ITEMS[k][1])} (+{ITEMS[k][2]}%)" for k in items if k in ITEMS]
     equipped_text = f"Экипировано ({len(equipped)}/{max_slots}): " + (", ".join(equipped) if equipped else "ничего")
     return f"🎒 <b>Твой инвентарь</b>\n{equipped_text}\n\nВыбери раздел:"
@@ -3311,7 +3503,7 @@ def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_p
 
 
 def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until: int, user_id: int,
-                      upgrades: dict, now: int = None) -> InlineKeyboardMarkup:
+                      upgrades: dict, now: int = None, prestige_upgrades: dict = None) -> InlineKeyboardMarkup:
     now = now or int(time.time())
     kb_rows = []
 
@@ -3327,7 +3519,7 @@ def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until
     elif not brewing_active:
         for key in POTION_ORDER:
             cfg = POTIONS[key]
-            seconds = brew_seconds_for(key, upgrades)
+            seconds = brew_seconds_for(key, upgrades, prestige_upgrades)
             kb_rows.append([InlineKeyboardButton(
                 text=f"⚗️ Варить {cfg['emoji']} {cfg['name']} ({cfg['brew_cost']}🪙, {format_time_left(seconds)})",
                 callback_data=f"potion_brew:{user_id}:{key}",
@@ -3355,13 +3547,14 @@ async def inventory(message: Message):
     row = await ensure_user(user_id, username)
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
+    prestige_upgrades = parse_prestige_upgrades(row[28])
     rows = await get_inventory(user_id)
 
     if not rows:
         await message.reply(TEXTS["inventory_1"])
         return
 
-    await safe_reply(message, format_inventory_menu_text(active_items, upgrades), reply_markup=inventory_menu_keyboard(user_id))
+    await safe_reply(message, format_inventory_menu_text(active_items, upgrades, prestige_upgrades), reply_markup=inventory_menu_keyboard(user_id))
 
 
 @dp.message(F.text.lower().in_({"мои предметы", "предметы"}))
@@ -3380,7 +3573,8 @@ async def my_boosters_tab(message: Message):
     row = await ensure_user(user_id, username)
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
-    max_slots = equipped_slots_max(upgrades)
+    prestige_upgrades = parse_prestige_upgrades(row[28])
+    max_slots = equipped_slots_max(upgrades, prestige_upgrades)
     rows = await get_inventory(user_id)
     await message.reply(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, user_id, 0))
 
@@ -3395,7 +3589,8 @@ async def inventory_back_to_menu(callback: CallbackQuery):
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
-    await safe_edit_text(callback, format_inventory_menu_text(active_items, upgrades), reply_markup=inventory_menu_keyboard(owner_id))
+    prestige_upgrades = parse_prestige_upgrades(row[28])
+    await safe_edit_text(callback, format_inventory_menu_text(active_items, upgrades, prestige_upgrades), reply_markup=inventory_menu_keyboard(owner_id))
     await callback.answer()
 
 
@@ -3414,7 +3609,8 @@ async def inventory_open_category(callback: CallbackQuery):
         row = await get_user(owner_id)
         upgrades = parse_upgrades(row[16])
         active_items = parse_equipped(row[18])
-        max_slots = equipped_slots_max(upgrades)
+        prestige_upgrades = parse_prestige_upgrades(row[28])
+        max_slots = equipped_slots_max(upgrades, prestige_upgrades)
         await callback.message.edit_text(format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
     elif category == "potions":
         row = await get_user(owner_id)
@@ -3422,10 +3618,11 @@ async def inventory_open_category(callback: CallbackQuery):
         stock = parse_potion_stock(row[26])
         active = active_potions_now(row[23])
         brewing_potion, brewing_until = row[24], row[25]
+        prestige_upgrades = parse_prestige_upgrades(row[28])
         await safe_edit_text(
             callback,
             format_potions_text(stock, active, brewing_potion, brewing_until, upgrades),
-            reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades),
+            reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades),
         )
     else:
         rows = await get_inventory(owner_id)
@@ -3450,6 +3647,7 @@ async def potion_brew_start(callback: CallbackQuery):
     coins = row[5]
     upgrades = parse_upgrades(row[16])
     brewing_potion, brewing_until = row[24], row[25]
+    prestige_upgrades = parse_prestige_upgrades(row[28])
 
     if brewing_potion and brewing_until > now:
         await callback.answer(TEXTS["potion_brew_busy_1"], show_alert=True)
@@ -3460,7 +3658,7 @@ async def potion_brew_start(callback: CallbackQuery):
         await callback.answer(TEXTS["potion_brew_no_coins_1"].format(v0=cfg["brew_cost"], v1=coins), show_alert=True)
         return
 
-    seconds = brew_seconds_for(potion_key, upgrades)
+    seconds = brew_seconds_for(potion_key, upgrades, prestige_upgrades)
     new_until = now + seconds
     await db_exec(
         "UPDATE users SET coins = coins - ?, brewing_potion = ?, brewing_until = ? WHERE user_id = ?",
@@ -3471,7 +3669,7 @@ async def potion_brew_start(callback: CallbackQuery):
     await safe_edit_text(
         callback,
         format_potions_text(stock, active_potions_now(row[23], now), potion_key, new_until, upgrades, now),
-        reply_markup=potions_keyboard(stock, potion_key, new_until, owner_id, upgrades, now),
+        reply_markup=potions_keyboard(stock, potion_key, new_until, owner_id, upgrades, now, prestige_upgrades),
     )
     await callback.answer(TEXTS["potion_brew_started_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=format_time_left(seconds)))
 
@@ -3487,6 +3685,7 @@ async def potion_collect(callback: CallbackQuery):
     row = await get_user(owner_id)
     brewing_potion, brewing_until = row[24], row[25]
     upgrades = parse_upgrades(row[16])
+    prestige_upgrades = parse_prestige_upgrades(row[28])
 
     if not brewing_potion:
         await callback.answer(TEXTS["potion_collect_none_1"], show_alert=True)
@@ -3506,7 +3705,7 @@ async def potion_collect(callback: CallbackQuery):
     await safe_edit_text(
         callback,
         format_potions_text(stock, active_potions_now(row[23], now), None, 0, upgrades, now),
-        reply_markup=potions_keyboard(stock, None, 0, owner_id, upgrades, now),
+        reply_markup=potions_keyboard(stock, None, 0, owner_id, upgrades, now, prestige_upgrades),
     )
     await callback.answer(TEXTS["potion_collect_ok_1"].format(v0=cfg["emoji"], v1=cfg["name"]))
 
@@ -3527,6 +3726,7 @@ async def potion_use(callback: CallbackQuery):
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
     stock = parse_potion_stock(row[26])
+    prestige_upgrades = parse_prestige_upgrades(row[28])
 
     if stock.get(potion_key, 0) <= 0:
         await callback.answer(TEXTS["potion_use_none_1"], show_alert=True)
@@ -3553,7 +3753,7 @@ async def potion_use(callback: CallbackQuery):
     await safe_edit_text(
         callback,
         format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, now),
-        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, now),
+        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, now, prestige_upgrades),
     )
     if cfg["effect"] == "no_cd":
         await callback.answer(TEXTS["potion_use_ok_charges_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=cfg["charges"]))
@@ -3573,7 +3773,8 @@ async def inventory_boosters_page(callback: CallbackQuery):
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
-    max_slots = equipped_slots_max(upgrades)
+    prestige_upgrades = parse_prestige_upgrades(row[28])
+    max_slots = equipped_slots_max(upgrades, prestige_upgrades)
     rows = await get_inventory(owner_id)
     await callback.message.edit_text(format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
     await callback.answer()
@@ -3599,7 +3800,8 @@ async def toggle_equip(callback: CallbackQuery):
 
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
-    max_slots = equipped_slots_max(upgrades)
+    prestige_upgrades = parse_prestige_upgrades(row[28])
+    max_slots = equipped_slots_max(upgrades, prestige_upgrades)
 
     before = parse_equipped(row[18])
     kicked = before[0] if item_key not in before and len(before) >= max_slots else None
@@ -3723,6 +3925,7 @@ async def craft_do(callback: CallbackQuery):
 
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
+    prestige_upgrades = parse_prestige_upgrades(row[28])
     craft_level = craft_level_of(upgrades)
     recipe = RECIPES[recipe_key]
 
@@ -3734,7 +3937,7 @@ async def craft_do(callback: CallbackQuery):
     inv_rows = await get_inventory(owner_id)
     inventory_map = {k: q for k, q in inv_rows}
 
-    missing = recipe_missing_ingredients(inventory_map, coins, score, recipe)
+    missing = recipe_missing_ingredients(inventory_map, coins, score, recipe, prestige_upgrades)
     if missing:
         await callback.answer("Не хватает: " + "; ".join(missing), show_alert=True)
         return
@@ -3746,7 +3949,8 @@ async def craft_do(callback: CallbackQuery):
         for ing_key in ALL_PLAYER_AMULETS:
             await remove_item(owner_id, ing_key, 1)
     if recipe.get("coin_cost"):
-        await db_exec("UPDATE users SET coins = coins - ? WHERE user_id = ?", (recipe["coin_cost"], owner_id))
+        discounted_cost = craft_coin_cost_with_discount(recipe["coin_cost"], prestige_upgrades)
+        await db_exec("UPDATE users SET coins = coins - ? WHERE user_id = ?", (discounted_cost, owner_id))
     if recipe.get("score_cost"):
         await db_exec("UPDATE users SET score = score - ? WHERE user_id = ?", (recipe["score_cost"], owner_id))
 
@@ -4117,6 +4321,126 @@ async def upgrade_buy(callback: CallbackQuery):
     await callback.answer(TEXTS["upgrade_buy_5"].format(v0=UPGRADES[key]['name'], v1=upgrades[key]))
 
 
+# ---------- Дерево престижа ("престиж") ----------
+
+def format_prestige_page_text(prestige_upgrades: dict, prestige_points: int, page: int) -> str:
+    total_pages = (len(PRESTIGE_ORDER) - 1) // PRESTIGE_PAGE_SIZE + 1
+    header = (
+        f"🔮 <b>ДЕРЕВО ПРЕСТИЖА</b> — стр. {page + 1}/{total_pages}\n"
+        f"🔮 Очки престижа: <code>{prestige_points}</code>\n"
+        f"━━━━━━━━━━━━━━━━━━\n"
+        f"Ветки бесконечны — чем выше уровень, тем реже растёт эффект, а цена растёт всегда.\n"
+    )
+    start = page * PRESTIGE_PAGE_SIZE
+    lines = [header]
+    for key in PRESTIGE_ORDER[start:start + PRESTIGE_PAGE_SIZE]:
+        cfg = PRESTIGE_UPGRADES[key]
+        level = prestige_level(prestige_upgrades, key)
+        bonus = prestige_bonus(prestige_upgrades, key)
+        cost = prestige_next_cost(key, prestige_upgrades)
+        lines.append(
+            f"{cfg['emoji']} <b>{cfg['name']}</b> — ур. {level} (эффект: {bonus})\n"
+            f"   {cfg['desc']}\n"
+            f"   Следующий уровень: {cost} 🔮"
+        )
+    return "\n".join(lines)
+
+
+def prestige_page_keyboard(prestige_upgrades: dict, user_id: int, page: int) -> InlineKeyboardMarkup:
+    total_pages = (len(PRESTIGE_ORDER) - 1) // PRESTIGE_PAGE_SIZE + 1
+    start = page * PRESTIGE_PAGE_SIZE
+    rows = []
+    for key in PRESTIGE_ORDER[start:start + PRESTIGE_PAGE_SIZE]:
+        cfg = PRESTIGE_UPGRADES[key]
+        level = prestige_level(prestige_upgrades, key)
+        cost = prestige_next_cost(key, prestige_upgrades)
+        label = f"⬆️ {cfg['emoji']} {cfg['name']} ({cost} 🔮)"
+        rows.append([InlineKeyboardButton(text=label, callback_data=f"pr_buy:{user_id}:{page}:{key}")])
+
+    nav = []
+    if page > 0:
+        nav.append(InlineKeyboardButton(text="◀️", callback_data=f"pr_page:{user_id}:{page - 1}"))
+    nav.append(InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="pr_noop"))
+    if page < total_pages - 1:
+        nav.append(InlineKeyboardButton(text="▶️", callback_data=f"pr_page:{user_id}:{page + 1}"))
+    rows.append(nav)
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+@dp.message(F.text.lower() == "престиж")
+async def prestige_menu(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    prestige_upgrades = parse_prestige_upgrades(row[28])
+    prestige_points = row[27]
+
+    await message.reply(
+        format_prestige_page_text(prestige_upgrades, prestige_points, 0),
+        reply_markup=prestige_page_keyboard(prestige_upgrades, user_id, 0),
+    )
+
+
+@dp.callback_query(F.data == "pr_noop")
+async def prestige_noop(callback: CallbackQuery):
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("pr_page:"))
+async def prestige_change_page(callback: CallbackQuery):
+    _, owner_str, page_str = callback.data.split(":")
+    owner_id = int(owner_str)
+    page = int(page_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["upgrade_change_page_1"], show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    prestige_upgrades = parse_prestige_upgrades(row[28])
+    prestige_points = row[27]
+    await callback.message.edit_text(
+        format_prestige_page_text(prestige_upgrades, prestige_points, page),
+        reply_markup=prestige_page_keyboard(prestige_upgrades, owner_id, page),
+    )
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("pr_buy:"))
+async def prestige_buy(callback: CallbackQuery):
+    _, owner_str, page_str, key = callback.data.split(":")
+    owner_id = int(owner_str)
+    page = int(page_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["upgrade_buy_1"], show_alert=True)
+        return
+    if key not in PRESTIGE_UPGRADES:
+        await callback.answer(TEXTS["upgrade_buy_2"], show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    prestige_upgrades = parse_prestige_upgrades(row[28])
+    prestige_points = row[27]
+    cost = prestige_next_cost(key, prestige_upgrades)
+
+    if prestige_points < cost:
+        await callback.answer(TEXTS["prestige_buy_4"].format(v0=cost, v1=prestige_points), show_alert=True)
+        return
+
+    prestige_upgrades[key] = prestige_level(prestige_upgrades, key) + 1
+    new_points = prestige_points - cost
+    await db_exec(
+        "UPDATE users SET prestige_points = ?, prestige_upgrades = ? WHERE user_id = ?",
+        (new_points, format_prestige_upgrades(prestige_upgrades), owner_id),
+    )
+
+    await callback.message.edit_text(
+        format_prestige_page_text(prestige_upgrades, new_points, page),
+        reply_markup=prestige_page_keyboard(prestige_upgrades, owner_id, page),
+    )
+    await callback.answer(TEXTS["upgrade_buy_5"].format(v0=PRESTIGE_UPGRADES[key]['name'], v1=prestige_upgrades[key]))
+
+
 # ---------- Перерождение ----------
 
 @dp.message(F.text.lower() == "перерождение")
@@ -4127,6 +4451,8 @@ async def rebirth(message: Message):
     row = await ensure_user(user_id, username)
     score, evolution_level = row[2], row[3]
     rebirth_points, rebirth_count = row[14], row[15]
+    prestige_points = row[27]
+    prestige_upgrades = parse_prestige_upgrades(row[28])
 
     if evolution_level < REBIRTH_MIN_EVO:
         await message.reply(
@@ -4138,14 +4464,25 @@ async def rebirth(message: Message):
     new_rebirth_points = rebirth_points + points_gained
     new_rebirth_count = rebirth_count + 1
 
+    # Эхо: +1% шанс на бонусное Очко Перерождения за каждую ступень ветки p_echo.
+    echo_text = ""
+    echo_chance = 0.01 * prestige_bonus(prestige_upgrades, "p_echo")
+    if echo_chance > 0 and random.random() < echo_chance:
+        new_rebirth_points += 1
+        echo_text = "\n🔮 Эхо сработало: +1 доп. Очко Перерождения!"
+
+    # Каждое обычное перерождение даёт +1 Очко Престижа (отдельная валюта, см. PRESTIGE_UPGRADES).
+    new_prestige_points = prestige_points + PRESTIGE_PER_REBIRTH
+
     await db_exec(
-        "UPDATE users SET score = 0, evolution_level = 0, rebirth_points = ?, rebirth_count = ? WHERE user_id = ?",
-        (new_rebirth_points, new_rebirth_count, user_id),
+        "UPDATE users SET score = 0, evolution_level = 0, rebirth_points = ?, rebirth_count = ?, "
+        "prestige_points = ? WHERE user_id = ?",
+        (new_rebirth_points, new_rebirth_count, new_prestige_points, user_id),
     )
 
     new_hardness = round(REBIRTH_HARDNESS_STEP * new_rebirth_count * 100)
     await message.reply(
-        TEXTS["rebirth_2"].format(v0=points_gained, v1=new_rebirth_points, v2=new_hardness)
+        TEXTS["rebirth_2"].format(v0=points_gained, v1=new_rebirth_points, v2=new_hardness, v3=PRESTIGE_PER_REBIRTH) + echo_text
     )
 
 
@@ -4249,17 +4586,19 @@ async def ultra_rebirth_confirm(callback: CallbackQuery):
     # Мягкий хард-ресет: обнуляются очки, уровень ноги (через score=0), эволюции и
     # обычные перерождения. upgrades/предметы/coins НЕ трогаем — они остаются навсегда,
     # как и в обычном перерождении. ultra_rebirth ставится в 1 безвозвратно.
+    prestige_points = row[27]
+    new_prestige_points = prestige_points + PRESTIGE_PER_ULTRA_REBIRTH
     await db_exec(
         "UPDATE users SET score = 0, evolution_level = 0, rebirth_points = 0, rebirth_count = 0, "
-        "ultra_rebirth = 1 WHERE user_id = ?",
-        (user_id,),
+        "ultra_rebirth = 1, prestige_points = ? WHERE user_id = ?",
+        (new_prestige_points, user_id),
     )
 
     await safe_edit_text(
         callback,
         TEXTS["ultra_rebirth_success_1"].format(
             v0=ULTRA_LEG_EMOJI, v1=esc(ULTRA_LEG_NAME), v2=ULTRA_LEG_LEVEL,
-            v3=round(ULTRA_REBIRTH_BOOST * 100),
+            v3=round(ULTRA_REBIRTH_BOOST * 100), v4=PRESTIGE_PER_ULTRA_REBIRTH,
         ),
     )
     await callback.answer()
