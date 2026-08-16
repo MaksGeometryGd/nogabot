@@ -36,17 +36,17 @@ PREMIUM_DAILY_CHARM = '<tg-emoji emoji-id="5233570349148311519">🧿</tg-emoji>'
 
 PREMIUM_MK_MGG = '<tg-emoji emoji-id="5420141555233071341">🧿</tg-emoji>'
 PREMIUM_MK_SANDSMOON = '<tg-emoji emoji-id="5197260300490907908">🌙</tg-emoji>'
-PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="5330393755407111028">🔧</tg-emoji>'
-PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">🪨</tg-emoji>'
-PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5778352775591103997">🐆</tg-emoji>'
-PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="5233239138450312962">↗️</tg-emoji>'
+PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="6325473957755488220">🔧</tg-emoji>'
+PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">🪝</tg-emoji>'
+PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5276381049851498060">🐆</tg-emoji>'
+PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="6206233738494347353">↗️</tg-emoji>'
 PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">💔</tg-emoji>'
 
 # заглушки — замени на реальные emoji-id, когда достанешь (см. инструкцию про custom_emoji_id)
 PREMIUM_OWNER_BADGE = '<tg-emoji emoji-id="5204056085509477484">💠</tg-emoji>'
 PREMIUM_VIP_BADGE = '<tg-emoji emoji-id="5233333941263437275">💎</tg-emoji>'
 PREMIUM_VIP_ITEM = '<tg-emoji emoji-id="5344025423258864934">🎗️</tg-emoji>'
-PREMIUM_MK_MARY = '<tg-emoji emoji-id="5224652622652266008">🌹</tg-emoji>'
+PREMIUM_MK_MARY = '<tg-emoji emoji-id="6328022870521808963">🌹</tg-emoji>'
 PREMIUM_MK_VERON03 = '<tg-emoji emoji-id="5429446558930182229">🔷</tg-emoji>'
 PREMIUM_STRANGE_COIN = '<tg-emoji emoji-id="5035428694441592026">🪙</tg-emoji>'
 
@@ -59,18 +59,37 @@ PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">💪</tg-emoji>
 PREMIUM_GALAXY_POWER_AMULET = '<tg-emoji emoji-id="5451648825431175858">🌠</tg-emoji>'
 PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌋</tg-emoji>'
 PREMIUM_HYBRID_AMULET = '<tg-emoji emoji-id="5204242195032336769">🧬</tg-emoji>'
-PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5341581827385599962">🤝</tg-emoji>'
-PREMIUM_TIME_PARTICLE = '<tg-emoji emoji-id="5985570245950053733">⏳</tg-emoji>'
-PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5364047860713143546">👁️</tg-emoji>'
-PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5987990962532521711">🟡</tg-emoji>'
+PREMIUM_FRIENDSHIP_ESSENCE = '<tg-emoji emoji-id="5843554051341422500">🤝</tg-emoji>'
+PREMIUM_TIME_PARTICLE = '<tg-emoji emoji-id="5363857580777029543">⏳</tg-emoji>'
+PREMIUM_GOD_ESSENCE = '<tg-emoji emoji-id="5242602154270667208">👁️</tg-emoji>'
+PREMIUM_DEVOTION_COIN = '<tg-emoji emoji-id="5416007206829047767">🟡</tg-emoji>'
 PREMIUM_OLD_VASE = '<tg-emoji emoji-id="6334461494649948210">🏺</tg-emoji>'
 PREMIUM_GOLDEN_VASE = '<tg-emoji emoji-id="5954115825324527429">⚱️</tg-emoji>'
-PREMIUM_GODLY_VASE = '<tg-emoji emoji-id="5283163228413641567">🏆</tg-emoji>'
+PREMIUM_GODLY_VASE = '<tg-emoji emoji-id="5242521945756413456">🏆</tg-emoji>'
 PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀</tg-emoji>'
 PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">⚡</tg-emoji>'
 PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎉</tg-emoji>'
 PREMIUM_WARM_CANDLE = '<tg-emoji emoji-id="5253717838870363235">🕯</tg-emoji>'
-PREMIUM_KOSHKO_AMULET = '<tg-emoji emoji-id="6327920744789444368">🐈</tg-emoji>'
+# TODO: заменить emoji-id на реальный premium-эмодзи для амулета кошко-девочки, когда он будет.
+PREMIUM_KOSHKO_AMULET = '<tg-emoji emoji-id="5371041424680710006">🐈</tg-emoji>'
+
+# ---------- Кейс 3: премиум-иконки (заглушки) ----------
+# TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
+# <tg-emoji>) — как найдёшь/сделаешь премиум-версию в Telegram, оберни так же, как выше:
+# '<tg-emoji emoji-id="ЧИСЛО">эмодзи</tg-emoji>'. Пока оставлено безопасно (не ломает отправку).
+PREMIUM_ICE_SHARD = '<tg-emoji emoji-id="5363812028353898315">🧊</tg-emoji>'
+PREMIUM_EMBER = '<tg-emoji emoji-id="5773638078321135255">🔥</tg-emoji>'
+PREMIUM_DRAGON_CLAW = '<tg-emoji emoji-id="5307771389564954063">🐉</tg-emoji>'
+PREMIUM_PARADOX_CHARM = '<tg-emoji emoji-id="5467522315887594988">🧿</tg-emoji>'
+PREMIUM_SHADOW_MASK = '<tg-emoji emoji-id="5463247917189977301">🕶️</tg-emoji>'
+PREMIUM_TIDE_WAVE = '<tg-emoji emoji-id="5994370062708904465">🌊</tg-emoji>'
+PREMIUM_WARRIOR_SKULL = '<tg-emoji emoji-id="5231105033625423869">💀</tg-emoji>'
+PREMIUM_BROKEN_CLOCK = '<tg-emoji emoji-id="5431903044000306112">🕰️</tg-emoji>'
+PREMIUM_ESSENCE_DROP = '<tg-emoji emoji-id="5260717261173304462">🩸</tg-emoji>'
+PREMIUM_COMET_SHARD = '<tg-emoji emoji-id="5294390831271129091">🌠</tg-emoji>'
+PREMIUM_ANCIENT_STONE = '<tg-emoji emoji-id="5224412151728328775">🪨</tg-emoji>'
+PREMIUM_FATE_THREAD = '<tg-emoji emoji-id="5366343945934624965">🧵</tg-emoji>'
+PREMIUM_KOSHKO_GIFT = '<tg-emoji emoji-id="6217230280701251264">🎀</tg-emoji>'
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
@@ -204,6 +223,9 @@ TEXTS = {
     "auto_evolve_not_vip_1": '⚠️ Авто-эволюция доступна только с VIP-статусом. Команда «вип» — как получить.',
     "auto_evolve_on_1": '⚙️💎 Авто-эволюция включена. Как только хватит очков — эволюция сработает сама.',
     "auto_evolve_off_1": '⚙️ Авто-эволюция выключена.',
+    "auto_rebirth_not_vip_1": '⚠️ Авто-перерождение доступно только с VIP-статусом. Команда «вип» — как получить.',
+    "auto_rebirth_on_1": '♻️💎 Авто-перерождение включено. Как только эволюция достигнет {v0} — перерождение сработает само.',
+    "auto_rebirth_off_1": '♻️ Авто-перерождение выключено.',
     "vip_case_open_1": 'Формат: вип открыть кейс <номер> <кол-во> (максимум 20 за раз).',
     "vip_case_open_2": '⚠️ Авто-эволюция VIP-only. Команда «вип» — как получить.',
     "vip_case_open_3": 'Такого кейса нет. Посмотри «кейсы» — список номеров.',
@@ -212,7 +234,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -577,6 +599,21 @@ ITEMS = {
     "swift_pill":   (PREMIUM_SWIFT_PILL, "Ускоренная таблетка", 12, 0),
     "party_set":    (PREMIUM_PARTY_SET, "Праздничный набор", 18, 0),
     "warm_candle":  (PREMIUM_WARM_CANDLE, "Тёплая свеча", 0, 0),
+
+    # ---------- Кейс 3 (буст-предметы + крафт-материалы) ----------
+    "ice_shard":     (PREMIUM_ICE_SHARD, "Ледяной осколок", 65, 12),
+    "ember":         (PREMIUM_EMBER, "Уголёк", 45, 12),
+    "dragon_claw":   (PREMIUM_DRAGON_CLAW, "Коготь дракона", 55, 8),
+    "paradox_charm": (PREMIUM_PARADOX_CHARM, "Оберег парадокса", 65, 5),
+    "shadow_mask":   (PREMIUM_SHADOW_MASK, "Маска тени", 95, 1.5),
+    "tide_wave":     (PREMIUM_TIDE_WAVE, "Волна прилива", 50, 10),
+    "warrior_skull": (PREMIUM_WARRIOR_SKULL, "Череп воина", 1, 7),
+    "broken_clock":  (PREMIUM_BROKEN_CLOCK, "Сломанные часы", 0, 15),
+    "essence_drop":  (PREMIUM_ESSENCE_DROP, "Капля эссенции", 0, 10),
+    "comet_shard":   (PREMIUM_COMET_SHARD, "Осколок кометы", 0, 3),
+    "koshko_gift":  (PREMIUM_KOSHKO_GIFT, "Дар кошко-девочки", 0, 2),
+    "ancient_stone": (PREMIUM_ANCIENT_STONE, "Древний камень", 0, 18),
+    "fate_thread":   (PREMIUM_FATE_THREAD, "Нить судьбы", 0, 4),
 }
 
 # Предметы, которые нельзя продать/передать/уничтожить — личные заглушки/значки.
@@ -587,6 +624,8 @@ PASSIVE_ITEMS = {
     # крафтовые пассивки и чистые крафт-материалы (не экипируются)
     "hybrid_amulet", "friendship_essence", "time_particle", "devotion_coin",
     "old_vase", "golden_vase", "godly_vase", "warm_candle",
+    # крафт-материалы из кейса 3 (сырьё под будущие рецепты, не экипируются)
+    "broken_clock", "essence_drop", "comet_shard", "koshko_gift", "ancient_stone", "fate_thread",
 }
 
 SELL_PRICE = {
@@ -598,6 +637,10 @@ SELL_PRICE = {
     "hybrid_amulet": 200, "friendship_essence": 260, "time_particle": 220,
     "god_essence": 1000, "koshko_amulet": 1400, "devotion_coin": 60, "old_vase": 15, "golden_vase": 120, "godly_vase": 500,
     "lucky_charm": 20, "swift_pill": 18, "party_set": 25, "warm_candle": 14,
+    "ice_shard": 15, "ember": 15, "dragon_claw": 22, "paradox_charm": 28, "shadow_mask": 45,
+    "tide_wave": 16, "warrior_skull": 24,
+    "broken_clock": 8, "essence_drop": 14, "comet_shard": 30, "koshko_gift": 35,
+    "ancient_stone": 6, "fate_thread": 32,
 }
 
 ITEM_FLAT_BONUS = {
@@ -610,6 +653,9 @@ CASES = {
     2: {"name": "Кейс Сапортов", "price": 50,
         "pool": ["mk_mgg", "mk_sandsmoon", "mk_fixsahal1", "mk_mk", "mk_panther", "mk_vector",
                  "mk_broken", "mk_mary", "mk_veron03", "strange_coin"]},
+    3: {"name": "Кейс Стихий и Крафта", "price": 500,
+        "pool": ["ice_shard", "ember", "dragon_claw", "paradox_charm", "shadow_mask", "tide_wave", "warrior_skull",
+                 "broken_clock", "essence_drop", "comet_shard", "koshko_gift", "ancient_stone", "fate_thread"]},
 }
 
 # Все "амулеты игроков", которые может сожрать рецепт Неактивированного гибридного амулета —
@@ -714,6 +760,9 @@ GOD_ESSENCE_TIMER_CUT = 5         # -5 сек к кулдауну фермы, п
 GOD_ESSENCE_FARM_SPEED = 5        # фарм в 5 раз быстрее
 TIME_PARTICLE_FARM_SPEED = 4      # фарм в 4 раза быстрее (пассивно, лежит в инвентаре)
 PAW_POINT_MULTIPLIER = 3          # 🐾 даёт втрое больше очков, чем обычная робо-нога 🦿
+ICE_SHARD_SAVE_CHANCE = 0.20      # 🧊 Ледяной осколок: шанс не сбросить очки/эво при эволюции/перерождении
+DRAGON_CLAW_POTION_MULT = 4       # 🐉 Коготь дракона: усиливает зелье скорости с x2 до x4
+TIDE_WAVE_PROC_CHANCE = 0.05      # 🌊 Волна прилива: шанс на доп. предмет из кейса 1 или 2 при фарме ног
 
 GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активирована."  # заменяет обычный префикс ответа фермы
 KOSHKO_AMULET_FLAVOR = f"{PREMIUM_KOSHKO_AMULET} Сила кошко-девочки активна."  # то же самое, но для амулета кошко-девочки
@@ -733,12 +782,15 @@ def get_active_unique_tier(active_items):
 
 def active_farm_limits(active_items, prestige_upgrades: dict = None) -> dict:
     """Лимиты за сообщение (🦵/🦿/🌌/⭐️) с учётом сильнейшего уникального бустера
-    + постоянных бонусов дерева престижа (p_legs/p_mek, см. PRESTIGE_UPGRADES)."""
+    + постоянных бонусов дерева престижа (p_legs/p_mek, см. PRESTIGE_UPGRADES)
+    + плоского бонуса от 🔥 Уголька (+1 к лимиту 🦵, складывается с чем угодно)."""
     tier = get_active_unique_tier(active_items)
     overrides = UNIQUE_LIMIT_OVERRIDES.get(tier, {})
     prestige_upgrades = prestige_upgrades or {}
     leg_bonus = prestige_bonus(prestige_upgrades, "p_legs")
     mek_bonus = prestige_bonus(prestige_upgrades, "p_mek")
+    if "ember" in set(_normalize_active_items(active_items)):
+        leg_bonus += 1
     return {
         "mek_limit": overrides.get("mek_limit", MEK_LIMIT) + mek_bonus,
         "leg_limit": overrides.get("leg_limit", LEG_LIMIT) + leg_bonus,
@@ -1093,9 +1145,12 @@ FIXED_COMMANDS = {
     "перерождение", "апгрейд", "прокачка", "апг", "престиж", "баланс", "топ очкп", "гл топ очкп", "помощь",
     "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ", "крафты", "крафт",
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
+    "мои зелья", "зелья",
     "!список вип", "!список банов топ", "!список ников", "!логи", "!пинг", "!ивент стоп", "!ивент статус",
     "ультра перерождение", "ультра перерождение подтверждаю",
     "авто эво вкл", "авто эво выкл", "авто эволюция вкл", "авто эволюция выкл",
+    "авто перерождение вкл", "авто перерождение выкл", "авто рб вкл", "авто рб выкл",
+    "авто ребёрт вкл", "авто ребёрт выкл", "авто реберт вкл", "авто реберт выкл",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
@@ -1384,8 +1439,14 @@ def base_level_threshold(level: int) -> int:
     return MAX_LEVEL_SCORE + round(200 * (level - 39) ** 1.5)
 
 
-def level_threshold(level: int, evolution_level: int, rebirth_count: int = 0) -> int:
-    hardness = (1 + EVO_HARDNESS_RATE * evolution_level) * rebirth_hardness_multiplier(rebirth_count)
+def level_threshold(level: int, evolution_level: int, rebirth_count: int = 0, active_items=None) -> int:
+    evo_extra = EVO_HARDNESS_RATE * evolution_level
+    rebirth_extra = REBIRTH_HARDNESS_STEP * rebirth_count
+    # 🧿 Оберег парадокса: -50% от усложнения эволюции и перерождения (не от базы, а от надбавки).
+    if active_items and "paradox_charm" in set(_normalize_active_items(active_items)):
+        evo_extra *= 0.5
+        rebirth_extra *= 0.5
+    hardness = (1 + evo_extra) * (1 + rebirth_extra)
     return round(base_level_threshold(level) * hardness)
 
 
@@ -1892,7 +1953,7 @@ USER_COLUMNS = (
     "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
     "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
     "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock, "
-    "prestige_points, prestige_upgrades"
+    "prestige_points, prestige_upgrades, auto_rebirth"
 )
 # Индексы полей выше при обращении по row[...]:
 #  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
@@ -1917,6 +1978,8 @@ USER_COLUMNS = (
 #     обычные перерождения/ультра-перерождение, НИКОГДА не тратится на обычные апгрейды (upgrades).
 #  28 prestige_upgrades — уровни веток дерева престижа "key:lvl,key:lvl" (тот же формат, что upgrades,
 #     но отдельное поле — ветки бесконечны, без max_level).
+#  29 auto_rebirth — Boolean (0/1), VIP-only: при включении перерождение срабатывает автоматически,
+#     как только эволюция достигает REBIRTH_MIN_EVO (см. try_auto_rebirth). Без активного VIP не работает.
 
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -1998,6 +2061,7 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN potion_stock TEXT DEFAULT ''",
         "ALTER TABLE users ADD COLUMN prestige_points INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN prestige_upgrades TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN auto_rebirth INTEGER DEFAULT 0",
     ):
         try:
             await db_exec(stmt)
@@ -2433,6 +2497,31 @@ async def auto_evolve_off(message: Message):
     await message.reply(TEXTS["auto_evolve_off_1"])
 
 
+@dp.message(F.text.lower().in_({"авто перерождение вкл", "авто рб вкл", "авто ребёрт вкл", "авто реберт вкл"}))
+async def auto_rebirth_on(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    row = await ensure_user(user_id, username)
+    vip_until = row[12]
+
+    if not is_vip_active(vip_until):
+        await message.reply(TEXTS["auto_rebirth_not_vip_1"])
+        return
+
+    await db_exec("UPDATE users SET auto_rebirth = 1 WHERE user_id = ?", (user_id,))
+    await message.reply(TEXTS["auto_rebirth_on_1"].format(v0=REBIRTH_MIN_EVO))
+
+
+@dp.message(F.text.lower().in_({"авто перерождение выкл", "авто рб выкл", "авто ребёрт выкл", "авто реберт выкл"}))
+async def auto_rebirth_off(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    await ensure_user(user_id, username)
+
+    await db_exec("UPDATE users SET auto_rebirth = 0 WHERE user_id = ?", (user_id,))
+    await message.reply(TEXTS["auto_rebirth_off_1"])
+
+
 VIP_CASE_OPEN_RE = re.compile(r"^вип открыть кейс\s+(\d+)\s+(\d+)$", re.IGNORECASE)
 VIP_CASE_OPEN_LIMIT = 20
 
@@ -2591,7 +2680,7 @@ async def toggle_badge(callback: CallbackQuery):
     await callback.answer(TEXTS["toggle_badge_2"])
 
 
-@dp.message(F.text.regexp(r"[🦵🦿]"))
+@dp.message(F.text.regexp(r"[??🦿]"))
 async def count_legs(message: Message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
@@ -2600,11 +2689,13 @@ async def count_legs(message: Message):
     row = await ensure_user(user_id, username)
     score, evolution_level, active_item = row[2], row[3], row[6]
     levelup_notify, vip_until = row[11], row[12]
-    rebirth_count = row[15]
+    rebirth_points, rebirth_count = row[14], row[15]
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     ultra_rebirth = bool(row[21])
     auto_evolve_enabled = bool(row[22])
+    auto_rebirth_enabled = bool(row[29])
+    prestige_points = row[27]
     vip_active = is_vip_active(vip_until)
     potions = active_potions_now(row[23])
     prestige_upgrades = parse_prestige_upgrades(row[28])
@@ -2647,8 +2738,10 @@ async def count_legs(message: Message):
         total = round(total * (2 ** star))            # ⭐️: ×2 к итогу за каждую штуку
     potion_text = ""
     if "potion_speed" in potions:
-        total *= 2
-        potion_text += "\n🧪⚡ Зелье ускорения: x2 к добыче!"
+        # 🐉 Коготь дракона: усиливает зелье скорости с x2 до x4, пока экипирован.
+        speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
+        total *= speed_mult
+        potion_text += f"\n🧪⚡ Зелье ускорения: x{speed_mult} к добыче!"
     new_score = score + total
 
     await db_exec(
@@ -2660,7 +2753,13 @@ async def count_legs(message: Message):
 
     auto_evo_text = ""
     if vip_active and auto_evolve_enabled:
-        evolution_level, new_score, auto_evo_text = await try_auto_evolve(user_id, new_score, evolution_level, rebirth_count)
+        evolution_level, new_score, auto_evo_text = await try_auto_evolve(user_id, new_score, evolution_level, rebirth_count, active_items)
+
+    auto_rebirth_text = ""
+    if vip_active and auto_rebirth_enabled:
+        new_score, evolution_level, rebirth_count, rebirth_points, prestige_points, auto_rebirth_text = await try_auto_rebirth(
+            user_id, new_score, evolution_level, rebirth_count, rebirth_points, prestige_points, prestige_upgrades, active_items
+        )
 
     inv = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv}
@@ -2673,6 +2772,19 @@ async def count_legs(message: Message):
     if now - _last_leg_reply.get(chat_id, 0) < LEG_REPLY_COOLDOWN:
         return
     _last_leg_reply[chat_id] = now
+
+    equipped_set = set(_normalize_active_items(active_items))
+
+    # 🌊 Волна прилива: шанс на доп. предмет из кейса 1 или 2 при фарме ног (отдельная строка).
+    tide_text = ""
+    if "tide_wave" in equipped_set and random.random() < TIDE_WAVE_PROC_CHANCE:
+        tide_item = roll_case_item(random.choice([1, 2]))
+        await add_item(user_id, tide_item)
+        tide_emoji, tide_name, _, _ = ITEMS[tide_item]
+        tide_text = f"\n🌊 Прилив принёс: {tide_emoji} {esc(tide_name)}!"
+
+    # 💀 Череп воина: только эффект — префикс "Смерть близко." перед ответом фарма ног.
+    skull_prefix = "💀 Смерть близко.\n" if "warrior_skull" in equipped_set else ""
 
     parts = f"+{legs}🦵"
     if mek:
@@ -2691,12 +2803,12 @@ async def count_legs(message: Message):
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
-            TEXTS["count_legs_1"].format(v0=flavor, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text + auto_evo_text + potion_text)
+            skull_prefix + TEXTS["count_legs_1"].format(v0=flavor, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text)
         )
         return
 
     await message.reply(
-        TEXTS["count_legs_2"].format(v0=parts, v1=total, v2=coin_text, v3=new_score, v4=vase_text + auto_evo_text + potion_text)
+        skull_prefix + TEXTS["count_legs_2"].format(v0=parts, v1=total, v2=coin_text, v3=new_score, v4=vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text)
     )
 
 
@@ -2941,11 +3053,13 @@ async def farm(message: Message):
     row = await ensure_user(user_id, username)
     score, evolution_level, active_item = row[2], row[3], row[6]
     last_farm, levelup_notify, vip_until = row[4], row[11], row[12]
-    rebirth_count = row[15]
+    rebirth_points, rebirth_count = row[14], row[15]
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     ultra_rebirth = bool(row[21])
     auto_evolve_enabled = bool(row[22])
+    auto_rebirth_enabled = bool(row[29])
+    prestige_points = row[27]
     vip_active = is_vip_active(vip_until)
     potions = active_potions_now(row[23], now)
     prestige_upgrades = parse_prestige_upgrades(row[28])
@@ -2973,8 +3087,10 @@ async def farm(message: Message):
     gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult * personal_mult * p_yield_mult)
     potion_text = ""
     if "potion_speed" in potions:
-        gained *= 2
-        potion_text += "\n🧪⚡ Зелье ускорения: x2 к добыче!"
+        # 🐉 Коготь дракона: усиливает зелье скорости с x2 до x4, пока экипирован.
+        speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
+        gained *= speed_mult
+        potion_text += f"\n🧪⚡ Зелье ускорения: x{speed_mult} к добыче!"
     new_score = score + gained
 
     await db_exec(
@@ -2995,7 +3111,13 @@ async def farm(message: Message):
 
     auto_evo_text = ""
     if vip_active and auto_evolve_enabled:
-        evolution_level, new_score, auto_evo_text = await try_auto_evolve(user_id, new_score, evolution_level, rebirth_count)
+        evolution_level, new_score, auto_evo_text = await try_auto_evolve(user_id, new_score, evolution_level, rebirth_count, active_items)
+
+    auto_rebirth_text = ""
+    if vip_active and auto_rebirth_enabled:
+        new_score, evolution_level, rebirth_count, rebirth_points, prestige_points, auto_rebirth_text = await try_auto_rebirth(
+            user_id, new_score, evolution_level, rebirth_count, rebirth_points, prestige_points, prestige_upgrades, active_items
+        )
 
     auto_text = ""
     if auto_legs or auto_coins:
@@ -3012,12 +3134,12 @@ async def farm(message: Message):
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
-            TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=vase_text + auto_evo_text + potion_text)
+            TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=vase_text + auto_evo_text + auto_rebirth_text + potion_text)
         )
         return
 
     await message.reply(
-        TEXTS["farm_3"].format(v0=gained, v1=new_score, v2=coin_text, v3=auto_text, v4=vase_text + auto_evo_text + potion_text)
+        TEXTS["farm_3"].format(v0=gained, v1=new_score, v2=coin_text, v3=auto_text, v4=vase_text + auto_evo_text + auto_rebirth_text + potion_text)
     )
 
 
@@ -3612,6 +3734,22 @@ async def my_boosters_tab(message: Message):
     await message.reply(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, user_id, 0))
 
 
+@dp.message(F.text.lower().in_({"мои зелья", "зелья"}))
+async def my_potions_tab(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    row = await ensure_user(user_id, username)
+    upgrades = parse_upgrades(row[16])
+    stock = parse_potion_stock(row[26])
+    active = active_potions_now(row[23])
+    brewing_potion, brewing_until = row[24], row[25]
+    prestige_upgrades = parse_prestige_upgrades(row[28])
+    await message.reply(
+        format_potions_text(stock, active, brewing_potion, brewing_until, upgrades),
+        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, user_id, upgrades, prestige_upgrades=prestige_upgrades),
+    )
+
+
 @dp.callback_query(F.data.startswith("inv_menu:"))
 async def inventory_back_to_menu(callback: CallbackQuery):
     owner_id = int(callback.data.split(":")[1])
@@ -4155,14 +4293,14 @@ async def buy_case(callback: CallbackQuery):
     await callback.answer(TEXTS["buy_case_3"])
 
 
-async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirth_count: int) -> tuple[int, int, str]:
+async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirth_count: int, active_items=None) -> tuple[int, int, str]:
     """VIP авто-эво: каскадно эволюционирует, пока очков хватает на след. эволюцию —
     например, если фарм разом принёс очков на 2 эволюции вперёд, сработают обе.
     Возвращает (итоговый evolution_level, итоговый score, текст для добавления к ответу)."""
     evolutions_done = 0
     unlock_text = ""
     while True:
-        required = level_threshold(39, evolution_level, rebirth_count)
+        required = level_threshold(39, evolution_level, rebirth_count, active_items)
         if score < required:
             break
         score = 0
@@ -4191,14 +4329,23 @@ async def evolve(message: Message):
     row = await ensure_user(user_id, username)
     score, evolution_level = row[2], row[3]
     rebirth_count = row[15]
+    active_items = parse_equipped(row[18])
 
-    required = level_threshold(39, evolution_level, rebirth_count)
+    required = level_threshold(39, evolution_level, rebirth_count, active_items)
     if score < required:
         await message.reply(TEXTS["evolve_1"].format(v0=required))
         return
 
     new_evolution = evolution_level + 1
-    await db_exec("UPDATE users SET score = 0, evolution_level = ? WHERE user_id = ?", (new_evolution, user_id))
+
+    # 🧊 Ледяной осколок: с шансом ICE_SHARD_SAVE_CHANCE очки ноги НЕ сбрасываются после эволюции.
+    ice_text = ""
+    kept_score = 0
+    if "ice_shard" in set(_normalize_active_items(active_items)) and random.random() < ICE_SHARD_SAVE_CHANCE:
+        kept_score = score
+        ice_text = "\n🧊 Ледяной осколок: очки ноги сохранены!"
+
+    await db_exec("UPDATE users SET score = ?, evolution_level = ? WHERE user_id = ?", (kept_score, new_evolution, user_id))
 
     unlock_text = ""
     if new_evolution == 1:
@@ -4208,7 +4355,7 @@ async def evolve(message: Message):
         unlock_text = "\nПолучена ⭐️ Звезда перерождения — экипируй в инвентарь!"
 
     await message.reply(
-        TEXTS["evolve_2"].format(v0=new_evolution, v1=round(EVO_HARDNESS_RATE * new_evolution * 100), v2=unlock_text)
+        TEXTS["evolve_2"].format(v0=new_evolution, v1=round(EVO_HARDNESS_RATE * new_evolution * 100), v2=unlock_text + ice_text)
     )
 
 
@@ -4476,6 +4623,59 @@ async def prestige_buy(callback: CallbackQuery):
 
 # ---------- Перерождение ----------
 
+def compute_rebirth_result(evolution_level: int, rebirth_points: int, rebirth_count: int,
+                            prestige_points: int, prestige_upgrades: dict, active_items) -> dict:
+    """Считает результат перерождения (без обращения к БД) — общая логика для ручной
+    команды «перерождение» и авто-перерождения (см. try_auto_rebirth)."""
+    points_gained = (evolution_level // REBIRTH_EVO_STEP) * REBIRTH_POINTS_PER_STEP
+    new_rebirth_points = rebirth_points + points_gained
+    new_rebirth_count = rebirth_count + 1
+
+    # Эхо: +1% шанс на бонусное Очко Перерождения за каждую ступень ветки p_echo.
+    extra_text = ""
+    echo_chance = 0.01 * prestige_bonus(prestige_upgrades, "p_echo")
+    if echo_chance > 0 and random.random() < echo_chance:
+        new_rebirth_points += 1
+        extra_text += "\n🔮 Эхо сработало: +1 доп. Очко Перерождения!"
+
+    # Каждое обычное перерождение даёт +1 Очко Престижа (отдельная валюта, см. PRESTIGE_UPGRADES).
+    new_prestige_points = prestige_points + PRESTIGE_PER_REBIRTH
+
+    # 🧊 Ледяной осколок: с шансом ICE_SHARD_SAVE_CHANCE уровень эволюции НЕ сбрасывается после перерождения.
+    kept_evolution = 0
+    if "ice_shard" in set(_normalize_active_items(active_items)) and random.random() < ICE_SHARD_SAVE_CHANCE:
+        kept_evolution = evolution_level
+        extra_text += "\n🧊 Ледяной осколок: уровень эволюции сохранён!"
+
+    return {
+        "points_gained": points_gained,
+        "kept_evolution": kept_evolution,
+        "rebirth_points": new_rebirth_points,
+        "rebirth_count": new_rebirth_count,
+        "prestige_points": new_prestige_points,
+        "extra_text": extra_text,
+    }
+
+
+async def try_auto_rebirth(user_id: int, score: int, evolution_level: int, rebirth_count: int,
+                            rebirth_points: int, prestige_points: int, prestige_upgrades: dict,
+                            active_items=None) -> tuple[int, int, int, int, int, str]:
+    """VIP авто-перерождение: срабатывает само, как только эволюция достигает REBIRTH_MIN_EVO
+    (см. auto_rebirth_on/off). Возвращает (score, evolution_level, rebirth_count, rebirth_points,
+    prestige_points, текст для добавления к ответу)."""
+    if evolution_level < REBIRTH_MIN_EVO:
+        return score, evolution_level, rebirth_count, rebirth_points, prestige_points, ""
+
+    result = compute_rebirth_result(evolution_level, rebirth_points, rebirth_count, prestige_points, prestige_upgrades, active_items)
+    await db_exec(
+        "UPDATE users SET score = 0, evolution_level = ?, rebirth_points = ?, rebirth_count = ?, "
+        "prestige_points = ? WHERE user_id = ?",
+        (result["kept_evolution"], result["rebirth_points"], result["rebirth_count"], result["prestige_points"], user_id),
+    )
+    text = f"\n♻️ Авто-перерождение: +{result['points_gained']}🉑 (всего {result['rebirth_points']}🉑)" + result["extra_text"]
+    return 0, result["kept_evolution"], result["rebirth_count"], result["rebirth_points"], result["prestige_points"], text
+
+
 @dp.message(F.text.lower() == "перерождение")
 async def rebirth(message: Message):
     user_id = message.from_user.id
@@ -4486,6 +4686,7 @@ async def rebirth(message: Message):
     rebirth_points, rebirth_count = row[14], row[15]
     prestige_points = row[27]
     prestige_upgrades = parse_prestige_upgrades(row[28])
+    active_items = parse_equipped(row[18])
 
     if evolution_level < REBIRTH_MIN_EVO:
         await message.reply(
@@ -4493,29 +4694,17 @@ async def rebirth(message: Message):
         )
         return
 
-    points_gained = (evolution_level // REBIRTH_EVO_STEP) * REBIRTH_POINTS_PER_STEP
-    new_rebirth_points = rebirth_points + points_gained
-    new_rebirth_count = rebirth_count + 1
-
-    # Эхо: +1% шанс на бонусное Очко Перерождения за каждую ступень ветки p_echo.
-    echo_text = ""
-    echo_chance = 0.01 * prestige_bonus(prestige_upgrades, "p_echo")
-    if echo_chance > 0 and random.random() < echo_chance:
-        new_rebirth_points += 1
-        echo_text = "\n🔮 Эхо сработало: +1 доп. Очко Перерождения!"
-
-    # Каждое обычное перерождение даёт +1 Очко Престижа (отдельная валюта, см. PRESTIGE_UPGRADES).
-    new_prestige_points = prestige_points + PRESTIGE_PER_REBIRTH
+    result = compute_rebirth_result(evolution_level, rebirth_points, rebirth_count, prestige_points, prestige_upgrades, active_items)
 
     await db_exec(
-        "UPDATE users SET score = 0, evolution_level = 0, rebirth_points = ?, rebirth_count = ?, "
+        "UPDATE users SET score = 0, evolution_level = ?, rebirth_points = ?, rebirth_count = ?, "
         "prestige_points = ? WHERE user_id = ?",
-        (new_rebirth_points, new_rebirth_count, new_prestige_points, user_id),
+        (result["kept_evolution"], result["rebirth_points"], result["rebirth_count"], result["prestige_points"], user_id),
     )
 
-    new_hardness = round(REBIRTH_HARDNESS_STEP * new_rebirth_count * 100)
+    new_hardness = round(REBIRTH_HARDNESS_STEP * result["rebirth_count"] * 100)
     await message.reply(
-        TEXTS["rebirth_2"].format(v0=points_gained, v1=new_rebirth_points, v2=new_hardness, v3=PRESTIGE_PER_REBIRTH) + echo_text
+        TEXTS["rebirth_2"].format(v0=result["points_gained"], v1=result["rebirth_points"], v2=new_hardness, v3=PRESTIGE_PER_REBIRTH) + result["extra_text"]
     )
 
 
