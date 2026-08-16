@@ -2680,7 +2680,7 @@ async def toggle_badge(callback: CallbackQuery):
     await callback.answer(TEXTS["toggle_badge_2"])
 
 
-@dp.message(F.text.regexp(r"[??🦿]"))
+@dp.message(F.text.regexp(r"[🦵🦿]"))
 async def count_legs(message: Message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
