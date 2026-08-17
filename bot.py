@@ -74,9 +74,10 @@ PREMIUM_WARM_CANDLE = '<tg-emoji emoji-id="5253717838870363235">🕯</tg-emoji>'
 # TODO: заменить emoji-id на реальный premium-эмодзи для амулета кошко-девочки, когда он будет.
 PREMIUM_KOSHKO_AMULET = '<tg-emoji emoji-id="5371041424680710006">🐈</tg-emoji>'
 
-# Очки крафта (💎) — отдельная валюта дерева крафта, получаемая обменом Очков Перерождения.
+# Очки крафта (💠) — отдельная валюта дерева крафта, получаемая обменом Очков Перерождения.
+# Алиасы команд: "крафт" и "очкк" (см. CRAFT_EXCHANGE_RE, ADMIN_GIVE_CRAFT_RE, ADMIN_TAKE_CRAFT_RE).
 # TODO: заменить emoji-id на реальный premium-эмодзи для очков крафта, когда он будет.
-PREMIUM_CRAFT_POINT = '<tg-emoji emoji-id="5254028100979787948">💎</tg-emoji>'
+PREMIUM_CRAFT_POINT = '<tg-emoji emoji-id="5254028100979787948">💠</tg-emoji>'
 
 # ---------- Кейс 3: премиум-иконки (заглушки) ----------
 # TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
@@ -196,7 +197,7 @@ FARM_EVOLVED = (500, 900)  # нерф с (700, 1250)
 
 EXCHANGE_RATE = 200
 REVERSE_EXCHANGE_RATE = 150  # 1 коин = 150 очков ног (обратный обменник, п.5 ТЗ)
-CRAFT_POINTS_EXCHANGE_RATE = 100  # 100 🉑 (очков перерождения) = 1 💎 (очко крафта)
+CRAFT_POINTS_EXCHANGE_RATE = 100  # 100 🉑 (очков перерождения) = 1 💠 (очко крафта)
 CRAFT_MAX_LEVEL = 3  # максимальный уровень апгрейда "crafts" (0/1/2/3)
 
 DAILY_TABLE = [100, 250, 500, 750, 1000]
@@ -243,7 +244,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт — 🉑 в 💎 очки крафта (курс 100:1)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт <число> — выдать 💎 очки крафта напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -359,7 +360,7 @@ TEXTS = {
     ),
     "ultra_rebirth_cancelled_1": 'Ультра перерождение отменено — прогресс не тронут.',
     "ultra_rebirth_not_owner_1": 'Это не твоё подтверждение!',
-    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n💎 Очки крафта: <code>{v5}</code>\n{v4}',
+    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n💠 Очки крафта: <code>{v5}</code>\n{v4}',
     "admin_give_rebirth_1": 'Формат: !дать очкп <количество> [себе] (в ответ на сообщение игрока)',
     "admin_give_rebirth_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
     "admin_give_rebirth_3": 'Некорректное количество.',
@@ -705,7 +706,7 @@ ALL_PLAYER_AMULETS = [
 
 # ---------- Система крафтов ----------
 # Уровень крафта игрока = уровень апгрейда "crafts" (0/1/2/3, апгрейд "апгрейд"/"прокачка").
-# Ур.3 стоит 5000 🉑 + 10 💎 (очков крафта, см. CRAFT_POINTS_EXCHANGE_RATE) — открывает будущие
+# Ур.3 стоит 5000 🉑 + 10 💠 (очков крафта, см. CRAFT_POINTS_EXCHANGE_RATE) — открывает будущие
 # рецепты уровня 3 (RECIPES с "level": 3, пока не добавлены).
 # ingredients: {item_key: qty}. special_ingredients поддерживает доп. требования
 # (валюта и "все амулеты игрока"), которых нет в обычных ITEMS-рецептах.
@@ -756,6 +757,7 @@ RECIPES = {
     "god_essence": {
         "level": 2,
         "ingredients": {"time_particle": 1, "friendship_essence": 1, "mk_broken": 1},
+        "craft_points_cost": 1,  # + 1 💠 очко крафта
     },
     "koshko_amulet": {
         "level": 2,
@@ -774,6 +776,7 @@ RECIPES = {
     "godly_vase": {
         "level": 2,
         "ingredients": {"golden_vase": 1, "devotion_coin": 1},
+        "craft_points_cost": 1,  # + 1 💠 очко крафта
     },
 }
 
@@ -841,7 +844,7 @@ def active_farm_limits(active_items, prestige_upgrades: dict = None) -> dict:
 
 
 def recipe_missing_ingredients(inventory_map: dict, coins: int, score: int, recipe: dict,
-                                prestige_upgrades: dict = None) -> list:
+                                prestige_upgrades: dict = None, craft_points: int = 0) -> list:
     """Список недостающих требований рецепта в виде читаемых строк. Пустой список = всё есть."""
     missing = []
     for ing_key, qty in recipe.get("ingredients", {}).items():
@@ -859,6 +862,9 @@ def recipe_missing_ingredients(inventory_map: dict, coins: int, score: int, reci
     score_cost = recipe.get("score_cost", 0)
     if score_cost and score < score_cost:
         missing.append(f"Очки ног: {score}/{score_cost}")
+    craft_points_cost = recipe.get("craft_points_cost", 0)
+    if craft_points_cost and craft_points < craft_points_cost:
+        missing.append(f"Очки крафта: {craft_points}/{craft_points_cost} 💠")
     return missing
 
 
@@ -870,6 +876,8 @@ def format_recipe_requirements(recipe: dict) -> str:
         parts.append(f"{recipe['coin_cost']} 🪙")
     if recipe.get("score_cost"):
         parts.append(f"{recipe['score_cost']} очков ног")
+    if recipe.get("craft_points_cost"):
+        parts.append(f"{recipe['craft_points_cost']} 💠")
     return " + ".join(parts)
 
 
@@ -954,10 +962,10 @@ UPGRADES = {
     "crafts": {
         "name": "Крафты", "desc": "Открывает уровни рецептов крафта (0/1/2/3) за 🉑",
         "max_level": CRAFT_MAX_LEVEL,
-        # Ур.1 = 15🉑, ур.2 = 35🉑 (обычная линейная прогрессия), ур.3 = 5000🉑 + 10💎 (особая цена).
+        # Ур.1 = 15🉑, ур.2 = 35🉑 (обычная линейная прогрессия), ур.3 = 5000🉑 + 10💠 (особая цена).
         "cost": lambda level: 5000 if level == CRAFT_MAX_LEVEL else _linear_cost(15, 20)(level),
         "category": 3,
-        # 3-й уровень крафта требует ДОПОЛНИТЕЛЬНО очки крафта (💎) поверх 🉑 из cost().
+        # 3-й уровень крафта требует ДОПОЛНИТЕЛЬНО очки крафта (💠) поверх 🉑 из cost().
         # extra_cost(level) -> (currency_field, amount) или None, если для этого уровня нет доп. валюты.
         "extra_cost": lambda level: (
             ("craft_points", 10) if level == CRAFT_MAX_LEVEL else None
@@ -1153,7 +1161,8 @@ ADMIN_BAN_TOP_RE = re.compile(r"^!бан топ(\s+себе)?$", re.IGNORECASE)
 ADMIN_UNBAN_TOP_RE = re.compile(r"^!разбан топ(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_REBIRTH_RE = re.compile(rf"^!дать очкп {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_REBIRTH_RE = re.compile(rf"^!снять очкп (?:{AMOUNT}|все)(\s+себе)?$", re.IGNORECASE)
-ADMIN_GIVE_CRAFT_RE = re.compile(rf"^!дать крафт {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_GIVE_CRAFT_RE = re.compile(rf"^!дать (?:крафт|очкк) {AMOUNT}(\s+себе)?$", re.IGNORECASE)
+ADMIN_TAKE_CRAFT_RE = re.compile(rf"^!снять (?:крафт|очкк) (?:{AMOUNT}|все)(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_LEGS_LVL_RE = re.compile(r"^!дать ноги лвл(\d+)(\s+себе)?$", re.IGNORECASE)
 
 PEER_GIVE_LEGS_RE = re.compile(rf"^дать ног {AMOUNT}$", re.IGNORECASE)
@@ -1161,7 +1170,12 @@ PEER_GIVE_COIN_RE = re.compile(rf"^дать коин {AMOUNT}$", re.IGNORECASE)
 
 EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT}$", re.IGNORECASE)
 REVERSE_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} коин$", re.IGNORECASE)
-CRAFT_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} крафт$", re.IGNORECASE)
+# "обменять <кол-во> крафт" — <кол-во> это 🉑 (очки перерождения), кратно курсу.
+# "обменять <кол-во> очкк" — тот же формат, просто алиас слова "крафт".
+CRAFT_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} (?:крафт|очкк)$", re.IGNORECASE)
+# "обменять крафт <кол-во>" / "обменять очкк <кол-во>" — удобный обратный формат: <кол-во> это
+# сколько ИМЕННО очков крафта 💠 хочешь получить, бот сам считает и списывает нужные 🉑.
+CRAFT_EXCHANGE_TO_RE = re.compile(rf"^обменять (?:крафт|очкк) {AMOUNT}$", re.IGNORECASE)
 CASE_NUM_RE = re.compile(r"^кейс (\d+)$", re.IGNORECASE)
 INFO_RE = re.compile(r"^инфо\s+@?(\w+)$", re.IGNORECASE)
 NICK_SET_RE = re.compile(r"^\+ник\s+(.+)$", re.IGNORECASE)
@@ -1744,7 +1758,7 @@ def upgrade_next_cost(key: str, upgrades: dict):
 
 
 def upgrade_next_extra_cost(key: str, upgrades: dict):
-    """Доп. стоимость в другой валюте для следующего уровня апгрейда (напр. крафты ур.3 = 🉑+💎).
+    """Доп. стоимость в другой валюте для следующего уровня апгрейда (напр. крафты ур.3 = 🉑+💠).
     Возвращает (currency_field, amount) либо None, если для этого уровня доп. валюты нет."""
     cfg = UPGRADES[key]
     if cfg.get("wip") or cfg["cost"] is None or not cfg.get("extra_cost"):
@@ -2052,7 +2066,7 @@ USER_COLUMNS = (
 #     переключатель ни на что не влияет.
 #  31 auto_sell_items — какие именно предметы из кейсов 1/2/3 продавать сразу при выпадении,
 #     формат "key1,key2,key3" (см. CASE_SELLABLE_ITEMS/apply_case_reward, меню "авто продажа настройка").
-#  32 craft_points (💎) — отдельная валюта "Очки крафта". Получается только обменом Очков
+#  32 craft_points (💠) — отдельная валюта "Очки крафта". Получается только обменом Очков
 #     Перерождения (см. команду "обменять <число> крафт", CRAFT_POINTS_EXCHANGE_RATE).
 #     Тратится на 3-й уровень апгрейда "crafts" (см. UPGRADES["crafts"]) вместе с 🉑.
 
@@ -3409,8 +3423,8 @@ async def reverse_exchange(message: Message):
 
 @dp.message(F.text.regexp(CRAFT_EXCHANGE_RE))
 async def craft_exchange(message: Message):
-    """обменять <кол-во> крафт -> списывает очки перерождения, начисляет очки крафта
-    (курс: CRAFT_POINTS_EXCHANGE_RATE 🉑 = 1 💎)."""
+    """обменять <кол-во> крафт/очкк -> списывает очки перерождения, начисляет очки крафта
+    (курс: CRAFT_POINTS_EXCHANGE_RATE 🉑 = 1 💠). <кол-во> здесь — это 🉑, которые отдаёшь."""
     match = CRAFT_EXCHANGE_RE.match(message.text.strip())
     rebirth_wanted = parse_amount(match.group(1))
     if not rebirth_wanted or rebirth_wanted <= 0:
@@ -3419,7 +3433,9 @@ async def craft_exchange(message: Message):
     if rebirth_wanted % CRAFT_POINTS_EXCHANGE_RATE != 0:
         await message.reply(
             f"Обменивать можно только кратно {CRAFT_POINTS_EXCHANGE_RATE} 🉑 "
-            f"(например: обменять {CRAFT_POINTS_EXCHANGE_RATE} крафт)."
+            f"(например: обменять {CRAFT_POINTS_EXCHANGE_RATE} крафт).\n"
+            f"Хочешь сразу задать нужное число очков крафта — пиши «обменять очкк <число>» "
+            f"(например: обменять очкк 3 → спишет {3 * CRAFT_POINTS_EXCHANGE_RATE} 🉑)."
         )
         return
 
@@ -3431,7 +3447,10 @@ async def craft_exchange(message: Message):
     craft_points = row[32]
 
     if rebirth_wanted > rebirth_points:
-        await message.reply(f"Недостаточно очков перерождения. У тебя {rebirth_points} 🉑.")
+        await message.reply(
+            f"Недостаточно очков перерождения. У тебя {rebirth_points} 🉑, "
+            f"нужно {rebirth_wanted} 🉑 (= {rebirth_wanted // CRAFT_POINTS_EXCHANGE_RATE} 💠)."
+        )
         return
 
     gained = rebirth_wanted // CRAFT_POINTS_EXCHANGE_RATE
@@ -3444,7 +3463,51 @@ async def craft_exchange(message: Message):
     )
 
     await message.reply(
-        f"Обменял {rebirth_wanted} 🉑 → +{gained} 💎 очков крафта (Всего: {new_craft_points})"
+        f"Обменял {rebirth_wanted} 🉑 → +{gained} 💠 очков крафта (Всего: {new_craft_points})"
+    )
+
+
+@dp.message(F.text.regexp(CRAFT_EXCHANGE_TO_RE))
+async def craft_exchange_to(message: Message):
+    """обменять крафт/очкк <кол-во> -> удобный обратный формат: <кол-во> это то, сколько
+    очков крафта 💠 хочешь ПОЛУЧИТЬ. Бот сам считает нужные 🉑 (по курсу) и списывает их."""
+    match = CRAFT_EXCHANGE_TO_RE.match(message.text.strip())
+    craft_wanted = parse_amount(match.group(1))
+    if not craft_wanted or craft_wanted <= 0:
+        await message.reply("Количество очков крафта должно быть больше нуля.")
+        return
+
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    rebirth_points = row[14]
+    craft_points = row[32]
+
+    rebirth_cost = craft_wanted * CRAFT_POINTS_EXCHANGE_RATE
+
+    if rebirth_cost > rebirth_points:
+        max_affordable = rebirth_points // CRAFT_POINTS_EXCHANGE_RATE
+        await message.reply(
+            f"Недостаточно очков перерождения. У тебя {rebirth_points} 🉑, "
+            f"нужно {rebirth_cost} 🉑 на {craft_wanted} 💠.\n"
+            f"Сейчас можешь обменять максимум {max_affordable} 💠 "
+            f"(обменять очкк {max_affordable})." if max_affordable > 0 else
+            f"Недостаточно очков перерождения. У тебя {rebirth_points} 🉑, "
+            f"нужно {rebirth_cost} 🉑 на {craft_wanted} 💠."
+        )
+        return
+
+    new_rebirth_points = rebirth_points - rebirth_cost
+    new_craft_points = craft_points + craft_wanted
+
+    await db_exec(
+        "UPDATE users SET rebirth_points = ?, craft_points = ? WHERE user_id = ?",
+        (new_rebirth_points, new_craft_points, user_id),
+    )
+
+    await message.reply(
+        f"Обменял {rebirth_cost} 🉑 → +{craft_wanted} 💠 очков крафта (Всего: {new_craft_points})"
     )
 
 
@@ -4483,10 +4546,11 @@ async def craft_do(callback: CallbackQuery):
         return
 
     coins, score = row[5], row[2]
+    craft_points = row[32]
     inv_rows = await get_inventory(owner_id)
     inventory_map = {k: q for k, q in inv_rows}
 
-    missing = recipe_missing_ingredients(inventory_map, coins, score, recipe, prestige_upgrades)
+    missing = recipe_missing_ingredients(inventory_map, coins, score, recipe, prestige_upgrades, craft_points)
     if missing:
         await callback.answer("Не хватает: " + "; ".join(missing), show_alert=True)
         return
@@ -4502,6 +4566,11 @@ async def craft_do(callback: CallbackQuery):
         await db_exec("UPDATE users SET coins = coins - ? WHERE user_id = ?", (discounted_cost, owner_id))
     if recipe.get("score_cost"):
         await db_exec("UPDATE users SET score = score - ? WHERE user_id = ?", (recipe["score_cost"], owner_id))
+    if recipe.get("craft_points_cost"):
+        await db_exec(
+            "UPDATE users SET craft_points = craft_points - ? WHERE user_id = ?",
+            (recipe["craft_points_cost"], owner_id),
+        )
 
     await add_item(owner_id, recipe_key, 1)
 
@@ -4771,7 +4840,7 @@ async def toggle_event(message: Message):
 # ---------- Меню прокачки ("апгрейд" / "прокачка" / "апг") ----------
 
 def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int, craft_points: int = 0) -> str:
-    craft_line = f"💎 Очки крафта: <code>{craft_points}</code>\n" if category == 3 else ""
+    craft_line = f"💠 Очки крафта: <code>{craft_points}</code>\n" if category == 3 else ""
     header = (
         f"⚙️ <b>МЕНЮ ПРОКАЧКИ</b> — {UPGRADE_CATEGORIES[category]}\n"
         f"🉑 Очки перерождения: <code>{rebirth_points}</code>\n"
@@ -4880,7 +4949,7 @@ async def upgrade_buy(callback: CallbackQuery):
     extra_field, extra_amount = (extra if extra else (None, 0))
     if extra_field == "craft_points" and craft_points < extra_amount:
         await callback.answer(
-            f"Нужно {extra_amount} 💎 очков крафта, у тебя {craft_points}.", show_alert=True
+            f"Нужно {extra_amount} 💠 очков крафта, у тебя {craft_points}.", show_alert=True
         )
         return
 
@@ -5272,14 +5341,14 @@ async def admin_give_rebirth(message: Message):
     await message.reply(TEXTS["admin_give_rebirth_4"].format(v0=amount, v1=esc(target_username), v2=new_points))
 
 
-@dp.message(F.text.lower().startswith("!дать крафт"))
+@dp.message(F.text.regexp(r"(?i)^!дать (?:крафт|очкк)\b"))
 async def admin_give_craft(message: Message):
     if not is_admin(message):
         return
     await log_admin_action(message)
     match = ADMIN_GIVE_CRAFT_RE.match(message.text.strip())
     if not match:
-        await message.reply("Формат: !дать крафт <количество> [себе] (в ответ на сообщение игрока)")
+        await message.reply("Формат: !дать крафт <количество> [себе] (в ответ на сообщение игрока). Алиас: !дать очкк")
         return
 
     target = await resolve_target(message, bool(match.group(2)))
@@ -5296,7 +5365,39 @@ async def admin_give_craft(message: Message):
     row = await ensure_user(target.id, target_username)
     new_points = row[32] + amount
     await db_exec("UPDATE users SET craft_points = ? WHERE user_id = ?", (new_points, target.id))
-    await message.reply(f"Выдано {amount} 💎 очков крафта игроку {esc(target_username)} (Всего: {new_points})")
+    await message.reply(f"Выдано {amount} 💠 очков крафта игроку {esc(target_username)} (Всего: {new_points})")
+
+
+@dp.message(F.text.regexp(r"(?i)^!снять (?:крафт|очкк)\b"))
+async def admin_take_craft(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_TAKE_CRAFT_RE.match(message.text.strip())
+    if not match:
+        await message.reply("Формат: !снять крафт <количество|все> [себе] (в ответ на сообщение игрока). Алиас: !снять очкк")
+        return
+
+    target = await resolve_target(message, bool(match.group(2)))
+    if not target:
+        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        return
+    target_username = target.username or target.first_name or "Без имени"
+
+    if match.group(1) is None:  # "!снять крафт все"
+        await db_exec("UPDATE users SET craft_points = 0 WHERE user_id = ?", (target.id,))
+        await message.reply(f"Снято все 💠 очки крафта у игрока {esc(target_username)} (Осталось: 0)")
+        return
+
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
+
+    row = await ensure_user(target.id, target_username)
+    new_points = max(0, row[32] - amount)
+    await db_exec("UPDATE users SET craft_points = ? WHERE user_id = ?", (new_points, target.id))
+    await message.reply(f"Снято {amount} 💠 очков крафта у игрока {esc(target_username)} (Осталось: {new_points})")
 
 
 @dp.message(F.text.lower().startswith("!снять очкп"))
