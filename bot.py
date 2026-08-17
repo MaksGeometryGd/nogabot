@@ -74,6 +74,10 @@ PREMIUM_WARM_CANDLE = '<tg-emoji emoji-id="5253717838870363235">🕯</tg-emoji>'
 # TODO: заменить emoji-id на реальный premium-эмодзи для амулета кошко-девочки, когда он будет.
 PREMIUM_KOSHKO_AMULET = '<tg-emoji emoji-id="5371041424680710006">🐈</tg-emoji>'
 
+# Очки крафта (💎) — отдельная валюта дерева крафта, получаемая обменом Очков Перерождения.
+# TODO: заменить emoji-id на реальный premium-эмодзи для очков крафта, когда он будет.
+PREMIUM_CRAFT_POINT = '<tg-emoji emoji-id="5254028100979787948">💎</tg-emoji>'
+
 # ---------- Кейс 3: премиум-иконки (заглушки) ----------
 # TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
 # <tg-emoji>) — как найдёшь/сделаешь премиум-версию в Telegram, оберни так же, как выше:
@@ -192,6 +196,8 @@ FARM_EVOLVED = (500, 900)  # нерф с (700, 1250)
 
 EXCHANGE_RATE = 200
 REVERSE_EXCHANGE_RATE = 150  # 1 коин = 150 очков ног (обратный обменник, п.5 ТЗ)
+CRAFT_POINTS_EXCHANGE_RATE = 100  # 100 🉑 (очков перерождения) = 1 💎 (очко крафта)
+CRAFT_MAX_LEVEL = 3  # максимальный уровень апгрейда "crafts" (0/1/2/3)
 
 DAILY_TABLE = [100, 250, 500, 750, 1000]
 DAILY_MIN_GAP = 20 * 3600
@@ -237,7 +243,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт — 🉑 в 💎 очки крафта (курс 100:1)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт <число> — выдать 💎 очки крафта напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -353,7 +359,7 @@ TEXTS = {
     ),
     "ultra_rebirth_cancelled_1": 'Ультра перерождение отменено — прогресс не тронут.',
     "ultra_rebirth_not_owner_1": 'Это не твоё подтверждение!',
-    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n{v4}',
+    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n💎 Очки крафта: <code>{v5}</code>\n{v4}',
     "admin_give_rebirth_1": 'Формат: !дать очкп <количество> [себе] (в ответ на сообщение игрока)',
     "admin_give_rebirth_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
     "admin_give_rebirth_3": 'Некорректное количество.',
@@ -698,7 +704,9 @@ ALL_PLAYER_AMULETS = [
 ]
 
 # ---------- Система крафтов ----------
-# Уровень крафта игрока = уровень апгрейда "crafts" (0/1/2, апгрейд "апгрейд"/"прокачка").
+# Уровень крафта игрока = уровень апгрейда "crafts" (0/1/2/3, апгрейд "апгрейд"/"прокачка").
+# Ур.3 стоит 5000 🉑 + 10 💎 (очков крафта, см. CRAFT_POINTS_EXCHANGE_RATE) — открывает будущие
+# рецепты уровня 3 (RECIPES с "level": 3, пока не добавлены).
 # ingredients: {item_key: qty}. special_ingredients поддерживает доп. требования
 # (валюта и "все амулеты игрока"), которых нет в обычных ITEMS-рецептах.
 RECIPES = {
@@ -944,8 +952,16 @@ UPGRADES = {
         "category": 2,
     },
     "crafts": {
-        "name": "Крафты", "desc": "Открывает уровни рецептов крафта (0/1/2) за 🉑",
-        "max_level": 2, "cost": _linear_cost(15, 20), "category": 3,
+        "name": "Крафты", "desc": "Открывает уровни рецептов крафта (0/1/2/3) за 🉑",
+        "max_level": CRAFT_MAX_LEVEL,
+        # Ур.1 = 15🉑, ур.2 = 35🉑 (обычная линейная прогрессия), ур.3 = 5000🉑 + 10💎 (особая цена).
+        "cost": lambda level: 5000 if level == CRAFT_MAX_LEVEL else _linear_cost(15, 20)(level),
+        "category": 3,
+        # 3-й уровень крафта требует ДОПОЛНИТЕЛЬНО очки крафта (💎) поверх 🉑 из cost().
+        # extra_cost(level) -> (currency_field, amount) или None, если для этого уровня нет доп. валюты.
+        "extra_cost": lambda level: (
+            ("craft_points", 10) if level == CRAFT_MAX_LEVEL else None
+        ),
     },
     "brew_speed": {
         "name": "Скорость готовки зелья",
@@ -1019,61 +1035,65 @@ def _milestone_bonus(milestones: list):
     return _fn
 
 
-def _slots_milestones(n: int) -> list:
-    # 1 ур -> +1 слот сразу; далее следующая ступень каждые 100 уровней (100, 200, 300, ...)
-    result = [1]
-    for i in range(1, n):
-        result.append(100 * i)
-    return result
+def _per_level_bonus(level: int) -> int:
+    """Прямая (не разреженная) кривая: каждый купленный уровень сразу даёт +1 к эффекту.
+    Используется только для 'Слоты' — это очень мощный бонус, поэтому взамен разреженности
+    его цена растёт в 10 раз за уровень (см. _prestige_cost(2, 10) в p_slots)."""
+    return max(0, level)
 
 
+# ---------- НЕРФ ПРЕСТИЖА (переработка) ----------
+# Раньше цены веток росли от базы 3-10 с шагом роста x1.15-1.30 за уровень — прогрессия быстро
+# улетала за пределы разумного фарма. Теперь база снижена в 5-10 раз, а рост цены за уровень
+# смягчён (было 1.15-1.30, стало 1.08-1.12), кроме "Слотов" — они остаются дорогими нарочно,
+# т.к. дают прямой +1 слот КАЖДЫЙ уровень (без разреженности), а не редкий милстоун раз в 100 ур.
 PRESTIGE_UPGRADES = {
     "p_legs": {
         "name": "Обычные ноги", "emoji": "🦵",
         "desc": "+1 к лимиту 🦵",
-        "cost": _prestige_cost(3, 1.15),
+        "cost": _prestige_cost(1, 1.08),   # было base=3, growth=1.15
         "bonus": _echelon_bonus,
     },
     "p_mek": {
         "name": "Робо ноги", "emoji": "🦿",
         "desc": "+1 к лимиту 🦿",
-        "cost": _prestige_cost(5, 1.18),
+        "cost": _prestige_cost(1, 1.09),   # было base=5, growth=1.18
         "bonus": _echelon_bonus,
     },
     "p_slots": {
         "name": "Слоты", "emoji": "🎒",
-        "desc": "+1 слот экипировки",
-        "cost": _prestige_cost(10, 1.30),
-        "bonus": _milestone_bonus(_slots_milestones(100000)),
+        "desc": "+1 слот экипировки за КАЖДЫЙ уровень (цена растёт x10 за уровень — самая дорогая ветка)",
+        "cost": _prestige_cost(2, 10.0),   # было base=10, growth=1.30 с редкими милстоунами
+        "bonus": _per_level_bonus,          # теперь каждый уровень = +1 слот сразу, без милстоунов
     },
     "p_farm_speed": {
         "name": "Скорость фарма", "emoji": "⏱️",
         "desc": "-1% к КД фермы",
-        "cost": _prestige_cost(4, 1.15),
+        "cost": _prestige_cost(1, 1.08),   # было base=4, growth=1.15
         "bonus": _echelon_bonus,
     },
     "p_farm_yield": {
         "name": "Добыча", "emoji": "📈",
         "desc": "+0.5% к множителю фермы",
-        "cost": _prestige_cost(4, 1.15),
+        "cost": _prestige_cost(1, 1.08),   # было base=4, growth=1.15
         "bonus": _echelon_bonus,
     },
     "p_brew_speed": {
         "name": "Скорость варки", "emoji": "🔥",
         "desc": "-2% времени варки зелий",
-        "cost": _prestige_cost(4, 1.15),
+        "cost": _prestige_cost(1, 1.08),   # было base=4, growth=1.15
         "bonus": _echelon_bonus,
     },
     "p_craft_discount": {
         "name": "Скидка крафта", "emoji": "🔨",
         "desc": "-1% к стоимости крафта",
-        "cost": _prestige_cost(4, 1.15),
+        "cost": _prestige_cost(1, 1.08),   # было base=4, growth=1.15
         "bonus": _echelon_bonus,
     },
     "p_echo": {
         "name": "Эхо", "emoji": "🔮",
         "desc": "+1% шанс бонус-очка перерождения",
-        "cost": _prestige_cost(5, 1.17),
+        "cost": _prestige_cost(1, 1.10),   # было base=5, growth=1.17
         "bonus": _echelon_bonus,
     },
 }
@@ -1133,6 +1153,7 @@ ADMIN_BAN_TOP_RE = re.compile(r"^!бан топ(\s+себе)?$", re.IGNORECASE)
 ADMIN_UNBAN_TOP_RE = re.compile(r"^!разбан топ(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_REBIRTH_RE = re.compile(rf"^!дать очкп {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_REBIRTH_RE = re.compile(rf"^!снять очкп (?:{AMOUNT}|все)(\s+себе)?$", re.IGNORECASE)
+ADMIN_GIVE_CRAFT_RE = re.compile(rf"^!дать крафт {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_LEGS_LVL_RE = re.compile(r"^!дать ноги лвл(\d+)(\s+себе)?$", re.IGNORECASE)
 
 PEER_GIVE_LEGS_RE = re.compile(rf"^дать ног {AMOUNT}$", re.IGNORECASE)
@@ -1140,6 +1161,7 @@ PEER_GIVE_COIN_RE = re.compile(rf"^дать коин {AMOUNT}$", re.IGNORECASE)
 
 EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT}$", re.IGNORECASE)
 REVERSE_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} коин$", re.IGNORECASE)
+CRAFT_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} крафт$", re.IGNORECASE)
 CASE_NUM_RE = re.compile(r"^кейс (\d+)$", re.IGNORECASE)
 INFO_RE = re.compile(r"^инфо\s+@?(\w+)$", re.IGNORECASE)
 NICK_SET_RE = re.compile(r"^\+ник\s+(.+)$", re.IGNORECASE)
@@ -1189,7 +1211,7 @@ PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
     "!дать коин", "!снять коин", "!дать б", "!снять б", "!дать п", "!снять п", "!дать вип", "!снять вип", "!сбросить",
     "передать ", "дать ", "кейс ", NEWS_PREFIX, "инфо ", "продать",
-    "!дать очкп", "!снять очкп", "открыть кейс", "осмотреть кейс", "осмотр кейс", "крафты ", "крафт ", "уничтожение",
+    "!дать очкп", "!снять очкп", "!дать крафт", "открыть кейс", "осмотреть кейс", "осмотр кейс", "крафты ", "крафт ", "уничтожение",
     "+ник ", "!бан топ", "!разбан топ", "!установить ног", "!установить эво",
     "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
     "!установить очкп", "!обнулить экономику", "!мультипликатор ферма", "!дать предмет",
@@ -1721,6 +1743,18 @@ def upgrade_next_cost(key: str, upgrades: dict):
     return cfg["cost"](level + 1)
 
 
+def upgrade_next_extra_cost(key: str, upgrades: dict):
+    """Доп. стоимость в другой валюте для следующего уровня апгрейда (напр. крафты ур.3 = 🉑+💎).
+    Возвращает (currency_field, amount) либо None, если для этого уровня доп. валюты нет."""
+    cfg = UPGRADES[key]
+    if cfg.get("wip") or cfg["cost"] is None or not cfg.get("extra_cost"):
+        return None
+    level = upgrade_level(upgrades, key)
+    if level >= cfg["max_level"]:
+        return None
+    return cfg["extra_cost"](level + 1)
+
+
 def parse_prestige_upgrades(upgrades_str: str) -> dict:
     result = {}
     for part in (upgrades_str or "").split(","):
@@ -1986,7 +2020,7 @@ USER_COLUMNS = (
     "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
     "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
     "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock, "
-    "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items"
+    "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items, craft_points"
 )
 # Индексы полей выше при обращении по row[...]:
 #  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
@@ -2018,6 +2052,9 @@ USER_COLUMNS = (
 #     переключатель ни на что не влияет.
 #  31 auto_sell_items — какие именно предметы из кейсов 1/2/3 продавать сразу при выпадении,
 #     формат "key1,key2,key3" (см. CASE_SELLABLE_ITEMS/apply_case_reward, меню "авто продажа настройка").
+#  32 craft_points (💎) — отдельная валюта "Очки крафта". Получается только обменом Очков
+#     Перерождения (см. команду "обменять <число> крафт", CRAFT_POINTS_EXCHANGE_RATE).
+#     Тратится на 3-й уровень апгрейда "crafts" (см. UPGRADES["crafts"]) вместе с 🉑.
 
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -2102,6 +2139,7 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN auto_rebirth INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN auto_sell INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN auto_sell_items TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN craft_points INTEGER DEFAULT 0",
     ):
         try:
             await db_exec(stmt)
@@ -3369,6 +3407,47 @@ async def reverse_exchange(message: Message):
     await message.reply(TEXTS["reverse_exchange_3"].format(v0=coins_wanted, v1=gained, v2=new_score))
 
 
+@dp.message(F.text.regexp(CRAFT_EXCHANGE_RE))
+async def craft_exchange(message: Message):
+    """обменять <кол-во> крафт -> списывает очки перерождения, начисляет очки крафта
+    (курс: CRAFT_POINTS_EXCHANGE_RATE 🉑 = 1 💎)."""
+    match = CRAFT_EXCHANGE_RE.match(message.text.strip())
+    rebirth_wanted = parse_amount(match.group(1))
+    if not rebirth_wanted or rebirth_wanted <= 0:
+        await message.reply("Количество очков перерождения должно быть больше нуля.")
+        return
+    if rebirth_wanted % CRAFT_POINTS_EXCHANGE_RATE != 0:
+        await message.reply(
+            f"Обменивать можно только кратно {CRAFT_POINTS_EXCHANGE_RATE} 🉑 "
+            f"(например: обменять {CRAFT_POINTS_EXCHANGE_RATE} крафт)."
+        )
+        return
+
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    rebirth_points = row[14]
+    craft_points = row[32]
+
+    if rebirth_wanted > rebirth_points:
+        await message.reply(f"Недостаточно очков перерождения. У тебя {rebirth_points} 🉑.")
+        return
+
+    gained = rebirth_wanted // CRAFT_POINTS_EXCHANGE_RATE
+    new_rebirth_points = rebirth_points - rebirth_wanted
+    new_craft_points = craft_points + gained
+
+    await db_exec(
+        "UPDATE users SET rebirth_points = ?, craft_points = ? WHERE user_id = ?",
+        (new_rebirth_points, new_craft_points, user_id),
+    )
+
+    await message.reply(
+        f"Обменял {rebirth_wanted} 🉑 → +{gained} 💎 очков крафта (Всего: {new_craft_points})"
+    )
+
+
 @dp.message(F.text.lower().startswith("обменять "))
 async def exchange(message: Message):
     match = EXCHANGE_RE.match(message.text.strip().lower())
@@ -4328,15 +4407,15 @@ def crafts_keyboard(recipe_keys: list, user_id: int, page: int = 0, query: str =
 def format_crafts_text(recipe_keys: list, craft_level: int, query: str, page: int = 0) -> str:
     if not recipe_keys:
         if query:
-            return f"🔨 Нет доступных рецептов по запросу «{esc(query)}» (либо не хватает уровня крафта {craft_level}/2)."
-        return f"🔨 Нет доступных рецептов на твоём уровне крафта ({craft_level}/2). Качай апгрейд «Крафты» в прокачке!"
+            return f"🔨 Нет доступных рецептов по запросу «{esc(query)}» (либо не хватает уровня крафта {craft_level}/{CRAFT_MAX_LEVEL})."
+        return f"🔨 Нет доступных рецептов на твоём уровне крафта ({craft_level}/{CRAFT_MAX_LEVEL}). Качай апгрейд «Крафты» в прокачке!"
 
     page_keys, page, total_pages = _paginate(recipe_keys, page)
     page_suffix = f" — стр. {page + 1}/{total_pages}" if total_pages > 1 else ""
-    lines = [f"🔨 <b>Доступные рецепты</b> (уровень крафта {craft_level}/2){page_suffix}:\n"]
+    lines = [f"🔨 <b>Доступные рецепты</b> (уровень крафта {craft_level}/{CRAFT_MAX_LEVEL}){page_suffix}:\n"]
     for key in page_keys:
         emoji, name, _, _ = ITEMS[key]
-        lines.append(f"{plain_emoji(emoji)} <b>{esc(name)}</b> = {esc(format_recipe_requirements(RECIPES[key]))}")
+        lines.append(f"{emoji} <b>{esc(name)}</b> = {esc(format_recipe_requirements(RECIPES[key]))}")
     return "\n".join(lines)
 
 
@@ -4427,7 +4506,7 @@ async def craft_do(callback: CallbackQuery):
     await add_item(owner_id, recipe_key, 1)
 
     emoji, name, _, _ = ITEMS[recipe_key]
-    result_text = f"✅ Скрафтил {plain_emoji(emoji)} {name}!"
+    result_text = f"✅ Скрафтил {emoji} {name}!"
 
     await callback.message.reply(result_text)
     await callback.answer(TEXTS["craft_do_4"])
@@ -4446,7 +4525,7 @@ def format_case_inspect_text(case_num: int, price: int, base_price: int) -> str:
     lines = [f"📦 <b>{esc(case['name'])}</b>", f"Цена: {price} 🪙{discount_line}", "", "Возможный дроп:"]
     for _k, emoji, name, percent, chance in case_drop_table(case_num):
         boost_part = f" (+{percent}%)" if percent else ""
-        lines.append(f"{plain_emoji(emoji)} {esc(name)}{boost_part} — {chance}%")
+        lines.append(f"{emoji} {esc(name)}{boost_part} — {chance}%")
     return "\n".join(lines)
 
 
@@ -4691,10 +4770,12 @@ async def toggle_event(message: Message):
 
 # ---------- Меню прокачки ("апгрейд" / "прокачка" / "апг") ----------
 
-def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int) -> str:
+def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int, craft_points: int = 0) -> str:
+    craft_line = f"💎 Очки крафта: <code>{craft_points}</code>\n" if category == 3 else ""
     header = (
         f"⚙️ <b>МЕНЮ ПРОКАЧКИ</b> — {UPGRADE_CATEGORIES[category]}\n"
         f"🉑 Очки перерождения: <code>{rebirth_points}</code>\n"
+        f"{craft_line}"
         f"━━━━━━━━━━━━━━━━━━\n"
     )
     return header
@@ -4716,7 +4797,9 @@ def upgrade_page_keyboard(upgrades: dict, user_id: int, category: int) -> Inline
             label = f"✅ {cfg['name']} — {level}/{cfg['max_level']} (макс)"
             rows.append([InlineKeyboardButton(text=label, callback_data="upg_noop")])
         else:
-            label = f"{cfg['name']} — {level}/{cfg['max_level']} ({cost} 🉑)"
+            extra = upgrade_next_extra_cost(key, upgrades)
+            extra_part = f" + {extra[1]} {plain_emoji(PREMIUM_CRAFT_POINT)}" if extra else ""
+            label = f"{cfg['name']} — {level}/{cfg['max_level']} ({cost} 🉑{extra_part})"
             rows.append([InlineKeyboardButton(text=label, callback_data=f"upg_buy:{user_id}:{category}:{key}")])
 
     nav = []
@@ -4735,9 +4818,10 @@ async def upgrade_menu(message: Message):
     row = await ensure_user(user_id, username)
     upgrades = parse_upgrades(row[16])
     rebirth_points = row[14]
+    craft_points = row[32]
 
     await message.reply(
-        format_upgrade_page_text(upgrades, rebirth_points, 1),
+        format_upgrade_page_text(upgrades, rebirth_points, 1, craft_points),
         reply_markup=upgrade_page_keyboard(upgrades, user_id, 1),
     )
 
@@ -4759,8 +4843,9 @@ async def upgrade_change_page(callback: CallbackQuery):
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
     rebirth_points = row[14]
+    craft_points = row[32]
     await callback.message.edit_text(
-        format_upgrade_page_text(upgrades, rebirth_points, category),
+        format_upgrade_page_text(upgrades, rebirth_points, category, craft_points),
         reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
     )
     await callback.answer()
@@ -4781,6 +4866,7 @@ async def upgrade_buy(callback: CallbackQuery):
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
     rebirth_points = row[14]
+    craft_points = row[32]
     cost = upgrade_next_cost(key, upgrades)
 
     if cost is None:
@@ -4790,15 +4876,24 @@ async def upgrade_buy(callback: CallbackQuery):
         await callback.answer(TEXTS["upgrade_buy_4"].format(v0=cost, v1=rebirth_points), show_alert=True)
         return
 
+    extra = upgrade_next_extra_cost(key, upgrades)
+    extra_field, extra_amount = (extra if extra else (None, 0))
+    if extra_field == "craft_points" and craft_points < extra_amount:
+        await callback.answer(
+            f"Нужно {extra_amount} 💎 очков крафта, у тебя {craft_points}.", show_alert=True
+        )
+        return
+
     upgrades[key] = upgrade_level(upgrades, key) + 1
     new_points = rebirth_points - cost
+    new_craft_points = craft_points - extra_amount if extra_field == "craft_points" else craft_points
     await db_exec(
-        "UPDATE users SET rebirth_points = ?, upgrades = ? WHERE user_id = ?",
-        (new_points, format_upgrades(upgrades), owner_id),
+        "UPDATE users SET rebirth_points = ?, upgrades = ?, craft_points = ? WHERE user_id = ?",
+        (new_points, format_upgrades(upgrades), new_craft_points, owner_id),
     )
 
     await callback.message.edit_text(
-        format_upgrade_page_text(upgrades, new_points, category),
+        format_upgrade_page_text(upgrades, new_points, category, new_craft_points),
         reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
     )
     await callback.answer(TEXTS["upgrade_buy_5"].format(v0=UPGRADES[key]['name'], v1=upgrades[key]))
@@ -5138,12 +5233,15 @@ async def show_balance(message: Message):
     score, coins = row[2], row[5]
     vip_until = row[12]
     rebirth_points, rebirth_count = row[14], row[15]
+    craft_points = row[32]
     vip_active = is_vip_active(vip_until)
 
     vip_line = f"{PREMIUM_VIP_BADGE} VIP активен" if vip_active else "VIP не активен"
 
     await message.reply(
-        TEXTS["show_balance_1"].format(v0=score, v1=coins, v2=rebirth_points, v3=rebirth_count, v4=vip_line)
+        TEXTS["show_balance_1"].format(
+            v0=score, v1=coins, v2=rebirth_points, v3=rebirth_count, v4=vip_line, v5=craft_points
+        )
     )
 
 
@@ -5172,6 +5270,33 @@ async def admin_give_rebirth(message: Message):
     new_points = row[14] + amount
     await db_exec("UPDATE users SET rebirth_points = ? WHERE user_id = ?", (new_points, target.id))
     await message.reply(TEXTS["admin_give_rebirth_4"].format(v0=amount, v1=esc(target_username), v2=new_points))
+
+
+@dp.message(F.text.lower().startswith("!дать крафт"))
+async def admin_give_craft(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_GIVE_CRAFT_RE.match(message.text.strip())
+    if not match:
+        await message.reply("Формат: !дать крафт <количество> [себе] (в ответ на сообщение игрока)")
+        return
+
+    target = await resolve_target(message, bool(match.group(2)))
+    if not target:
+        await message.reply("Ответь этой командой на сообщение игрока, либо допиши «себе».")
+        return
+
+    amount = parse_amount(match.group(1))
+    if not amount or amount <= 0:
+        await message.reply("Некорректное количество.")
+        return
+    target_username = target.username or target.first_name or "Без имени"
+
+    row = await ensure_user(target.id, target_username)
+    new_points = row[32] + amount
+    await db_exec("UPDATE users SET craft_points = ? WHERE user_id = ?", (new_points, target.id))
+    await message.reply(f"Выдано {amount} 💎 очков крафта игроку {esc(target_username)} (Всего: {new_points})")
 
 
 @dp.message(F.text.lower().startswith("!снять очкп"))
