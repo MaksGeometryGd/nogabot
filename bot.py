@@ -5,6 +5,7 @@ import random
 import re
 import time
 from datetime import datetime
+from urllib.parse import quote, unquote
 
 import libsql
 import aiohttp
@@ -226,6 +227,8 @@ TEXTS = {
     "auto_rebirth_not_vip_1": '⚠️ Авто-перерождение доступно только с VIP-статусом. Команда «вип» — как получить.',
     "auto_rebirth_on_1": '♻️💎 Авто-перерождение включено. Как только эволюция достигнет {v0} — перерождение сработает само.',
     "auto_rebirth_off_1": '♻️ Авто-перерождение выключено.',
+    "auto_sell_on_1": '💰 Авто-продажа включена. Настрой список предметов: «авто продажа настройка».',
+    "auto_sell_off_1": '💰 Авто-продажа выключена.',
     "vip_case_open_1": 'Формат: вип открыть кейс <номер> <кол-во> (максимум 20 за раз).',
     "vip_case_open_2": '⚠️ Авто-эволюция VIP-only. Команда «вип» — как получить.',
     "vip_case_open_3": 'Такого кейса нет. Посмотри «кейсы» — список номеров.',
@@ -234,7 +237,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -657,6 +660,35 @@ CASES = {
         "pool": ["ice_shard", "ember", "dragon_claw", "paradox_charm", "shadow_mask", "tide_wave", "warrior_skull",
                  "broken_clock", "essence_drop", "comet_shard", "koshko_gift", "ancient_stone", "fate_thread"]},
 }
+
+# Все предметы, которые вообще могут выпасть из кейсов 1/2/3 — единственные, что доступны
+# для настройки авто-продажи (см. auto_sell вкл/выкл, "авто продажа настройка").
+CASE_SELLABLE_ITEMS = list(dict.fromkeys(
+    CASES[1]["pool"] + CASES[2]["pool"] + CASES[3]["pool"]
+))
+AUTOSELL_PAGE_SIZE = 8  # предметов на страницу в меню настройки авто-продажи
+
+
+def parse_auto_sell_items(raw: str) -> set:
+    return set(x for x in (raw or "").split(",") if x)
+
+
+def format_auto_sell_items(items: set) -> str:
+    return ",".join(sorted(items))
+
+
+async def apply_case_reward(user_id: int, item_key: str, upgrades: dict,
+                             auto_sell_enabled: bool, auto_sell_items: set) -> tuple[int, str]:
+    """Выдаёт выпавший из кейса предмет — либо в инвентарь как обычно, либо, если включена
+    авто-продажа и этот предмет отмечен в конфиге, сразу продаёт его за монеты.
+    Возвращает (получено_монет, текст-пометка для ответа, например ' (авто-продано за 8🪙)')."""
+    if auto_sell_enabled and item_key in auto_sell_items and item_key not in NON_TRADABLE_ITEMS:
+        sell_lvl = upgrade_level(upgrades, "sell_boost")
+        price = SELL_PRICE.get(item_key, 1) + sell_bonus_coins(upgrades)
+        await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (price, user_id))
+        return price, f" (авто-продано за {price}🪙)"
+    await add_item(user_id, item_key)
+    return 0, ""
 
 # Все "амулеты игроков", которые может сожрать рецепт Неактивированного гибридного амулета —
 # все предметы с "амулет" в названии КРОМЕ VIP-амулета и Сломанного амулета (см. уточнение ТЗ).
@@ -1151,6 +1183,7 @@ FIXED_COMMANDS = {
     "авто эво вкл", "авто эво выкл", "авто эволюция вкл", "авто эволюция выкл",
     "авто перерождение вкл", "авто перерождение выкл", "авто рб вкл", "авто рб выкл",
     "авто ребёрт вкл", "авто ребёрт выкл", "авто реберт вкл", "авто реберт выкл",
+    "авто продажа вкл", "авто продажа выкл", "авто продажа настройка", "авто продажа конфиг", "авто продажа настройки",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
@@ -1161,7 +1194,7 @@ PREFIX_COMMANDS = (
     "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
     "!установить очкп", "!обнулить экономику", "!мультипликатор ферма", "!дать предмет",
     "!очистить инвентарь", "!дать апгрейд", "!вип навсегда", "!сброс ник", "!найти ", "!ультра навсегда",
-    "вип открыть кейс",
+    "вип открыть кейс", "бустеры поиск ", "!дать ключ",
 )
 
 
@@ -1953,7 +1986,7 @@ USER_COLUMNS = (
     "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
     "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
     "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock, "
-    "prestige_points, prestige_upgrades, auto_rebirth"
+    "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items"
 )
 # Индексы полей выше при обращении по row[...]:
 #  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
@@ -1980,6 +2013,11 @@ USER_COLUMNS = (
 #     но отдельное поле — ветки бесконечны, без max_level).
 #  29 auto_rebirth — Boolean (0/1), VIP-only: при включении перерождение срабатывает автоматически,
 #     как только эволюция достигает REBIRTH_MIN_EVO (см. try_auto_rebirth). Без активного VIP не работает.
+#  30 auto_sell — Boolean (0/1): глобальный переключатель авто-продажи дропа из кейсов 1/2/3
+#     (см. auto_sell вкл/выкл). Работает только вместе с auto_sell_items — если список пуст,
+#     переключатель ни на что не влияет.
+#  31 auto_sell_items — какие именно предметы из кейсов 1/2/3 продавать сразу при выпадении,
+#     формат "key1,key2,key3" (см. CASE_SELLABLE_ITEMS/apply_case_reward, меню "авто продажа настройка").
 
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -2062,6 +2100,8 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN prestige_points INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN prestige_upgrades TEXT DEFAULT ''",
         "ALTER TABLE users ADD COLUMN auto_rebirth INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN auto_sell INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN auto_sell_items TEXT DEFAULT ''",
     ):
         try:
             await db_exec(stmt)
@@ -2522,6 +2562,109 @@ async def auto_rebirth_off(message: Message):
     await message.reply(TEXTS["auto_rebirth_off_1"])
 
 
+@dp.message(F.text.lower() == "авто продажа вкл")
+async def auto_sell_on(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    await ensure_user(user_id, username)
+
+    await db_exec("UPDATE users SET auto_sell = 1 WHERE user_id = ?", (user_id,))
+    await message.reply(TEXTS["auto_sell_on_1"])
+
+
+@dp.message(F.text.lower() == "авто продажа выкл")
+async def auto_sell_off(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    await ensure_user(user_id, username)
+
+    await db_exec("UPDATE users SET auto_sell = 0 WHERE user_id = ?", (user_id,))
+    await message.reply(TEXTS["auto_sell_off_1"])
+
+
+@dp.message(F.text.lower().in_({"авто продажа настройка", "авто продажа конфиг", "авто продажа настройки"}))
+async def auto_sell_config(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    row = await ensure_user(user_id, username)
+    auto_sell_enabled = bool(row[30])
+    auto_sell_items = parse_auto_sell_items(row[31])
+    await message.reply(
+        format_autosell_text(auto_sell_enabled, auto_sell_items),
+        reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, user_id),
+    )
+
+
+@dp.callback_query(F.data.startswith("autosell_toggle:"))
+async def autosell_toggle(callback: CallbackQuery):
+    parts = callback.data.split(":")
+    owner_id = int(parts[1])
+    item_key = parts[2]
+    page = int(parts[3]) if len(parts) > 3 else 0
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+    if item_key not in CASE_SELLABLE_ITEMS:
+        await callback.answer()
+        return
+
+    row = await get_user(owner_id)
+    auto_sell_enabled = bool(row[30])
+    auto_sell_items = parse_auto_sell_items(row[31])
+
+    if item_key in auto_sell_items:
+        auto_sell_items.discard(item_key)
+    else:
+        auto_sell_items.add(item_key)
+
+    await db_exec("UPDATE users SET auto_sell_items = ? WHERE user_id = ?", (format_auto_sell_items(auto_sell_items), owner_id))
+    await callback.message.edit_text(
+        format_autosell_text(auto_sell_enabled, auto_sell_items, page),
+        reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
+    )
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("autosell_switch:"))
+async def autosell_switch(callback: CallbackQuery):
+    parts = callback.data.split(":")
+    owner_id = int(parts[1])
+    page = int(parts[2]) if len(parts) > 2 else 0
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    auto_sell_enabled = not bool(row[30])
+    auto_sell_items = parse_auto_sell_items(row[31])
+
+    await db_exec("UPDATE users SET auto_sell = ? WHERE user_id = ?", (1 if auto_sell_enabled else 0, owner_id))
+    await callback.message.edit_text(
+        format_autosell_text(auto_sell_enabled, auto_sell_items, page),
+        reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
+    )
+    await callback.answer(TEXTS["auto_sell_on_1"] if auto_sell_enabled else TEXTS["auto_sell_off_1"])
+
+
+@dp.callback_query(F.data.startswith("autosell_page:"))
+async def autosell_page_nav(callback: CallbackQuery):
+    _, owner_str, page_str = callback.data.split(":")
+    owner_id = int(owner_str)
+    page = int(page_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    auto_sell_enabled = bool(row[30])
+    auto_sell_items = parse_auto_sell_items(row[31])
+    await callback.message.edit_text(
+        format_autosell_text(auto_sell_enabled, auto_sell_items, page),
+        reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
+    )
+    await callback.answer()
+
+
 VIP_CASE_OPEN_RE = re.compile(r"^вип открыть кейс\s+(\d+)\s+(\d+)$", re.IGNORECASE)
 VIP_CASE_OPEN_LIMIT = 20
 
@@ -2556,6 +2699,8 @@ async def vip_open_case_bulk(message: Message):
 
     coins = row[5]
     upgrades = parse_upgrades(row[16])
+    auto_sell_enabled = bool(row[30])
+    auto_sell_items = parse_auto_sell_items(row[31])
     unit_price = case_price_with_discount(case["price"], upgrades)
     total_price = unit_price * count
 
@@ -2564,18 +2709,27 @@ async def vip_open_case_bulk(message: Message):
         return
 
     won = {}
+    sold = {}
+    sold_coins_total = 0
     for _ in range(count):
         item_key = roll_case_item(case_num)
-        await add_item(user_id, item_key)
-        won[item_key] = won.get(item_key, 0) + 1
+        coins_got, _ = await apply_case_reward(user_id, item_key, upgrades, auto_sell_enabled, auto_sell_items)
+        if coins_got:
+            sold[item_key] = sold.get(item_key, 0) + 1
+            sold_coins_total += coins_got
+        else:
+            won[item_key] = won.get(item_key, 0) + 1
 
-    new_coins = coins - total_price
+    new_coins = coins - total_price + sold_coins_total
     await db_exec(
         "UPDATE users SET coins = coins - ?, cases_opened = cases_opened + ? WHERE user_id = ?",
         (total_price, count, user_id),
     )
 
     loot_lines = "\n".join(f"● {ITEMS[k][0]} {esc(ITEMS[k][1])} × {qty}" for k, qty in won.items())
+    if sold:
+        sold_lines = ", ".join(f"{ITEMS[k][0]} {esc(ITEMS[k][1])} × {qty}" for k, qty in sold.items())
+        loot_lines += f"\n💰 Авто-продано: {sold_lines} (+{sold_coins_total} 🪙)"
     await safe_reply(
         message,
         TEXTS["vip_case_open_6"].format(v0=count, v1=esc(case["name"]), v2=total_price, v3=new_coins, v4=loot_lines),
@@ -3541,6 +3695,7 @@ def format_inventory_menu_text(active_items, upgrades: dict = None, prestige_upg
 
 
 INV_PAGE_SIZE = 5  # кнопок на вкладку — меняй тут, всё остальное посчитается само
+POTION_PAGE_SIZE = 6  # типов зелий на вкладку (для брю/юз кнопок)
 
 
 def inventory_menu_keyboard(user_id: int) -> InlineKeyboardMarkup:
@@ -3573,33 +3728,91 @@ def _pagination_row(callback_prefix: str, user_id: int, page: int, total_pages: 
     return nav
 
 
-def boosters_keyboard(rows, active_items, user_id: int, page: int = 0) -> InlineKeyboardMarkup:
+def boosters_keyboard(rows, active_items, user_id: int, page: int = 0, query: str = None) -> InlineKeyboardMarkup:
     equipped = set(_normalize_active_items(active_items))
     boosters = [(k, q) for k, q in rows if k not in PASSIVE_ITEMS]
+    if query:
+        ql = query.lower()
+        boosters = [(k, q) for k, q in boosters if ql in ITEMS[k][1].lower()]
     page_items, page, total_pages = _paginate(boosters, page)
 
     kb_rows = []
     for item_key, qty in page_items:
         emoji, name, percent, _ = ITEMS[item_key]
         mark = " ✅" if item_key in equipped else ""
+        cb = f"equip:{user_id}:{item_key}:{page}"
+        if query:
+            cb += f":{quote(query)}"
         kb_rows.append([InlineKeyboardButton(
             text=f"{name} {plain_emoji(emoji)} (+{percent}%) x{qty}{mark}",
-            callback_data=f"equip:{user_id}:{item_key}:{page}",
+            callback_data=cb,
         )])
 
-    nav_row = _pagination_row("inv_boost_page", user_id, page, total_pages)
+    if query:
+        nav_row = _pagination_row("inv_boost_search_page", user_id, page, total_pages, extra=quote(query))
+    else:
+        nav_row = _pagination_row("inv_boost_page", user_id, page, total_pages)
     if nav_row:
         kb_rows.append(nav_row)
     kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
     return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
 
-def items_keyboard(user_id: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")]])
+def items_keyboard(user_id: int, rows=None, page: int = 0) -> InlineKeyboardMarkup:
+    rows = rows or []
+    passive = [(k, q) for k, q in rows if k in PASSIVE_ITEMS]
+    _, page, total_pages = _paginate(passive, page)
+    kb_rows = []
+    nav_row = _pagination_row("inv_items_page", user_id, page, total_pages)
+    if nav_row:
+        kb_rows.append(nav_row)
+    kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
+    return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
 
-def format_boosters_text(rows, max_slots: int = 1, page: int = 0):
+def format_autosell_text(auto_sell_enabled: bool, auto_sell_items: set, page: int = 0) -> str:
+    _, page, total_pages = _paginate(CASE_SELLABLE_ITEMS, page, AUTOSELL_PAGE_SIZE)
+    page_suffix = f" (стр. {page + 1}/{total_pages})" if total_pages > 1 else ""
+    status = "включена ✅" if auto_sell_enabled else "выключена ❌"
+    return (
+        f"💰 <b>Авто-продажа дропа из кейсов 1/2/3</b>{page_suffix}\n"
+        f"Статус: {status}\n"
+        f"Отмечено предметов: {len(auto_sell_items)}\n\n"
+        f"Жми на предмет, чтобы включить/выключить его авто-продажу:"
+    )
+
+
+def autosell_keyboard(auto_sell_enabled: bool, auto_sell_items: set, user_id: int, page: int = 0) -> InlineKeyboardMarkup:
+    page_items, page, total_pages = _paginate(CASE_SELLABLE_ITEMS, page, AUTOSELL_PAGE_SIZE)
+    kb_rows = []
+    for item_key in page_items:
+        emoji, name, _, _ = ITEMS[item_key]
+        mark = "✅" if item_key in auto_sell_items else "❌"
+        kb_rows.append([InlineKeyboardButton(
+            text=f"{name} {plain_emoji(emoji)} {mark}",
+            callback_data=f"autosell_toggle:{user_id}:{item_key}:{page}",
+        )])
+
+    nav_row = _pagination_row("autosell_page", user_id, page, total_pages)
+    if nav_row:
+        kb_rows.append(nav_row)
+
+    switch_text = "🔴 Выключить авто-продажу" if auto_sell_enabled else "🟢 Включить авто-продажу"
+    kb_rows.append([InlineKeyboardButton(text=switch_text, callback_data=f"autosell_switch:{user_id}:{page}")])
+    kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
+    return InlineKeyboardMarkup(inline_keyboard=kb_rows)
+
+
+def format_boosters_text(rows, max_slots: int = 1, page: int = 0, query: str = None):
     boosters = [(k, q) for k, q in rows if k not in PASSIVE_ITEMS]
+    if query:
+        ql = query.lower()
+        boosters = [(k, q) for k, q in boosters if ql in ITEMS[k][1].lower()]
+        if not boosters:
+            return f"🔍 По запросу «{esc(query)}» бустеров не найдено."
+        _, page, total_pages = _paginate(boosters, page)
+        page_suffix = f" (стр. {page + 1}/{total_pages})" if total_pages > 1 else ""
+        return f"🔍 Поиск «{esc(query)}»{page_suffix}:"
     if not boosters:
         return f"🧪 У тебя нет бустеров. Можно носить одновременно {max_slots}."
     _, page, total_pages = _paginate(boosters, page)
@@ -3607,12 +3820,14 @@ def format_boosters_text(rows, max_slots: int = 1, page: int = 0):
     return f"🧪 Твои бустеры (можно носить одновременно {max_slots}){page_suffix}:"
 
 
-def format_items_text(rows):
+def format_items_text(rows, page: int = 0):
     passive = [(k, q) for k, q in rows if k in PASSIVE_ITEMS]
     if not passive:
         return "📦 У тебя нет предметов."
-    lines = ["📦 Твои предметы (нельзя экипировать, действуют пассивно):\n"]
-    for item_key, qty in passive:
+    page_items, page, total_pages = _paginate(passive, page)
+    page_suffix = f" (стр. {page + 1}/{total_pages})" if total_pages > 1 else ""
+    lines = [f"📦 Твои предметы (нельзя экипировать, действуют пассивно){page_suffix}:\n"]
+    for item_key, qty in page_items:
         emoji, name, _, _ = ITEMS[item_key]
         lines.append(f"{emoji} {esc(name)} x{qty}")
     return "\n".join(lines)
@@ -3630,9 +3845,11 @@ def format_time_left(seconds: int) -> str:
 
 
 def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_potion: str, brewing_until: int,
-                         upgrades: dict, now: int = None) -> str:
+                         upgrades: dict, now: int = None, page: int = 0) -> str:
     now = now or int(time.time())
-    lines = ["⚗️ <b>Зелья</b>"]
+    _, page, total_pages = _paginate(POTION_ORDER, page, POTION_PAGE_SIZE)
+    page_suffix = f" (стр. {page + 1}/{total_pages})" if total_pages > 1 else ""
+    lines = [f"⚗️ <b>Зелья</b>{page_suffix}"]
 
     if brewing_potion and brewing_potion in POTIONS:
         cfg = POTIONS[brewing_potion]
@@ -3658,12 +3875,14 @@ def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_p
 
 
 def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until: int, user_id: int,
-                      upgrades: dict, now: int = None, prestige_upgrades: dict = None) -> InlineKeyboardMarkup:
+                      upgrades: dict, now: int = None, prestige_upgrades: dict = None, page: int = 0) -> InlineKeyboardMarkup:
     now = now or int(time.time())
     kb_rows = []
 
     brewing_active = bool(brewing_potion) and brewing_until > now
     brewing_ready = bool(brewing_potion) and brewing_until <= now
+
+    page_order, page, total_pages = _paginate(POTION_ORDER, page, POTION_PAGE_SIZE)
 
     if brewing_ready:
         cfg = POTIONS[brewing_potion]
@@ -3672,7 +3891,7 @@ def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until
             callback_data=f"potion_collect:{user_id}",
         )])
     elif not brewing_active:
-        for key in POTION_ORDER:
+        for key in page_order:
             cfg = POTIONS[key]
             seconds = brew_seconds_for(key, upgrades, prestige_upgrades)
             kb_rows.append([InlineKeyboardButton(
@@ -3680,7 +3899,7 @@ def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until
                 callback_data=f"potion_brew:{user_id}:{key}",
             )])
 
-    for key in POTION_ORDER:
+    for key in page_order:
         qty = inventory_potions.get(key, 0)
         if qty > 0:
             cfg = POTIONS[key]
@@ -3689,7 +3908,10 @@ def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until
                 callback_data=f"potion_use:{user_id}:{key}",
             )])
 
-    kb_rows.append([InlineKeyboardButton(text="🔄 Обновить", callback_data=f"inv_cat:{user_id}:potions:0")])
+    nav_row = _pagination_row("inv_potion_page", user_id, page, total_pages)
+    if nav_row:
+        kb_rows.append(nav_row)
+    kb_rows.append([InlineKeyboardButton(text="🔄 Обновить", callback_data=f"inv_cat:{user_id}:potions:{page}")])
     kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
     return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
@@ -3718,7 +3940,7 @@ async def my_items_tab(message: Message):
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     await ensure_user(user_id, username)
     rows = await get_inventory(user_id)
-    await safe_reply(message, format_items_text(rows), reply_markup=items_keyboard(user_id))
+    await safe_reply(message, format_items_text(rows), reply_markup=items_keyboard(user_id, rows))
 
 
 @dp.message(F.text.lower().in_({"мои бустеры", "бустеры"}))
@@ -3732,6 +3954,22 @@ async def my_boosters_tab(message: Message):
     max_slots = equipped_slots_max(upgrades, prestige_upgrades)
     rows = await get_inventory(user_id)
     await message.reply(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, user_id, 0))
+
+
+@dp.message(F.text.lower().regexp(r"^бустеры поиск\s+.+$"))
+async def my_boosters_search(message: Message):
+    query = message.text.strip()[len("бустеры поиск"):].strip()
+    if not query:
+        return
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    row = await ensure_user(user_id, username)
+    active_items = parse_equipped(row[18])
+    rows = await get_inventory(user_id)
+    await message.reply(
+        format_boosters_text(rows, page=0, query=query),
+        reply_markup=boosters_keyboard(rows, active_items, user_id, 0, query=query),
+    )
 
 
 @dp.message(F.text.lower().in_({"мои зелья", "зелья"}))
@@ -3792,12 +4030,12 @@ async def inventory_open_category(callback: CallbackQuery):
         prestige_upgrades = parse_prestige_upgrades(row[28])
         await safe_edit_text(
             callback,
-            format_potions_text(stock, active, brewing_potion, brewing_until, upgrades),
-            reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades),
+            format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, page=page),
+            reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page),
         )
     else:
         rows = await get_inventory(owner_id)
-        await safe_edit_text(callback, format_items_text(rows), reply_markup=items_keyboard(owner_id))
+        await safe_edit_text(callback, format_items_text(rows, page), reply_markup=items_keyboard(owner_id, rows, page))
     await callback.answer()
 
 
@@ -3951,6 +4189,63 @@ async def inventory_boosters_page(callback: CallbackQuery):
     await callback.answer()
 
 
+@dp.callback_query(F.data.startswith("inv_boost_search_page:"))
+async def inventory_boosters_search_page(callback: CallbackQuery):
+    parts = callback.data.split(":")
+    owner_id = int(parts[1])
+    page = int(parts[2])
+    query = unquote(parts[3]) if len(parts) > 3 else ""
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    active_items = parse_equipped(row[18])
+    rows = await get_inventory(owner_id)
+    await callback.message.edit_text(
+        format_boosters_text(rows, page=page, query=query),
+        reply_markup=boosters_keyboard(rows, active_items, owner_id, page, query=query),
+    )
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("inv_items_page:"))
+async def inventory_items_page(callback: CallbackQuery):
+    _, owner_str, page_str = callback.data.split(":")
+    owner_id = int(owner_str)
+    page = int(page_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+
+    rows = await get_inventory(owner_id)
+    await safe_edit_text(callback, format_items_text(rows, page), reply_markup=items_keyboard(owner_id, rows, page))
+    await callback.answer()
+
+
+@dp.callback_query(F.data.startswith("inv_potion_page:"))
+async def inventory_potions_page(callback: CallbackQuery):
+    _, owner_str, page_str = callback.data.split(":")
+    owner_id = int(owner_str)
+    page = int(page_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    upgrades = parse_upgrades(row[16])
+    stock = parse_potion_stock(row[26])
+    active = active_potions_now(row[23])
+    brewing_potion, brewing_until = row[24], row[25]
+    prestige_upgrades = parse_prestige_upgrades(row[28])
+    await safe_edit_text(
+        callback,
+        format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, page=page),
+        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page),
+    )
+    await callback.answer()
+
+
 @dp.callback_query(F.data == "noop")
 async def noop_callback(callback: CallbackQuery):
     await callback.answer()
@@ -3962,6 +4257,7 @@ async def toggle_equip(callback: CallbackQuery):
     owner_id = int(parts[1])
     item_key = parts[2]
     page = int(parts[3]) if len(parts) > 3 else 0
+    query = unquote(parts[4]) if len(parts) > 4 else None
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["toggle_equip_1"], show_alert=True)
         return
@@ -3981,7 +4277,10 @@ async def toggle_equip(callback: CallbackQuery):
     await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), owner_id))
     rows = await get_inventory(owner_id)
 
-    await callback.message.edit_text(format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, new_equipped, owner_id, page))
+    await callback.message.edit_text(
+        format_boosters_text(rows, max_slots, page, query=query),
+        reply_markup=boosters_keyboard(rows, new_equipped, owner_id, page, query=query),
+    )
     if kicked and kicked in ITEMS:
         await callback.answer(TEXTS["toggle_equip_3"].format(v0=ITEMS[item_key][1], v1=ITEMS[kicked][1]))
     else:
@@ -4178,6 +4477,8 @@ async def open_case_instant(message: Message, case_num: int):
     row = await ensure_user(user_id, username)
     coins = row[5]
     upgrades = parse_upgrades(row[16])
+    auto_sell_enabled = bool(row[30])
+    auto_sell_items = parse_auto_sell_items(row[31])
     price = case_price_with_discount(case["price"], upgrades)
 
     if coins < price:
@@ -4191,10 +4492,10 @@ async def open_case_instant(message: Message, case_num: int):
         "UPDATE users SET coins = coins - ?, cases_opened = cases_opened + 1 WHERE user_id = ?",
         (price, user_id),
     )
-    await add_item(user_id, item_key)
-    new_coins = coins - price
+    _sold_for, sold_text = await apply_case_reward(user_id, item_key, upgrades, auto_sell_enabled, auto_sell_items)
+    new_coins = coins - price + _sold_for
 
-    await message.reply(TEXTS["open_case_instant_3"].format(v0=emoji, v1=esc(name), v2=percent, v3=new_coins))
+    await message.reply(TEXTS["open_case_instant_3"].format(v0=emoji, v1=esc(name), v2=percent, v3=new_coins) + sold_text)
 
 
 @dp.message(F.text.lower() == "кейс")
@@ -4270,6 +4571,8 @@ async def buy_case(callback: CallbackQuery):
     row = await get_user(owner_id)
     coins = row[5]
     upgrades = parse_upgrades(row[16])
+    auto_sell_enabled = bool(row[30])
+    auto_sell_items = parse_auto_sell_items(row[31])
     price = case_price_with_discount(case["price"], upgrades)
 
     if coins < price:
@@ -4283,11 +4586,11 @@ async def buy_case(callback: CallbackQuery):
         "UPDATE users SET coins = coins - ?, cases_opened = cases_opened + 1 WHERE user_id = ?",
         (price, owner_id),
     )
-    await add_item(owner_id, item_key)
-    new_coins = coins - price
+    sold_for, sold_text = await apply_case_reward(owner_id, item_key, upgrades, auto_sell_enabled, auto_sell_items)
+    new_coins = coins - price + sold_for
 
     await callback.message.edit_text(
-        f"🎉 Выпало: {emoji} {esc(name)} (+{percent}%)!\nОстаток монет: {new_coins} 🪙",
+        f"🎉 Выпало: {emoji} {esc(name)} (+{percent}%)!{sold_text}\nОстаток монет: {new_coins} 🪙",
         reply_markup=case_offer_keyboard(case_num, owner_id, price),
     )
     await callback.answer(TEXTS["buy_case_3"])
