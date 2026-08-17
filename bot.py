@@ -223,6 +223,23 @@ PING_INTERVAL = 600                          # сек. между self-ping за
 # {v0}, {v1}... — места подстановки переменных (что именно подставляется см. в коде вызова).
 
 TEXTS = {
+    "promo_create_1": 'Формат: !промокод создать "тип" "количество" "активаций" "название"\n'
+                       'Тип: ноги/эво/коин/очкп/крафт или предмет:<ключ>.',
+    "promo_create_2": '❌ Неизвестный тип награды: «{v0}». Смотри формат: ноги/эво/коин/очкп/крафт или предмет:<ключ>.',
+    "promo_create_3": '❌ Количество должно быть положительным числом.',
+    "promo_create_4": '❌ Число активаций должно быть положительным числом.',
+    "promo_create_5": '❌ Промокод «{v0}» уже существует. Сначала удали его: !промокод удалить "{v0}".',
+    "promo_create_6": '✅ Промокод «{v0}» создан!\nНаграда: {v1} × {v2}\nАктиваций: {v3}',
+    "promo_delete_1": 'Формат: !промокод удалить "название"',
+    "promo_delete_2": '❌ Промокод «{v0}» не найден.',
+    "promo_delete_3": '🗑 Промокод «{v0}» удалён.',
+    "promo_list_1": 'Активных промокодов пока нет.',
+    "promo_list_2": '🎟 <b>Промокоды ({v0}):</b>\n{v1}',
+    "promo_redeem_1": 'Формат: промокод <название> (или промо <название>)',
+    "promo_redeem_2": '❌ Такого промокода не существует.',
+    "promo_redeem_3": '⚠️ Активации промокода «{v0}» закончились.',
+    "promo_redeem_4": '⚠️ Ты уже активировал этот промокод раньше.',
+    "promo_redeem_5": '🎉 Промокод «{v0}» активирован! Получено: {v1}',
     "maybe_announce_levelup_1": '🎉 {v0} поднялся до нового уровня! {v1}{v2}{v3}',
     "notify_off_1": 'Уведомления о новом уровне выключены.',
     "notify_on_1": 'Уведомления о новом уровне включены.',
@@ -244,7 +261,10 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД',
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД\n'
+    '● !промокод создать "тип" "кол-во" "активаций" "название" — создать промокод (тип: ноги/эво/коин/очкп/крафт или предмет:<ключ>)\n'
+    '● !промокод удалить "название" — удалить промокод\n'
+    '● !промокод список — список активных промокодов',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -1204,6 +1224,16 @@ ADMIN_ULTRA_REBIRTH_RE = re.compile(r"^!ультра навсегда(\s+себ�
 ADMIN_RESET_NICK_RE = re.compile(r"^!сброс ник\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_FIND_RE = re.compile(r"^!найти\s+@?(\w+)$", re.IGNORECASE)
 
+# ---------- Промокоды ----------
+# Аргументы в кавычках: !промокод создать "тип" "количество" "активаций" "название"
+# Тип — что выдать: "ноги"/"эво"/"коин"/"очкп"/"крафт"/"предмет:<ключ_ITEMS>".
+PROMO_CREATE_RE = re.compile(
+    r'^!промокод создать\s+"([^"]+)"\s+"([^"]+)"\s+"([^"]+)"\s+"([^"]+)"$', re.IGNORECASE
+)
+PROMO_DELETE_RE = re.compile(r'^!промокод удалить\s+"([^"]+)"$', re.IGNORECASE)
+PROMO_LIST_RE = re.compile(r'^!промокод список$', re.IGNORECASE)
+PROMO_REDEEM_RE = re.compile(r'^(?:промокод|промо)\s+(\S+)$', re.IGNORECASE)
+
 NEWS_PREFIX = "!новость "
 
 FIXED_COMMANDS = {
@@ -2130,6 +2160,33 @@ async def init_db():
             command TEXT
         )
     """)
+    # ---------- Система промокодов ----------
+    # reward_type: "legs" (ноги/score), "evo" (эво/evolution_level), "coin" (монеты),
+    # "rebirth" (очкп/rebirth_points), "craft" (очкк/craft_points), "item" (предмет из ITEMS,
+    # тогда reward_key = ключ ITEMS, иначе '' и не используется).
+    # activations_left — сколько раз промокод ещё можно активировать всего (по всем игрокам);
+    # уменьшается на 1 при каждой успешной активации, при 0 промокод больше не работает.
+    await db_exec("""
+        CREATE TABLE IF NOT EXISTS promocodes (
+            code TEXT PRIMARY KEY,
+            reward_type TEXT NOT NULL,
+            reward_key TEXT DEFAULT '',
+            amount INTEGER NOT NULL,
+            activations_left INTEGER NOT NULL,
+            created_by TEXT,
+            created_at INTEGER
+        )
+    """)
+    # Кто уже активировал какой промокод — один игрок не может активировать один и тот же
+    # промокод дважды, даже если activations_left ещё не исчерпан.
+    await db_exec("""
+        CREATE TABLE IF NOT EXISTS promocode_uses (
+            user_id INTEGER,
+            code TEXT,
+            used_at INTEGER,
+            PRIMARY KEY (user_id, code)
+        )
+    """)
     for stmt in (
         "ALTER TABLE users ADD COLUMN levelup_notify INTEGER DEFAULT 1",
         "ALTER TABLE users ADD COLUMN vip_until INTEGER DEFAULT 0",
@@ -2190,6 +2247,63 @@ async def add_item(user_id: int, item_key: str, qty: int = 1):
         "ON CONFLICT(user_id, item_key) DO UPDATE SET qty = qty + excluded.qty",
         (user_id, item_key, qty),
     )
+
+
+# ---------- Промокоды: помощники ----------
+# Ключ слова из команды (рус.) -> (reward_type, человекочитаемое название, колонка в users для
+# валют; для "item" колонка не используется — идёт через inventory).
+PROMO_TYPE_ALIASES = {
+    "ноги": "legs", "нога": "legs", "ног": "legs",
+    "эво": "evo", "эволюция": "evo",
+    "коин": "coin", "коины": "coin", "монеты": "coin",
+    "очкп": "rebirth", "перерождение": "rebirth",
+    "крафт": "craft", "очкк": "craft",
+}
+PROMO_TYPE_COLUMN = {
+    "legs": "score",
+    "evo": "evolution_level",
+    "coin": "coins",
+    "rebirth": "rebirth_points",
+    "craft": "craft_points",
+}
+PROMO_TYPE_LABEL = {
+    "legs": "🦵 очков ноги",
+    "evo": "🧬 очков эволюции",
+    "coin": "🪙 монет",
+    "rebirth": "🉑 очков перерождения",
+    "craft": "💠 очков крафта",
+}
+
+
+def parse_promo_type(raw: str):
+    """Разбирает строку типа награды из команды создания промокода.
+    Возвращает (reward_type, reward_key) либо None, если тип не распознан.
+    "предмет:<ключ>" -> ("item", "<ключ>"); иначе алиас из PROMO_TYPE_ALIASES -> (type, "")."""
+    raw = raw.strip().lower()
+    if raw.startswith("предмет:") or raw.startswith("предмет "):
+        item_key = raw.split(":", 1)[1].strip() if ":" in raw else raw.split(" ", 1)[1].strip()
+        if item_key not in ITEMS:
+            return None
+        return ("item", item_key)
+    reward_type = PROMO_TYPE_ALIASES.get(raw)
+    if not reward_type:
+        return None
+    return (reward_type, "")
+
+
+async def apply_promo_reward(user_id: int, reward_type: str, reward_key: str, amount: int):
+    """Выдаёт награду промокода игроку. Возвращает текст для показа в ответе (что именно выдано)."""
+    if reward_type == "item":
+        await add_item(user_id, reward_key, amount)
+        emoji, name, _, _ = ITEMS[reward_key]
+        return f"{emoji} {esc(name)} ×{amount}"
+
+    column = PROMO_TYPE_COLUMN[reward_type]
+    await db_exec(
+        f"UPDATE users SET {column} = {column} + ? WHERE user_id = ?",
+        (amount, user_id),
+    )
+    return f"{amount} {PROMO_TYPE_LABEL[reward_type]}"
 
 
 async def remove_item(user_id: int, item_key: str, qty: int = 1) -> bool:
@@ -6559,6 +6673,160 @@ async def admin_find(message: Message):
         lines.append(f"● {esc(title)}")
 
     await message.reply(TEXTS["admin_find_3"].format(v0=esc(row[1]), v1=len(chat_rows), v2="\n".join(lines)))
+
+
+@dp.message(F.text.regexp(r'(?i)^!промокод создать\s+'))
+async def admin_promo_create(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = PROMO_CREATE_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["promo_create_1"])
+        return
+
+    type_raw, amount_raw, activations_raw, code_raw = match.groups()
+    code = code_raw.strip()
+
+    parsed_type = parse_promo_type(type_raw)
+    if not parsed_type:
+        await message.reply(TEXTS["promo_create_2"].format(v0=esc(type_raw)))
+        return
+    reward_type, reward_key = parsed_type
+
+    amount = parse_amount(amount_raw)
+    if not amount or amount <= 0:
+        await message.reply(TEXTS["promo_create_3"])
+        return
+
+    activations = parse_amount(activations_raw)
+    if not activations or activations <= 0:
+        await message.reply(TEXTS["promo_create_4"])
+        return
+
+    existing = await db_query_one("SELECT code FROM promocodes WHERE code = ?", (code,))
+    if existing:
+        await message.reply(TEXTS["promo_create_5"].format(v0=esc(code)))
+        return
+
+    admin_username = message.from_user.username or message.from_user.first_name or "admin"
+    await db_exec(
+        "INSERT INTO promocodes (code, reward_type, reward_key, amount, activations_left, created_by, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (code, reward_type, reward_key, amount, activations, admin_username, int(time.time())),
+    )
+
+    if reward_type == "item":
+        emoji, name, _, _ = ITEMS[reward_key]
+        reward_label = f"{emoji} {esc(name)}"
+    else:
+        reward_label = PROMO_TYPE_LABEL[reward_type]
+
+    await message.reply(TEXTS["promo_create_6"].format(v0=esc(code), v1=reward_label, v2=amount, v3=activations))
+
+
+@dp.message(F.text.regexp(r'(?i)^!промокод удалить\s+'))
+async def admin_promo_delete(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = PROMO_DELETE_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["promo_delete_1"])
+        return
+
+    code = match.group(1).strip()
+    existing = await db_query_one("SELECT code FROM promocodes WHERE code = ?", (code,))
+    if not existing:
+        await message.reply(TEXTS["promo_delete_2"].format(v0=esc(code)))
+        return
+
+    await db_exec("DELETE FROM promocodes WHERE code = ?", (code,))
+    await db_exec("DELETE FROM promocode_uses WHERE code = ?", (code,))
+    await message.reply(TEXTS["promo_delete_3"].format(v0=esc(code)))
+
+
+@dp.message(F.text.lower() == "!промокод список")
+async def admin_promo_list(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    rows = await db_query(
+        "SELECT code, reward_type, reward_key, amount, activations_left FROM promocodes ORDER BY created_at DESC LIMIT 50"
+    )
+    if not rows:
+        await message.reply(TEXTS["promo_list_1"])
+        return
+
+    lines = []
+    for code, reward_type, reward_key, amount, activations_left in rows:
+        if reward_type == "item" and reward_key in ITEMS:
+            emoji, name, _, _ = ITEMS[reward_key]
+            reward_label = f"{emoji} {esc(name)}"
+        else:
+            reward_label = PROMO_TYPE_LABEL.get(reward_type, esc(reward_type))
+        lines.append(f"● «{esc(code)}» — {reward_label} × {amount} (осталось активаций: {activations_left})")
+
+    await message.reply(TEXTS["promo_list_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+
+@dp.message(F.text.regexp(r'(?i)^(?:промокод|промо)\s+\S+$'))
+async def redeem_promo(message: Message):
+    match = PROMO_REDEEM_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["promo_redeem_1"])
+        return
+
+    code = match.group(1).strip()
+    promo = await db_query_one(
+        "SELECT reward_type, reward_key, amount, activations_left FROM promocodes WHERE code = ?", (code,)
+    )
+    if not promo:
+        await message.reply(TEXTS["promo_redeem_2"])
+        return
+
+    reward_type, reward_key, amount, activations_left = promo
+    if activations_left <= 0:
+        await message.reply(TEXTS["promo_redeem_3"].format(v0=esc(code)))
+        return
+
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    already_used = await db_query_one(
+        "SELECT 1 FROM promocode_uses WHERE user_id = ? AND code = ?", (user_id, code)
+    )
+    if already_used:
+        await message.reply(TEXTS["promo_redeem_4"])
+        return
+
+    await ensure_user(user_id, username)
+
+    # Гонка: атомарно списываем активацию только если она ещё есть в момент UPDATE
+    # (защита от переактивации при параллельных запросах). Если WHERE не подошёл —
+    # значит активации кончились именно сейчас, между чтением и записью.
+    await db_exec(
+        "UPDATE promocodes SET activations_left = activations_left - 1 "
+        "WHERE code = ? AND activations_left > 0",
+        (code,),
+    )
+    check = await db_query_one("SELECT activations_left FROM promocodes WHERE code = ?", (code,))
+    if check is None:
+        await message.reply(TEXTS["promo_redeem_2"])
+        return
+    if check[0] < activations_left:
+        # UPDATE применился именно в этом вызове — активация наша, продолжаем.
+        pass
+    else:
+        # activations_left не изменился нашим запросом — значит уже был 0, кто-то опередил.
+        await message.reply(TEXTS["promo_redeem_3"].format(v0=esc(code)))
+        return
+
+    await db_exec(
+        "INSERT INTO promocode_uses (user_id, code, used_at) VALUES (?, ?, ?)",
+        (user_id, code, int(time.time())),
+    )
+    reward_label = await apply_promo_reward(user_id, reward_type, reward_key, amount)
+    await message.reply(TEXTS["promo_redeem_5"].format(v0=esc(code), v1=reward_label))
 
 
 @dp.message(F.text.lower() == "!логи")
