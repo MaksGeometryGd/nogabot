@@ -79,6 +79,22 @@ PREMIUM_KOSHKO_AMULET = '<tg-emoji emoji-id="5371041424680710006">🐈</tg-emoji
 # TODO: заменить emoji-id на реальный premium-эмодзи для очков крафта, когда он будет.
 PREMIUM_CRAFT_POINT = '<tg-emoji emoji-id="5254028100979787948">💠</tg-emoji>'
 
+# ---------- Промо-эксклюзив: недоступные вне промокодов/админ-команд предметы и бейджи ----------
+# Нельзя выбить, продать или передать — выдаются только через админ-команды или промокоды
+# (см. NON_TRADABLE_ITEMS ниже и PROMO_BADGES).
+# TODO: заменить emoji-id на реальные premium-эмодзи, когда достанешь (см. инструкцию про
+# custom_emoji_id) — сейчас это заглушки, аналогично PREMIUM_POWER_AMULET и другим выше.
+PREMIUM_KOTYARA_AMULET = '<tg-emoji emoji-id="5415692772273312091">🐱</tg-emoji>'
+PREMIUM_MIKU_AMULET = '<tg-emoji emoji-id="5397821533613735774">🎤</tg-emoji>'
+PREMIUM_GOLDA_ITEM = '<tg-emoji emoji-id="5330230039843709983">🥇</tg-emoji>'
+PREMIUM_KARAMBIT_GOLD = '<tg-emoji emoji-id="5060114895148680390">🔪</tg-emoji>'
+PREMIUM_BUTTERFLY_LEGACY = '<tg-emoji emoji-id="4943160586331490355">🦋</tg-emoji>'
+
+PREMIUM_BADGE_TESTER = '<tg-emoji emoji-id="5947528161536251718">🧪</tg-emoji>'
+PREMIUM_BADGE_SUPPORT = '<tg-emoji emoji-id="5947343263194157527">🛠️</tg-emoji>'
+PREMIUM_BADGE_POWER = '<tg-emoji emoji-id="5780703608760700844">💪</tg-emoji>'
+PREMIUM_BADGE_TOP1_PAST = '<tg-emoji emoji-id="5363999757079429238">👑</tg-emoji>'
+
 # ---------- Кейс 3: премиум-иконки (заглушки) ----------
 # TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
 # <tg-emoji>) — как найдёшь/сделаешь премиум-версию в Telegram, оберни так же, как выше:
@@ -240,11 +256,18 @@ TEXTS = {
     "promo_redeem_3": '⚠️ Активации промокода «{v0}» закончились.',
     "promo_redeem_4": '⚠️ Ты уже активировал этот промокод раньше.',
     "promo_redeem_5": '🎉 Промокод «{v0}» активирован! Получено: {v1}',
+
+    "promo_create_badge_1": 'Формат: !промокод создать бейдж "название_бейджа" "название_промокода"\n'
+                             'Доступные бейджи: тестер, сапорт, потужность, топ1 в прошлом.',
+    "promo_create_badge_2": '❌ Неизвестный бейдж: «{v0}». Смотри список доступных бейджей: тестер, сапорт, потужность, топ1 в прошлом.',
+    "promo_create_badge_3": '❌ Промокод «{v0}» уже существует. Сначала удали его: !промокод удалить "{v0}".',
+    "promo_create_badge_4": '✅ Промокод «{v0}» создан!\nНаграда: {v1} бейдж «{v2}»\nАктиваций: 1',
+
     "maybe_announce_levelup_1": '🎉 {v0} поднялся до нового уровня! {v1}{v2}{v3}',
     "notify_off_1": 'Уведомления о новом уровне выключены.',
     "notify_on_1": 'Уведомления о новом уровне включены.',
     "vip_info_command_1": 'У тебя уже есть VIP-статус! 💎',
-    "vip_info_command_2": '💎 VIP даёт постоянный буст +{v0}% к добыче.\nМожно купить прямо в боте за {v1} звёзд Telegram — выдаётся навсегда.',
+    "vip_info_command_2": '💎 VIP даёт постоянный буст +{v0}% к добыче.\nЦена: {v1} звёзд Telegram — выдаётся навсегда. Для оформления напиши админу.',
     "auto_evolve_not_vip_1": '⚠️ Авто-эволюция доступна только с VIP-статусом. Команда «вип» — как получить.',
     "auto_evolve_on_1": '⚙️💎 Авто-эволюция включена. Как только хватит очков — эволюция сработает сама.',
     "auto_evolve_off_1": '⚙️ Авто-эволюция выключена.',
@@ -263,6 +286,7 @@ TEXTS = {
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
     "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД\n'
     '● !промокод создать "тип" "кол-во" "активаций" "название" — создать промокод (тип: ноги/эво/коин/очкп/крафт или предмет:<ключ>)\n'
+    '● !промокод создать бейдж "название_бейджа" "название_промокода" — создать промокод на бейдж (бейджи: тестер/сапорт/потужность/топ1 в прошлом)\n'
     '● !промокод удалить "название" — удалить промокод\n'
     '● !промокод список — список активных промокодов',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
@@ -644,10 +668,23 @@ ITEMS = {
     "koshko_gift":  (PREMIUM_KOSHKO_GIFT, "Дар кошко-девочки", 0, 2),
     "ancient_stone": (PREMIUM_ANCIENT_STONE, "Древний камень", 0, 18),
     "fate_thread":   (PREMIUM_FATE_THREAD, "Нить судьбы", 0, 4),
+
+    # ---------- Промо-эксклюзив: только через промокоды или админ-команды ----------
+    # Нельзя выбить (drop_weight=0), продать или передать (см. NON_TRADABLE_ITEMS).
+    "kotyara_amulet":  (PREMIUM_KOTYARA_AMULET, "Амулет Котяры", 60, 0),
+    "miku_amulet":     (PREMIUM_MIKU_AMULET, "Амулет Мику", 50, 0),
+    "golda":           (PREMIUM_GOLDA_ITEM, "Голда", 0, 0),
+    "karambit_gold":   (PREMIUM_KARAMBIT_GOLD, "Керамбит голд", 0, 0),
+    "butterfly_legacy": (PREMIUM_BUTTERFLY_LEGACY, "Бабочка легаси", 0, 0),
 }
 
 # Предметы, которые нельзя продать/передать/уничтожить — личные заглушки/значки.
-NON_TRADABLE_ITEMS = {"vip_charm"}
+NON_TRADABLE_ITEMS = {
+    "vip_charm",
+    # Промо-эксклюзив (см. PREM_⚡): нельзя выбить, продать или передать —
+    # доступны только через админ-команды или промокоды.
+    "kotyara_amulet", "miku_amulet", "golda", "karambit_gold", "butterfly_legacy",
+}
 
 PASSIVE_ITEMS = {
     "strange_coin",
@@ -1229,6 +1266,12 @@ ADMIN_FIND_RE = re.compile(r"^!найти\s+@?(\w+)$", re.IGNORECASE)
 # Тип — что выдать: "ноги"/"эво"/"коин"/"очкп"/"крафт"/"предмет:<ключ_ITEMS>".
 PROMO_CREATE_RE = re.compile(
     r'^!промокод создать\s+"([^"]+)"\s+"([^"]+)"\s+"([^"]+)"\s+"([^"]+)"$', re.IGNORECASE
+)
+# Отдельный, более короткий синтаксис для выдачи бейджа (см. PROMO_BADGES) — без "количество"
+# и "активаций": бейдж выдаётся один раз на аккаунт, активация промокода всегда одна (1).
+# !промокод создать бейдж "название_бейджа" "название_промокода"
+PROMO_CREATE_BADGE_RE = re.compile(
+    r'^!промокод создать бейдж\s+"([^"]+)"\s+"([^"]+)"$', re.IGNORECASE
 )
 PROMO_DELETE_RE = re.compile(r'^!промокод удалить\s+"([^"]+)"$', re.IGNORECASE)
 PROMO_LIST_RE = re.compile(r'^!промокод список$', re.IGNORECASE)
@@ -1932,7 +1975,8 @@ def sell_bonus_coins(upgrades: dict) -> int:
     return 2 * upgrade_level(upgrades, "sell_boost")
 
 
-def badge_list(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool):
+def badge_list(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool,
+                promo_badges: set = frozenset()):
     result = []
     if username and username.lower() == ADMIN_USERNAME.lower():
         result.append(("owner", PREMIUM_OWNER_BADGE, "Владелец"))
@@ -1946,12 +1990,17 @@ def badge_list(username: str, evolution_level: int, cases_opened: int, total_far
         result.append(("farm", PREMIUM_BADGE_FARM, "30k нафармлено"))
     if evolution_level >= 5:
         result.append(("evo5", PREMIUM_BADGE_EVO5, "5 эволюция"))
+    # Бейджи, выданные вручную через промокод/админ-команду (см. PROMO_BADGES).
+    for key in promo_badges:
+        if key in PROMO_BADGES:
+            emoji, name = PROMO_BADGES[key]
+            result.append((key, emoji, name))
     return result
 
 
 def get_badges(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool,
-                hidden: set = frozenset()) -> str:
-    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active)
+                hidden: set = frozenset(), promo_badges: set = frozenset()) -> str:
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
     return "".join(emoji for key, emoji, _ in earned if key not in hidden)
 
 
@@ -2064,7 +2113,8 @@ USER_COLUMNS = (
     "cases_opened, total_farmed, last_bonus, bonus_streak, levelup_notify, vip_until, hidden_badges, "
     "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
     "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock, "
-    "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items, craft_points"
+    "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items, craft_points, "
+    "promo_badges"
 )
 # Индексы полей выше при обращении по row[...]:
 #  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
@@ -2099,6 +2149,8 @@ USER_COLUMNS = (
 #  32 craft_points (💠) — отдельная валюта "Очки крафта". Получается только обменом Очков
 #     Перерождения (см. команду "обменять <число> крафт", CRAFT_POINTS_EXCHANGE_RATE).
 #     Тратится на 3-й уровень апгрейда "crafts" (см. UPGRADES["crafts"]) вместе с 🉑.
+#  33 promo_badges — бейджи, выданные вручную через промокоды/админ-команды (не автоматические
+#     достижения из badge_list), формат "key1,key2,key3" (см. PROMO_BADGES, parse_promo_badges).
 
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -2211,6 +2263,7 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN auto_sell INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN auto_sell_items TEXT DEFAULT ''",
         "ALTER TABLE users ADD COLUMN craft_points INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN promo_badges TEXT DEFAULT ''",
     ):
         try:
             await db_exec(stmt)
@@ -2231,7 +2284,7 @@ async def ensure_user(user_id: int, username: str):
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
         now = int(time.time())
-        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "")
+        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "", "")
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
@@ -2274,11 +2327,53 @@ PROMO_TYPE_LABEL = {
     "craft": "💠 очков крафта",
 }
 
+# ---------- Промо-бейджи ----------
+# Бейджи, которые НЕЛЬЗЯ заработать автоматически (в отличие от badge_list) — выдаются
+# только через "!промокод создать бейдж "название_бейджа" "название_промокода"" или
+# напрямую админ-командой. Хранятся в колонке users.promo_badges как "key1,key2,key3"
+# (тот же формат, что hidden_badges/equipped_items). Совместимы с системой скрытия
+# бейджей в топах (см. badges_menu/toggle_badge — hidden работает и для промо-бейджей).
+PROMO_BADGES = {
+    "tester":       (PREMIUM_BADGE_TESTER, "Тестер"),
+    "support":      (PREMIUM_BADGE_SUPPORT, "Сапорт"),
+    "power":        (PREMIUM_BADGE_POWER, "Потужность"),
+    "top1_past":    (PREMIUM_BADGE_TOP1_PAST, "Топ 1 в прошлом"),
+}
+# Русские названия бейджей (как их вводит админ в команде создания промокода) -> ключ PROMO_BADGES.
+PROMO_BADGE_ALIASES = {
+    "тестер": "tester",
+    "сапорт": "support",
+    "потужность": "power",
+    "топ1 в прошлом": "top1_past",
+    "топ 1 в прошлом": "top1_past",
+}
+
+
+def parse_promo_badges(raw: str) -> set:
+    return set(x for x in (raw or "").split(",") if x)
+
+
+def format_promo_badges(badges: set) -> str:
+    return ",".join(sorted(badges))
+
+
+def find_promo_badge_key(name_raw: str):
+    """Находит ключ PROMO_BADGES по русскому названию бейджа (из команды создания промокода)."""
+    return PROMO_BADGE_ALIASES.get(name_raw.strip().lower())
+
+
+async def add_promo_badge(user_id: int, badge_key: str):
+    row = await db_query_one("SELECT promo_badges FROM users WHERE user_id = ?", (user_id,))
+    current = parse_promo_badges(row[0] if row else "")
+    current.add(badge_key)
+    await db_exec("UPDATE users SET promo_badges = ? WHERE user_id = ?", (format_promo_badges(current), user_id))
+
 
 def parse_promo_type(raw: str):
     """Разбирает строку типа награды из команды создания промокода.
     Возвращает (reward_type, reward_key) либо None, если тип не распознан.
-    "предмет:<ключ>" -> ("item", "<ключ>"); иначе алиас из PROMO_TYPE_ALIASES -> (type, "")."""
+    "предмет:<ключ>" -> ("item", "<ключ>"); "бейдж" обрабатывается отдельным синтаксисом
+    (см. PROMO_CREATE_BADGE_RE); иначе алиас из PROMO_TYPE_ALIASES -> (type, "")."""
     raw = raw.strip().lower()
     if raw.startswith("предмет:") or raw.startswith("предмет "):
         item_key = raw.split(":", 1)[1].strip() if ":" in raw else raw.split(" ", 1)[1].strip()
@@ -2297,6 +2392,11 @@ async def apply_promo_reward(user_id: int, reward_type: str, reward_key: str, am
         await add_item(user_id, reward_key, amount)
         emoji, name, _, _ = ITEMS[reward_key]
         return f"{emoji} {esc(name)} ×{amount}"
+
+    if reward_type == "badge":
+        await add_promo_badge(user_id, reward_key)
+        emoji, name = PROMO_BADGES[reward_key]
+        return f"{emoji} бейдж «{esc(name)}»"
 
     column = PROMO_TYPE_COLUMN[reward_type]
     await db_exec(
@@ -2442,13 +2542,13 @@ async def get_all_chat_ids():
 async def build_top(chat_id, order_column: str, limit: int = 10):
     if chat_id is None:
         rows = await db_query(
-            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth "
+            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges "
             f"FROM users WHERE (top_banned IS NULL OR top_banned = 0) ORDER BY {order_column} DESC LIMIT ?",
             (limit,),
         )
     else:
         rows = await db_query(
-            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges, u.rebirth_points, u.rebirth_count, u.nickname, u.ultra_rebirth
+            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges, u.rebirth_points, u.rebirth_count, u.nickname, u.ultra_rebirth, u.promo_badges
                 FROM users u JOIN chat_members cm ON u.user_id = cm.user_id
                 WHERE cm.chat_id = ? AND (u.top_banned IS NULL OR u.top_banned = 0) ORDER BY u.{order_column} DESC LIMIT ?""",
             (chat_id, limit),
@@ -2656,9 +2756,11 @@ async def clear_nickname(message: Message):
 
 
 def buy_vip_keyboard(user_id: int) -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(inline_keyboard=[[
-        InlineKeyboardButton(text=f"⭐️ Купить VIP навсегда за {VIP_STARS_PRICE} звёзд", callback_data=f"buy_vip:{user_id}")
-    ]])
+    contact_text = quote("Привет! Хочу оформить VIP-статус")
+    contact_url = f"https://t.me/{ADMIN_USERNAME}?text={contact_text}"
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="✉️ Написать админу", url=contact_url)],
+    ])
 
 
 @dp.message(F.text.lower() == "вип")
@@ -2962,9 +3064,10 @@ async def badges_menu(message: Message):
     row = await ensure_user(user_id, username)
     evolution_level, cases_opened, total_farmed, vip_until = row[3], row[7], row[8], row[12]
     hidden = parse_hidden(row[13] if len(row) > 13 else "")
+    promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
     vip_active = is_vip_active(vip_until)
 
-    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active)
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
     if not earned:
         await message.reply(TEXTS["badges_menu_1"])
         return
@@ -2984,6 +3087,7 @@ async def toggle_badge(callback: CallbackQuery):
     row = await get_user(owner_id)
     username, evolution_level, cases_opened, total_farmed, vip_until = row[1], row[3], row[7], row[8], row[12]
     hidden = parse_hidden(row[13] if len(row) > 13 else "")
+    promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
 
     if key in hidden:
         hidden.discard(key)
@@ -2994,7 +3098,7 @@ async def toggle_badge(callback: CallbackQuery):
     await db_exec("UPDATE users SET hidden_badges = ? WHERE user_id = ?", (new_hidden_str, owner_id))
 
     vip_active = is_vip_active(vip_until)
-    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active)
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
     kb = badges_keyboard(earned, hidden, owner_id)
     await callback.message.edit_text("🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
     await callback.answer(TEXTS["toggle_badge_2"])
@@ -3212,6 +3316,7 @@ async def info_player(message: Message):
     vip_until = row[12]
     rebirth_count = row[15] if len(row) > 15 else 0
     hidden = parse_hidden(row[13] if len(row) > 13 else "")
+    promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
     nickname = row[19] if len(row) > 19 else None
     ultra_rebirth = bool(row[21]) if len(row) > 21 else False
     shown_name = display_name(username, nickname)
@@ -3222,7 +3327,7 @@ async def info_player(message: Message):
     name_part = f" {esc(name)}" if name else ""
     item_text = ITEMS[active_item][1] if active_item and active_item in ITEMS else "нет"
     vip_text = "активен" if vip_active else "не активен"
-    badges = get_badges(username, evolution_level, cases_opened, total_farmed, vip_active, hidden)
+    badges = get_badges(username, evolution_level, cases_opened, total_farmed, vip_active, hidden, promo_badges)
 
     text = (
         f"👣 <b>Инфо об игроке {esc(shown_name)}{badges}:</b>\n"
@@ -3243,10 +3348,10 @@ async def send_legs_top(message: Message, chat_id, title: str):
         return
 
     text = f"🏆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw) in enumerate(rows, 1):
         level = get_level_index(score, evolution_level, rebirth_count, bool(ultra_rebirth))
         emoji, name, show_level = get_level_visual(level)
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw))
         lvl_part = f" ({level} лвл)" if show_level else ""
         name_part = f" {esc(name)}" if name else ""
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — <code>{score}</code>\n   └ {emoji}{name_part}{lvl_part} · эво {evolution_level}\n\n"
@@ -3262,8 +3367,8 @@ async def send_evo_top(message: Message, chat_id, title: str):
         return
 
     text = f"🎆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw))
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — эво {evolution_level} ({score} очков)\n"
 
     await message.reply(text)
@@ -3277,8 +3382,8 @@ async def send_coin_top(message: Message, chat_id, title: str):
         return
 
     text = f"🪙 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw))
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — {coins} 🪙\n"
 
     await message.reply(text)
@@ -3292,8 +3397,8 @@ async def send_rebirth_top(message: Message, chat_id, title: str):
         return
 
     text = f"🉑 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges))
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw))
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — {rebirth_points} 🉑 (перерождений: {rebirth_count})\n"
 
     await message.reply(text)
@@ -6675,7 +6780,45 @@ async def admin_find(message: Message):
     await message.reply(TEXTS["admin_find_3"].format(v0=esc(row[1]), v1=len(chat_rows), v2="\n".join(lines)))
 
 
-@dp.message(F.text.regexp(r'(?i)^!промокод создать\s+'))
+@dp.message(F.text.regexp(r'(?i)^!промокод создать бейдж\s+'))
+async def admin_promo_create_badge(message: Message):
+    """Короткий синтаксис для выдачи бейджа промокодом (см. PROMO_BADGES):
+    !промокод создать бейдж "название_бейджа" "название_промокода".
+    Зарегистрирован раньше admin_promo_create и матчится первым — aiogram
+    останавливается на первом сработавшем хендлере для одного сообщения."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = PROMO_CREATE_BADGE_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["promo_create_badge_1"])
+        return
+
+    badge_name_raw, code_raw = match.groups()
+    code = code_raw.strip()
+
+    badge_key = find_promo_badge_key(badge_name_raw)
+    if not badge_key:
+        await message.reply(TEXTS["promo_create_badge_2"].format(v0=esc(badge_name_raw)))
+        return
+
+    existing = await db_query_one("SELECT code FROM promocodes WHERE code = ?", (code,))
+    if existing:
+        await message.reply(TEXTS["promo_create_badge_3"].format(v0=esc(code)))
+        return
+
+    admin_username = message.from_user.username or message.from_user.first_name or "admin"
+    await db_exec(
+        "INSERT INTO promocodes (code, reward_type, reward_key, amount, activations_left, created_by, created_at) "
+        "VALUES (?, ?, ?, ?, ?, ?, ?)",
+        (code, "badge", badge_key, 1, 1, admin_username, int(time.time())),
+    )
+
+    emoji, name = PROMO_BADGES[badge_key]
+    await message.reply(TEXTS["promo_create_badge_4"].format(v0=esc(code), v1=emoji, v2=esc(name)))
+
+
+@dp.message(F.text.regexp(r'(?i)^!промокод создать\s+(?!бейдж\s)'))
 async def admin_promo_create(message: Message):
     if not is_admin(message):
         return
@@ -6763,6 +6906,9 @@ async def admin_promo_list(message: Message):
         if reward_type == "item" and reward_key in ITEMS:
             emoji, name, _, _ = ITEMS[reward_key]
             reward_label = f"{emoji} {esc(name)}"
+        elif reward_type == "badge" and reward_key in PROMO_BADGES:
+            emoji, name = PROMO_BADGES[reward_key]
+            reward_label = f"{emoji} бейдж «{esc(name)}»"
         else:
             reward_label = PROMO_TYPE_LABEL.get(reward_type, esc(reward_type))
         lines.append(f"● «{esc(code)}» — {reward_label} × {amount} (осталось активаций: {activations_left})")
