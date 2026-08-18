@@ -90,10 +90,22 @@ PREMIUM_GOLDA_ITEM = '<tg-emoji emoji-id="5330230039843709983">🥇</tg-emoji>'
 PREMIUM_KARAMBIT_GOLD = '<tg-emoji emoji-id="5060114895148680390">🔪</tg-emoji>'
 PREMIUM_BUTTERFLY_LEGACY = '<tg-emoji emoji-id="4943160586331490355">🦋</tg-emoji>'
 
+# Новые бустеры (мини-апдейт): крест / фати / фанат Мику.
+PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5282820155015971423">✝️</tg-emoji>'
+PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5404393696865041225">🤲</tg-emoji>'
+PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5199714801286132798">🎧</tg-emoji>'
+
 PREMIUM_BADGE_TESTER = '<tg-emoji emoji-id="5947528161536251718">🧪</tg-emoji>'
 PREMIUM_BADGE_SUPPORT = '<tg-emoji emoji-id="5947343263194157527">🛠️</tg-emoji>'
 PREMIUM_BADGE_POWER = '<tg-emoji emoji-id="5780703608760700844">💪</tg-emoji>'
 PREMIUM_BADGE_TOP1_PAST = '<tg-emoji emoji-id="5363999757079429238">👑</tg-emoji>'
+
+# ---------- Безумные крафты (ур.1/ур.3) ----------
+# TODO: заменить emoji-id на реальные premium-эмодзи, когда достанешь.
+PREMIUM_CHAOS_ORB = '<tg-emoji emoji-id="5201679280672616755">🌀</tg-emoji>'
+PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="5237697056805510735">⏰</tg-emoji>'
+PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="5305669252181672918">🔮</tg-emoji>'
+PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="5237888066886064441">⚡️</tg-emoji>'
 
 # ---------- Кейс 3: премиум-иконки (заглушки) ----------
 # TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
@@ -673,9 +685,21 @@ ITEMS = {
     # Нельзя выбить (drop_weight=0), продать или передать (см. NON_TRADABLE_ITEMS).
     "kotyara_amulet":  (PREMIUM_KOTYARA_AMULET, "Амулет Котяры", 60, 0),
     "miku_amulet":     (PREMIUM_MIKU_AMULET, "Амулет Мику", 50, 0),
-    "golda":           (PREMIUM_GOLDA_ITEM, "Голда", 0, 0),
-    "karambit_gold":   (PREMIUM_KARAMBIT_GOLD, "Керамбит голд", 0, 0),
-    "butterfly_legacy": (PREMIUM_BUTTERFLY_LEGACY, "Бабочка легаси", 0, 0),
+    "golda":           (PREMIUM_GOLDA_ITEM, "Голда", 52, 0),
+    "karambit_gold":   (PREMIUM_KARAMBIT_GOLD, "Керамбит голд", 228, 0),
+    "butterfly_legacy": (PREMIUM_BUTTERFLY_LEGACY, "Бабочка легаси", 69, 0),
+    "krest_amulet":    (PREMIUM_KREST_AMULET, "Амулет Креста", 100, 0),
+    "fati_amulet":     (PREMIUM_FATI_AMULET, "Амулет Фати", 80, 0),
+
+    # ---------- Безумные крафты (см. RECIPES: chaos_orb / chronos_clock / chronos_orb) ----------
+    # Не выбиваются из кейсов — только крафт (см. CRAFT_MAX_LEVEL) или промо/админка.
+    "chaos_orb":     (PREMIUM_CHAOS_ORB, "Шар хаоса", 0, 0),
+    "chronos_clock": (PREMIUM_CHRONOS_CLOCK, "Часы Хроноса", 0, 0),
+    "chronos_orb":   (PREMIUM_CHRONOS_ORB, "Шар Хроноса", 0, 0),
+
+    # ---------- Новые крафты (мини-апдейт) ----------
+    # Не выбивается и не выдаётся промо/админкой — получить можно только крафтом.
+    "miku_fan_amulet": (PREMIUM_MIKU_FAN_AMULET, "Амулет Фаната Мику", 300, 0),
 }
 
 # Предметы, которые нельзя продать/передать/уничтожить — личные заглушки/значки.
@@ -684,6 +708,11 @@ NON_TRADABLE_ITEMS = {
     # Промо-эксклюзив (см. PREM_⚡): нельзя выбить, продать или передать —
     # доступны только через админ-команды или промокоды.
     "kotyara_amulet", "miku_amulet", "golda", "karambit_gold", "butterfly_legacy",
+    "krest_amulet", "fati_amulet",
+    # Безумные крафты — важные эндгейм-предметы, нельзя продать/передать.
+    "chaos_orb", "chronos_clock", "chronos_orb",
+    # Крафтовый эксклюзив — важный эндгейм-предмет, нельзя продать/передать.
+    "miku_fan_amulet",
 }
 
 PASSIVE_ITEMS = {
@@ -835,6 +864,28 @@ RECIPES = {
         "ingredients": {"golden_vase": 1, "devotion_coin": 1},
         "craft_points_cost": 1,  # + 1 💠 очко крафта
     },
+
+    # ---------- Безумные крафты ----------
+    "chaos_orb": {
+        "level": 1,
+        "ingredients": {"orb": 10, "paradox_charm": 2},
+    },
+    "chronos_clock": {
+        "level": 1,
+        "ingredients": {"broken_clock": 10, "essence_drop": 1},
+        "rebirth_cost": 5,  # + 5 🉑 очков перерождения
+    },
+    "chronos_orb": {
+        "level": 3,
+        "ingredients": {"chaos_orb": 69, "chronos_clock": 1, "essence_drop": 5},
+        "craft_points_cost": 20,  # + 20 💠 очков крафта
+    },
+
+    # ---------- Новые крафты (мини-апдейт) ----------
+    "miku_fan_amulet": {
+        "level": 1,
+        "ingredients": {"mk_sandsmoon": 1, "miku_amulet": 1},
+    },
 }
 
 # Иерархия "уникальных" бустеров (от слабого к сильному) — используется для правила
@@ -863,6 +914,30 @@ PAW_POINT_MULTIPLIER = 3          # 🐾 даёт втрое больше очк
 ICE_SHARD_SAVE_CHANCE = 0.20      # 🧊 Ледяной осколок: шанс не сбросить очки/эво при эволюции/перерождении
 DRAGON_CLAW_POTION_MULT = 4       # 🐉 Коготь дракона: усиливает зелье скорости с x2 до x4
 TIDE_WAVE_PROC_CHANCE = 0.05      # 🌊 Волна прилива: шанс на доп. предмет из кейса 1 или 2 при фарме ног
+
+# ---------- Безумные крафты: шансы при фарме ног (см. apply_chaos_orb_proc / apply_chronos_orb_procs) ----------
+CHAOS_ORB_FARM_CHANCE = 0.02          # 🌀 Шар хаоса: шанс поймать бонус-фарму (1 - 10 000 000 ног)
+CHAOS_ORB_FARM_MIN = 1
+CHAOS_ORB_FARM_MAX = 10_000_000
+
+CHRONOS_ORB_REBIRTH_CHANCE = 0.009       # шанс поймать очки перерождения (1-500)
+CHRONOS_ORB_REBIRTH_MIN, CHRONOS_ORB_REBIRTH_MAX = 1, 500
+CHRONOS_ORB_FARM_MULT_MIN, CHRONOS_ORB_FARM_MULT_MAX = 0.1, 5.0  # рандом-множитель к добыче фарма (x0.1..x5)
+CHRONOS_ORB_COIN_CHANCE = 0.05           # шанс выдачи монет (1-10 000)
+CHRONOS_ORB_COIN_MIN, CHRONOS_ORB_COIN_MAX = 1, 10_000
+CHRONOS_ORB_LEGS_CHANCE = 0.02           # шанс выдачи ног (1-10 000 000)
+CHRONOS_ORB_LEGS_MIN, CHRONOS_ORB_LEGS_MAX = 1, 10_000_000
+CHRONOS_ORB_NO_CD_CHANCE = 0.07          # шанс на моментальное исчезновение кулдауна фермы
+CHRONOS_ORB_PRESTIGE_CHANCE = 0.01       # шанс выдачи очков престижа (0-20)
+CHRONOS_ORB_PRESTIGE_MIN, CHRONOS_ORB_PRESTIGE_MAX = 0, 20
+CHRONOS_ORB_POTION_CHANCE = 0.01         # шанс выдачи рандомного зелья
+CHRONOS_ORB_BOOSTER_CHANCE = 0.01        # шанс выдачи любого бустера (кроме предметов 1+ ур. крафта)
+CHRONOS_ORB_BADGE_CHANCE = 0.001         # шанс выдачи бейджа "Мастер Хаоса⚡️"
+CHRONOS_ORB_STRANGE_COIN_CHANCE = 0.0069 # шанс получить странную монету
+CHRONOS_ORB_OLD_VASE_CHANCE = 0.0069     # шанс получить старую вазу
+
+CHRONOS_BOOST_INTERVAL = 300      # 5 минут — период пересчёта рандомного буста Шара Хроноса
+CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX = 1, 200  # диапазон % буста
 
 GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активирована."  # заменяет обычный префикс ответа фермы
 KOSHKO_AMULET_FLAVOR = f"{PREMIUM_KOSHKO_AMULET} Сила кошко-девочки активна."  # то же самое, но для амулета кошко-девочки
@@ -901,7 +976,7 @@ def active_farm_limits(active_items, prestige_upgrades: dict = None) -> dict:
 
 
 def recipe_missing_ingredients(inventory_map: dict, coins: int, score: int, recipe: dict,
-                                prestige_upgrades: dict = None, craft_points: int = 0) -> list:
+                                prestige_upgrades: dict = None, craft_points: int = 0, rebirth_points: int = 0) -> list:
     """Список недостающих требований рецепта в виде читаемых строк. Пустой список = всё есть."""
     missing = []
     for ing_key, qty in recipe.get("ingredients", {}).items():
@@ -922,6 +997,9 @@ def recipe_missing_ingredients(inventory_map: dict, coins: int, score: int, reci
     craft_points_cost = recipe.get("craft_points_cost", 0)
     if craft_points_cost and craft_points < craft_points_cost:
         missing.append(f"Очки крафта: {craft_points}/{craft_points_cost} 💠")
+    rebirth_cost = recipe.get("rebirth_cost", 0)
+    if rebirth_cost and rebirth_points < rebirth_cost:
+        missing.append(f"Очки перерождения: {rebirth_points}/{rebirth_cost} 🉑")
     return missing
 
 
@@ -935,6 +1013,8 @@ def format_recipe_requirements(recipe: dict) -> str:
         parts.append(f"{recipe['score_cost']} очков ног")
     if recipe.get("craft_points_cost"):
         parts.append(f"{recipe['craft_points_cost']} 💠")
+    if recipe.get("rebirth_cost"):
+        parts.append(f"{recipe['rebirth_cost']} 🉑")
     return " + ".join(parts)
 
 
@@ -1688,9 +1768,13 @@ def format_potions(potions: dict) -> str:
     return ",".join(f"{k}:{v}" for k, v in potions.items() if v > 0)
 
 
-def active_potions_now(potions_str: str, now: int = None) -> dict:
-    """Отфильтровывает истёкшие time-based зелья (charge-based остаются, пока заряды > 0)."""
+def active_potions_now(potions_str: str, now: int = None, active_items=None) -> dict:
+    """Отфильтровывает истёкшие time-based зелья (charge-based остаются, пока заряды > 0).
+    ⏰ Часы Хроноса: пока экипированы, время action-зелий не тикает (не удаляем по истечению) —
+    сама запись until_ts в БД не трогается, поэтому после снятия предмета зелье честно
+    доедает оставшееся время."""
     now = now or int(time.time())
+    frozen = bool(active_items and "chronos_clock" in set(_normalize_active_items(active_items)))
     parsed = parse_potions(potions_str)
     result = {}
     for key, val in parsed.items():
@@ -1699,7 +1783,7 @@ def active_potions_now(potions_str: str, now: int = None) -> dict:
             if val > 0:
                 result[key] = val
         else:
-            if val > now:
+            if val > now or frozen:
                 result[key] = val
     return result
 
@@ -1710,13 +1794,18 @@ def potion_duration_seconds(key: str, upgrades: dict) -> int:
     return round(base * bonus)
 
 
-def brew_seconds_for(key: str, upgrades: dict, prestige_upgrades: dict = None) -> int:
+CHAOS_ORB_BREW_CUT = 0.90  # 🌀 Шар хаоса: -90% к времени варки зелья, пока экипирован
+
+
+def brew_seconds_for(key: str, upgrades: dict, prestige_upgrades: dict = None, active_items=None) -> int:
     base = POTIONS[key]["brew_seconds"]
     cut = 1 - 0.10 * upgrade_level(upgrades, "brew_speed")
     if prestige_upgrades:
         p_speed = prestige_bonus(prestige_upgrades, "p_brew_speed")
         if p_speed:
             cut -= 0.02 * p_speed  # -2% за ступень сверху обычного апгрейда
+    if active_items and "chaos_orb" in set(_normalize_active_items(active_items)):
+        cut -= CHAOS_ORB_BREW_CUT
     cut = max(0.1, cut)  # не даём варке уйти ниже 10% базового времени
     return max(30, round(base * cut))
 
@@ -1761,7 +1850,7 @@ def format_potion_stock(stock: dict) -> str:
 
 
 def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrades: dict = None,
-                    ultra_rebirth: bool = False) -> float:
+                    ultra_rebirth: bool = False, chronos_boost_pct: int = 0) -> float:
     mult = 1.0
     if evolution_level >= 2:
         mult += EVO_BOOST_STEP
@@ -1770,6 +1859,10 @@ def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrade
     for item_key in _normalize_active_items(active_items):
         if item_key in ITEMS:
             mult += ITEMS[item_key][2] / 100
+    if "chronos_orb" in set(_normalize_active_items(active_items)):
+        # 🔮 Шар Хроноса: буст рандомный (1-200%), меняется раз в 5 минут фоновым тасков
+        # (см. chronos_orb_boost_loop), текущее значение хранится в users.chronos_boost_pct.
+        mult += chronos_boost_pct / 100
     if vip_active:
         mult += VIP_BOOST
     if upgrades:
@@ -2114,7 +2207,7 @@ USER_COLUMNS = (
     "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
     "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock, "
     "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items, craft_points, "
-    "promo_badges"
+    "promo_badges, chronos_boost_pct"
 )
 # Индексы полей выше при обращении по row[...]:
 #  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
@@ -2151,6 +2244,9 @@ USER_COLUMNS = (
 #     Тратится на 3-й уровень апгрейда "crafts" (см. UPGRADES["crafts"]) вместе с 🉑.
 #  33 promo_badges — бейджи, выданные вручную через промокоды/админ-команды (не автоматические
 #     достижения из badge_list), формат "key1,key2,key3" (см. PROMO_BADGES, parse_promo_badges).
+#  34 chronos_boost_pct — текущий % буста от 🔮 Шара Хроноса (1-200), пересчитывается раз в
+#     5 минут фоновым тасков для ВСЕХ игроков сразу (не только активных). Применяется в
+#     get_multiplier() только пока chronos_orb экипирован.
 
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -2264,6 +2360,7 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN auto_sell_items TEXT DEFAULT ''",
         "ALTER TABLE users ADD COLUMN craft_points INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN promo_badges TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN chronos_boost_pct INTEGER DEFAULT 100",
     ):
         try:
             await db_exec(stmt)
@@ -2284,7 +2381,7 @@ async def ensure_user(user_id: int, username: str):
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
         now = int(time.time())
-        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "", "")
+        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "", "", 100)
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
@@ -2338,6 +2435,7 @@ PROMO_BADGES = {
     "support":      (PREMIUM_BADGE_SUPPORT, "Сапорт"),
     "power":        (PREMIUM_BADGE_POWER, "Потужность"),
     "top1_past":    (PREMIUM_BADGE_TOP1_PAST, "Топ 1 в прошлом"),
+    "chaos_master": (PREMIUM_BADGE_CHAOS_MASTER, "Мастер Хаоса⚡️"),
 }
 # Русские названия бейджей (как их вводит админ в команде создания промокода) -> ключ PROMO_BADGES.
 PROMO_BADGE_ALIASES = {
@@ -2346,6 +2444,7 @@ PROMO_BADGE_ALIASES = {
     "потужность": "power",
     "топ1 в прошлом": "top1_past",
     "топ 1 в прошлом": "top1_past",
+    "мастер хаоса": "chaos_master",
 }
 
 
@@ -2480,6 +2579,115 @@ async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = 
             return "\n🏺 Старая ваза: +1🉑!"
         return ""
     return ""
+
+
+def _random_booster_pool() -> list:
+    """Все выбиваемые/крафтовые бустеры (boost_percent > 0), кроме предметов 1+ уровня крафта
+    (см. RECIPES) — используется шансом на выдачу бустера от 🔮 Шара Хроноса."""
+    pool = []
+    for key, (_, _, boost_percent, _) in ITEMS.items():
+        if boost_percent <= 0:
+            continue
+        recipe = RECIPES.get(key)
+        if recipe and recipe.get("level", 0) >= 1:
+            continue
+        pool.append(key)
+    return pool
+
+
+async def apply_chaos_orb_proc(user_id: int, active_items) -> str:
+    """🌀 Шар хаоса: пока экипирован, шанс 2% при фарме ног поймать бонус-фарму
+    (случайное количество очков ноги от 1 до 10 000 000)."""
+    if "chaos_orb" not in set(_normalize_active_items(active_items)):
+        return ""
+    if random.random() >= CHAOS_ORB_FARM_CHANCE:
+        return ""
+    bonus = random.randint(CHAOS_ORB_FARM_MIN, CHAOS_ORB_FARM_MAX)
+    await db_exec("UPDATE users SET score = score + ? WHERE user_id = ?", (bonus, user_id))
+    return f"\n🌀 Шар хаоса: РЕДКИЙ ПРОК! +{bonus} очков ноги!"
+
+
+async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
+    """🔮 Шар Хроноса: пока экипирован, при каждом фарме ног независимо проверяются все
+    эффекты — несколько могут сработать за один фарм одновременно.
+    Возвращает (текст_для_ответа, сбросить_кулдаун: bool, доп_множитель_фарма: float)."""
+    if "chronos_orb" not in set(_normalize_active_items(active_items)):
+        return "", False, 1.0
+
+    lines = []
+    reset_cd = False
+    farm_extra_mult = random.uniform(CHRONOS_ORB_FARM_MULT_MIN, CHRONOS_ORB_FARM_MULT_MAX)
+    lines.append(f"\n🔮 Шар Хроноса: рандом-множитель фарма x{farm_extra_mult:.2f}")
+
+    if random.random() < CHRONOS_ORB_REBIRTH_CHANCE:
+        amount = random.randint(CHRONOS_ORB_REBIRTH_MIN, CHRONOS_ORB_REBIRTH_MAX)
+        await db_exec("UPDATE users SET rebirth_points = rebirth_points + ? WHERE user_id = ?", (amount, user_id))
+        lines.append(f"🔮 Шар Хроноса: +{amount} 🉑!")
+
+    if random.random() < CHRONOS_ORB_COIN_CHANCE:
+        amount = random.randint(CHRONOS_ORB_COIN_MIN, CHRONOS_ORB_COIN_MAX)
+        await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (amount, user_id))
+        lines.append(f"🔮 Шар Хроноса: +{amount} 🪙!")
+
+    if random.random() < CHRONOS_ORB_LEGS_CHANCE:
+        amount = random.randint(CHRONOS_ORB_LEGS_MIN, CHRONOS_ORB_LEGS_MAX)
+        await db_exec("UPDATE users SET score = score + ? WHERE user_id = ?", (amount, user_id))
+        lines.append(f"🔮 Шар Хроноса: +{amount} очков ноги!")
+
+    if random.random() < CHRONOS_ORB_NO_CD_CHANCE:
+        reset_cd = True
+        lines.append("🔮 Шар Хроноса: кулдаун фермы обнулён!")
+
+    if random.random() < CHRONOS_ORB_PRESTIGE_CHANCE:
+        amount = random.randint(CHRONOS_ORB_PRESTIGE_MIN, CHRONOS_ORB_PRESTIGE_MAX)
+        if amount > 0:
+            await db_exec("UPDATE users SET prestige_points = prestige_points + ? WHERE user_id = ?", (amount, user_id))
+            lines.append(f"🔮 Шар Хроноса: +{amount} 🔮 очков престижа!")
+
+    if random.random() < CHRONOS_ORB_POTION_CHANCE:
+        potion_key = random.choice(POTION_ORDER)
+        stock_row = await db_query_one("SELECT potion_stock FROM users WHERE user_id = ?", (user_id,))
+        stock = parse_potion_stock(stock_row[0] if stock_row else "")
+        stock[potion_key] = stock.get(potion_key, 0) + 1
+        await db_exec("UPDATE users SET potion_stock = ? WHERE user_id = ?", (format_potion_stock(stock), user_id))
+        cfg = POTIONS[potion_key]
+        lines.append(f"🔮 Шар Хроноса: +1 {cfg['emoji']} {esc(cfg['name'])}!")
+
+    if random.random() < CHRONOS_ORB_BOOSTER_CHANCE:
+        pool = _random_booster_pool()
+        if pool:
+            booster_key = random.choice(pool)
+            await add_item(user_id, booster_key, 1)
+            emoji, name, _, _ = ITEMS[booster_key]
+            lines.append(f"🔮 Шар Хроноса: +1 {emoji} {esc(name)}!")
+
+    if random.random() < CHRONOS_ORB_BADGE_CHANCE:
+        await add_promo_badge(user_id, "chaos_master")
+        emoji, name = PROMO_BADGES["chaos_master"]
+        lines.append(f"🔮 Шар Хроноса: ПОЛУЧЕН БЕЙДЖ {emoji} «{esc(name)}»!!!")
+
+    if random.random() < CHRONOS_ORB_STRANGE_COIN_CHANCE:
+        await add_item(user_id, "strange_coin", 1)
+        lines.append(f"🔮 Шар Хроноса: +1 {ITEMS['strange_coin'][0]} Странная монета!")
+
+    if random.random() < CHRONOS_ORB_OLD_VASE_CHANCE:
+        await add_item(user_id, "old_vase", 1)
+        lines.append(f"🔮 Шар Хроноса: +1 {ITEMS['old_vase'][0]} Старая ваза!")
+
+    return "".join(lines), reset_cd, farm_extra_mult
+
+
+async def chronos_orb_boost_loop():
+    """Фоновый таск: раз в CHRONOS_BOOST_INTERVAL (5 мин) пересчитывает рандомный % буста
+    (1-200%) для ВСЕХ игроков сразу — не только для тех, у кого экипирован Шар Хроноса
+    (дёшево одним UPDATE, а не по каждому фарму), см. get_multiplier()."""
+    while True:
+        await asyncio.sleep(CHRONOS_BOOST_INTERVAL)
+        try:
+            new_pct = random.randint(CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX)
+            await db_exec("UPDATE users SET chronos_boost_pct = ?", (new_pct,))
+        except Exception as e:
+            print(f"chronos_orb_boost_loop ошибка: {e}")
 
 
 async def is_event_active() -> bool:
@@ -3121,8 +3329,9 @@ async def count_legs(message: Message):
     auto_rebirth_enabled = bool(row[29])
     prestige_points = row[27]
     vip_active = is_vip_active(vip_until)
-    potions = active_potions_now(row[23])
+    potions = active_potions_now(row[23], active_items=active_items)
     prestige_upgrades = parse_prestige_upgrades(row[28])
+    chronos_boost_pct = row[34] if len(row) > 34 else 100
 
     flat_bonus = total_flat_bonus(active_items)
     limits = active_farm_limits(active_items, prestige_upgrades)
@@ -3151,7 +3360,7 @@ async def count_legs(message: Message):
     gained += flat_bonus  # гарант-бонус применяется один раз к итогу, а не за каждую ногу
     gained = round(gained * farm_yield_multiplier(upgrades))
 
-    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct)
     event_mult = await get_event_multiplier()
     personal_mult = await get_personal_multiplier(user_id)
     p_yield_mult = 1 + 0.005 * prestige_bonus(prestige_upgrades, "p_farm_yield")
@@ -3166,6 +3375,12 @@ async def count_legs(message: Message):
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
         total *= speed_mult
         potion_text += f"\n🧪⚡ Зелье ускорения: x{speed_mult} к добыче!"
+
+    # 🔮 Шар Хроноса: рандом-множитель к добыче (x0.1..x5) + куча независимых шансов на разные награды
+    # (без сброса кулдауна — здесь его в принципе нет, только антиспам-задержка ответа).
+    chronos_text, _chronos_reset_cd, chronos_farm_mult = await apply_chronos_orb_procs(user_id, active_items)
+    if chronos_farm_mult != 1.0:
+        total = round(total * chronos_farm_mult)
     new_score = score + total
 
     await db_exec(
@@ -3190,6 +3405,7 @@ async def count_legs(message: Message):
     luck_boost = "luck_x2" in potions
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
+    chaos_text = await apply_chaos_orb_proc(user_id, active_items)
 
     now = time.monotonic()
     chat_id = message.chat.id
@@ -3221,18 +3437,19 @@ async def count_legs(message: Message):
         parts += f" +{star}⭐️"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
+    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text + chaos_text + chronos_text
 
     if bonus["is_god"]:
         flavor = KOSHKO_AMULET_FLAVOR if bonus.get("tier") == "koshko_amulet" else GOD_ESSENCE_FLAVOR
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
-            skull_prefix + TEXTS["count_legs_1"].format(v0=flavor, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text)
+            skull_prefix + TEXTS["count_legs_1"].format(v0=flavor, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=extra_text)
         )
         return
 
     await message.reply(
-        skull_prefix + TEXTS["count_legs_2"].format(v0=parts, v1=total, v2=coin_text, v3=new_score, v4=vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text)
+        skull_prefix + TEXTS["count_legs_2"].format(v0=parts, v1=total, v2=coin_text, v3=new_score, v4=extra_text)
     )
 
 
@@ -3259,7 +3476,8 @@ async def my_profile(message: Message):
     emoji, name, show_level = get_level_visual(level)
     display_level = level
     nxt = next_level_text(score, evolution_level, rebirth_count, ultra_rebirth)
-    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth)
+    chronos_boost_pct = row[34] if len(row) > 34 else 100
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct)
     flat_bonus = total_flat_bonus(active_items)
 
     if vip_active:
@@ -3486,8 +3704,9 @@ async def farm(message: Message):
     auto_rebirth_enabled = bool(row[29])
     prestige_points = row[27]
     vip_active = is_vip_active(vip_until)
-    potions = active_potions_now(row[23], now)
+    potions = active_potions_now(row[23], now, active_items)
     prestige_upgrades = parse_prestige_upgrades(row[28])
+    chronos_boost_pct = row[34] if len(row) > 34 else 100
 
     inv_rows = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv_rows}
@@ -3505,7 +3724,7 @@ async def farm(message: Message):
     auto_legs, auto_coins, score, _coins_after = await claim_offline_auto_farm(user_id, row)
 
     low, high = farm_range(evolution_level)
-    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct)
     event_mult = await get_event_multiplier()
     personal_mult = await get_personal_multiplier(user_id)
     p_yield_mult = 1 + 0.005 * prestige_bonus(prestige_upgrades, "p_farm_yield")
@@ -3516,11 +3735,17 @@ async def farm(message: Message):
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
         gained *= speed_mult
         potion_text += f"\n🧪⚡ Зелье ускорения: x{speed_mult} к добыче!"
+
+    # 🔮 Шар Хроноса: рандом-множитель к добыче (x0.1..x5) + куча независимых шансов на разные награды.
+    chronos_text, chronos_reset_cd, chronos_farm_mult = await apply_chronos_orb_procs(user_id, active_items)
+    if chronos_farm_mult != 1.0:
+        gained = round(gained * chronos_farm_mult)
     new_score = score + gained
 
+    new_last_farm = 0 if chronos_reset_cd else now
     await db_exec(
         "UPDATE users SET score = ?, last_farm = ?, total_farmed = total_farmed + ? WHERE user_id = ?",
-        (new_score, now, gained, user_id),
+        (new_score, new_last_farm, gained, user_id),
     )
 
     if has_no_cd:
@@ -3531,6 +3756,7 @@ async def farm(message: Message):
     luck_boost = "luck_x2" in potions
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
+    chaos_text = await apply_chaos_orb_proc(user_id, active_items)
 
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count, ultra_rebirth)
 
@@ -3554,17 +3780,18 @@ async def farm(message: Message):
         auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
+    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + chaos_text + chronos_text
 
     if bonus["is_god"]:
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
-            TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=vase_text + auto_evo_text + auto_rebirth_text + potion_text)
+            TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=extra_text)
         )
         return
 
     await message.reply(
-        TEXTS["farm_3"].format(v0=gained, v1=new_score, v2=coin_text, v3=auto_text, v4=vase_text + auto_evo_text + auto_rebirth_text + potion_text)
+        TEXTS["farm_3"].format(v0=gained, v1=new_score, v2=coin_text, v3=auto_text, v4=extra_text)
     )
 
 
@@ -4236,7 +4463,8 @@ def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_p
 
 
 def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until: int, user_id: int,
-                      upgrades: dict, now: int = None, prestige_upgrades: dict = None, page: int = 0) -> InlineKeyboardMarkup:
+                      upgrades: dict, now: int = None, prestige_upgrades: dict = None, page: int = 0,
+                      active_items=None) -> InlineKeyboardMarkup:
     now = now or int(time.time())
     kb_rows = []
 
@@ -4254,7 +4482,7 @@ def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until
     elif not brewing_active:
         for key in page_order:
             cfg = POTIONS[key]
-            seconds = brew_seconds_for(key, upgrades, prestige_upgrades)
+            seconds = brew_seconds_for(key, upgrades, prestige_upgrades, active_items)
             kb_rows.append([InlineKeyboardButton(
                 text=f"⚗️ Варить {cfg['emoji']} {cfg['name']} ({cfg['brew_cost']}🪙, {format_time_left(seconds)})",
                 callback_data=f"potion_brew:{user_id}:{key}",
@@ -4340,12 +4568,13 @@ async def my_potions_tab(message: Message):
     row = await ensure_user(user_id, username)
     upgrades = parse_upgrades(row[16])
     stock = parse_potion_stock(row[26])
-    active = active_potions_now(row[23])
+    active_items = parse_equipped(row[18])
+    active = active_potions_now(row[23], active_items=active_items)
     brewing_potion, brewing_until = row[24], row[25]
     prestige_upgrades = parse_prestige_upgrades(row[28])
     await message.reply(
         format_potions_text(stock, active, brewing_potion, brewing_until, upgrades),
-        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, user_id, upgrades, prestige_upgrades=prestige_upgrades),
+        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, user_id, upgrades, prestige_upgrades=prestige_upgrades, active_items=active_items),
     )
 
 
@@ -4386,13 +4615,14 @@ async def inventory_open_category(callback: CallbackQuery):
         row = await get_user(owner_id)
         upgrades = parse_upgrades(row[16])
         stock = parse_potion_stock(row[26])
-        active = active_potions_now(row[23])
+        active_items = parse_equipped(row[18])
+        active = active_potions_now(row[23], active_items=active_items)
         brewing_potion, brewing_until = row[24], row[25]
         prestige_upgrades = parse_prestige_upgrades(row[28])
         await safe_edit_text(
             callback,
             format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, page=page),
-            reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page),
+            reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page, active_items=active_items),
         )
     else:
         rows = await get_inventory(owner_id)
@@ -4416,6 +4646,7 @@ async def potion_brew_start(callback: CallbackQuery):
     row = await get_user(owner_id)
     coins = row[5]
     upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
     brewing_potion, brewing_until = row[24], row[25]
     prestige_upgrades = parse_prestige_upgrades(row[28])
 
@@ -4428,7 +4659,7 @@ async def potion_brew_start(callback: CallbackQuery):
         await callback.answer(TEXTS["potion_brew_no_coins_1"].format(v0=cfg["brew_cost"], v1=coins), show_alert=True)
         return
 
-    seconds = brew_seconds_for(potion_key, upgrades, prestige_upgrades)
+    seconds = brew_seconds_for(potion_key, upgrades, prestige_upgrades, active_items)
     new_until = now + seconds
     await db_exec(
         "UPDATE users SET coins = coins - ?, brewing_potion = ?, brewing_until = ? WHERE user_id = ?",
@@ -4438,8 +4669,8 @@ async def potion_brew_start(callback: CallbackQuery):
     stock = parse_potion_stock(row[26])
     await safe_edit_text(
         callback,
-        format_potions_text(stock, active_potions_now(row[23], now), potion_key, new_until, upgrades, now),
-        reply_markup=potions_keyboard(stock, potion_key, new_until, owner_id, upgrades, now, prestige_upgrades),
+        format_potions_text(stock, active_potions_now(row[23], now, active_items), potion_key, new_until, upgrades, now),
+        reply_markup=potions_keyboard(stock, potion_key, new_until, owner_id, upgrades, now, prestige_upgrades, active_items=active_items),
     )
     await callback.answer(TEXTS["potion_brew_started_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=format_time_left(seconds)))
 
@@ -4455,6 +4686,7 @@ async def potion_collect(callback: CallbackQuery):
     row = await get_user(owner_id)
     brewing_potion, brewing_until = row[24], row[25]
     upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
     prestige_upgrades = parse_prestige_upgrades(row[28])
 
     if not brewing_potion:
@@ -4474,8 +4706,8 @@ async def potion_collect(callback: CallbackQuery):
     cfg = POTIONS[brewing_potion]
     await safe_edit_text(
         callback,
-        format_potions_text(stock, active_potions_now(row[23], now), None, 0, upgrades, now),
-        reply_markup=potions_keyboard(stock, None, 0, owner_id, upgrades, now, prestige_upgrades),
+        format_potions_text(stock, active_potions_now(row[23], now, active_items), None, 0, upgrades, now),
+        reply_markup=potions_keyboard(stock, None, 0, owner_id, upgrades, now, prestige_upgrades, active_items=active_items),
     )
     await callback.answer(TEXTS["potion_collect_ok_1"].format(v0=cfg["emoji"], v1=cfg["name"]))
 
@@ -4495,6 +4727,7 @@ async def potion_use(callback: CallbackQuery):
     now = int(time.time())
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
     stock = parse_potion_stock(row[26])
     prestige_upgrades = parse_prestige_upgrades(row[28])
 
@@ -4506,7 +4739,7 @@ async def potion_use(callback: CallbackQuery):
     if stock[potion_key] <= 0:
         del stock[potion_key]
 
-    active = active_potions_now(row[23], now)
+    active = active_potions_now(row[23], now, active_items)
     cfg = POTIONS[potion_key]
     if cfg["effect"] == "no_cd":
         active[potion_key] = cfg["charges"]  # использование освежает заряды (не суммирует)
@@ -4523,7 +4756,7 @@ async def potion_use(callback: CallbackQuery):
     await safe_edit_text(
         callback,
         format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, now),
-        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, now, prestige_upgrades),
+        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, now, prestige_upgrades, active_items=active_items),
     )
     if cfg["effect"] == "no_cd":
         await callback.answer(TEXTS["potion_use_ok_charges_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=cfg["charges"]))
@@ -4595,14 +4828,15 @@ async def inventory_potions_page(callback: CallbackQuery):
 
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
     stock = parse_potion_stock(row[26])
-    active = active_potions_now(row[23])
+    active = active_potions_now(row[23], active_items=active_items)
     brewing_potion, brewing_until = row[24], row[25]
     prestige_upgrades = parse_prestige_upgrades(row[28])
     await safe_edit_text(
         callback,
         format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, page=page),
-        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page),
+        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page, active_items=active_items),
     )
     await callback.answer()
 
@@ -4766,10 +5000,11 @@ async def craft_do(callback: CallbackQuery):
 
     coins, score = row[5], row[2]
     craft_points = row[32]
+    rebirth_points = row[14]
     inv_rows = await get_inventory(owner_id)
     inventory_map = {k: q for k, q in inv_rows}
 
-    missing = recipe_missing_ingredients(inventory_map, coins, score, recipe, prestige_upgrades, craft_points)
+    missing = recipe_missing_ingredients(inventory_map, coins, score, recipe, prestige_upgrades, craft_points, rebirth_points)
     if missing:
         await callback.answer("Не хватает: " + "; ".join(missing), show_alert=True)
         return
@@ -4789,6 +5024,11 @@ async def craft_do(callback: CallbackQuery):
         await db_exec(
             "UPDATE users SET craft_points = craft_points - ? WHERE user_id = ?",
             (recipe["craft_points_cost"], owner_id),
+        )
+    if recipe.get("rebirth_cost"):
+        await db_exec(
+            "UPDATE users SET rebirth_points = rebirth_points - ? WHERE user_id = ?",
+            (recipe["rebirth_cost"], owner_id),
         )
 
     await add_item(owner_id, recipe_key, 1)
@@ -7071,6 +7311,7 @@ async def main():
     await site.start()
 
     asyncio.create_task(keep_alive())
+    asyncio.create_task(chronos_orb_boost_loop())
 
     print("Бот НОГА запущен!")
     try:
