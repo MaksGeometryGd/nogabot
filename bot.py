@@ -1881,17 +1881,19 @@ def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrade
         mult += EVO_BOOST_STEP
     if evolution_level >= 3:
         mult += EVO_BOOST_STEP * (evolution_level - 2)
-    # Бусты экипированных бустеров (амулеты и т.п.) не складываются друг с другом —
-    # применяется только самый сильный из надетых (см. ITEMS[key][2] = boost_percent).
-    # chronos_orb СОЗНАТЕЛЬНО исключён из этого подбора: у него отдельный рандомный
+    # Процентные бусты экипированных бустеров (амулеты и т.п.) СКЛАДЫВАЮТСЯ между собой
+    # (см. ITEMS[key][2] = boost_percent; ITEMS[key][3] = drop_weight, см. roll_case_item) —
+    # надел 2 предмета с 700% и 800% => +1500%. Слотов экипировки максимум 3
+    # (см. UPGRADES["equip_slots"]), так что сумма не может уйти в неконтролируемый рост.
+    # chronos_orb СОЗНАТЕЛЬНО исключён из этой суммы: у него отдельный рандомный
     # буст (ветка ниже), а его ITEMS[...][2]=120 — только для UI/отображения, чтобы
     # не задвоить буст (фикс. % + рандомный % одновременно).
     equipped_set = set(_normalize_active_items(active_items))
-    best_boost_percent = 0
+    total_boost_percent = 0
     for item_key in equipped_set:
         if item_key in ITEMS and item_key != "chronos_orb":
-            best_boost_percent = max(best_boost_percent, ITEMS[item_key][2])
-    mult += best_boost_percent / 100
+            total_boost_percent += ITEMS[item_key][2]
+    mult += total_boost_percent / 100
     if "chronos_orb" in equipped_set:
         # 🔮 Шар Хроноса: буст рандомный (1-200%), меняется раз в 5 минут фоновым тасков
         # (см. chronos_orb_boost_loop), текущее значение хранится в users.chronos_boost_pct.
