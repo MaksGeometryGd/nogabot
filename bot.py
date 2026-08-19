@@ -2825,10 +2825,12 @@ def inventory_keyboard(inventory_rows, active_item: str, user_id: int) -> Inline
         if item_key in PASSIVE_ITEMS:
             continue
         emoji, name, percent, _ = ITEMS[item_key]
-        mark = " ✅" if active_item == item_key else ""
+        is_equipped = active_item == item_key
+        mark = " ✅" if is_equipped else ""
         rows.append([InlineKeyboardButton(
             text=f"{name} {plain_emoji(emoji)} ({_percent_label(item_key, percent)}) x{qty}{mark}",
             callback_data=f"equip:{user_id}:{item_key}",
+            style="success" if is_equipped else None,
         )])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
@@ -4394,10 +4396,10 @@ def _pagination_row(callback_prefix: str, user_id: int, page: int, total_pages: 
     suffix = f":{extra}" if extra else ""
     nav = []
     if page > 0:
-        nav.append(InlineKeyboardButton(text="◀️", callback_data=f"{callback_prefix}:{user_id}:{page - 1}{suffix}"))
+        nav.append(InlineKeyboardButton(text="◀️", callback_data=f"{callback_prefix}:{user_id}:{page - 1}{suffix}", style="primary"))
     nav.append(InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="noop"))
     if page < total_pages - 1:
-        nav.append(InlineKeyboardButton(text="▶️", callback_data=f"{callback_prefix}:{user_id}:{page + 1}{suffix}"))
+        nav.append(InlineKeyboardButton(text="▶️", callback_data=f"{callback_prefix}:{user_id}:{page + 1}{suffix}", style="primary"))
     return nav
 
 
@@ -4412,13 +4414,15 @@ def boosters_keyboard(rows, active_items, user_id: int, page: int = 0, query: st
     kb_rows = []
     for item_key, qty in page_items:
         emoji, name, percent, _ = ITEMS[item_key]
-        mark = " ✅" if item_key in equipped else ""
+        is_equipped = item_key in equipped
+        mark = " ✅" if is_equipped else ""
         cb = f"equip:{user_id}:{item_key}:{page}"
         if query:
             cb += f":{quote(query)}"
         kb_rows.append([InlineKeyboardButton(
             text=f"{name} {plain_emoji(emoji)} ({_percent_label(item_key, percent)}) x{qty}{mark}",
             callback_data=cb,
+            style="success" if is_equipped else None,
         )])
 
     if query:
@@ -4460,10 +4464,12 @@ def autosell_keyboard(auto_sell_enabled: bool, auto_sell_items: set, user_id: in
     kb_rows = []
     for item_key in page_items:
         emoji, name, _, _ = ITEMS[item_key]
-        mark = "✅" if item_key in auto_sell_items else "❌"
+        is_on = item_key in auto_sell_items
+        mark = "✅" if is_on else "❌"
         kb_rows.append([InlineKeyboardButton(
             text=f"{name} {plain_emoji(emoji)} {mark}",
             callback_data=f"autosell_toggle:{user_id}:{item_key}:{page}",
+            style="success" if is_on else "danger",
         )])
 
     nav_row = _pagination_row("autosell_page", user_id, page, total_pages)
@@ -4471,7 +4477,10 @@ def autosell_keyboard(auto_sell_enabled: bool, auto_sell_items: set, user_id: in
         kb_rows.append(nav_row)
 
     switch_text = "🔴 Выключить авто-продажу" if auto_sell_enabled else "🟢 Включить авто-продажу"
-    kb_rows.append([InlineKeyboardButton(text=switch_text, callback_data=f"autosell_switch:{user_id}:{page}")])
+    kb_rows.append([InlineKeyboardButton(
+        text=switch_text, callback_data=f"autosell_switch:{user_id}:{page}",
+        style="danger" if auto_sell_enabled else "success",
+    )])
     kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
     return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
@@ -5555,10 +5564,10 @@ def prestige_page_keyboard(prestige_upgrades: dict, user_id: int, page: int) -> 
 
     nav = []
     if page > 0:
-        nav.append(InlineKeyboardButton(text="◀️", callback_data=f"pr_page:{user_id}:{page - 1}"))
+        nav.append(InlineKeyboardButton(text="◀️", callback_data=f"pr_page:{user_id}:{page - 1}", style="primary"))
     nav.append(InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="pr_noop"))
     if page < total_pages - 1:
-        nav.append(InlineKeyboardButton(text="▶️", callback_data=f"pr_page:{user_id}:{page + 1}"))
+        nav.append(InlineKeyboardButton(text="▶️", callback_data=f"pr_page:{user_id}:{page + 1}", style="primary"))
     rows.append(nav)
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
@@ -5735,8 +5744,8 @@ def ultra_rebirth_eligible(evolution_level: int, leg_level: int, rebirth_count: 
 
 def ultra_rebirth_confirm_keyboard(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[[
-        InlineKeyboardButton(text="🌌 Подтвердить", callback_data=f"ultra_ok:{user_id}"),
-        InlineKeyboardButton(text="Отмена", callback_data=f"ultra_no:{user_id}"),
+        InlineKeyboardButton(text="🌌 Подтвердить", callback_data=f"ultra_ok:{user_id}", style="success"),
+        InlineKeyboardButton(text="Отмена", callback_data=f"ultra_no:{user_id}", style="danger"),
     ]])
 
 
