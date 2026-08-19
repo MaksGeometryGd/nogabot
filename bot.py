@@ -91,9 +91,9 @@ PREMIUM_KARAMBIT_GOLD = '<tg-emoji emoji-id="5060114895148680390">🔪</tg-emoji
 PREMIUM_BUTTERFLY_LEGACY = '<tg-emoji emoji-id="4943160586331490355">🦋</tg-emoji>'
 
 # Новые бустеры (мини-апдейт): крест / фати / фанат Мику.
-PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5282820155015971423">✝️</tg-emoji>'
-PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5404393696865041225">🤲</tg-emoji>'
-PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5199714801286132798">🎧</tg-emoji>'
+PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5415692772273312092">✝️</tg-emoji>'
+PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5415692772273312093">🤲</tg-emoji>'
+PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5415692772273312094">🎧</tg-emoji>'
 
 PREMIUM_BADGE_TESTER = '<tg-emoji emoji-id="5947528161536251718">🧪</tg-emoji>'
 PREMIUM_BADGE_SUPPORT = '<tg-emoji emoji-id="5947343263194157527">🛠️</tg-emoji>'
@@ -102,10 +102,10 @@ PREMIUM_BADGE_TOP1_PAST = '<tg-emoji emoji-id="5363999757079429238">👑</tg-emo
 
 # ---------- Безумные крафты (ур.1/ур.3) ----------
 # TODO: заменить emoji-id на реальные premium-эмодзи, когда достанешь.
-PREMIUM_CHAOS_ORB = '<tg-emoji emoji-id="5201679280672616755">🌀</tg-emoji>'
-PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="5237697056805510735">⏰</tg-emoji>'
-PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="5305669252181672918">🔮</tg-emoji>'
-PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="5237888066886064441">⚡️</tg-emoji>'
+PREMIUM_CHAOS_ORB = '<tg-emoji emoji-id="0000000000000000010">🌀</tg-emoji>'
+PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="0000000000000000011">⏰</tg-emoji>'
+PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="0000000000000000012">🔮</tg-emoji>'
+PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="0000000000000000013">⚡️</tg-emoji>'
 
 # ---------- Кейс 3: премиум-иконки (заглушки) ----------
 # TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
@@ -941,6 +941,7 @@ CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX = 1, 200  # диапазон % буста
 
 GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активирована."  # заменяет обычный префикс ответа фермы
 KOSHKO_AMULET_FLAVOR = f"{PREMIUM_KOSHKO_AMULET} Сила кошко-девочки активна."  # то же самое, но для амулета кошко-девочки
+CHRONOS_ORB_FLAVOR = f"{PREMIUM_CHRONOS_ORB} ХАОС ХАОС ХАОС"  # флейвор Шара Хроноса — приоритет ВЫШЕ god_essence/koshko_amulet
 # Тиры, полностью наследующие "god_essence"-механики (скорость фарма, гарант монет/очков перерождения).
 GOD_TIER_LIKE = {"god_essence", "koshko_amulet"}
 
@@ -1850,15 +1851,19 @@ def format_potion_stock(stock: dict) -> str:
 
 
 def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrades: dict = None,
-                    ultra_rebirth: bool = False, chronos_boost_pct: int = 0) -> float:
+                    ultra_rebirth: bool = False, chronos_boost_pct: int = 100) -> float:
     mult = 1.0
     if evolution_level >= 2:
         mult += EVO_BOOST_STEP
     if evolution_level >= 3:
         mult += EVO_BOOST_STEP * (evolution_level - 2)
+    # Бусты экипированных бустеров (амулеты и т.п.) не складываются друг с другом —
+    # применяется только самый сильный из надетых (см. ITEMS[key][2] = boost_percent).
+    best_boost_percent = 0
     for item_key in _normalize_active_items(active_items):
         if item_key in ITEMS:
-            mult += ITEMS[item_key][2] / 100
+            best_boost_percent = max(best_boost_percent, ITEMS[item_key][2])
+    mult += best_boost_percent / 100
     if "chronos_orb" in set(_normalize_active_items(active_items)):
         # 🔮 Шар Хроноса: буст рандомный (1-200%), меняется раз в 5 минут фоновым тасков
         # (см. chronos_orb_boost_loop), текущее значение хранится в users.chronos_boost_pct.
@@ -2381,7 +2386,7 @@ async def ensure_user(user_id: int, username: str):
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
         now = int(time.time())
-        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "", "", 100)
+        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "", 0, "", "", 0, "", 100)
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
@@ -2674,20 +2679,21 @@ async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
         await add_item(user_id, "old_vase", 1)
         lines.append(f"🔮 Шар Хроноса: +1 {ITEMS['old_vase'][0]} Старая ваза!")
 
-    return "".join(lines), reset_cd, farm_extra_mult
+    return "\n".join(lines), reset_cd, farm_extra_mult
 
 
 async def chronos_orb_boost_loop():
     """Фоновый таск: раз в CHRONOS_BOOST_INTERVAL (5 мин) пересчитывает рандомный % буста
     (1-200%) для ВСЕХ игроков сразу — не только для тех, у кого экипирован Шар Хроноса
-    (дёшево одним UPDATE, а не по каждому фарму), см. get_multiplier()."""
+    (дёшево одним UPDATE, а не по каждому фарму), см. get_multiplier(). Первый пересчёт —
+    сразу при старте бота, чтобы буст не простаивал на 0%/100% до первого 5-минутного тика."""
     while True:
-        await asyncio.sleep(CHRONOS_BOOST_INTERVAL)
         try:
             new_pct = random.randint(CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX)
             await db_exec("UPDATE users SET chronos_boost_pct = ?", (new_pct,))
         except Exception as e:
             print(f"chronos_orb_boost_loop ошибка: {e}")
+        await asyncio.sleep(CHRONOS_BOOST_INTERVAL)
 
 
 async def is_event_active() -> bool:
@@ -3083,6 +3089,7 @@ async def autosell_toggle(callback: CallbackQuery):
     if item_key not in CASE_SELLABLE_ITEMS:
         await callback.answer()
         return
+    await callback.answer()  # мгновенный ack — убирает "часики" до начала работы с БД
 
     row = await get_user(owner_id)
     auto_sell_enabled = bool(row[30])
@@ -3098,7 +3105,6 @@ async def autosell_toggle(callback: CallbackQuery):
         format_autosell_text(auto_sell_enabled, auto_sell_items, page),
         reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
     )
-    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("autosell_switch:"))
@@ -3113,13 +3119,13 @@ async def autosell_switch(callback: CallbackQuery):
     row = await get_user(owner_id)
     auto_sell_enabled = not bool(row[30])
     auto_sell_items = parse_auto_sell_items(row[31])
+    await callback.answer(TEXTS["auto_sell_on_1"] if auto_sell_enabled else TEXTS["auto_sell_off_1"])
 
     await db_exec("UPDATE users SET auto_sell = ? WHERE user_id = ?", (1 if auto_sell_enabled else 0, owner_id))
     await callback.message.edit_text(
         format_autosell_text(auto_sell_enabled, auto_sell_items, page),
         reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
     )
-    await callback.answer(TEXTS["auto_sell_on_1"] if auto_sell_enabled else TEXTS["auto_sell_off_1"])
 
 
 @dp.callback_query(F.data.startswith("autosell_page:"))
@@ -3130,6 +3136,7 @@ async def autosell_page_nav(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
         return
+    await callback.answer()
 
     row = await get_user(owner_id)
     auto_sell_enabled = bool(row[30])
@@ -3138,7 +3145,6 @@ async def autosell_page_nav(callback: CallbackQuery):
         format_autosell_text(auto_sell_enabled, auto_sell_items, page),
         reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
     )
-    await callback.answer()
 
 
 VIP_CASE_OPEN_RE = re.compile(r"^вип открыть кейс\s+(\d+)\s+(\d+)$", re.IGNORECASE)
@@ -3291,6 +3297,7 @@ async def toggle_badge(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["toggle_badge_1"], show_alert=True)
         return
+    await callback.answer(TEXTS["toggle_badge_2"])
 
     row = await get_user(owner_id)
     username, evolution_level, cases_opened, total_farmed, vip_until = row[1], row[3], row[7], row[8], row[12]
@@ -3309,7 +3316,6 @@ async def toggle_badge(callback: CallbackQuery):
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
     kb = badges_keyboard(earned, hidden, owner_id)
     await callback.message.edit_text("🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
-    await callback.answer(TEXTS["toggle_badge_2"])
 
 
 @dp.message(F.text.regexp(r"[🦵🦿]"))
@@ -3438,13 +3444,22 @@ async def count_legs(message: Message):
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
     extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text + chaos_text + chronos_text
+    chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
-        flavor = KOSHKO_AMULET_FLAVOR if bonus.get("tier") == "koshko_amulet" else GOD_ESSENCE_FLAVOR
+        # 🔮 Шар Хроноса приоритетнее флейвора god_essence/koshko_amulet.
+        flavor = CHRONOS_ORB_FLAVOR if chronos_equipped else (KOSHKO_AMULET_FLAVOR if bonus.get("tier") == "koshko_amulet" else GOD_ESSENCE_FLAVOR)
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
             skull_prefix + TEXTS["count_legs_1"].format(v0=flavor, v1=parts, v2=total, v3=coin_text, v4=god_extra, v5=new_score, v6=extra_text)
+        )
+        return
+
+    if chronos_equipped:
+        await safe_reply(
+            message,
+            skull_prefix + TEXTS["count_legs_1"].format(v0=CHRONOS_ORB_FLAVOR, v1=parts, v2=total, v3=coin_text, v4="", v5=new_score, v6=extra_text)
         )
         return
 
@@ -3494,7 +3509,7 @@ async def my_profile(message: Message):
     rebirth_line = f"● Перерождений: {rebirth_count} (🉑 {rebirth_points})\n" if rebirth_count else ""
     ultra_line = "🌌 <b>Статус: После Ультра перерождения</b>\n" if ultra_rebirth else ""
     equipped_names = [ITEMS[k][1] for k in (active_items) if k and k in ITEMS]
-    equip_line = f"● Экипировано: {', '.join(equipped_names)}\n" if equipped_names else ""
+    equip_line = ("● Экипировано:\n" + "\n".join(f"  {n}" for n in equipped_names) + "\n") if equipped_names else ""
 
     text = (
         f"👣 <b>ТВОЯ ЛЮТАЯ НОГОСТЬ, {esc(shown_name)}:</b>\n"
@@ -3781,12 +3796,22 @@ async def farm(message: Message):
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
     extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + chaos_text + chronos_text
+    chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
+        # 🔮 Шар Хроноса приоритетнее флейвора god_essence/koshko_amulet.
+        flavor = CHRONOS_ORB_FLAVOR if chronos_equipped else GOD_ESSENCE_FLAVOR
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
             message,
-            TEXTS["farm_2"].format(v0=GOD_ESSENCE_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=extra_text)
+            TEXTS["farm_2"].format(v0=flavor, v1=gained, v2=new_score, v3=coin_text, v4=god_extra, v5=auto_text, v6=extra_text)
+        )
+        return
+
+    if chronos_equipped:
+        await safe_reply(
+            message,
+            TEXTS["farm_2"].format(v0=CHRONOS_ORB_FLAVOR, v1=gained, v2=new_score, v3=coin_text, v4="", v5=auto_text, v6=extra_text)
         )
         return
 
@@ -4278,7 +4303,9 @@ def format_inventory_menu_text(active_items, upgrades: dict = None, prestige_upg
     items = _normalize_active_items(active_items)
     max_slots = equipped_slots_max(upgrades or {}, prestige_upgrades or {})
     equipped = [f"{ITEMS[k][0]} {esc(ITEMS[k][1])} (+{ITEMS[k][2]}%)" for k in items if k in ITEMS]
-    equipped_text = f"Экипировано ({len(equipped)}/{max_slots}): " + (", ".join(equipped) if equipped else "ничего")
+    equipped_header = f"Экипировано ({len(equipped)}/{max_slots}):"
+    # Каждый экипированный предмет — на своей строке, а не слитно через запятую.
+    equipped_text = equipped_header + ("\n" + "\n".join(equipped) if equipped else " ничего")
     return f"🎒 <b>Твой инвентарь</b>\n{equipped_text}\n\nВыбери раздел:"
 
 
@@ -4457,7 +4484,11 @@ def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_p
             lines.append(f"● {cfg['emoji']} {format_time_left(val - now)}")
 
     owned = [f"{POTIONS[k]['emoji']}x{q}" for k, q in inventory_potions.items() if q > 0]
-    lines.append("В запасе: " + (", ".join(owned) if owned else "пусто"))
+    if owned:
+        lines.append("В запасе:")
+        lines.extend(f"  {o}" for o in owned)
+    else:
+        lines.append("В запасе: пусто")
 
     return "\n".join(lines)
 
@@ -4584,13 +4615,13 @@ async def inventory_back_to_menu(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["inventory_back_to_menu_1"], show_alert=True)
         return
+    await callback.answer()
 
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     prestige_upgrades = parse_prestige_upgrades(row[28])
     await safe_edit_text(callback, format_inventory_menu_text(active_items, upgrades, prestige_upgrades), reply_markup=inventory_menu_keyboard(owner_id))
-    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("inv_cat:"))
@@ -4602,6 +4633,7 @@ async def inventory_open_category(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
         return
+    await callback.answer()
 
     if category == "boosters":
         rows = await get_inventory(owner_id)
@@ -4627,7 +4659,6 @@ async def inventory_open_category(callback: CallbackQuery):
     else:
         rows = await get_inventory(owner_id)
         await safe_edit_text(callback, format_items_text(rows, page), reply_markup=items_keyboard(owner_id, rows, page))
-    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("potion_brew:"))
@@ -4772,6 +4803,7 @@ async def inventory_boosters_page(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
         return
+    await callback.answer()
 
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
@@ -4780,7 +4812,6 @@ async def inventory_boosters_page(callback: CallbackQuery):
     max_slots = equipped_slots_max(upgrades, prestige_upgrades)
     rows = await get_inventory(owner_id)
     await callback.message.edit_text(format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
-    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("inv_boost_search_page:"))
@@ -4792,6 +4823,7 @@ async def inventory_boosters_search_page(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
         return
+    await callback.answer()
 
     row = await get_user(owner_id)
     active_items = parse_equipped(row[18])
@@ -4800,7 +4832,6 @@ async def inventory_boosters_search_page(callback: CallbackQuery):
         format_boosters_text(rows, page=page, query=query),
         reply_markup=boosters_keyboard(rows, active_items, owner_id, page, query=query),
     )
-    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("inv_items_page:"))
@@ -4811,10 +4842,10 @@ async def inventory_items_page(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
         return
+    await callback.answer()
 
     rows = await get_inventory(owner_id)
     await safe_edit_text(callback, format_items_text(rows, page), reply_markup=items_keyboard(owner_id, rows, page))
-    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("inv_potion_page:"))
@@ -4825,6 +4856,7 @@ async def inventory_potions_page(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
         return
+    await callback.answer()
 
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
@@ -4838,7 +4870,6 @@ async def inventory_potions_page(callback: CallbackQuery):
         format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, page=page),
         reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page, active_items=active_items),
     )
-    await callback.answer()
 
 
 @dp.callback_query(F.data == "noop")
@@ -4964,6 +4995,7 @@ async def crafts_page_nav(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["craft_do_1"], show_alert=True)
         return
+    await callback.answer()
 
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
@@ -4974,7 +5006,6 @@ async def crafts_page_nav(callback: CallbackQuery):
         format_crafts_text(recipe_keys, craft_level, query or "", page),
         reply_markup=crafts_keyboard(recipe_keys, owner_id, page, query or "") if recipe_keys else None,
     )
-    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("craft:"))
@@ -5151,6 +5182,7 @@ async def inspect_case_callback(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["inspect_case_callback_1"], show_alert=True)
         return
+    await callback.answer()
 
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
@@ -5161,7 +5193,6 @@ async def inspect_case_callback(callback: CallbackQuery):
         format_case_inspect_text(case_num, price, case["price"]),
         reply_markup=case_offer_keyboard(case_num, owner_id, price),
     )
-    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("buy_case:"))
@@ -5367,6 +5398,7 @@ async def upgrade_change_page(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["upgrade_change_page_1"], show_alert=True)
         return
+    await callback.answer()
 
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
@@ -5376,7 +5408,6 @@ async def upgrade_change_page(callback: CallbackQuery):
         format_upgrade_page_text(upgrades, rebirth_points, category, craft_points),
         reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
     )
-    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("upg_buy:"))
@@ -5501,6 +5532,7 @@ async def prestige_change_page(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["upgrade_change_page_1"], show_alert=True)
         return
+    await callback.answer()
 
     row = await get_user(owner_id)
     prestige_upgrades = parse_prestige_upgrades(row[28])
@@ -5509,7 +5541,6 @@ async def prestige_change_page(callback: CallbackQuery):
         format_prestige_page_text(prestige_upgrades, prestige_points, page),
         reply_markup=prestige_page_keyboard(prestige_upgrades, owner_id, page),
     )
-    await callback.answer()
 
 
 @dp.callback_query(F.data.startswith("pr_buy:"))
@@ -5693,8 +5724,8 @@ async def ultra_rebirth_cancel(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["ultra_rebirth_not_owner_1"], show_alert=True)
         return
-    await safe_edit_text(callback, TEXTS["ultra_rebirth_cancelled_1"])
     await callback.answer()
+    await safe_edit_text(callback, TEXTS["ultra_rebirth_cancelled_1"])
 
 
 @dp.callback_query(F.data.startswith("ultra_ok:"))
