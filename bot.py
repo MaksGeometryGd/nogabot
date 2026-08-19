@@ -617,6 +617,7 @@ TEXTS = {
     "admin_logs_2": '📜 <b>Последние действия ({v0}):</b>\n{v1}',
 
     "admin_ping_1": '🏓 Понг! Ответ БД за {v0} мс.',
+    "admin_ping_2": '🏓 Понг! 5 замеров SELECT 1 (мс): {v0}\nmin={v1} avg={v2} max={v3}',
 
     "admin_event_stop_1": 'Ивент остановлен.',
     "admin_event_stop_2": 'Ивент и так не активен.',
@@ -7463,6 +7464,27 @@ async def admin_ping(message: Message):
     await db_query_one("SELECT 1")
     elapsed_ms = round((time.monotonic() - start) * 1000)
     await message.reply(TEXTS["admin_ping_1"].format(v0=elapsed_ms))
+
+
+@dp.message(F.text.lower() == "!пинг5")
+async def admin_ping5(message: Message):
+    # Диагностика: 5 последовательных SELECT 1, чтобы отличить разовый пик
+    # (запрос попал в очередь _db_worker следом за другими задачами) от
+    # устойчивой сетевой/региональной задержки до Turso.
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    samples = []
+    for _ in range(5):
+        start = time.monotonic()
+        await db_query_one("SELECT 1")
+        samples.append(round((time.monotonic() - start) * 1000))
+    samples_text = ", ".join(str(s) for s in samples)
+    await message.reply(
+        TEXTS["admin_ping_2"].format(
+            v0=samples_text, v1=min(samples), v2=round(sum(samples) / len(samples)), v3=max(samples)
+        )
+    )
 
 
 @dp.message(F.text.lower() == "!ивент стоп")
