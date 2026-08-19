@@ -298,7 +298,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !забанить чат [название] — тихо отключить фарм в чате (без аргумента — текущий чат)\n● !разбанить чат [название] — снять тихий бан с чата\n● !список банов чат — список забаненных чатов\n● !список чат — все чаты, где сейчас состоит бот\n● !логи — последние действия админа\n● !пинг — задержка БД\n'
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !бан все / !разбан все — полный тихий бан игрока во всех чатах (в ответ на его сообщение)\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников / !список банов игроков — списки\n● !игроки — список всех игроков\n● !найти @user — в каких чатах видели игрока\n● !забанить чат [название] — тихо отключить фарм в чате (без аргумента — текущий чат; при нескольких совпадениях по названию банит их все сразу)\n● !разбанить чат [название] — снять тихий бан с чата (тоже сразу со всех совпадений)\n● !список банов чат — список забаненных чатов\n● !список чат — все чаты, где сейчас состоит бот\n● !логи — последние 20 действий админа\n● !логи вся — вся история действий админа\n● !пинг — задержка БД\n'
     '● !промокод создать "тип" "кол-во" "активаций" "название" — создать промокод (тип: ноги/эво/коин/очкп/крафт или предмет:<ключ>)\n'
     '● !промокод создать бейдж "название_бейджа" "название_промокода" — создать промокод на бейдж (бейджи: тестер/сапорт/потужность/топ1 в прошлом)\n'
     '● !промокод удалить "название" — удалить промокод\n'
@@ -616,10 +616,26 @@ TEXTS = {
     "admin_ban_chat_2": '⚠️ Фарм уже был отключён в этом чате.',
     "admin_ban_chat_3": 'Чат не найден по названию «{v0}». Бот знает только чаты, где уже писали игроки.',
     "admin_ban_chat_4": 'Найдено несколько подходящих чатов, уточни название:\n{v0}',
+    "admin_ban_chat_5": '✅ Фарм отключён сразу в {v0} чатах:\n{v1}',
+    "admin_ban_chat_6": '⚠️ Уже были забанены ({v0}):\n{v1}',
     "admin_unban_chat_1": '✅ Фарм снова разрешён в чате: {v0}',
     "admin_unban_chat_2": '⚠️ Этот чат и так не был в бане.',
+    "admin_unban_chat_3": '✅ Фарм снова разрешён сразу в {v0} чатах:\n{v1}',
+    "admin_unban_chat_4": '⚠️ И так не были в бане ({v0}):\n{v1}',
     "admin_list_banned_chats_1": 'Нет забаненных чатов.',
     "admin_list_banned_chats_2": '🚫 Забаненные чаты ({v0}):\n{v1}',
+    "admin_ban_all_1": '✅ {v0} забанен(а) полностью — бот теперь молчит для него/неё во всех чатах.',
+    "admin_ban_all_2": '⚠️ Этот игрок уже был полностью забанен.',
+    "admin_ban_all_3": 'Формат: !бан все (в ответ на сообщение игрока)',
+    "admin_unban_all_1": '✅ {v0} разбанен(а) полностью — бот снова отвечает во всех чатах.',
+    "admin_unban_all_2": '⚠️ Этот игрок и так не был полностью забанен.',
+    "admin_unban_all_3": 'Формат: !разбан все (в ответ на сообщение игрока)',
+    "admin_list_banned_users_1": 'Нет полностью забаненных игроков.',
+    "admin_list_banned_users_2": '🚫 Полностью забаненные игроки ({v0}):\n{v1}',
+    "admin_players_1": 'Игроков пока нет.',
+    "admin_players_2": '👥 <b>Игроки ({v0}):</b>\n{v1}',
+    "admin_logs_all_1": 'Логов пока нет.',
+    "admin_logs_all_2": '📜 <b>Все логи ({v0}):</b>\n{v1}',
     "admin_list_chats_1": 'Бот пока нигде не активен (ещё никто не писал команды в группах).',
     "admin_list_chats_2": '💬 Чаты бота ({v0}):\n{v1}',
 
@@ -1363,6 +1379,10 @@ ADMIN_FIND_RE = re.compile(r"^!найти\s+@?(\w+)$", re.IGNORECASE)
 # просто "ферма"/"фарма" перестаёт работать (без ответа, см. хендлер farm()).
 ADMIN_BAN_CHAT_RE = re.compile(r"^!забанить чат(?:\s+(.+))?$", re.IGNORECASE)
 ADMIN_UNBAN_CHAT_RE = re.compile(r"^!разбанить чат(?:\s+(.+))?$", re.IGNORECASE)
+# !бан все / !разбан все — персональный тихий бан игрока (в ответ на его сообщение),
+# работает на уровне "забанить чат", но для конкретного user_id во всех чатах сразу.
+ADMIN_BAN_ALL_RE = re.compile(r"^!бан все(\s+себе)?$", re.IGNORECASE)
+ADMIN_UNBAN_ALL_RE = re.compile(r"^!разбан все(\s+себе)?$", re.IGNORECASE)
 
 # ---------- Промокоды ----------
 # Аргументы в кавычках: !промокод создать "тип" "количество" "активаций" "название"
@@ -1390,8 +1410,8 @@ FIXED_COMMANDS = {
     "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ", "крафты", "крафт",
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
     "мои зелья", "зелья",
-    "!список вип", "!список банов топ", "!список ников", "!список банов чат", "!список чат", "!логи", "!пинг", "!ивент стоп", "!ивент статус",
-    "!забанить чат", "!разбанить чат",
+    "!список вип", "!список банов топ", "!список ников", "!список банов чат", "!список чат", "!логи", "!логи вся", "!пинг", "!ивент стоп", "!ивент статус",
+    "!забанить чат", "!разбанить чат", "!игроки", "!список банов игроков",
     "ультра перерождение", "ультра перерождение подтверждаю",
     "авто эво вкл", "авто эво выкл", "авто эволюция вкл", "авто эволюция выкл",
     "авто перерождение вкл", "авто перерождение выкл", "авто рб вкл", "авто рб выкл",
@@ -1403,7 +1423,7 @@ PREFIX_COMMANDS = (
     "!дать коин", "!снять коин", "!дать б", "!снять б", "!дать п", "!снять п", "!дать вип", "!снять вип", "!сбросить",
     "передать ", "дать ", "кейс ", NEWS_PREFIX, "инфо ", "продать",
     "!дать очкп", "!снять очкп", "!дать крафт", "открыть кейс", "осмотреть кейс", "осмотр кейс", "крафты ", "крафт ", "уничтожение",
-    "+ник ", "!бан топ", "!разбан топ", "!установить ног", "!установить эво",
+    "+ник ", "!бан топ", "!разбан топ", "!бан все", "!разбан все", "!установить ног", "!установить эво",
     "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
     "!установить очкп", "!обнулить экономику", "!мультипликатор ферма", "!дать предмет",
     "!очистить инвентарь", "!дать апгрейд", "!вип навсегда", "!сброс ник", "!найти ", "!ультра навсегда",
@@ -2491,6 +2511,17 @@ async def init_db():
             banned_at INTEGER
         )
     """)
+    # Персональный тихий бан игрока (см. !бан все) — работает как banned_chats, но по
+    # user_id и во ВСЕХ чатах сразу: весь игровой функционал бота для этого игрока молча
+    # не отвечает, независимо от того, забанен ли сам чат.
+    await db_exec("""
+        CREATE TABLE IF NOT EXISTS banned_users (
+            user_id INTEGER PRIMARY KEY,
+            username TEXT,
+            banned_by TEXT,
+            banned_at INTEGER
+        )
+    """)
     # ---------- Система промокодов ----------
     # reward_type: "legs" (ноги/score), "evo" (эво/evolution_level), "coin" (монеты),
     # "rebirth" (очкп/rebirth_points), "craft" (очкк/craft_points), "item" (предмет из ITEMS,
@@ -3044,6 +3075,36 @@ class ChatBanMiddleware(BaseMiddleware):
         return await handler(event, data)
 
 
+class UserBanMiddleware(BaseMiddleware):
+    """Тихий персональный бан игрока (см. !бан все): если user_id в banned_users, ВЕСЬ
+    игровой функционал бота для этого игрока молча не работает — ни текстовые команды,
+    ни инлайн-кнопки, в ЛЮБОМ чате и в личке. Работает как ChatBanMiddleware, но по
+    user_id, а не по chat_id — не завязан на конкретный чат.
+
+    Исключение — команды управления самим баном (!бан все / !разбан все / !список банов
+    игроков), чтобы забаненного игрока можно было разбанить, и админ (is_admin) никогда
+    не блокируется сам собой."""
+    BAN_MGMT_PREFIXES = ("!бан все", "!разбан все", "!список банов игроков")
+
+    async def __call__(self, handler, event, data):
+        user = getattr(event, "from_user", None)
+        if user is not None and user.id is not None and user.id != ADMIN_USER_ID:
+            text = getattr(event, "text", None)
+            if isinstance(event, CallbackQuery):
+                text = None  # у callback нет .text — сверяем только по user_id ниже
+            is_ban_mgmt = bool(text) and text.strip().lower().startswith(self.BAN_MGMT_PREFIXES)
+            if not is_ban_mgmt:
+                banned = await db_query_one("SELECT 1 FROM banned_users WHERE user_id = ?", (user.id,))
+                if banned:
+                    if isinstance(event, CallbackQuery):
+                        try:
+                            await event.answer()
+                        except Exception:
+                            pass
+                    return
+        return await handler(event, data)
+
+
 class AliasNormalizeMiddleware(BaseMiddleware):
     """Переписывает message.text на канонический вид команды ДО того, как текст попадёт
     в остальные middleware/хендлеры (is_command_text, ThrottleMiddleware, сами @dp.message)."""
@@ -3172,6 +3233,8 @@ dp.callback_query.middleware(StaleCallbackGuardMiddleware())
 
 dp.message.outer_middleware(ChatBanMiddleware())
 dp.callback_query.outer_middleware(ChatBanMiddleware())
+dp.message.outer_middleware(UserBanMiddleware())
+dp.callback_query.outer_middleware(UserBanMiddleware())
 dp.message.outer_middleware(AliasNormalizeMiddleware())
 # PrivateBlockMiddleware больше не подключается — личка разлочена для всех
 # (раньше в ЛС отвечал только ADMIN_USERNAME, остальные получали тишину).
@@ -7374,10 +7437,10 @@ async def admin_find(message: Message):
     await message.reply(TEXTS["admin_find_3"].format(v0=esc(row[1]), v1=len(chat_rows), v2="\n".join(lines)))
 
 
-async def _resolve_chat_by_query(message: Message, query: str):
+async def _resolve_chats_by_query(message: Message, query: str):
     """Ищет chat_id по подстроке названия среди чатов, известных боту (chat_members).
-    Возвращает (chat_id, title) при однозначном совпадении, либо (None, None) и сам
-    отправляет игроку соответствующее сообщение (не найдено / несколько совпадений)."""
+    Возвращает список [(chat_id, title), ...] всех совпадений (может быть пустым), и
+    сам отправляет игроку сообщение, если совпадений вообще не нашлось."""
     rows = await db_query("SELECT DISTINCT chat_id FROM chat_members")
     query_lower = query.lower()
     matches = []
@@ -7392,12 +7455,7 @@ async def _resolve_chat_by_query(message: Message, query: str):
 
     if not matches:
         await message.reply(TEXTS["admin_ban_chat_3"].format(v0=esc(query)))
-        return None, None
-    if len(matches) > 1:
-        lines = [f"● {esc(title)}" for _, title in matches[:20]]
-        await message.reply(TEXTS["admin_ban_chat_4"].format(v0="\n".join(lines)))
-        return None, None
-    return matches[0]
+    return matches
 
 
 @dp.message(F.text.regexp(r"(?i)^!забанить чат"))
@@ -7410,24 +7468,41 @@ async def admin_ban_chat(message: Message):
     query = query.strip()
 
     if query:
-        chat_id, title = await _resolve_chat_by_query(message, query)
-        if chat_id is None:
+        # Если по названию находится несколько подходящих чатов — банятся ВСЕ
+        # совпадения сразу одной командой, без запроса на уточнение.
+        targets = await _resolve_chats_by_query(message, query)
+        if not targets:
             return
     else:
-        chat_id = message.chat.id
-        title = message.chat.title or message.chat.full_name or str(chat_id)
-
-    existing = await db_query_one("SELECT chat_id FROM banned_chats WHERE chat_id = ?", (chat_id,))
-    if existing:
-        await message.reply(TEXTS["admin_ban_chat_2"])
-        return
+        targets = [(message.chat.id, message.chat.title or message.chat.full_name or str(message.chat.id))]
 
     admin_username = message.from_user.username or str(message.from_user.id)
-    await db_exec(
-        "INSERT INTO banned_chats (chat_id, title, banned_by, banned_at) VALUES (?, ?, ?, ?)",
-        (chat_id, title, admin_username, int(time.time())),
-    )
-    await message.reply(TEXTS["admin_ban_chat_1"].format(v0=esc(title)))
+    banned_now = []
+    already_banned = []
+    for chat_id, title in targets:
+        existing = await db_query_one("SELECT chat_id FROM banned_chats WHERE chat_id = ?", (chat_id,))
+        if existing:
+            already_banned.append(title)
+            continue
+        await db_exec(
+            "INSERT INTO banned_chats (chat_id, title, banned_by, banned_at) VALUES (?, ?, ?, ?)",
+            (chat_id, title, admin_username, int(time.time())),
+        )
+        banned_now.append(title)
+
+    if len(targets) == 1:
+        if banned_now:
+            await message.reply(TEXTS["admin_ban_chat_1"].format(v0=esc(banned_now[0])))
+        else:
+            await message.reply(TEXTS["admin_ban_chat_2"])
+        return
+
+    lines = [f"● {esc(t)}" for t in banned_now]
+    text = TEXTS["admin_ban_chat_5"].format(v0=len(banned_now), v1="\n".join(lines) or "—")
+    if already_banned:
+        skipped_lines = "\n".join(f"● {esc(t)}" for t in already_banned)
+        text += "\n\n" + TEXTS["admin_ban_chat_6"].format(v0=len(already_banned), v1=skipped_lines)
+    await message.reply(text)
 
 
 @dp.message(F.text.regexp(r"(?i)^!разбанить чат"))
@@ -7440,20 +7515,36 @@ async def admin_unban_chat(message: Message):
     query = query.strip()
 
     if query:
-        chat_id, title = await _resolve_chat_by_query(message, query)
-        if chat_id is None:
+        # Как и при бане — при нескольких совпадениях по названию снимаем бан со всех сразу.
+        targets = await _resolve_chats_by_query(message, query)
+        if not targets:
             return
     else:
-        chat_id = message.chat.id
-        title = message.chat.title or message.chat.full_name or str(chat_id)
+        targets = [(message.chat.id, message.chat.title or message.chat.full_name or str(message.chat.id))]
 
-    existing = await db_query_one("SELECT chat_id FROM banned_chats WHERE chat_id = ?", (chat_id,))
-    if not existing:
-        await message.reply(TEXTS["admin_unban_chat_2"])
+    unbanned_now = []
+    not_banned = []
+    for chat_id, title in targets:
+        existing = await db_query_one("SELECT chat_id FROM banned_chats WHERE chat_id = ?", (chat_id,))
+        if not existing:
+            not_banned.append(title)
+            continue
+        await db_exec("DELETE FROM banned_chats WHERE chat_id = ?", (chat_id,))
+        unbanned_now.append(title)
+
+    if len(targets) == 1:
+        if unbanned_now:
+            await message.reply(TEXTS["admin_unban_chat_1"].format(v0=esc(unbanned_now[0])))
+        else:
+            await message.reply(TEXTS["admin_unban_chat_2"])
         return
 
-    await db_exec("DELETE FROM banned_chats WHERE chat_id = ?", (chat_id,))
-    await message.reply(TEXTS["admin_unban_chat_1"].format(v0=esc(title)))
+    lines = [f"● {esc(t)}" for t in unbanned_now]
+    text = TEXTS["admin_unban_chat_3"].format(v0=len(unbanned_now), v1="\n".join(lines) or "—")
+    if not_banned:
+        skipped_lines = "\n".join(f"● {esc(t)}" for t in not_banned)
+        text += "\n\n" + TEXTS["admin_unban_chat_4"].format(v0=len(not_banned), v1=skipped_lines)
+    await message.reply(text)
 
 
 @dp.message(F.text.lower() == "!список банов чат")
@@ -7468,6 +7559,97 @@ async def admin_list_banned_chats(message: Message):
 
     lines = [f"● {esc(title or str(chat_id))}" for title, chat_id in rows]
     await message.reply(TEXTS["admin_list_banned_chats_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+
+@dp.message(F.text.regexp(r"(?i)^!бан все"))
+async def admin_ban_all(message: Message):
+    """!бан все — персональный тихий бан игрока (в ответ на его сообщение), уровня
+    "забанить чат", но по user_id и во всех чатах сразу (см. UserBanMiddleware)."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_BAN_ALL_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_ban_all_3"])
+        return
+
+    target = await resolve_target(message, bool(match.group(1)))
+    if not target:
+        await message.reply(TEXTS["admin_ban_all_3"])
+        return
+
+    existing = await db_query_one("SELECT user_id FROM banned_users WHERE user_id = ?", (target.id,))
+    if existing:
+        await message.reply(TEXTS["admin_ban_all_2"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    admin_username = message.from_user.username or str(message.from_user.id)
+    await db_exec(
+        "INSERT INTO banned_users (user_id, username, banned_by, banned_at) VALUES (?, ?, ?, ?)",
+        (target.id, target_username, admin_username, int(time.time())),
+    )
+    await message.reply(TEXTS["admin_ban_all_1"].format(v0=esc(target_username)))
+
+
+@dp.message(F.text.regexp(r"(?i)^!разбан все"))
+async def admin_unban_all(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_UNBAN_ALL_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["admin_unban_all_3"])
+        return
+
+    target = await resolve_target(message, bool(match.group(1)))
+    if not target:
+        await message.reply(TEXTS["admin_unban_all_3"])
+        return
+
+    existing = await db_query_one("SELECT user_id FROM banned_users WHERE user_id = ?", (target.id,))
+    if not existing:
+        await message.reply(TEXTS["admin_unban_all_2"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    await db_exec("DELETE FROM banned_users WHERE user_id = ?", (target.id,))
+    await message.reply(TEXTS["admin_unban_all_1"].format(v0=esc(target_username)))
+
+
+@dp.message(F.text.lower() == "!список банов игроков")
+async def admin_list_banned_users(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    rows = await db_query("SELECT username, user_id FROM banned_users ORDER BY banned_at DESC LIMIT 50")
+    if not rows:
+        await message.reply(TEXTS["admin_list_banned_users_1"])
+        return
+
+    lines = [f"● {esc(username or str(user_id))}" for username, user_id in rows]
+    await message.reply(TEXTS["admin_list_banned_users_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+
+@dp.message(F.text.lower() == "!игроки")
+async def admin_list_players(message: Message):
+    """!игроки — показ всех игроков (username/ник + основные показатели)."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    rows = await db_query(
+        "SELECT username, nickname, score, evolution_level FROM users "
+        "ORDER BY evolution_level DESC, score DESC LIMIT 100"
+    )
+    if not rows:
+        await message.reply(TEXTS["admin_players_1"])
+        return
+
+    lines = [
+        f"● {esc(display_name(username, nickname))} — нога {score}, эво {evolution_level}"
+        for username, nickname, score, evolution_level in rows
+    ]
+    await message.reply(TEXTS["admin_players_2"].format(v0=len(rows), v1="\n".join(lines)))
 
 
 @dp.message(F.text.lower() == "!список чат")
@@ -7712,6 +7894,46 @@ async def admin_logs(message: Message):
         lines.append(f"● [{dt}] @{esc(admin_username)}: {esc(command)}")
 
     await message.reply(TEXTS["admin_logs_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+
+@dp.message(F.text.lower() == "!логи вся")
+async def admin_logs_all(message: Message):
+    """!логи вся — вся история audit_log без ограничения в 20 записей.
+    Telegram-сообщение ограничено ~4096 символами, поэтому шлём частями."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    rows = await db_query("SELECT ts, admin_username, command FROM audit_log ORDER BY id DESC")
+    if not rows:
+        await message.reply(TEXTS["admin_logs_all_1"])
+        return
+
+    lines = []
+    for ts, admin_username, command in rows:
+        dt = datetime.fromtimestamp(ts).strftime("%d.%m %H:%M")
+        lines.append(f"● [{dt}] @{esc(admin_username)}: {esc(command)}")
+
+    total = len(rows)
+    header = TEXTS["admin_logs_all_2"].format(v0=total, v1="")
+    chunk_limit = 3800  # запас от лимита Telegram (4096) под HTML-теги и служебный текст
+    chunk_lines = []
+    chunk_len = len(header)
+    chunks = []
+    for line in lines:
+        if chunk_len + len(line) + 1 > chunk_limit and chunk_lines:
+            chunks.append(chunk_lines)
+            chunk_lines = []
+            chunk_len = 0
+        chunk_lines.append(line)
+        chunk_len += len(line) + 1
+    if chunk_lines:
+        chunks.append(chunk_lines)
+
+    for i, chunk in enumerate(chunks):
+        if i == 0:
+            await message.reply(TEXTS["admin_logs_all_2"].format(v0=total, v1="\n".join(chunk)))
+        else:
+            await message.answer("\n".join(chunk))
 
 
 @dp.message(F.text.lower().startswith("!чистлоги"))
