@@ -2173,26 +2173,41 @@ async def resolve_target(message: Message, to_self: bool):
 
 
 # ---------- Слой БД (Turso / libSQL) ----------
-# ВАЖНО: раньше тут был один общий _conn + глобальный asyncio.Lock на КАЖДЫЙ запрос —
-# это сериализовало вообще все обращения к БД во всём боте (и текстовые команды, и
-# инлайн-кнопки), поэтому под нагрузкой кнопки "тупили": нажатие ждало своей очереди
-# среди вообще всех db-запросов бота. libsql-коннекшн не потокобезопасен для парал-
-# лельного использования одним объектом из разных потоков — но потокобезопасен, если
-# у каждого потока (thread pool executor'а из to_thread) СВОЁ соединение. Поэтому вместо
-# лока — соединение per-thread (threading.local), запросы разных пользователей теперь
-# реально выполняются параллельно и не блокируют друг друга.
-import threading
-
-_thread_local = threading.local()
-_pool_size_limiter = asyncio.Semaphore(32)  # верхний предел параллельных БД-потоков — защита от перегрузки Turso
+# ИСТОРИЯ ПРАВОК (важно не наступить на те же грабли повторно):
+# 1) Раньше был один общий _conn + глобальный asyncio.Lock на КАЖДЫЙ запрос — все
+#    обращения к БД сериализовались строго по одному, поэтому под нагрузкой кнопки
+#    и команды тормозили (каждый запрос ждал своей очереди).
+# 2) Затем это заменили на "соединение per-thread" через threading.local() + обычный
+#    asyncio.to_thread (дефолтный пул потоков, до 32 воркеров) — это ОКАЗАЛОСЬ ХУЖЕ:
+#    при спаме каждое сообщение могло попасть в новый поток пула и открыть НОВОЕ
+#    сетевое соединение с Turso, а Turso сериализует записи на своей стороне и не
+#    даёт выигрыша от параллельных соединений — вместо этого при спаме плодилось
+#    много одновременных попыток коннекта, что приводило к таймаутам соединения и
+#    "отвалу половины функционала", который сам проходил через время (когда лишние
+#    соединения закрывались по таймауту). Это и есть баг, о котором сообщил игрок.
+# ИТОГ (текущее решение): одно-единственное постоянное соединение + СТРОГАЯ очередь
+# запросов через один выделенный поток-воркер (не пул!). Запросы выполняются по
+# очереди — предсказуемо и без риска "размножения" соединений — но, в отличие от
+# варианта (1), это не блокирует event loop бота: пока воркер занят одним SQL-
+# запросом, сам бот продолжает читать апдейты от Telegram, отвечать на callback_query
+# ("часики" гаснут сразу), запускать другие хендлеры и т.д. — тормозит только сама
+# db-операция, а не весь бот целиком.
+_db_queue: "asyncio.Queue" = None
+_db_worker_task = None
+_conn = None
+# Единственный выделенный поток-исполнитель для всех synchronous libsql-вызовов —
+# ГАРАНТИРУЕТ, что _conn всегда используется из одного и того же ОС-потока (обычный
+# asyncio.to_thread берёт поток из общего пула, а он может отличаться от вызова к
+# вызову — с одним закреплённым потоком такой риск исключён полностью).
+from concurrent.futures import ThreadPoolExecutor
+_db_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="db-worker")
 
 
 def _connect():
-    conn = getattr(_thread_local, "conn", None)
-    if conn is None:
-        conn = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
-        _thread_local.conn = conn
-    return conn
+    global _conn
+    if _conn is None:
+        _conn = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
+    return _conn
 
 
 def _exec_sync(sql, params):
@@ -2207,14 +2222,45 @@ def _query_sync(sql, params):
     return cur.fetchall()
 
 
+async def _db_worker():
+    """Единственный поток, реально трогающий libsql-соединение. Берёт задачи из
+    очереди строго по одной — соединение всегда используется из одного и того же
+    потока, никаких гонок и никакого размножения коннектов при всплесках нагрузки."""
+    loop = asyncio.get_event_loop()
+    while True:
+        fn, sql, params, future = await _db_queue.get()
+        try:
+            result = await loop.run_in_executor(_db_executor, fn, sql, params)
+            if not future.done():
+                future.set_result(result)
+        except Exception as e:
+            if not future.done():
+                future.set_exception(e)
+        finally:
+            _db_queue.task_done()
+
+
+def _ensure_db_worker():
+    global _db_queue, _db_worker_task
+    if _db_queue is None:
+        _db_queue = asyncio.Queue()
+    if _db_worker_task is None or _db_worker_task.done():
+        _db_worker_task = asyncio.create_task(_db_worker())
+
+
+async def _db_submit(fn, sql, params):
+    _ensure_db_worker()
+    future = asyncio.get_event_loop().create_future()
+    await _db_queue.put((fn, sql, params, future))
+    return await future
+
+
 async def db_exec(sql, params=()):
-    async with _pool_size_limiter:
-        await asyncio.to_thread(_exec_sync, sql, params)
+    await _db_submit(_exec_sync, sql, params)
 
 
 async def db_query(sql, params=()):
-    async with _pool_size_limiter:
-        return await asyncio.to_thread(_query_sync, sql, params)
+    return await _db_submit(_query_sync, sql, params)
 
 
 async def db_query_one(sql, params=()):
