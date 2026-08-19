@@ -3050,7 +3050,7 @@ dp.message.outer_middleware(AliasNormalizeMiddleware())
 # PrivateBlockMiddleware больше не подключается — личка разлочена для всех
 # (раньше в ЛС отвечал только ADMIN_USERNAME, остальные получали тишину).
 dp.message.middleware(TrackMembershipMiddleware())
-dp.message.middleware(ThrottleMiddleware(1.5))
+dp.message.middleware(ThrottleMiddleware(0.6))
 dp.callback_query.middleware(CallbackThrottleMiddleware(0.15))
 
 _last_leg_reply = {}
