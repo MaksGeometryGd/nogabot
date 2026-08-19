@@ -21,6 +21,9 @@ from aiohttp import web
 
 TOKEN = os.environ.get("BOT_TOKEN")
 ADMIN_USERNAME = "MaksGeometryGd"
+# user_id — основная проверка админки (см. is_admin): в отличие от username,
+# не меняется и не может «утечь» другому аккаунту.
+ADMIN_USER_ID = 7148430462
 TURSO_URL = os.environ.get("TURSO_DATABASE_URL")
 TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN")
 
@@ -696,7 +699,7 @@ ITEMS = {
     # рандомный буст 1-200% (см. CHRONOS_BOOST_MIN/MAX, chronos_orb_boost_loop, get_multiplier).
     # 120 здесь — это только базовое/отображаемое значение (напр. для сортировки/UI), не бустит дважды.
     "chaos_orb":     (PREMIUM_CHAOS_ORB, "Шар хаоса", 0, 100),
-    "chronos_clock": (PREMIUM_CHRONOS_CLOCK, "Часы Хроноса", 0, 150),
+    "chronos_clock": (PREMIUM_CHRONOS_CLOCK, "Часы Хроноса", 0, 120),
     "chronos_orb":   (PREMIUM_CHRONOS_ORB, "Шар Хроноса", 0, 120),
 
     # ---------- Новые крафты (мини-апдейт) ----------
@@ -1641,10 +1644,29 @@ async def safe_reply(message: Message, text: str, reply_markup=None):
 
 
 async def safe_edit_text(callback: CallbackQuery, text: str, reply_markup=None):
+    """Как callback.message.edit_text(), но не роняет хендлер, если Telegram отклонил
+    правку. Это критично для инлайн-кнопок: если edit_text бросает исключение ДО того,
+    как хендлер успел вызвать callback.answer(), Telegram держит кнопку в состоянии
+    "часики" до собственного таймаута — именно это ощущается как "не нажимается"/
+    "нажимается криво". Ловим и гасим самые частые причины:
+    - "message is not modified" — юзер дважды подряд нажал одну и ту же кнопку
+      (текст/клавиатура не изменились); это не ошибка, просто нечего обновлять.
+    - "message to edit not found" / "query is too old" — сообщение удалено или
+      кнопка нажата на старом сообщении после рестарта бота.
+    - невалидный premium emoji-id — как и раньше, повторяем без премиум-обёртки.
+    """
     try:
         return await callback.message.edit_text(text, reply_markup=reply_markup)
-    except TelegramBadRequest:
-        return await callback.message.edit_text(strip_premium_emoji(text), reply_markup=reply_markup)
+    except TelegramBadRequest as e:
+        err = str(e).lower()
+        if "message is not modified" in err:
+            return None
+        if "message to edit not found" in err or "query is too old" in err or "message can't be edited" in err:
+            return None
+        try:
+            return await callback.message.edit_text(strip_premium_emoji(text), reply_markup=reply_markup)
+        except TelegramBadRequest:
+            return None
 
 
 def build_regular_visual(level: int) -> str:
@@ -2124,7 +2146,13 @@ def farm_range(evolution_level: int):
 
 
 def is_admin(message: Message) -> bool:
-    return (message.from_user.username or "").lower() == ADMIN_USERNAME.lower()
+    # Раньше проверялось только по username — если бы ты сменил ник, доступ отвалился
+    # бы у тебя и мог достаться первому, кто займёт освободившийся @MaksGeometryGd
+    # (username в Telegram не привязан к аккаунту навсегда и переиспользуется).
+    # user_id, в отличие от username, у аккаунта не меняется никогда — это основная
+    # проверка. Username оставлен как запасной канал (например, если ADMIN_USER_ID
+    # придётся когда-то поменять на другой аккаунт).
+    return message.from_user.id == ADMIN_USER_ID or (message.from_user.username or "").lower() == ADMIN_USERNAME.lower()
 
 
 def roll_case_item(case_num: int) -> str:
@@ -2948,10 +2976,25 @@ class ThrottleMiddleware(BaseMiddleware):
 class CallbackThrottleMiddleware(BaseMiddleware):
     """Троттлинг для инлайн-кнопок. Короткий кулдаун (350-500мс) и, что критично,
     ВСЕГДА отвечает на callback_query — иначе Telegram держит кнопку в состоянии
-    "загрузка" до собственного таймаута, что выглядит как зависшая/незажимаемая кнопка."""
+    "загрузка" до собственного таймаута, что выглядит как зависшая/незажимаемая кнопка.
+
+    ВАЖНО: ключ (user_id, callback_data) почти всегда уникален (страница/предмет/id
+    внутри callback_data), поэтому last_call растёт без ограничений и никогда не
+    чистится сам — за часы работы с активной аудиторией это утечка памяти и
+    постепенное замедление (в т.ч. ощущается как "кнопки тормозят"). Раз в
+    CLEANUP_EVERY вызовов выбрасываем протухшие записи (старше rate * 20)."""
+    CLEANUP_EVERY = 500
+
     def __init__(self, rate: float = 0.4):
         self.rate = rate
         self.last_call = {}
+        self._calls_since_cleanup = 0
+
+    def _cleanup(self, now: float):
+        ttl = self.rate * 20
+        stale = [k for k, t in self.last_call.items() if now - t > ttl]
+        for k in stale:
+            del self.last_call[k]
 
     async def __call__(self, handler, event: CallbackQuery, data):
         user_id = event.from_user.id if event.from_user else None
@@ -2967,12 +3010,42 @@ class CallbackThrottleMiddleware(BaseMiddleware):
                 pass
             return
         self.last_call[key] = now
+
+        self._calls_since_cleanup += 1
+        if self._calls_since_cleanup >= self.CLEANUP_EVERY:
+            self._calls_since_cleanup = 0
+            self._cleanup(now)
+
         return await handler(event, data)
 
 
+class StaleCallbackGuardMiddleware(BaseMiddleware):
+    """Многие callback-хендлеры делают callback.data.split(":") и int(parts[N]) без
+    защиты, полагаясь на то, что бот сам генерирует callback_data. Это верно почти
+    всегда — но если формат callback_data когда-нибудь поменяется (новая версия
+    бота), кнопки под СТАРЫМИ сообщениями (отправленными до обновления) начнут
+    падать с ValueError/IndexError прямо на парсинге, ДО вызова callback.answer().
+    Без этой страховки такая кнопка виснет с "часиками" до таймаута Telegram —
+    тот же симптом, что чинили в safe_edit_text, только с другим триггером.
+    Ловим узко (только ValueError/IndexError) — остальные ошибки идут в общий
+    @dp.errors() как и раньше, тут ничего не маскируем сверх этого."""
+    async def __call__(self, handler, event: CallbackQuery, data):
+        try:
+            return await handler(event, data)
+        except (ValueError, IndexError):
+            try:
+                await event.answer("Кнопка устарела, обнови меню заново.", show_alert=True)
+            except Exception:
+                pass
+            return
+
+
+dp.callback_query.middleware(StaleCallbackGuardMiddleware())
+
+
 dp.message.outer_middleware(AliasNormalizeMiddleware())
-dp.message.middleware(PrivateBlockMiddleware())
-dp.callback_query.middleware(PrivateBlockMiddleware())
+# PrivateBlockMiddleware больше не подключается — личка разлочена для всех
+# (раньше в ЛС отвечал только ADMIN_USERNAME, остальные получали тишину).
 dp.message.middleware(TrackMembershipMiddleware())
 dp.message.middleware(ThrottleMiddleware(1.5))
 dp.callback_query.middleware(CallbackThrottleMiddleware(0.15))
@@ -3194,7 +3267,7 @@ async def autosell_toggle(callback: CallbackQuery):
         auto_sell_items.add(item_key)
 
     await db_exec("UPDATE users SET auto_sell_items = ? WHERE user_id = ?", (format_auto_sell_items(auto_sell_items), owner_id))
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_autosell_text(auto_sell_enabled, auto_sell_items, page),
         reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
     )
@@ -3215,7 +3288,7 @@ async def autosell_switch(callback: CallbackQuery):
     await callback.answer(TEXTS["auto_sell_on_1"] if auto_sell_enabled else TEXTS["auto_sell_off_1"])
 
     await db_exec("UPDATE users SET auto_sell = ? WHERE user_id = ?", (1 if auto_sell_enabled else 0, owner_id))
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_autosell_text(auto_sell_enabled, auto_sell_items, page),
         reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
     )
@@ -3234,7 +3307,7 @@ async def autosell_page_nav(callback: CallbackQuery):
     row = await get_user(owner_id)
     auto_sell_enabled = bool(row[30])
     auto_sell_items = parse_auto_sell_items(row[31])
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_autosell_text(auto_sell_enabled, auto_sell_items, page),
         reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
     )
@@ -3408,7 +3481,7 @@ async def toggle_badge(callback: CallbackQuery):
     vip_active = is_vip_active(vip_until)
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
     kb = badges_keyboard(earned, hidden, owner_id)
-    await callback.message.edit_text("🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
+    await safe_edit_text(callback, "🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
 
 
 @dp.message(F.text.regexp(r"[🦵🦿]"))
@@ -4755,7 +4828,7 @@ async def inventory_open_category(callback: CallbackQuery):
         active_items = parse_equipped(row[18])
         prestige_upgrades = parse_prestige_upgrades(row[28])
         max_slots = equipped_slots_max(upgrades, prestige_upgrades)
-        await callback.message.edit_text(format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
+        await safe_edit_text(callback, format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
     elif category == "potions":
         row = await get_user(owner_id)
         upgrades = parse_upgrades(row[16])
@@ -4924,7 +4997,7 @@ async def inventory_boosters_page(callback: CallbackQuery):
     prestige_upgrades = parse_prestige_upgrades(row[28])
     max_slots = equipped_slots_max(upgrades, prestige_upgrades)
     rows = await get_inventory(owner_id)
-    await callback.message.edit_text(format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
+    await safe_edit_text(callback, format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
 
 
 @dp.callback_query(F.data.startswith("inv_boost_search_page:"))
@@ -4941,7 +5014,7 @@ async def inventory_boosters_search_page(callback: CallbackQuery):
     row = await get_user(owner_id)
     active_items = parse_equipped(row[18])
     rows = await get_inventory(owner_id)
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_boosters_text(rows, page=page, query=query),
         reply_markup=boosters_keyboard(rows, active_items, owner_id, page, query=query),
     )
@@ -5016,7 +5089,7 @@ async def toggle_equip(callback: CallbackQuery):
     await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), owner_id))
     rows = await get_inventory(owner_id)
 
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_boosters_text(rows, max_slots, page, query=query),
         reply_markup=boosters_keyboard(rows, new_equipped, owner_id, page, query=query),
     )
@@ -5115,7 +5188,7 @@ async def crafts_page_nav(callback: CallbackQuery):
     craft_level = craft_level_of(upgrades)
     recipe_keys = available_recipes(craft_level, query)
 
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_crafts_text(recipe_keys, craft_level, query or "", page),
         reply_markup=crafts_keyboard(recipe_keys, owner_id, page, query or "") if recipe_keys else None,
     )
@@ -5302,7 +5375,7 @@ async def inspect_case_callback(callback: CallbackQuery):
     case = CASES[case_num]
     price = case_price_with_discount(case["price"], upgrades)
 
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_case_inspect_text(case_num, price, case["price"]),
         reply_markup=case_offer_keyboard(case_num, owner_id, price),
     )
@@ -5340,7 +5413,7 @@ async def buy_case(callback: CallbackQuery):
     sold_for, sold_text = await apply_case_reward(owner_id, item_key, upgrades, auto_sell_enabled, auto_sell_items)
     new_coins = coins - price + sold_for
 
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         f"🎉 Выпало: {emoji} {esc(name)} (+{percent}%)!{sold_text}\nОстаток монет: {new_coins} 🪙",
         reply_markup=case_offer_keyboard(case_num, owner_id, price),
     )
@@ -5518,7 +5591,7 @@ async def upgrade_change_page(callback: CallbackQuery):
     upgrades = parse_upgrades(row[16])
     rebirth_points = row[14]
     craft_points = row[32]
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_upgrade_page_text(upgrades, rebirth_points, category, craft_points),
         reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
     )
@@ -5565,7 +5638,7 @@ async def upgrade_buy(callback: CallbackQuery):
         (new_points, format_upgrades(upgrades), new_craft_points, owner_id),
     )
 
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_upgrade_page_text(upgrades, new_points, category, new_craft_points),
         reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
     )
@@ -5651,7 +5724,7 @@ async def prestige_change_page(callback: CallbackQuery):
     row = await get_user(owner_id)
     prestige_upgrades = parse_prestige_upgrades(row[28])
     prestige_points = row[27]
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_prestige_page_text(prestige_upgrades, prestige_points, page),
         reply_markup=prestige_page_keyboard(prestige_upgrades, owner_id, page),
     )
@@ -5685,7 +5758,7 @@ async def prestige_buy(callback: CallbackQuery):
         (new_points, format_prestige_upgrades(prestige_upgrades), owner_id),
     )
 
-    await callback.message.edit_text(
+    await safe_edit_text(callback, 
         format_prestige_page_text(prestige_upgrades, new_points, page),
         reply_markup=prestige_page_keyboard(prestige_upgrades, owner_id, page),
     )
