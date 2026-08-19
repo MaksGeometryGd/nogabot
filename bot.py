@@ -636,6 +636,8 @@ TEXTS = {
     "admin_players_2": '👥 <b>Игроки ({v0}):</b>\n{v1}',
     "admin_logs_all_1": 'Логов пока нет.',
     "admin_logs_all_2": '📜 <b>Все логи ({v0}):</b>\n{v1}',
+    "admin_top_spam_1": 'За выбранный период команд от игроков не было.',
+    "admin_top_spam_2": '🚨 <b>Топ спама за {v0} мин. ({v1} игроков):</b>\n{v2}',
     "admin_list_chats_1": 'Бот пока нигде не активен (ещё никто не писал команды в группах).',
     "admin_list_chats_2": '💬 Чаты бота ({v0}):\n{v1}',
 
@@ -2501,6 +2503,25 @@ async def init_db():
             command TEXT
         )
     """)
+    # Лог КАЖДОЙ команды КАЖДОГО игрока (не только админов) — пишется в
+    # ThrottleMiddleware ДО проверки rate-limit, поэтому видно и заглушённые
+    # троттлингом попытки. Нужен, чтобы отличить массовый живой фарм от ботов/
+    # скриптов, спамящих команды намного чаще, чем физически может человек
+    # (см. !топ спам). Индекс по (user_id, ts) — типичный запрос это "команды
+    # одного игрока за последний час".
+    await db_exec("""
+        CREATE TABLE IF NOT EXISTS player_action_log (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ts INTEGER,
+            user_id INTEGER,
+            username TEXT,
+            command TEXT
+        )
+    """)
+    await db_exec("""
+        CREATE INDEX IF NOT EXISTS idx_player_action_log_user_ts
+        ON player_action_log (user_id, ts)
+    """)
     # Чаты, в которых фарм отключён (тихий бан — "ферма" молча ничего не делает).
     # Бот из чата НЕ выходит, только блокирует фарм-геймплей для всех участников.
     await db_exec("""
@@ -2981,6 +3002,60 @@ async def log_admin_action(message: Message):
     )
 
 
+# Собственный троттлинг записи в player_action_log — отдельно от
+# ThrottleMiddleware.rate. Задача этого лога — увидеть КАЖДУЮ попытку
+# команды, но при реальном спам-шквале (тысячи попыток в минуту от одного
+# user_id) писать в БД на каждую из них означало бы, что сам лог добавляет
+# нагрузку сопоставимую с тем, что мы расследуем. Поэтому пишем не чаще
+# PLAYER_LOG_MIN_INTERVAL на юзера, а между записями считаем пропущенные
+# попытки — "skipped" в тексте команды показывает, что были более частые
+# обращения, даже если каждая из них не попала в лог отдельной строкой.
+PLAYER_LOG_MIN_INTERVAL = 1.0
+_player_log_last = {}
+_player_log_skipped = {}
+_player_log_calls_since_cleanup = 0
+_PLAYER_LOG_CLEANUP_EVERY = 500
+
+
+def _cleanup_player_log_throttle(now: float):
+    ttl = PLAYER_LOG_MIN_INTERVAL * 20
+    stale = [uid for uid, t in _player_log_last.items() if now - t > ttl]
+    for uid in stale:
+        del _player_log_last[uid]
+        # Не роняем накопленный skipped-счётчик стухших юзеров молча — по
+        # ним больше не будет вызовов _log_player_action, которые могли бы
+        # его сбросить, так что не пишем в БД (это фоновая очистка, не
+        # обработка сообщения), просто отбрасываем счётчик вместе с записью.
+        _player_log_skipped.pop(uid, None)
+
+
+async def _log_player_action(user_id: int, username: str, text: str):
+    global _player_log_calls_since_cleanup
+    now = time.monotonic()
+    last = _player_log_last.get(user_id, 0)
+    if now - last < PLAYER_LOG_MIN_INTERVAL:
+        _player_log_skipped[user_id] = _player_log_skipped.get(user_id, 0) + 1
+        return
+    skipped = _player_log_skipped.pop(user_id, 0)
+    _player_log_last[user_id] = now
+
+    _player_log_calls_since_cleanup += 1
+    if _player_log_calls_since_cleanup >= _PLAYER_LOG_CLEANUP_EVERY:
+        _player_log_calls_since_cleanup = 0
+        _cleanup_player_log_throttle(now)
+
+    command = text.strip()[:200]
+    if skipped:
+        command = f"{command} [+{skipped} пропущено за <{PLAYER_LOG_MIN_INTERVAL:.0f}с]"
+    try:
+        await db_exec(
+            "INSERT INTO player_action_log (ts, user_id, username, command) VALUES (?, ?, ?, ?)",
+            (int(time.time()), user_id, username, command),
+        )
+    except Exception as e:
+        print(f"_log_player_action ошибка: {e}")
+
+
 async def track_membership(user_id: int, chat_id: int):
     await db_exec("INSERT OR IGNORE INTO chat_members (user_id, chat_id) VALUES (?, ?)", (user_id, chat_id))
 
@@ -3152,6 +3227,17 @@ class ThrottleMiddleware(BaseMiddleware):
         text = getattr(event, "text", None)
         if not text or not is_command_text(text):
             return await handler(event, data)
+
+        # Пишем попытку команды в лог ДО проверки rate-limit ниже — иначе спам
+        # от ботов гасился бы троттлингом раньше, чем успел бы попасть в лог,
+        # и картина спама была бы не видна. Сама запись в лог тоже троттлится
+        # (см. _log_player_action) отдельным, более мелким интервалом — иначе
+        # при реальном шквале спама логирование само добавляло бы по одному
+        # INSERT'у на каждую попытку и усиливало бы ту же нагрузку, которую
+        # мы пытаемся диагностировать. Не await'им — не задерживаем живых
+        # игроков ради записи в лог.
+        username = event.from_user.username or str(user_id)
+        asyncio.create_task(_log_player_action(user_id, username, text))
 
         now = time.monotonic()
         key = (user_id, "cmd")
@@ -7896,6 +7982,67 @@ async def admin_logs(message: Message):
     await message.reply(TEXTS["admin_logs_2"].format(v0=len(rows), v1="\n".join(lines)))
 
 
+@dp.message(F.text.lower().startswith("!топ спам"))
+async def admin_top_spam(message: Message):
+    """!топ спам        -> топ-20 игроков по числу команд за последний час
+    !топ спам 30        -> тот же топ, но за последние 30 минут
+
+    Источник — player_action_log (пишется в ThrottleMiddleware ДО rate-limit,
+    см. _log_player_action), так что здесь видно и то, что троттлинг заглушил.
+    Для каждого игрока также берём минимальный интервал между двумя ЕГО
+    последовательными командами за то же окно — человек физически не может
+    слать команды каждые доли секунды подолгу, поэтому маленький минимальный
+    интервал при большом числе команд — сигнал на бота/скрипт, а не флуд руками.
+    """
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+
+    parts = message.text.strip().split(maxsplit=2)
+    minutes = 60
+    if len(parts) > 2:
+        try:
+            minutes = max(1, int(parts[2]))
+        except ValueError:
+            minutes = 60
+
+    since = int(time.time()) - minutes * 60
+    rows = await db_query(
+        "SELECT user_id, username, ts FROM player_action_log WHERE ts >= ? ORDER BY user_id, ts",
+        (since,),
+    )
+    if not rows:
+        await message.reply(TEXTS["admin_top_spam_1"])
+        return
+
+    per_user = {}
+    for user_id, username, ts in rows:
+        entry = per_user.setdefault(user_id, {"username": username, "count": 0, "min_gap": None, "last_ts": None})
+        entry["username"] = username  # берём самый свежий username
+        entry["count"] += 1
+        if entry["last_ts"] is not None:
+            gap = ts - entry["last_ts"]
+            if entry["min_gap"] is None or gap < entry["min_gap"]:
+                entry["min_gap"] = gap
+        entry["last_ts"] = ts
+
+    ranked = sorted(per_user.items(), key=lambda kv: kv[1]["count"], reverse=True)[:20]
+
+    lines = []
+    for user_id, info in ranked:
+        gap = info["min_gap"]
+        # PLAYER_LOG_MIN_INTERVAL — сам лог не пишет чаще этого на юзера, так
+        # что min_gap меньше него в принципе не бывает; порог подозрения
+        # берём чуть выше — с запасом на то, что реальный человек не жмёт
+        # команды раз в секунду часами подряд.
+        suspicious = gap is not None and gap <= PLAYER_LOG_MIN_INTERVAL + 1
+        marker = " ⚠️ подозрение на бота" if suspicious else ""
+        gap_text = f"{gap}с" if gap is not None else "—"
+        lines.append(f"● @{esc(info['username'])} (id {user_id}): {info['count']} команд, мин. интервал {gap_text}{marker}")
+
+    await message.reply(TEXTS["admin_top_spam_2"].format(v0=minutes, v1=len(ranked), v2="\n".join(lines)))
+
+
 @dp.message(F.text.lower() == "!логи вся")
 async def admin_logs_all(message: Message):
     """!логи вся — вся история audit_log без ограничения в 20 записей.
@@ -7941,7 +8088,18 @@ async def admin_clear_logs(message: Message):
     # !чистлоги            -> удаляет всё старше 7 дней (по умолчанию)
     # !чистлоги 3          -> удаляет всё старше 3 дней
     # !чистлоги все        -> удаляет audit_log целиком
+    # !чистлоги игроки ... -> то же самое, но для player_action_log (см. ниже);
+    #                         проверяем ПЕРВЫМ делом в этой же функции, а не
+    #                         отдельным хендлером — иначе этот же startswith
+    #                         перехватил бы "!чистлоги игроки" раньше, чем
+    #                         дошло бы до отдельного хендлера с более узким
+    #                         префиксом (aiogram матчит в порядке регистрации).
     if not is_admin(message):
+        return
+
+    parts = message.text.strip().split(maxsplit=2)
+    if len(parts) > 1 and parts[1].strip().lower() == "игроки":
+        await _admin_clear_player_logs_impl(message, parts[2].strip().lower() if len(parts) > 2 else "")
         return
 
     parts = message.text.strip().split(maxsplit=1)
@@ -7969,6 +8127,41 @@ async def admin_clear_logs(message: Message):
     await db_exec("DELETE FROM audit_log WHERE ts < ?", (cutoff,))
     await log_admin_action(message)
     after_row = await db_query_one("SELECT COUNT(*) FROM audit_log")
+    after = after_row[0] if after_row else 0
+    await message.reply(TEXTS["admin_logs_clear_1"].format(v0=before, v1=after))
+
+
+async def _admin_clear_player_logs_impl(message: Message, arg: str):
+    # !чистлоги игроки        -> удаляет player_action_log старше 2 дней (по умолчанию)
+    # !чистлоги игроки 1      -> удаляет всё старше 1 дня
+    # !чистлоги игроки все    -> удаляет player_action_log целиком
+    #
+    # Отдельная ветка, а не общий срок с !чистлоги — player_action_log
+    # пишется на КАЖДУЮ команду каждого игрока (см. ThrottleMiddleware) и
+    # растёт заметно быстрее, чем audit_log (только админ-действия), поэтому
+    # дефолтный срок хранения короче (2 дня, а не 7). is_admin уже проверен
+    # вызывающей admin_clear_logs.
+    if arg in ("все", "всё", "all"):
+        before_row = await db_query_one("SELECT COUNT(*) FROM player_action_log")
+        before = before_row[0] if before_row else 0
+        await db_exec("DELETE FROM player_action_log")
+        await log_admin_action(message)
+        await message.reply(TEXTS["admin_logs_clear_1"].format(v0=before, v1=0))
+        return
+
+    days = 2
+    if arg:
+        try:
+            days = max(0, int(arg))
+        except ValueError:
+            days = 2
+
+    cutoff = int(time.time()) - days * 86400
+    before_row = await db_query_one("SELECT COUNT(*) FROM player_action_log WHERE ts < ?", (cutoff,))
+    before = before_row[0] if before_row else 0
+    await db_exec("DELETE FROM player_action_log WHERE ts < ?", (cutoff,))
+    await log_admin_action(message)
+    after_row = await db_query_one("SELECT COUNT(*) FROM player_action_log")
     after = after_row[0] if after_row else 0
     await message.reply(TEXTS["admin_logs_clear_1"].format(v0=before, v1=after))
 
