@@ -91,9 +91,9 @@ PREMIUM_KARAMBIT_GOLD = '<tg-emoji emoji-id="5060114895148680390">🔪</tg-emoji
 PREMIUM_BUTTERFLY_LEGACY = '<tg-emoji emoji-id="4943160586331490355">🦋</tg-emoji>'
 
 # Новые бустеры (мини-апдейт): крест / фати / фанат Мику.
-PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5415692772273312092">✝️</tg-emoji>'
-PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5415692772273312093">🤲</tg-emoji>'
-PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5415692772273312094">🎧</tg-emoji>'
+PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5282820155015971423">✝️</tg-emoji>'
+PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5404393696865041225">🤲</tg-emoji>'
+PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5199714801286132798">🎧</tg-emoji>'
 
 PREMIUM_BADGE_TESTER = '<tg-emoji emoji-id="5947528161536251718">🧪</tg-emoji>'
 PREMIUM_BADGE_SUPPORT = '<tg-emoji emoji-id="5947343263194157527">🛠️</tg-emoji>'
@@ -102,10 +102,10 @@ PREMIUM_BADGE_TOP1_PAST = '<tg-emoji emoji-id="5363999757079429238">👑</tg-emo
 
 # ---------- Безумные крафты (ур.1/ур.3) ----------
 # TODO: заменить emoji-id на реальные premium-эмодзи, когда достанешь.
-PREMIUM_CHAOS_ORB = '<tg-emoji emoji-id="0000000000000000010">🌀</tg-emoji>'
-PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="0000000000000000011">⏰</tg-emoji>'
-PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="0000000000000000012">🔮</tg-emoji>'
-PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="0000000000000000013">⚡️</tg-emoji>'
+PREMIUM_CHAOS_ORB = '<tg-emoji emoji-id="5201679280672616755">🌀</tg-emoji>'
+PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="5237697056805510735">⏰</tg-emoji>'
+PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="5305669252181672918">🔮</tg-emoji>'
+PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="5237888066886064441">⚡️</tg-emoji>'
 
 # ---------- Кейс 3: премиум-иконки (заглушки) ----------
 # TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
