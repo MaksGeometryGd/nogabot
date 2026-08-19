@@ -2301,6 +2301,27 @@ def _invalidate_user_cache(user_id):
     _user_cache.pop(user_id, None)
 
 
+# ---------- Кэш банов чатов/игроков (в памяти процесса) ----------
+# ChatBanMiddleware и UserBanMiddleware раньше делали SELECT в БД на КАЖДОЕ
+# сообщение и КАЖДЫЙ callback от КАЖДОГО юзера — даже для тех, кто вообще
+# никогда не был забанен (подавляющее большинство). Под спамом это удваивало
+# число запросов в очередь БД-воркера ДО троттлинга. Списки banned_chats/
+# banned_users на практике маленькие (десятки записей) и меняются редко —
+# держим их целиком в памяти, грузим один раз при старте (см. init_db) и
+# точечно обновляем при !забанить/разбанить чат и !бан/разбан все — без
+# похода в БД на чтение.
+_banned_chats_cache: set = set()
+_banned_users_cache: set = set()
+
+
+async def _load_ban_caches():
+    global _banned_chats_cache, _banned_users_cache
+    chat_rows = await db_query("SELECT chat_id FROM banned_chats")
+    user_rows = await db_query("SELECT user_id FROM banned_users")
+    _banned_chats_cache = {r[0] for r in chat_rows}
+    _banned_users_cache = {r[0] for r in user_rows}
+
+
 def _connect(worker_idx):
     # Каждый воркер держит РОВНО одно своё соединение, создаваемое один раз при
     # первом обращении и переиспользуемое дальше — не 32 соединения "по требованию",
@@ -2601,6 +2622,8 @@ async def init_db():
             await db_exec(stmt)
         except Exception:
             pass
+
+    await _load_ban_caches()
 
 
 async def get_user(user_id: int):
@@ -2933,6 +2956,29 @@ async def chronos_orb_boost_loop():
         await asyncio.sleep(CHRONOS_BOOST_INTERVAL)
 
 
+AUTO_LOG_CLEANUP_INTERVAL = 24 * 60 * 60  # раз в сутки
+AUTO_AUDIT_LOG_DAYS = 7        # как дефолт у ручной "!чистлоги"
+AUTO_PLAYER_LOG_DAYS = 2       # как дефолт у ручной "!чистлоги игроки"
+
+
+async def auto_log_cleanup_loop():
+    """Фоновый таск: раз в сутки сам чистит старые записи логов — те же сроки,
+    что и дефолты ручных команд !чистлоги / !чистлоги игроки. player_action_log
+    пишется на КАЖДУЮ команду каждого игрока (см. ThrottleMiddleware) и без
+    регулярной чистки растёт быстрее всего, раздувая БД и, как следствие, время
+    отклика на запросы к ней. Первый прогон — не сразу при старте (сон в начале
+    цикла), чтобы не толкаться с init_db на старте бота."""
+    while True:
+        await asyncio.sleep(AUTO_LOG_CLEANUP_INTERVAL)
+        try:
+            audit_cutoff = int(time.time()) - AUTO_AUDIT_LOG_DAYS * 86400
+            await db_exec("DELETE FROM audit_log WHERE ts < ?", (audit_cutoff,))
+            player_cutoff = int(time.time()) - AUTO_PLAYER_LOG_DAYS * 86400
+            await db_exec("DELETE FROM player_action_log WHERE ts < ?", (player_cutoff,))
+        except Exception as e:
+            print(f"auto_log_cleanup_loop ошибка: {e}")
+
+
 async def is_event_active() -> bool:
     active, _ = await get_event_state()
     return active
@@ -3139,8 +3185,9 @@ class ChatBanMiddleware(BaseMiddleware):
                 text = None  # у callback нет .text — сверяем только по chat_id ниже
             is_ban_mgmt = bool(text) and text.strip().lower().startswith(self.BAN_MGMT_PREFIXES)
             if not is_ban_mgmt:
-                banned = await db_query_one("SELECT 1 FROM banned_chats WHERE chat_id = ?", (chat.id,))
-                if banned:
+                # Кэш в памяти вместо SELECT на каждое сообщение/callback — см.
+                # _banned_chats_cache и комментарий там же.
+                if chat.id in _banned_chats_cache:
                     if isinstance(event, CallbackQuery):
                         try:
                             await event.answer()
@@ -3169,8 +3216,9 @@ class UserBanMiddleware(BaseMiddleware):
                 text = None  # у callback нет .text — сверяем только по user_id ниже
             is_ban_mgmt = bool(text) and text.strip().lower().startswith(self.BAN_MGMT_PREFIXES)
             if not is_ban_mgmt:
-                banned = await db_query_one("SELECT 1 FROM banned_users WHERE user_id = ?", (user.id,))
-                if banned:
+                # Кэш в памяти вместо SELECT на каждое сообщение/callback — см.
+                # _banned_users_cache и комментарий у _load_ban_caches.
+                if user.id in _banned_users_cache:
                     if isinstance(event, CallbackQuery):
                         try:
                             await event.answer()
@@ -4153,10 +4201,11 @@ async def top_overall_global(message: Message):
 
 @dp.message(F.text.lower().in_({"ферма", "фарма"}))
 async def farm(message: Message):
-    # Тихий бан чата: если чат в banned_chats, фарм молча не работает — без ответа,
-    # чтобы не давать спамерам понятный сигнал "тебя заблокировали" (см. !забанить чат).
-    banned = await db_query_one("SELECT 1 FROM banned_chats WHERE chat_id = ?", (message.chat.id,))
-    if banned:
+    # Тихий бан чата: ChatBanMiddleware (outer_middleware) уже фильтрует забаненные
+    # чаты раньше этого хендлера — эта проверка была дублирующим SELECT на КАЖДЫЙ
+    # вызов самого частого действия в игре (фарм). Кэш вместо запроса — на случай
+    # прямого вызова функции в обход диспетчера, без похода в БД на горячем пути.
+    if message.chat.id in _banned_chats_cache:
         return
 
     user_id = message.from_user.id
@@ -7574,6 +7623,7 @@ async def admin_ban_chat(message: Message):
             "INSERT INTO banned_chats (chat_id, title, banned_by, banned_at) VALUES (?, ?, ?, ?)",
             (chat_id, title, admin_username, int(time.time())),
         )
+        _banned_chats_cache.add(chat_id)
         banned_now.append(title)
 
     if len(targets) == 1:
@@ -7616,6 +7666,7 @@ async def admin_unban_chat(message: Message):
             not_banned.append(title)
             continue
         await db_exec("DELETE FROM banned_chats WHERE chat_id = ?", (chat_id,))
+        _banned_chats_cache.discard(chat_id)
         unbanned_now.append(title)
 
     if len(targets) == 1:
@@ -7675,6 +7726,7 @@ async def admin_ban_all(message: Message):
         "INSERT INTO banned_users (user_id, username, banned_by, banned_at) VALUES (?, ?, ?, ?)",
         (target.id, target_username, admin_username, int(time.time())),
     )
+    _banned_users_cache.add(target.id)
     await message.reply(TEXTS["admin_ban_all_1"].format(v0=esc(target_username)))
 
 
@@ -7700,6 +7752,7 @@ async def admin_unban_all(message: Message):
 
     target_username = target.username or target.first_name or "Без имени"
     await db_exec("DELETE FROM banned_users WHERE user_id = ?", (target.id,))
+    _banned_users_cache.discard(target.id)
     await message.reply(TEXTS["admin_unban_all_1"].format(v0=esc(target_username)))
 
 
@@ -8028,6 +8081,22 @@ async def admin_top_spam(message: Message):
 
     ranked = sorted(per_user.items(), key=lambda kv: kv[1]["count"], reverse=True)[:20]
 
+    # Нога (уровень) нужна только для этих ≤20 игроков, а не для всех строк
+    # лога — один точечный запрос по IN(...), а не N+1 обращений в БД.
+    leg_by_user = {}
+    if ranked:
+        ids = [user_id for user_id, _ in ranked]
+        placeholders = ",".join("?" for _ in ids)
+        leg_rows = await db_query(
+            f"SELECT user_id, score, evolution_level, rebirth_count, ultra_rebirth "
+            f"FROM users WHERE user_id IN ({placeholders})",
+            tuple(ids),
+        )
+        for uid, score, evo, rebirth_count, ultra in leg_rows:
+            level = get_level_index(score or 0, evo or 0, rebirth_count or 0, bool(ultra))
+            emoji, name, _ = get_level_visual(level)
+            leg_by_user[uid] = f"{emoji} ур.{level}" + (f" ({name})" if name else "")
+
     lines = []
     for user_id, info in ranked:
         gap = info["min_gap"]
@@ -8038,7 +8107,11 @@ async def admin_top_spam(message: Message):
         suspicious = gap is not None and gap <= PLAYER_LOG_MIN_INTERVAL + 1
         marker = " ⚠️ подозрение на бота" if suspicious else ""
         gap_text = f"{gap}с" if gap is not None else "—"
-        lines.append(f"● @{esc(info['username'])} (id {user_id}): {info['count']} команд, мин. интервал {gap_text}{marker}")
+        leg_text = leg_by_user.get(user_id, "—")
+        lines.append(
+            f"● @{esc(info['username'])} (id {user_id}), {leg_text}: "
+            f"{info['count']} команд, мин. интервал {gap_text}{marker}"
+        )
 
     await message.reply(TEXTS["admin_top_spam_2"].format(v0=minutes, v1=len(ranked), v2="\n".join(lines)))
 
@@ -8267,6 +8340,7 @@ async def main():
 
     asyncio.create_task(keep_alive())
     asyncio.create_task(chronos_orb_boost_loop())
+    asyncio.create_task(auto_log_cleanup_loop())
 
     print("Бот НОГА запущен!")
     try:
