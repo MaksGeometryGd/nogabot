@@ -91,9 +91,9 @@ PREMIUM_KARAMBIT_GOLD = '<tg-emoji emoji-id="5060114895148680390">🔪</tg-emoji
 PREMIUM_BUTTERFLY_LEGACY = '<tg-emoji emoji-id="4943160586331490355">🦋</tg-emoji>'
 
 # Новые бустеры (мини-апдейт): крест / фати / фанат Мику.
-PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5415692772273312092">✝️</tg-emoji>'
-PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5415692772273312093">🤲</tg-emoji>'
-PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5415692772273312094">🎧</tg-emoji>'
+PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5282820155015971423">✝️</tg-emoji>'
+PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5404393696865041225">🤲</tg-emoji>'
+PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5199714801286132798">🎧</tg-emoji>'
 
 PREMIUM_BADGE_TESTER = '<tg-emoji emoji-id="5947528161536251718">🧪</tg-emoji>'
 PREMIUM_BADGE_SUPPORT = '<tg-emoji emoji-id="5947343263194157527">🛠️</tg-emoji>'
@@ -101,11 +101,10 @@ PREMIUM_BADGE_POWER = '<tg-emoji emoji-id="5780703608760700844">💪</tg-emoji>'
 PREMIUM_BADGE_TOP1_PAST = '<tg-emoji emoji-id="5363999757079429238">👑</tg-emoji>'
 
 # ---------- Безумные крафты (ур.1/ур.3) ----------
-# TODO: заменить emoji-id на реальные premium-эмодзи, когда достанешь.
-PREMIUM_CHAOS_ORB = '<tg-emoji emoji-id="0000000000000000010">🌀</tg-emoji>'
-PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="0000000000000000011">⏰</tg-emoji>'
-PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="0000000000000000012">🔮</tg-emoji>'
-PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="0000000000000000013">⚡️</tg-emoji>'
+PREMIUM_CHAOS_ORB = '<tg-emoji emoji-id="5201679280672616755">🌀</tg-emoji>'
+PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="5237697056805510735">⏰</tg-emoji>'
+PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="5305669252181672918">🔮</tg-emoji>'
+PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="5237888066886064441">⚡️</tg-emoji>'
 
 # ---------- Кейс 3: премиум-иконки (заглушки) ----------
 # TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
@@ -2718,22 +2717,43 @@ async def is_event_active() -> bool:
     return active
 
 
+# Кэш глобального состояния ивента: одно и то же для ВСЕХ игроков, а раньше читалось
+# из БД заново на КАЖДОЕ сообщение с ногой — при массовом фарме много людей одновременно
+# создавали шквал одинаковых запросов, забивая очередь и тормозя вообще всё (в т.ч. кнопки).
+# TTL короткий (3 сек), так что !ивент стоп и админ-правки применяются почти мгновенно.
+_event_state_cache = {"value": None, "until": 0.0}
+_EVENT_STATE_TTL = 3.0
+
+
 async def get_event_state():
-    """Возвращает (активен: bool, множитель: float) с учётом автоистечения по времени."""
+    """Возвращает (активен: bool, множитель: float) с учётом автоистечения по времени.
+    Кэшируется на _EVENT_STATE_TTL секунд — см. _event_state_cache."""
+    now_mono = time.monotonic()
+    if _event_state_cache["value"] is not None and now_mono < _event_state_cache["until"]:
+        return _event_state_cache["value"]
+
     rows = await db_query(
         "SELECT key, value FROM settings WHERE key IN ('event_active', 'event_multiplier', 'event_until')"
     )
     d = {k: v for k, v in rows}
     if d.get("event_active") != "1":
-        return False, 1.0
+        result = (False, 1.0)
+    else:
+        until = int(d.get("event_until") or 0)
+        if until and int(time.time()) > until:
+            await db_exec("UPDATE settings SET value = '0' WHERE key = 'event_active'")
+            result = (False, 1.0)
+        else:
+            mult = float(d.get("event_multiplier") or 2)
+            result = (True, mult)
 
-    until = int(d.get("event_until") or 0)
-    if until and int(time.time()) > until:
-        await db_exec("UPDATE settings SET value = '0' WHERE key = 'event_active'")
-        return False, 1.0
+    _event_state_cache["value"] = result
+    _event_state_cache["until"] = now_mono + _EVENT_STATE_TTL
+    return result
 
-    mult = float(d.get("event_multiplier") or 2)
-    return True, mult
+
+def _invalidate_event_state_cache():
+    _event_state_cache["value"] = None
 
 
 async def get_event_multiplier() -> float:
@@ -3392,8 +3412,14 @@ async def count_legs(message: Message):
     gained = round(gained * farm_yield_multiplier(upgrades))
 
     mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct)
-    event_mult = await get_event_multiplier()
-    personal_mult = await get_personal_multiplier(user_id)
+    # event_mult почти всегда из кэша (см. _event_state_cache) — реального db-запроса нет.
+    # inventory не зависит от score/этих множителей, поэтому его тоже забираем параллельно
+    # заранее, а не после UPDATE score, как раньше — меньше последовательных сетевых
+    # round-trip'ов на КАЖДОЕ сообщение с ногой, что и было причиной подтормаживания при
+    # массовом фарме (много сообщений разом = много цепочек из последовательных запросов).
+    event_mult, personal_mult, inv = await asyncio.gather(
+        get_event_multiplier(), get_personal_multiplier(user_id), get_inventory(user_id)
+    )
     p_yield_mult = 1 + 0.005 * prestige_bonus(prestige_upgrades, "p_farm_yield")
     total = round(gained * mult * event_mult * personal_mult * p_yield_mult)
     if galaxy:
@@ -3431,7 +3457,6 @@ async def count_legs(message: Message):
             user_id, new_score, evolution_level, rebirth_count, rebirth_points, prestige_points, prestige_upgrades, active_items
         )
 
-    inv = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv}
     luck_boost = "luck_x2" in potions
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
@@ -5353,6 +5378,7 @@ async def toggle_event(message: Message):
                 "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
                 (key, value),
             )
+    _invalidate_event_state_cache()
 
     if new_value == "1":
         await message.reply(TEXTS["toggle_event_1"])
@@ -6719,6 +6745,7 @@ async def admin_event_custom(message: Message):
             "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
             (key, value),
         )
+    _invalidate_event_state_cache()
 
     await message.reply(TEXTS["admin_event_custom_3"].format(v0=mult, v1=minutes))
 
@@ -7318,6 +7345,7 @@ async def admin_event_stop(message: Message):
         "INSERT INTO settings (key, value) VALUES ('event_active', '0') "
         "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
     )
+    _invalidate_event_state_cache()
     await message.reply(TEXTS["admin_event_stop_1"] if active else TEXTS["admin_event_stop_2"])
 
 
