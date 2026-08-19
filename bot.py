@@ -2234,6 +2234,25 @@ from concurrent.futures import ThreadPoolExecutor
 _db_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="db-worker")
 
 
+# ---------- Кэш строк users (в памяти процесса) ----------
+# ГЛАВНЫЙ ИСТОЧНИК "пинга": ensure_user()/get_user() вызывались НА КАЖДОЕ сообщение
+# и callback (80+ мест в коде) и каждый раз были отдельным сетевым round-trip'ом до
+# Turso — именно это давало задержку перед ответом бота на любое действие, даже
+# если данные пользователя вообще не менялись. Теперь строка users читается из
+# сети один раз и кэшируется в памяти; при любой записи в users (100+ мест —
+# db_exec с "UPDATE users ... WHERE user_id = ?") кэш точечно инвалидируется по
+# user_id, так что устаревших score/coins/etc. увидеть нельзя — просто следующее
+# чтение для этого юзера снова сходит в БД. Единственное исключение — глобальный
+# UPDATE users SET chronos_boost_pct = ? (без WHERE, задевает все строки сразу):
+# для него сбрасывается весь кэш целиком.
+_user_cache: dict = {}
+_USERS_WRITE_RE = re.compile(r"\b(?:UPDATE|DELETE\s+FROM)\s+users\b", re.IGNORECASE)
+
+
+def _invalidate_user_cache(user_id):
+    _user_cache.pop(user_id, None)
+
+
 def _connect():
     global _conn
     if _conn is None:
@@ -2288,6 +2307,13 @@ async def _db_submit(fn, sql, params):
 
 async def db_exec(sql, params=()):
     await _db_submit(_exec_sync, sql, params)
+    if _USERS_WRITE_RE.search(sql):
+        if "WHERE user_id = ?" in sql and params:
+            _invalidate_user_cache(params[-1])
+        else:
+            # редкий глобальный UPDATE users без WHERE user_id — например
+            # chronos_boost_pct для всех сразу. Безопаснее сбросить весь кэш.
+            _user_cache.clear()
 
 
 async def db_query(sql, params=()):
@@ -2467,7 +2493,12 @@ async def init_db():
 
 
 async def get_user(user_id: int):
-    return await db_query_one(f"SELECT {USER_COLUMNS} FROM users WHERE user_id = ?", (user_id,))
+    if user_id in _user_cache:
+        return _user_cache[user_id]
+    row = await db_query_one(f"SELECT {USER_COLUMNS} FROM users WHERE user_id = ?", (user_id,))
+    if row is not None:
+        _user_cache[user_id] = row
+    return row
 
 
 async def get_user_by_username(username: str):
@@ -2479,7 +2510,9 @@ async def ensure_user(user_id: int, username: str):
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
         now = int(time.time())
-        return (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "", 0, "", "", 0, "", 100)
+        new_row = (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "", 0, "", "", 0, "", 100)
+        _user_cache[user_id] = new_row  # сразу кладём в кэш — не ждём ещё один SELECT
+        return new_row
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
