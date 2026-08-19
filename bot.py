@@ -91,9 +91,9 @@ PREMIUM_KARAMBIT_GOLD = '<tg-emoji emoji-id="5060114895148680390">🔪</tg-emoji
 PREMIUM_BUTTERFLY_LEGACY = '<tg-emoji emoji-id="4943160586331490355">🦋</tg-emoji>'
 
 # Новые бустеры (мини-апдейт): крест / фати / фанат Мику.
-PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5282820155015971423">✝️</tg-emoji>'
-PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5404393696865041225">🤲</tg-emoji>'
-PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5199714801286132798">🎧</tg-emoji>'
+PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5415692772273312092">✝️</tg-emoji>'
+PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5415692772273312093">🤲</tg-emoji>'
+PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5415692772273312094">🎧</tg-emoji>'
 
 PREMIUM_BADGE_TESTER = '<tg-emoji emoji-id="5947528161536251718">🧪</tg-emoji>'
 PREMIUM_BADGE_SUPPORT = '<tg-emoji emoji-id="5947343263194157527">🛠️</tg-emoji>'
@@ -102,10 +102,10 @@ PREMIUM_BADGE_TOP1_PAST = '<tg-emoji emoji-id="5363999757079429238">👑</tg-emo
 
 # ---------- Безумные крафты (ур.1/ур.3) ----------
 # TODO: заменить emoji-id на реальные premium-эмодзи, когда достанешь.
-PREMIUM_CHAOS_ORB = '<tg-emoji emoji-id="5201679280672616755">🌀</tg-emoji>'
-PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="5237697056805510735">⏰</tg-emoji>'
-PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="5305669252181672918">🔮</tg-emoji>'
-PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="5237888066886064441">⚡️</tg-emoji>'
+PREMIUM_CHAOS_ORB = '<tg-emoji emoji-id="0000000000000000010">🌀</tg-emoji>'
+PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="0000000000000000011">⏰</tg-emoji>'
+PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="0000000000000000012">🔮</tg-emoji>'
+PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="0000000000000000013">⚡️</tg-emoji>'
 
 # ---------- Кейс 3: премиум-иконки (заглушки) ----------
 # TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
@@ -693,9 +693,12 @@ ITEMS = {
 
     # ---------- Безумные крафты (см. RECIPES: chaos_orb / chronos_clock / chronos_orb) ----------
     # Не выбиваются из кейсов — только крафт (см. CRAFT_MAX_LEVEL) или промо/админка.
-    "chaos_orb":     (PREMIUM_CHAOS_ORB, "Шар хаоса", 0, 0),
-    "chronos_clock": (PREMIUM_CHRONOS_CLOCK, "Часы Хроноса", 0, 0),
-    "chronos_orb":   (PREMIUM_CHRONOS_ORB, "Шар Хроноса", 0, 0),
+    # ВАЖНО: у chronos_orb фикс. % НЕ используется для итогового буста — у него отдельный
+    # рандомный буст 1-200% (см. CHRONOS_BOOST_MIN/MAX, chronos_orb_boost_loop, get_multiplier).
+    # 120 здесь — это только базовое/отображаемое значение (напр. для сортировки/UI), не бустит дважды.
+    "chaos_orb":     (PREMIUM_CHAOS_ORB, "Шар хаоса", 0, 100),
+    "chronos_clock": (PREMIUM_CHRONOS_CLOCK, "Часы Хроноса", 0, 150),
+    "chronos_orb":   (PREMIUM_CHRONOS_ORB, "Шар Хроноса", 0, 120),
 
     # ---------- Новые крафты (мини-апдейт) ----------
     # Не выбивается и не выдаётся промо/админкой — получить можно только крафтом.
@@ -941,7 +944,7 @@ CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX = 1, 200  # диапазон % буста
 
 GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активирована."  # заменяет обычный префикс ответа фермы
 KOSHKO_AMULET_FLAVOR = f"{PREMIUM_KOSHKO_AMULET} Сила кошко-девочки активна."  # то же самое, но для амулета кошко-девочки
-CHRONOS_ORB_FLAVOR = f"{PREMIUM_CHRONOS_ORB} ХАОС ХАОС ХАОС"  # флейвор Шара Хроноса — приоритет ВЫШЕ god_essence/koshko_amulet
+CHRONOS_ORB_FLAVOR = f"{PREMIUM_CHRONOS_ORB} ХАОС! ХАОС! ХАОС!"  # флейвор Шара Хроноса — приоритет ВЫШЕ god_essence/koshko_amulet
 # Тиры, полностью наследующие "god_essence"-механики (скорость фарма, гарант монет/очков перерождения).
 GOD_TIER_LIKE = {"god_essence", "koshko_amulet"}
 
@@ -1859,12 +1862,16 @@ def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrade
         mult += EVO_BOOST_STEP * (evolution_level - 2)
     # Бусты экипированных бустеров (амулеты и т.п.) не складываются друг с другом —
     # применяется только самый сильный из надетых (см. ITEMS[key][2] = boost_percent).
+    # chronos_orb СОЗНАТЕЛЬНО исключён из этого подбора: у него отдельный рандомный
+    # буст (ветка ниже), а его ITEMS[...][2]=120 — только для UI/отображения, чтобы
+    # не задвоить буст (фикс. % + рандомный % одновременно).
+    equipped_set = set(_normalize_active_items(active_items))
     best_boost_percent = 0
-    for item_key in _normalize_active_items(active_items):
-        if item_key in ITEMS:
+    for item_key in equipped_set:
+        if item_key in ITEMS and item_key != "chronos_orb":
             best_boost_percent = max(best_boost_percent, ITEMS[item_key][2])
     mult += best_boost_percent / 100
-    if "chronos_orb" in set(_normalize_active_items(active_items)):
+    if "chronos_orb" in equipped_set:
         # 🔮 Шар Хроноса: буст рандомный (1-200%), меняется раз в 5 минут фоновым тасков
         # (см. chronos_orb_boost_loop), текущее значение хранится в users.chronos_boost_pct.
         mult += chronos_boost_pct / 100
@@ -2167,16 +2174,26 @@ async def resolve_target(message: Message, to_self: bool):
 
 
 # ---------- Слой БД (Turso / libSQL) ----------
+# ВАЖНО: раньше тут был один общий _conn + глобальный asyncio.Lock на КАЖДЫЙ запрос —
+# это сериализовало вообще все обращения к БД во всём боте (и текстовые команды, и
+# инлайн-кнопки), поэтому под нагрузкой кнопки "тупили": нажатие ждало своей очереди
+# среди вообще всех db-запросов бота. libsql-коннекшн не потокобезопасен для парал-
+# лельного использования одним объектом из разных потоков — но потокобезопасен, если
+# у каждого потока (thread pool executor'а из to_thread) СВОЁ соединение. Поэтому вместо
+# лока — соединение per-thread (threading.local), запросы разных пользователей теперь
+# реально выполняются параллельно и не блокируют друг друга.
+import threading
 
-_db_lock = asyncio.Lock()
-_conn = None
+_thread_local = threading.local()
+_pool_size_limiter = asyncio.Semaphore(32)  # верхний предел параллельных БД-потоков — защита от перегрузки Turso
 
 
 def _connect():
-    global _conn
-    if _conn is None:
-        _conn = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
-    return _conn
+    conn = getattr(_thread_local, "conn", None)
+    if conn is None:
+        conn = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
+        _thread_local.conn = conn
+    return conn
 
 
 def _exec_sync(sql, params):
@@ -2192,12 +2209,12 @@ def _query_sync(sql, params):
 
 
 async def db_exec(sql, params=()):
-    async with _db_lock:
+    async with _pool_size_limiter:
         await asyncio.to_thread(_exec_sync, sql, params)
 
 
 async def db_query(sql, params=()):
-    async with _db_lock:
+    async with _pool_size_limiter:
         return await asyncio.to_thread(_query_sync, sql, params)
 
 
@@ -2774,6 +2791,14 @@ def is_vip_active(vip_until: int) -> bool:
     return bool(vip_until) and vip_until > int(time.time())
 
 
+def _percent_label(item_key: str, percent: int) -> str:
+    """Подпись буста для кнопок/списков. chronos_orb — спец-случай: у него рандомный
+    буст 1-200% (пересчитывается раз в 5 мин), фикс. число тут вводило бы в заблуждение."""
+    if item_key == "chronos_orb":
+        return "+1-200%, рандом"
+    return f"+{percent}%"
+
+
 def inventory_keyboard(inventory_rows, active_item: str, user_id: int) -> InlineKeyboardMarkup:
     rows = []
     for item_key, qty in inventory_rows:
@@ -2782,7 +2807,7 @@ def inventory_keyboard(inventory_rows, active_item: str, user_id: int) -> Inline
         emoji, name, percent, _ = ITEMS[item_key]
         mark = " ✅" if active_item == item_key else ""
         rows.append([InlineKeyboardButton(
-            text=f"{name} {plain_emoji(emoji)} (+{percent}%) x{qty}{mark}",
+            text=f"{name} {plain_emoji(emoji)} ({_percent_label(item_key, percent)}) x{qty}{mark}",
             callback_data=f"equip:{user_id}:{item_key}",
         )])
     return InlineKeyboardMarkup(inline_keyboard=rows)
@@ -2882,7 +2907,7 @@ dp.message.middleware(PrivateBlockMiddleware())
 dp.callback_query.middleware(PrivateBlockMiddleware())
 dp.message.middleware(TrackMembershipMiddleware())
 dp.message.middleware(ThrottleMiddleware(1.5))
-dp.callback_query.middleware(CallbackThrottleMiddleware(0.4))
+dp.callback_query.middleware(CallbackThrottleMiddleware(0.15))
 
 _last_leg_reply = {}
 
@@ -4299,10 +4324,18 @@ async def destroy_wrong_format(message: Message):
     )
 
 
+def _format_equipped_item_line(item_key: str) -> str:
+    emoji, name, boost_percent, _ = ITEMS[item_key]
+    if item_key == "chronos_orb":
+        # Буст рандомный (1-200%, пересчитывается раз в 5 мин) — фикс. число тут вводило бы в заблуждение.
+        return f"{emoji} {esc(name)} (+1-200%, рандом)"
+    return f"{emoji} {esc(name)} (+{boost_percent}%)"
+
+
 def format_inventory_menu_text(active_items, upgrades: dict = None, prestige_upgrades: dict = None):
     items = _normalize_active_items(active_items)
     max_slots = equipped_slots_max(upgrades or {}, prestige_upgrades or {})
-    equipped = [f"{ITEMS[k][0]} {esc(ITEMS[k][1])} (+{ITEMS[k][2]}%)" for k in items if k in ITEMS]
+    equipped = [_format_equipped_item_line(k) for k in items if k in ITEMS]
     equipped_header = f"Экипировано ({len(equipped)}/{max_slots}):"
     # Каждый экипированный предмет — на своей строке, а не слитно через запятую.
     equipped_text = equipped_header + ("\n" + "\n".join(equipped) if equipped else " ничего")
@@ -4359,7 +4392,7 @@ def boosters_keyboard(rows, active_items, user_id: int, page: int = 0, query: st
         if query:
             cb += f":{quote(query)}"
         kb_rows.append([InlineKeyboardButton(
-            text=f"{name} {plain_emoji(emoji)} (+{percent}%) x{qty}{mark}",
+            text=f"{name} {plain_emoji(emoji)} ({_percent_label(item_key, percent)}) x{qty}{mark}",
             callback_data=cb,
         )])
 
