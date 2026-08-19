@@ -2561,9 +2561,14 @@ async def init_db():
             user_id INTEGER PRIMARY KEY,
             username TEXT,
             banned_by TEXT,
-            banned_at INTEGER
+            banned_at INTEGER,
+            reason TEXT DEFAULT 'manual'
         )
     """)
+    try:
+        await db_exec("ALTER TABLE banned_users ADD COLUMN reason TEXT DEFAULT 'manual'")
+    except Exception:
+        pass  # колонка уже существует на старой БД — не первый запуск
     # ---------- Система промокодов ----------
     # reward_type: "legs" (ноги/score), "evo" (эво/evolution_level), "coin" (монеты),
     # "rebirth" (очкп/rebirth_points), "craft" (очкк/craft_points), "item" (предмет из ITEMS,
@@ -3228,6 +3233,133 @@ class UserBanMiddleware(BaseMiddleware):
         return await handler(event, data)
 
 
+# ---------- Анти-спам (флуд-бан) ----------
+# Порог срабатывания: ANTISPAM_LIMIT сообщений за ANTISPAM_WINDOW секунд.
+# Считаем ДВА независимых счётчика:
+#   1) по user_id — один и тот же игрок шлёт >= ANTISPAM_LIMIT сообщений подряд
+#      быстрее, чем физически может человек (например, кликер/скрипт).
+#   2) по chat_id — суммарно В ОДНОМ ЧАТЕ пришло >= ANTISPAM_LIMIT сообщений от
+#      КОГО УГОДНО за то же окно — ловит скоординированный спам с нескольких
+#      разных аккаунтов одновременно (см. инцидент: 10 ботов разом положили Render).
+#      В этом случае баним всех, кто реально прислал сообщение в этом окне —
+#      не весь чат целиком, а только участников самого всплеска.
+ANTISPAM_LIMIT = 10
+ANTISPAM_WINDOW = 2.7
+ANTISPAM_BAN_MESSAGE = (
+    "🚫 Вы превысили лимит отправки сообщений. Если это случайно, "
+    f"напишите овнеру @{ADMIN_USERNAME}"
+)
+
+# user_id -> список monotonic-таймстампов недавних сообщений
+_antispam_user_hits: dict = {}
+# chat_id -> список (monotonic-таймстамп, user_id) недавних сообщений
+_antispam_chat_hits: dict = {}
+
+
+async def _antispam_ban_user(user_id: int, username: str, reason: str):
+    """Мгновенный необратимый (до ручного !разбан все) бан — переиспользует ту же
+    таблицу/кэш, что и ручной !бан все, поэтому дальше UserBanMiddleware-логика тут
+    не нужна: если юзер уже забанен ЕЮ, повторно писать в БД незачем."""
+    if user_id in _banned_users_cache:
+        return
+    _banned_users_cache.add(user_id)  # сразу, до await, чтобы гонки не дали дубликат
+    try:
+        await db_exec(
+            "INSERT INTO banned_users (user_id, username, banned_by, banned_at, reason) "
+            "VALUES (?, ?, ?, ?, ?) ON CONFLICT(user_id) DO NOTHING",
+            (user_id, username, "AntiSpamMiddleware", int(time.time()), reason),
+        )
+    except Exception as e:
+        print(f"_antispam_ban_user ошибка записи в БД: {e}")
+
+
+class AntiSpamMiddleware(BaseMiddleware):
+    """Мгновенный бан без предупреждений: ANTISPAM_LIMIT сообщений за ANTISPAM_WINDOW
+    секунд — либо от одного user_id, либо суммарно в одном chat_id от кого угодно —
+    и виновники молча банятся в banned_users (тот же тихий бан, что и у !бан все).
+    Работает как outer_middleware ДО ChatBanMiddleware/UserBanMiddleware: даже если
+    юзера забанят прямо сейчас, событие, из-за которого сработал бан, ещё не должно
+    доехать до хендлеров — поэтому сообщение с предупреждением шлём отсюда же и
+    возвращаемся, не вызывая handler.
+
+    Админ (ADMIN_USER_ID) никогда не считается и не банится."""
+
+    async def __call__(self, handler, event, data):
+        if not isinstance(event, Message):
+            return await handler(event, data)
+
+        user = event.from_user
+        if user is None or user.id == ADMIN_USER_ID:
+            return await handler(event, data)
+
+        # Уже забанен (этим же фильтром или вручную) — молчим, дальше по цепочке
+        # UserBanMiddleware всё равно дропнет, но не тратим время на подсчёт.
+        if user.id in _banned_users_cache:
+            return await handler(event, data)
+
+        now = time.monotonic()
+        username = user.username or user.first_name or str(user.id)
+
+        # ---- 1) счётчик по user_id ----
+        hits = _antispam_user_hits.setdefault(user.id, [])
+        hits.append(now)
+        cutoff = now - ANTISPAM_WINDOW
+        while hits and hits[0] < cutoff:
+            hits.pop(0)
+
+        user_triggered = len(hits) >= ANTISPAM_LIMIT
+
+        # ---- 2) счётчик по chat_id (кто угодно в чате) ----
+        chat = event.chat
+        chat_triggered_ids = []
+        if chat is not None:
+            chat_hits = _antispam_chat_hits.setdefault(chat.id, [])
+            chat_hits.append((now, user.id))
+            while chat_hits and chat_hits[0][0] < cutoff:
+                chat_hits.pop(0)
+            if len(chat_hits) >= ANTISPAM_LIMIT:
+                # баним каждого уникального участника этого всплеска в чате,
+                # а не только текущего отправителя
+                chat_triggered_ids = list({uid for _, uid in chat_hits if uid != ADMIN_USER_ID})
+
+        if not user_triggered and not chat_triggered_ids:
+            # Обычное редкое сообщение — не даём словарям расти бесконечно:
+            # если после чистки окна остался всего 1 свежий хит (только что
+            # добавленный), это неактивный юзер/чат, безопасно выкинуть ключ
+            # и пересоздать при следующем сообщении через setdefault выше.
+            if len(hits) <= 1:
+                _antispam_user_hits.pop(user.id, None)
+            if chat is not None and len(_antispam_chat_hits.get(chat.id, [])) <= 1:
+                _antispam_chat_hits.pop(chat.id, None)
+            return await handler(event, data)
+
+        # Срабатывание — баним и отвечаем один раз, дальше для этих юзеров
+        # включается штатный UserBanMiddleware (тихое игнорирование).
+        if user_triggered:
+            await _antispam_ban_user(user.id, username, "antispam")
+            _antispam_user_hits.pop(user.id, None)
+            try:
+                await event.reply(ANTISPAM_BAN_MESSAGE)
+            except Exception:
+                pass
+
+        for uid in chat_triggered_ids:
+            if uid == user.id and user_triggered:
+                continue  # уже забанен и уведомлён выше
+            await _antispam_ban_user(uid, str(uid), "antispam_chat_flood")
+            _antispam_user_hits.pop(uid, None)
+
+        if chat_triggered_ids:
+            _antispam_chat_hits.pop(chat.id, None)
+            if not user_triggered:
+                try:
+                    await event.reply(ANTISPAM_BAN_MESSAGE)
+                except Exception:
+                    pass
+
+        return
+
+
 class AliasNormalizeMiddleware(BaseMiddleware):
     """Переписывает message.text на канонический вид команды ДО того, как текст попадёт
     в остальные middleware/хендлеры (is_command_text, ThrottleMiddleware, сами @dp.message)."""
@@ -3369,6 +3501,7 @@ dp.message.outer_middleware(ChatBanMiddleware())
 dp.callback_query.outer_middleware(ChatBanMiddleware())
 dp.message.outer_middleware(UserBanMiddleware())
 dp.callback_query.outer_middleware(UserBanMiddleware())
+dp.message.outer_middleware(AntiSpamMiddleware())
 dp.message.outer_middleware(AliasNormalizeMiddleware())
 # PrivateBlockMiddleware больше не подключается — личка разлочена для всех
 # (раньше в ЛС отвечал только ADMIN_USERNAME, остальные получали тишину).
@@ -7761,12 +7894,21 @@ async def admin_list_banned_users(message: Message):
     if not is_admin(message):
         return
     await log_admin_action(message)
-    rows = await db_query("SELECT username, user_id FROM banned_users ORDER BY banned_at DESC LIMIT 50")
+    rows = await db_query(
+        "SELECT username, user_id, reason FROM banned_users ORDER BY banned_at DESC LIMIT 50"
+    )
     if not rows:
         await message.reply(TEXTS["admin_list_banned_users_1"])
         return
 
-    lines = [f"● {esc(username or str(user_id))}" for username, user_id in rows]
+    reason_labels = {
+        "antispam": " (флуд, авто)",
+        "antispam_chat_flood": " (флуд в чате, авто)",
+    }
+    lines = [
+        f"● {esc(username or str(user_id))}{reason_labels.get(reason, '')}"
+        for username, user_id, reason in rows
+    ]
     await message.reply(TEXTS["admin_list_banned_users_2"].format(v0=len(rows), v1="\n".join(lines)))
 
 
