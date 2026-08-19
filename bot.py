@@ -298,7 +298,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !логи — последние действия админа\n● !пинг — задержка БД\n'
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников — списки\n● !найти @user — в каких чатах видели игрока\n● !забанить чат [название] — тихо отключить фарм в чате (без аргумента — текущий чат)\n● !разбанить чат [название] — снять тихий бан с чата\n● !список банов чат — список забаненных чатов\n● !список чат — все чаты, где сейчас состоит бот\n● !логи — последние действия админа\n● !пинг — задержка БД\n'
     '● !промокод создать "тип" "кол-во" "активаций" "название" — создать промокод (тип: ноги/эво/коин/очкп/крафт или предмет:<ключ>)\n'
     '● !промокод создать бейдж "название_бейджа" "название_промокода" — создать промокод на бейдж (бейджи: тестер/сапорт/потужность/топ1 в прошлом)\n'
     '● !промокод удалить "название" — удалить промокод\n'
@@ -612,9 +612,20 @@ TEXTS = {
     "admin_find_2": 'Игрок не найден (он ещё не писал ноги в этом боте).',
     "admin_find_3": '🔎 {v0} — бот видел его в {v1} чате(ах):\n{v2}',
     "admin_find_4": 'Бот не встречал этого игрока ни в одном чате.',
+    "admin_ban_chat_1": '✅ Фарм отключён в чате: {v0}',
+    "admin_ban_chat_2": '⚠️ Фарм уже был отключён в этом чате.',
+    "admin_ban_chat_3": 'Чат не найден по названию «{v0}». Бот знает только чаты, где уже писали игроки.',
+    "admin_ban_chat_4": 'Найдено несколько подходящих чатов, уточни название:\n{v0}',
+    "admin_unban_chat_1": '✅ Фарм снова разрешён в чате: {v0}',
+    "admin_unban_chat_2": '⚠️ Этот чат и так не был в бане.',
+    "admin_list_banned_chats_1": 'Нет забаненных чатов.',
+    "admin_list_banned_chats_2": '🚫 Забаненные чаты ({v0}):\n{v1}',
+    "admin_list_chats_1": 'Бот пока нигде не активен (ещё никто не писал команды в группах).',
+    "admin_list_chats_2": '💬 Чаты бота ({v0}):\n{v1}',
 
     "admin_logs_1": 'Лог пуст.',
     "admin_logs_2": '📜 <b>Последние действия ({v0}):</b>\n{v1}',
+    "admin_logs_clear_1": '🧹 Очищено записей лога: {v0}. Осталось: {v1} (за последние 7 дней).',
 
     "admin_ping_1": '🏓 Понг! Ответ БД за {v0} мс.',
     "admin_ping_2": '🏓 Понг! 5 замеров SELECT 1 (мс): {v0}\nmin={v1} avg={v2} max={v3}',
@@ -1347,6 +1358,11 @@ ADMIN_VIP_FOREVER_RE = re.compile(r"^!вип навсегда(\s+себе)?$", r
 ADMIN_ULTRA_REBIRTH_RE = re.compile(r"^!ультра навсегда(\s+себе)?$", re.IGNORECASE)
 ADMIN_RESET_NICK_RE = re.compile(r"^!сброс ник\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_FIND_RE = re.compile(r"^!найти\s+@?(\w+)$", re.IGNORECASE)
+# !забанить чат [название] — без аргумента банит текущий чат, с аргументом ищет по
+# подстроке названия среди чатов из chat_members. Тихий бан: бот остаётся в чате,
+# просто "ферма"/"фарма" перестаёт работать (без ответа, см. хендлер farm()).
+ADMIN_BAN_CHAT_RE = re.compile(r"^!забанить чат(?:\s+(.+))?$", re.IGNORECASE)
+ADMIN_UNBAN_CHAT_RE = re.compile(r"^!разбанить чат(?:\s+(.+))?$", re.IGNORECASE)
 
 # ---------- Промокоды ----------
 # Аргументы в кавычках: !промокод создать "тип" "количество" "активаций" "название"
@@ -1374,7 +1390,8 @@ FIXED_COMMANDS = {
     "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ", "крафты", "крафт",
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
     "мои зелья", "зелья",
-    "!список вип", "!список банов топ", "!список ников", "!логи", "!пинг", "!ивент стоп", "!ивент статус",
+    "!список вип", "!список банов топ", "!список ников", "!список банов чат", "!список чат", "!логи", "!пинг", "!ивент стоп", "!ивент статус",
+    "!забанить чат", "!разбанить чат",
     "ультра перерождение", "ультра перерождение подтверждаю",
     "авто эво вкл", "авто эво выкл", "авто эволюция вкл", "авто эволюция выкл",
     "авто перерождение вкл", "авто перерождение выкл", "авто рб вкл", "авто рб выкл",
@@ -1390,7 +1407,7 @@ PREFIX_COMMANDS = (
     "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
     "!установить очкп", "!обнулить экономику", "!мультипликатор ферма", "!дать предмет",
     "!очистить инвентарь", "!дать апгрейд", "!вип навсегда", "!сброс ник", "!найти ", "!ультра навсегда",
-    "вип открыть кейс", "бустеры поиск ", "!дать ключ",
+    "вип открыть кейс", "бустеры поиск ", "!дать ключ", "!забанить чат ", "!разбанить чат ",
 )
 
 
@@ -2211,27 +2228,36 @@ async def resolve_target(message: Message, to_self: bool):
 # 2) Затем это заменили на "соединение per-thread" через threading.local() + обычный
 #    asyncio.to_thread (дефолтный пул потоков, до 32 воркеров) — это ОКАЗАЛОСЬ ХУЖЕ:
 #    при спаме каждое сообщение могло попасть в новый поток пула и открыть НОВОЕ
-#    сетевое соединение с Turso, а Turso сериализует записи на своей стороне и не
-#    даёт выигрыша от параллельных соединений — вместо этого при спаме плодилось
-#    много одновременных попыток коннекта, что приводило к таймаутам соединения и
-#    "отвалу половины функционала", который сам проходил через время (когда лишние
-#    соединения закрывались по таймауту). Это и есть баг, о котором сообщил игрок.
-# ИТОГ (текущее решение): одно-единственное постоянное соединение + СТРОГАЯ очередь
-# запросов через один выделенный поток-воркер (не пул!). Запросы выполняются по
-# очереди — предсказуемо и без риска "размножения" соединений — но, в отличие от
-# варианта (1), это не блокирует event loop бота: пока воркер занят одним SQL-
-# запросом, сам бот продолжает читать апдейты от Telegram, отвечать на callback_query
-# ("часики" гаснут сразу), запускать другие хендлеры и т.д. — тормозит только сама
-# db-операция, а не весь бот целиком.
-_db_queue: "asyncio.Queue" = None
-_db_worker_task = None
-_conn = None
-# Единственный выделенный поток-исполнитель для всех synchronous libsql-вызовов —
-# ГАРАНТИРУЕТ, что _conn всегда используется из одного и того же ОС-потока (обычный
-# asyncio.to_thread берёт поток из общего пула, а он может отличаться от вызова к
-# вызову — с одним закреплённым потоком такой риск исключён полностью).
+#    сетевое соединение с Turso (лениво, по требованию, в произвольном из 32
+#    потоков) — при всплеске нагрузки это давало резкий скачок числа одновременных
+#    попыток коннекта, что приводило к таймаутам соединения и "отвалу половины
+#    функционала", который сам проходил через время (когда лишние соединения
+#    закрывались по таймауту). Это и есть баг, о котором сообщил игрок.
+# 3) Затем это заменили на одно-единственное постоянное соединение + СТРОГУЮ очередь
+#    запросов через один выделенный поток-воркер (не пул) — это убрало проблему
+#    "размножения соединений" полностью, но ценой полной сериализации: запрос
+#    юзера A физически ждёт своей очереди за всеми запросами юзеров B, C, D...
+#    которые пришли раньше. Под нагрузкой (много одновременных нажатий кнопок)
+#    задержка перед ответом растёт линейно с числом активных пользователей — это
+#    и есть "высокий пинг из-за нагрузки".
+# ИТОГ (текущее решение): НЕСКОЛЬКО (DB_WORKER_COUNT) выделенных воркеров, у
+# каждого — СВОЁ собственное соединение, открытое один раз при первом обращении
+# этого воркера (не лениво на каждый запрос, не в случайном потоке общего пула).
+# Число соединений строго ограничено и стабильно (не 32, а DB_WORKER_COUNT) —
+# никакого "размножения" при спаме быть не может, т.к. воркеров ровно столько,
+# сколько задано на старте, и они переиспользуются, а не создаются заново.
+# Запросы одного и того же user_id всегда обрабатываются последовательно (см.
+# _pick_worker) — это защищает от гонок при чтении/записи одной строки, а вот
+# запросы РАЗНЫХ пользователей теперь могут выполняться параллельно на разных
+# воркерах/соединениях, чего не было в варианте (3).
 from concurrent.futures import ThreadPoolExecutor
-_db_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="db-worker")
+
+DB_WORKER_COUNT = int(os.environ.get("DB_WORKER_COUNT", "4"))
+
+_db_queues: list = []          # список asyncio.Queue, по одной на воркер
+_db_worker_tasks: list = []
+_db_conns: list = []           # список соединений libsql, по одному на воркер (thread-local по построению)
+_db_executor = ThreadPoolExecutor(max_workers=DB_WORKER_COUNT, thread_name_prefix="db-worker")
 
 
 # ---------- Кэш строк users (в памяти процесса) ----------
@@ -2253,55 +2279,78 @@ def _invalidate_user_cache(user_id):
     _user_cache.pop(user_id, None)
 
 
-def _connect():
-    global _conn
-    if _conn is None:
-        _conn = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
-    return _conn
+def _connect(worker_idx):
+    # Каждый воркер держит РОВНО одно своё соединение, создаваемое один раз при
+    # первом обращении и переиспользуемое дальше — не 32 соединения "по требованию",
+    # а фиксированные DB_WORKER_COUNT штук.
+    if _db_conns[worker_idx] is None:
+        _db_conns[worker_idx] = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
+    return _db_conns[worker_idx]
 
 
-def _exec_sync(sql, params):
-    conn = _connect()
+def _exec_sync(worker_idx, sql, params):
+    conn = _connect(worker_idx)
     conn.execute(sql, params)
     conn.commit()
 
 
-def _query_sync(sql, params):
-    conn = _connect()
+def _query_sync(worker_idx, sql, params):
+    conn = _connect(worker_idx)
     cur = conn.execute(sql, params)
     return cur.fetchall()
 
 
-async def _db_worker():
-    """Единственный поток, реально трогающий libsql-соединение. Берёт задачи из
-    очереди строго по одной — соединение всегда используется из одного и того же
-    потока, никаких гонок и никакого размножения коннектов при всплесках нагрузки."""
+async def _db_worker(worker_idx):
+    """Один из DB_WORKER_COUNT потоков. Каждый воркер берёт задачи строго из
+    СВОЕЙ очереди по одной — его соединение всегда используется из одного и
+    того же потока (никаких гонок внутри соединения), но разные воркеры со
+    своими соединениями могут работать параллельно, а не ждать друг друга."""
     loop = asyncio.get_event_loop()
+    queue = _db_queues[worker_idx]
     while True:
-        fn, sql, params, future = await _db_queue.get()
+        fn, sql, params, future = await queue.get()
         try:
-            result = await loop.run_in_executor(_db_executor, fn, sql, params)
+            result = await loop.run_in_executor(_db_executor, fn, worker_idx, sql, params)
             if not future.done():
                 future.set_result(result)
         except Exception as e:
             if not future.done():
                 future.set_exception(e)
         finally:
-            _db_queue.task_done()
+            queue.task_done()
 
 
-def _ensure_db_worker():
-    global _db_queue, _db_worker_task
-    if _db_queue is None:
-        _db_queue = asyncio.Queue()
-    if _db_worker_task is None or _db_worker_task.done():
-        _db_worker_task = asyncio.create_task(_db_worker())
+def _ensure_db_workers():
+    global _db_queues, _db_worker_tasks, _db_conns
+    if not _db_queues:
+        _db_queues = [asyncio.Queue() for _ in range(DB_WORKER_COUNT)]
+        _db_conns = [None] * DB_WORKER_COUNT
+        _db_worker_tasks = [None] * DB_WORKER_COUNT
+    for i in range(DB_WORKER_COUNT):
+        if _db_worker_tasks[i] is None or _db_worker_tasks[i].done():
+            _db_worker_tasks[i] = asyncio.create_task(_db_worker(i))
+
+
+def _pick_worker(params):
+    # Запросы одного user_id всегда идут в один и тот же воркер — гарантирует
+    # порядок операций над одной строкой (никаких гонок чтение-после-записи для
+    # одного игрока). user_id обычно последний параметр в WHERE (см. весь код
+    # db_exec/db_query выше), поэтому берём первый int-параметр как ключ шардинга;
+    # если параметров нет (например "SELECT 1" для !пинг) — берём воркер 0.
+    for p in params:
+        # bool — подкласс int в Python (isinstance(True, int) is True), поэтому
+        # явно исключаем его, иначе случайный флаг True/False мог бы ошибочно
+        # "выбираться" вместо настоящего user_id.
+        if isinstance(p, int) and not isinstance(p, bool):
+            return p % DB_WORKER_COUNT
+    return 0
 
 
 async def _db_submit(fn, sql, params):
-    _ensure_db_worker()
+    _ensure_db_workers()
+    worker_idx = _pick_worker(params)
     future = asyncio.get_event_loop().create_future()
-    await _db_queue.put((fn, sql, params, future))
+    await _db_queues[worker_idx].put((fn, sql, params, future))
     return await future
 
 
@@ -2430,6 +2479,16 @@ async def init_db():
             ts INTEGER,
             admin_username TEXT,
             command TEXT
+        )
+    """)
+    # Чаты, в которых фарм отключён (тихий бан — "ферма" молча ничего не делает).
+    # Бот из чата НЕ выходит, только блокирует фарм-геймплей для всех участников.
+    await db_exec("""
+        CREATE TABLE IF NOT EXISTS banned_chats (
+            chat_id INTEGER PRIMARY KEY,
+            title TEXT,
+            banned_by TEXT,
+            banned_at INTEGER
         )
     """)
     # ---------- Система промокодов ----------
@@ -2953,6 +3012,38 @@ def get_chat(event):
     return None
 
 
+class ChatBanMiddleware(BaseMiddleware):
+    """Тихий бан чата (см. !забанить чат): если chat_id в banned_chats, ВЕСЬ игровой
+    функционал в этом чате молча не работает — ни текстовые команды, ни инлайн-кнопки.
+    Бот из чата не выходит, просто игнорирует всё до хендлера.
+
+    Исключение — админ-команды управления самим баном (!забанить чат / !разбанить чат /
+    !список банов чат), чтобы забаненный чат можно было разбанить, не выходя из него,
+    и не для остальных owner-команд (!дебаг, !дать и т.п. в забаненном чате тоже глохнут,
+    администрирование игроков всё равно доступно в других чатах/лички).
+    Работает как outer_middleware — стоит раньше троттлинга и трекинга участников,
+    чтобы забаненный чат вообще не грузил остальную логику."""
+    BAN_MGMT_PREFIXES = ("!забанить чат", "!разбанить чат", "!список банов чат")
+
+    async def __call__(self, handler, event, data):
+        chat = get_chat(event)
+        if chat is not None and chat.id is not None:
+            text = getattr(event, "text", None)
+            if isinstance(event, CallbackQuery):
+                text = None  # у callback нет .text — сверяем только по chat_id ниже
+            is_ban_mgmt = bool(text) and text.strip().lower().startswith(self.BAN_MGMT_PREFIXES)
+            if not is_ban_mgmt:
+                banned = await db_query_one("SELECT 1 FROM banned_chats WHERE chat_id = ?", (chat.id,))
+                if banned:
+                    if isinstance(event, CallbackQuery):
+                        try:
+                            await event.answer()
+                        except Exception:
+                            pass
+                    return
+        return await handler(event, data)
+
+
 class AliasNormalizeMiddleware(BaseMiddleware):
     """Переписывает message.text на канонический вид команды ДО того, как текст попадёт
     в остальные middleware/хендлеры (is_command_text, ThrottleMiddleware, сами @dp.message)."""
@@ -3079,6 +3170,8 @@ class StaleCallbackGuardMiddleware(BaseMiddleware):
 dp.callback_query.middleware(StaleCallbackGuardMiddleware())
 
 
+dp.message.outer_middleware(ChatBanMiddleware())
+dp.callback_query.outer_middleware(ChatBanMiddleware())
 dp.message.outer_middleware(AliasNormalizeMiddleware())
 # PrivateBlockMiddleware больше не подключается — личка разлочена для всех
 # (раньше в ЛС отвечал только ADMIN_USERNAME, остальные получали тишину).
@@ -3911,6 +4004,12 @@ async def top_overall_global(message: Message):
 
 @dp.message(F.text.lower().in_({"ферма", "фарма"}))
 async def farm(message: Message):
+    # Тихий бан чата: если чат в banned_chats, фарм молча не работает — без ответа,
+    # чтобы не давать спамерам понятный сигнал "тебя заблокировали" (см. !забанить чат).
+    banned = await db_query_one("SELECT 1 FROM banned_chats WHERE chat_id = ?", (message.chat.id,))
+    if banned:
+        return
+
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     now = int(time.time())
@@ -7275,6 +7374,133 @@ async def admin_find(message: Message):
     await message.reply(TEXTS["admin_find_3"].format(v0=esc(row[1]), v1=len(chat_rows), v2="\n".join(lines)))
 
 
+async def _resolve_chat_by_query(message: Message, query: str):
+    """Ищет chat_id по подстроке названия среди чатов, известных боту (chat_members).
+    Возвращает (chat_id, title) при однозначном совпадении, либо (None, None) и сам
+    отправляет игроку соответствующее сообщение (не найдено / несколько совпадений)."""
+    rows = await db_query("SELECT DISTINCT chat_id FROM chat_members")
+    query_lower = query.lower()
+    matches = []
+    for (chat_id,) in rows:
+        try:
+            chat = await bot.get_chat(chat_id)
+            title = chat.title or chat.full_name or str(chat_id)
+        except Exception:
+            continue
+        if query_lower in title.lower():
+            matches.append((chat_id, title))
+
+    if not matches:
+        await message.reply(TEXTS["admin_ban_chat_3"].format(v0=esc(query)))
+        return None, None
+    if len(matches) > 1:
+        lines = [f"● {esc(title)}" for _, title in matches[:20]]
+        await message.reply(TEXTS["admin_ban_chat_4"].format(v0="\n".join(lines)))
+        return None, None
+    return matches[0]
+
+
+@dp.message(F.text.regexp(r"(?i)^!забанить чат"))
+async def admin_ban_chat(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_BAN_CHAT_RE.match(message.text.strip())
+    query = (match.group(1) if match else None) or ""
+    query = query.strip()
+
+    if query:
+        chat_id, title = await _resolve_chat_by_query(message, query)
+        if chat_id is None:
+            return
+    else:
+        chat_id = message.chat.id
+        title = message.chat.title or message.chat.full_name or str(chat_id)
+
+    existing = await db_query_one("SELECT chat_id FROM banned_chats WHERE chat_id = ?", (chat_id,))
+    if existing:
+        await message.reply(TEXTS["admin_ban_chat_2"])
+        return
+
+    admin_username = message.from_user.username or str(message.from_user.id)
+    await db_exec(
+        "INSERT INTO banned_chats (chat_id, title, banned_by, banned_at) VALUES (?, ?, ?, ?)",
+        (chat_id, title, admin_username, int(time.time())),
+    )
+    await message.reply(TEXTS["admin_ban_chat_1"].format(v0=esc(title)))
+
+
+@dp.message(F.text.regexp(r"(?i)^!разбанить чат"))
+async def admin_unban_chat(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_UNBAN_CHAT_RE.match(message.text.strip())
+    query = (match.group(1) if match else None) or ""
+    query = query.strip()
+
+    if query:
+        chat_id, title = await _resolve_chat_by_query(message, query)
+        if chat_id is None:
+            return
+    else:
+        chat_id = message.chat.id
+        title = message.chat.title or message.chat.full_name or str(chat_id)
+
+    existing = await db_query_one("SELECT chat_id FROM banned_chats WHERE chat_id = ?", (chat_id,))
+    if not existing:
+        await message.reply(TEXTS["admin_unban_chat_2"])
+        return
+
+    await db_exec("DELETE FROM banned_chats WHERE chat_id = ?", (chat_id,))
+    await message.reply(TEXTS["admin_unban_chat_1"].format(v0=esc(title)))
+
+
+@dp.message(F.text.lower() == "!список банов чат")
+async def admin_list_banned_chats(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    rows = await db_query("SELECT title, chat_id FROM banned_chats ORDER BY banned_at DESC LIMIT 50")
+    if not rows:
+        await message.reply(TEXTS["admin_list_banned_chats_1"])
+        return
+
+    lines = [f"● {esc(title or str(chat_id))}" for title, chat_id in rows]
+    await message.reply(TEXTS["admin_list_banned_chats_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+
+@dp.message(F.text.lower() == "!список чат")
+async def admin_list_chats(message: Message):
+    """Список всех чатов, где бот отметился (из chat_members — Telegram Bot API не даёт
+    метода 'дай все чаты бота' напрямую). Титул подтягивается свежим через bot.get_chat();
+    если чат недоступен (бота уже выгнали), запись пропускается, а не показывается мёртвой
+    строкой — так список честно отражает чаты, где бот РЕАЛЬНО сейчас состоит."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+
+    chat_ids = await db_query("SELECT DISTINCT chat_id FROM chat_members")
+    banned_rows = await db_query("SELECT chat_id FROM banned_chats")
+    banned_ids = {cid for (cid,) in banned_rows}
+
+    lines = []
+    for (chat_id,) in chat_ids:
+        try:
+            chat = await bot.get_chat(chat_id)
+            title = chat.title or chat.full_name or str(chat_id)
+        except Exception:
+            continue
+        mark = " 🚫" if chat_id in banned_ids else ""
+        lines.append(f"● {esc(title)}{mark}")
+
+    if not lines:
+        await message.reply(TEXTS["admin_list_chats_1"])
+        return
+
+    await message.reply(TEXTS["admin_list_chats_2"].format(v0=len(lines), v1="\n".join(lines)))
+
+
 @dp.message(F.text.regexp(r'(?i)^!промокод создать бейдж\s+'))
 async def admin_promo_create_badge(message: Message):
     """Короткий синтаксис для выдачи бейджа промокодом (см. PROMO_BADGES):
@@ -7486,6 +7712,43 @@ async def admin_logs(message: Message):
         lines.append(f"● [{dt}] @{esc(admin_username)}: {esc(command)}")
 
     await message.reply(TEXTS["admin_logs_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+
+@dp.message(F.text.lower().startswith("!чистлоги"))
+async def admin_clear_logs(message: Message):
+    # !чистлоги            -> удаляет всё старше 7 дней (по умолчанию)
+    # !чистлоги 3          -> удаляет всё старше 3 дней
+    # !чистлоги все        -> удаляет audit_log целиком
+    if not is_admin(message):
+        return
+
+    parts = message.text.strip().split(maxsplit=1)
+    arg = parts[1].strip().lower() if len(parts) > 1 else ""
+
+    if arg in ("все", "всё", "all"):
+        before_row = await db_query_one("SELECT COUNT(*) FROM audit_log")
+        before = before_row[0] if before_row else 0
+        await db_exec("DELETE FROM audit_log")
+        # логируем ПОСЛЕ очистки, иначе запись о самой команде чистки тоже удалится
+        await log_admin_action(message)
+        await message.reply(TEXTS["admin_logs_clear_1"].format(v0=before, v1=0))
+        return
+
+    days = 7
+    if arg:
+        try:
+            days = max(0, int(arg))
+        except ValueError:
+            days = 7
+
+    cutoff = int(time.time()) - days * 86400
+    before_row = await db_query_one("SELECT COUNT(*) FROM audit_log WHERE ts < ?", (cutoff,))
+    before = before_row[0] if before_row else 0
+    await db_exec("DELETE FROM audit_log WHERE ts < ?", (cutoff,))
+    await log_admin_action(message)
+    after_row = await db_query_one("SELECT COUNT(*) FROM audit_log")
+    after = after_row[0] if after_row else 0
+    await message.reply(TEXTS["admin_logs_clear_1"].format(v0=before, v1=after))
 
 
 @dp.message(F.text.lower() == "!пинг")
