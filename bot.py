@@ -19,6 +19,33 @@ from aiogram.types import (
 )
 from aiohttp import web
 
+# Некоторые хостинги (например Pterodactyl-панели без готового UI для секретов)
+# не дают способа задать переменные окружения через свою панель — только файлы.
+# Поэтому дополнительно читаем /home/container/.env (или .env рядом со скриптом),
+# если он есть — это НЕ заменяет os.environ, а просто подмешивает в него значения
+# из файла, если их там ещё не было. На хостах, где переменные окружения задаются
+# штатно (Render, Koyeb и т.п.), файла .env просто не будет, и этот блок не сработает.
+def _load_dotenv_if_present():
+    for path in ("/home/container/.env", os.path.join(os.path.dirname(__file__), ".env")):
+        if not os.path.isfile(path):
+            continue
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#") or "=" not in line:
+                        continue
+                    key, _, value = line.partition("=")
+                    key = key.strip()
+                    value = value.strip().strip('"').strip("'")
+                    os.environ.setdefault(key, value)
+        except Exception as e:
+            print(f".env не удалось прочитать ({path}): {e}")
+        break  # первый найденный файл — этого достаточно
+
+
+_load_dotenv_if_present()
+
 TOKEN = os.environ.get("BOT_TOKEN")
 ADMIN_USERNAME = "MaksGeometryGd"
 # user_id — основная проверка админки (см. is_admin): в отличие от username,
@@ -2337,6 +2364,12 @@ def _exec_sync(worker_idx, sql, params):
     conn.commit()
 
 
+def _exec_many_sync(worker_idx, sql, params_list):
+    conn = _connect(worker_idx)
+    conn.executemany(sql, params_list)
+    conn.commit()
+
+
 def _query_sync(worker_idx, sql, params):
     conn = _connect(worker_idx)
     cur = conn.execute(sql, params)
@@ -2406,6 +2439,15 @@ async def db_exec(sql, params=()):
             # редкий глобальный UPDATE users без WHERE user_id — например
             # chronos_boost_pct для всех сразу. Безопаснее сбросить весь кэш.
             _user_cache.clear()
+
+
+async def db_exec_many(sql, params_list):
+    """Как db_exec, но один запрос в очередь воркера выполняет executemany
+    сразу для списка наборов параметров — используется для батчинга (см.
+    _flush_player_log_buffer), чтобы N записей стоили очереди воркера как одна."""
+    if not params_list:
+        return
+    await _db_submit(_exec_many_sync, sql, params_list)
 
 
 async def db_query(sql, params=()):
@@ -3067,6 +3109,20 @@ _player_log_skipped = {}
 _player_log_calls_since_cleanup = 0
 _PLAYER_LOG_CLEANUP_EVERY = 500
 
+# ---------- Батчинг player_action_log ----------
+# С DB_WORKER_COUNT=1 каждый отдельный INSERT в player_action_log физически
+# занимает место в ЕДИНСТВЕННОЙ очереди воркера и на время своего выполнения
+# блокирует все остальные запросы (в т.ч. игровые действия других юзеров),
+# которые пришли следом. При активном чате это давало заметный вклад в
+# задержку ответа, хотя сам лог по смыслу не требует немедленной записи —
+# важно лишь, чтобы запись рано или поздно попала в БД. Поэтому копим строки
+# лога в памяти и сбрасываем их одним batched INSERT раз в
+# PLAYER_LOG_FLUSH_INTERVAL секунд — вместо N отдельных обращений к очереди
+# воркера получаем одно, независимо от того, сколько действий произошло за
+# этот интервал.
+PLAYER_LOG_FLUSH_INTERVAL = 5.0
+_player_log_buffer: list = []
+
 
 def _cleanup_player_log_throttle(now: float):
     ttl = PLAYER_LOG_MIN_INTERVAL * 20
@@ -3098,13 +3154,27 @@ async def _log_player_action(user_id: int, username: str, text: str):
     command = text.strip()[:200]
     if skipped:
         command = f"{command} [+{skipped} пропущено за <{PLAYER_LOG_MIN_INTERVAL:.0f}с]"
-    try:
-        await db_exec(
-            "INSERT INTO player_action_log (ts, user_id, username, command) VALUES (?, ?, ?, ?)",
-            (int(time.time()), user_id, username, command),
-        )
-    except Exception as e:
-        print(f"_log_player_action ошибка: {e}")
+    # Не пишем в БД сразу — кладём в буфер, реальный INSERT делает
+    # _flush_player_log_buffer() пачкой раз в PLAYER_LOG_FLUSH_INTERVAL сек.
+    _player_log_buffer.append((int(time.time()), user_id, username, command))
+
+
+async def _flush_player_log_buffer():
+    """Фоновый цикл: раз в PLAYER_LOG_FLUSH_INTERVAL сек сбрасывает накопленные
+    записи player_action_log ОДНИМ запросом (executemany на стороне воркера),
+    вместо отдельного INSERT на каждое действие игрока."""
+    while True:
+        await asyncio.sleep(PLAYER_LOG_FLUSH_INTERVAL)
+        if not _player_log_buffer:
+            continue
+        batch, _player_log_buffer[:] = _player_log_buffer[:], []
+        try:
+            await db_exec_many(
+                "INSERT INTO player_action_log (ts, user_id, username, command) VALUES (?, ?, ?, ?)",
+                batch,
+            )
+        except Exception as e:
+            print(f"_flush_player_log_buffer ошибка: {e}")
 
 
 async def track_membership(user_id: int, chat_id: int):
@@ -8490,11 +8560,23 @@ async def main():
     asyncio.create_task(keep_alive())
     asyncio.create_task(chronos_orb_boost_loop())
     asyncio.create_task(auto_log_cleanup_loop())
+    asyncio.create_task(_flush_player_log_buffer())
 
     print("Бот НОГА запущен!")
     try:
         await dp.start_polling(bot, drop_pending_updates=False)
     finally:
+        # Сохраняем то, что накопилось в буфере логов и ещё не попало в БД,
+        # чтобы штатная остановка (не краш) не теряла последние секунды логов.
+        if _player_log_buffer:
+            try:
+                batch, _player_log_buffer[:] = _player_log_buffer[:], []
+                await db_exec_many(
+                    "INSERT INTO player_action_log (ts, user_id, username, command) VALUES (?, ?, ?, ?)",
+                    batch,
+                )
+            except Exception as e:
+                print(f"Финальный flush player_action_log не удался: {e}")
         await bot.session.close()
         await runner.cleanup()
 
