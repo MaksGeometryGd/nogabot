@@ -242,7 +242,7 @@ EVO_BOOST_STEP = 0.10      # нерф с 0.30/0.20
 VIP_BOOST = 2.0  # +200%
 
 # ---------- Прочие настройки (собраны сюда из разных мест файла) ----------
-LEG_REPLY_COOLDOWN = 2                       # сек. между повторными реакциями бота на "нога"
+LEG_REPLY_COOLDOWN = 1                       # сек. между повторными реакциями бота на "нога"
 VIP_STARS_PRICE = 15                         # цена VIP навсегда в звёздах Telegram
 VIP_FOREVER_SECONDS = 100 * 365 * 86400      # "навсегда" — технически 100 лет
 PING_INTERVAL = 600                          # сек. между self-ping запросами (анти-сон Render)
@@ -2274,7 +2274,7 @@ async def resolve_target(message: Message, to_self: bool):
 # воркерах/соединениях, чего не было в варианте (3).
 from concurrent.futures import ThreadPoolExecutor
 
-DB_WORKER_COUNT = int(os.environ.get("DB_WORKER_COUNT", "4"))
+DB_WORKER_COUNT = int(os.environ.get("DB_WORKER_COUNT", "1"))
 
 _db_queues: list = []          # список asyncio.Queue, по одной на воркер
 _db_worker_tasks: list = []
@@ -8454,9 +8454,16 @@ async def handle(request):
 
 
 async def keep_alive():
+    # Render задаёт готовый URL с протоколом (RENDER_EXTERNAL_URL). Koyeb вместо этого
+    # даёт только домен без протокола (KOYEB_PUBLIC_DOMAIN) — https:// нужно добавить
+    # самим. Проверяем оба варианта, чтобы один и тот же код работал на обеих платформах.
     url = os.environ.get("RENDER_EXTERNAL_URL")
     if not url:
-        print("RENDER_EXTERNAL_URL не задан, self-ping отключён")
+        domain = os.environ.get("KOYEB_PUBLIC_DOMAIN")
+        if domain:
+            url = f"https://{domain}"
+    if not url:
+        print("Ни RENDER_EXTERNAL_URL, ни KOYEB_PUBLIC_DOMAIN не заданы, self-ping отключён")
         return
 
     async with aiohttp.ClientSession() as session:
@@ -8486,7 +8493,7 @@ async def main():
 
     print("Бот НОГА запущен!")
     try:
-        await dp.start_polling(bot, drop_pending_updates=True)
+        await dp.start_polling(bot, drop_pending_updates=False)
     finally:
         await bot.session.close()
         await runner.cleanup()
