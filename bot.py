@@ -1,5 +1,6 @@
 import asyncio
 import bisect
+import functools
 import os
 import random
 import re
@@ -3363,55 +3364,13 @@ def get_chat(event):
     return None
 
 
-# ---------- Защита экономики от гонок (гонки/дубли на фарме, крафте, кейсах, продаже) ----------
-# Проблема: хендлеры вида farm()/craft_do()/sell_item()/open_case_instant() читают
-# состояние игрока (score, last_farm, инвентарь...), затем ДОЛГО считают (несколько await:
-# бонусы, проки, авто-эво/перерождение), и только в конце пишут UPDATE. Всё это время
-# юзер может прислать вторую параллельную команду/нажать кнопку ещё раз — она читает ещё
-# СТАРОЕ состояние (в т.ч. из _user_cache) и проходит те же проверки повторно. Результат —
-# задвоенный/утроенный фарм, повторный крафт с одним набором ингредиентов, повторная продажа
-# несуществующего уже предмета и т.п. ThrottleMiddleware (0.6с) и CallbackThrottleMiddleware
-# защищают от честного дабл-тапа, но НЕ гарантируют атомарность — их легко обойти двумя
-# разными командами/кнопками или чуть большей задержкой между запросами.
-#
-# Решение — простой и жёсткий asyncio.Lock на каждого игрока: пока один экономический
-# экшен этого user_id не завершился целиком (расчёты + запись в БД), следующий с тем же
-# user_id физически ждёт своей очереди на уровне event loop, а не гоняет параллельные
-# запросы к БД. Это НЕ троттлинг (не отбрасывает запрос) — это сериализация, поэтому
-# каждое действие всё равно выполнится, просто по очереди и с гарантированно свежим
-# состоянием на момент своего чтения.
-#
-_econ_locks: dict = {}          # user_id -> asyncio.Lock
-
-
-def _get_econ_lock(user_id: int) -> asyncio.Lock:
-    lock = _econ_locks.get(user_id)
-    if lock is None:
-        lock = asyncio.Lock()
-        _econ_locks[user_id] = lock
-    return lock
-
-
-def econ_guard(action: str):
-    """Декоратор для экономических хендлеров (message или callback). Сериализует все
-    вызовы одного user_id через asyncio.Lock, чтобы гонка параллельных запросов не
-    давала дублировать результат (двойной фарм/крафт/продажа за одну команду).
-
-    Применять на хендлеры, где есть паттерн read->compute->write над балансом/инвентарём:
-    farm, craft_do, sell_item/sell_booster/sell_passive, open_case_instant, rebirth и т.п."""
-    def decorator(handler):
-        async def wrapper(event, *args, **kwargs):
-            user = event.from_user
-            if user is None:
-                return await handler(event, *args, **kwargs)
-            user_id = user.id
-
-            lock = _get_econ_lock(user_id)
-            async with lock:
-                return await handler(event, *args, **kwargs)
-        wrapper.__name__ = getattr(handler, "__name__", "econ_guarded")
-        return wrapper
-    return decorator
+# ---------- Защита экономики от гонок УДАЛЕНА по прямому запросу пользователя ----------
+# Раньше здесь стоял econ_guard — asyncio.Lock на юзера, сериализующий фарм/крафт/
+# продажу/кейсы/эволюцию/перерождение/промокоды, чтобы спам/дабл-тап не задваивал
+# результат (см. историю чата). Убран целиком: определение декоратора, _econ_locks,
+# _get_econ_lock и все 11 навешиваний @econ_guard(...) на хендлерах ниже. Без него
+# теоретически возможен дубль-фарм/дубль-крафт при быстром спаме одной командой —
+# это осознанный компромисс, принятый явно, не побочный эффект.
 
 
 # user_id -> последний monotonic-таймстамп начисления очков за 🦵/🦿 (см. LEG_FARM_COOLDOWN)
@@ -4432,7 +4391,6 @@ async def top_overall_global(message: Message):
 
 
 @dp.message(F.text.lower().in_({"ферма", "фарма"}))
-@econ_guard("farm")
 async def farm(message: Message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
@@ -4855,7 +4813,6 @@ _TRANSFER_CURRENCY_TOKENS = {"ног": "ног", "коин": "коин"}
 
 
 @dp.message(F.text.regexp(r"(?i)^(дать|передать)\s+(.+)$"))
-@econ_guard("transfer")
 async def give_or_transfer(message: Message):
     """Умный хендлер: 'дать 888 коин' -> валюта, 'дать свеча' / 'передать свеча' -> предмет.
     Синтаксис определяется автоматически по структуре аргументов."""
@@ -4969,13 +4926,11 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
 
 
 @dp.message(F.text.lower().startswith("продать б "))
-@econ_guard("sell")
 async def sell_booster(message: Message):
     await sell_item(message, "продать б ", only_passive=False)
 
 
 @dp.message(F.text.lower().startswith("продать п "))
-@econ_guard("sell")
 async def sell_passive(message: Message):
     await sell_item(message, "продать п ", only_passive=True)
 
@@ -5802,7 +5757,6 @@ async def crafts_page_nav(callback: CallbackQuery):
 
 
 @dp.callback_query(F.data.startswith("craft:"))
-@econ_guard("craft")
 async def craft_do(callback: CallbackQuery):
     _, owner_str, recipe_key = callback.data.split(":")
     owner_id = int(owner_str)
@@ -5948,7 +5902,6 @@ async def case_inspect_command(message: Message):
 
 
 @dp.message(F.text.lower().regexp(r"^открыть кейс\s+(\d+)$"))
-@econ_guard("case")
 async def case_open_command(message: Message):
     match = re.match(r"^открыть кейс\s+(\d+)$", message.text.strip().lower())
     await open_case_instant(message, int(match.group(1)))
@@ -5991,7 +5944,6 @@ async def inspect_case_callback(callback: CallbackQuery):
 
 
 @dp.callback_query(F.data.startswith("buy_case:"))
-@econ_guard("case")
 async def buy_case(callback: CallbackQuery):
     _, case_num_str, owner_str = callback.data.split(":")
     case_num = int(case_num_str)
@@ -6118,7 +6070,6 @@ async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirt
 
 
 @dp.message(F.text.lower() == "эволюция")
-@econ_guard("evolve")
 async def evolve(message: Message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
@@ -6516,7 +6467,6 @@ async def try_auto_rebirth(user_id: int, score: int, evolution_level: int, rebir
 
 
 @dp.message(F.text.lower() == "перерождение")
-@econ_guard("rebirth")
 async def rebirth(message: Message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
@@ -6614,7 +6564,6 @@ async def ultra_rebirth_cancel(callback: CallbackQuery):
 
 
 @dp.callback_query(F.data.startswith("ultra_ok:"))
-@econ_guard("ultra_rebirth")
 async def ultra_rebirth_confirm(callback: CallbackQuery):
     owner_id = int(callback.data.split(":")[1])
     if callback.from_user.id != owner_id:
@@ -8066,7 +8015,6 @@ async def admin_promo_list(message: Message):
 
 
 @dp.message(F.text.regexp(r'(?i)^(?:промокод|промо)\s+\S+$'))
-@econ_guard("promo")
 async def redeem_promo(message: Message):
     match = PROMO_REDEEM_RE.match(message.text.strip())
     if not match:
