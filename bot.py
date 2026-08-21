@@ -595,13 +595,14 @@ TEXTS = {
     ),
 
     "admin_stupnya_1": (
-        '👣 <b>Античит «Ступня»</b>\\n'
-        '━━━━━━━━━━━━━━━━━━\\n'
-        '<b>Пороги:</b>\\n'
-        '● Флуд команд: <code>{v0}</code> сообщ. / <code>{v1}</code>с\\n'
-        '● Burst-бан: <code>{v2}</code> сообщ. / <code>{v3}</code>с\\n'
-        '● Кулдаун фарма ног: <code>{v4}</code>с (флуд-бан после <code>{v5}</code> нарушений / <code>{v6}</code>с)\\n\\n'
-        '<b>Баны за 24ч ({v7} всего):</b>\\n{v8}'
+        '👣 <b>Античит «Ступня»</b>\n'
+        '━━━━━━━━━━━━━━━━━━\n'
+        '<b>Пороги:</b>\n'
+        '● Флуд команд: <code>{v0}</code> сообщ. / <code>{v1}</code>с\n'
+        '● Burst-бан: <code>{v2}</code> сообщ. / <code>{v3}</code>с\n'
+        '● Кулдаун фарма ног: <code>{v4}</code>с (флуд-бан после <code>{v5}</code> нарушений / <code>{v6}</code>с)\n'
+        '● Устойчивый фарм ног: бан после <code>{v9}</code> начислений подряд / <code>{v10}</code>с\n\n'
+        '<b>Баны за 24ч ({v7} всего):</b>\n{v8}'
     ),
     "admin_stupnya_2": '— нет банов за последние 24ч —',
 
@@ -1764,6 +1765,17 @@ def apply_command_aliases(text: str) -> str:
     там нет алиасов, и текст останется как есть)."""
     if not text:
         return text
+    # Срезаем только КРАЙНИЕ пробелы/переводы строк, и только если это превращает
+    # текст в распознаваемую команду (точное совпадение с FIXED_COMMANDS/алиасом).
+    # Не трогаем содержимое внутри строки — ники, промокоды, текст с 🦵/🦿 и т.п.
+    # остаются как есть. Без этой подрезки лишний пробел в начале/конце (частый
+    # случай при наборе на телефоне) ломает команды с точным сравнением текста,
+    # например F.text.lower() == "эволюция" / "перерождение" — бот на них молча
+    # не реагирует, и выглядит это как "команда перестала работать".
+    if text != text.strip():
+        stripped_lower = text.strip().lower()
+        if stripped_lower in FIXED_COMMANDS or stripped_lower in ALIAS_PHRASES:
+            text = text.strip()
     result = normalize_alias_text(text)
     if result != text:
         return result
@@ -3619,6 +3631,7 @@ BAN_REASON_TEXT = {
     "antispam_chat_flood": "участие в массовом флуде в чате",
     "antispam_burst": "аномально быстрая серия сообщений подряд (похоже на скрипт/кликер)",
     "leg_farm_flood": "накрутка очков за 🦵/🦿 мимо личного кулдауна фарма (похоже на скрипт)",
+    "leg_sustained_farm": "устойчивый нечеловеческий темп фарма 🦵/🦿 на длинном окне (похоже на скрипт/селфбот)",
     "econ_race_farm": "попытка обойти кулдаун фермы параллельными запросами",
     "econ_race_craft": "попытка провести повторный крафт параллельными запросами",
     "econ_race_sell": "попытка продать один и тот же предмет параллельными запросами",
@@ -3652,9 +3665,24 @@ _antispam_chat_hits: dict = {}
 _leg_farm_last: dict = {}
 # user_id -> список monotonic-таймстампов попыток фарма ног, упёршихся в личный кулдаун
 _leg_flood_hits: dict = {}
+# user_id -> список monotonic-таймстампов ВСЕХ успешных (не упёршихся в кулдаун)
+# начислений за 🦵/🦿 — отдельно от _leg_flood_hits, см. LEG_SUSTAINED_* ниже.
+_leg_farm_success_hits: dict = {}
 
 LEG_FLOOD_STRIKE_LIMIT = 5     # столько попыток подряд мимо LEG_FARM_COOLDOWN...
 LEG_FLOOD_STRIKE_WINDOW = 6.0  # ...за это окно (сек) — тихий бан
+
+# ---- Детектор УСТОЙЧИВОГО фарма ног (главная дыра, которую эти пороги закрывают) ----
+# LEG_FARM_COOLDOWN и LEG_FLOOD_STRIKE_* ловят только "слишком БЫСТРЫЙ" всплеск — если
+# скрипт шлёт сообщения РЕЖЕ кулдауна (например, 1 раз в секунду, а не в 0.8с), каждое
+# сообщение легально проходит и НИКОГДА не задевает пороги выше. Реальный человек не
+# способен методично слать сообщение с эмодзи ноги раз в секунду десятки раз подряд —
+# он отвлекается, печатает медленнее, останавливается почитать чат. Поэтому считаем
+# ОТДЕЛЬНО каждое УСПЕШНОЕ (не отсеянное кулдауном) начисление за длинное окно: если
+# их набирается LEG_SUSTAINED_LIMIT за LEG_SUSTAINED_WINDOW секунд — это устойчивый
+# автоматический фарм, а не игра человека, тихий бан с причиной leg_sustained_farm.
+LEG_SUSTAINED_LIMIT = 20        # столько успешных начислений ног подряд...
+LEG_SUSTAINED_WINDOW = 25.0     # ...за это окно (сек, ~1 каждые 1.25с в среднем) — бан
 
 
 async def _register_leg_flood_hit(user_id: int, username: str):
@@ -3671,6 +3699,22 @@ async def _register_leg_flood_hit(user_id: int, username: str):
     if len(hits) >= LEG_FLOOD_STRIKE_LIMIT:
         _leg_flood_hits.pop(user_id, None)
         await _antispam_ban_user(user_id, username, "leg_farm_flood")
+
+
+async def _register_leg_sustained_hit(user_id: int, username: str):
+    """Считает КАЖДОЕ успешное (прошедшее LEG_FARM_COOLDOWN) начисление за 🦵/🦿 в
+    длинном окне (см. LEG_SUSTAINED_WINDOW/LIMIT выше) — ловит скрипты, которые бьют
+    РЕЖЕ короткого кулдауна специально, чтобы не задеть _register_leg_flood_hit, но
+    всё равно поддерживают темп, недостижимый для живого игрока."""
+    now = time.monotonic()
+    hits = _leg_farm_success_hits.setdefault(user_id, [])
+    hits.append(now)
+    cutoff = now - LEG_SUSTAINED_WINDOW
+    while hits and hits[0] < cutoff:
+        hits.pop(0)
+    if len(hits) >= LEG_SUSTAINED_LIMIT:
+        _leg_farm_success_hits.pop(user_id, None)
+        await _antispam_ban_user(user_id, username, "leg_sustained_farm")
 
 
 async def _antispam_ban_user(user_id: int, username: str, reason: str):
@@ -3957,10 +4001,30 @@ _last_leg_reply = {}
 
 @dp.errors()
 async def error_handler(event, exception):
+    """Раньше эта функция ТОЛЬКО печатала exception в консоль и всё — если хендлер
+    (evolve/rebirth/farm/...) падал с необработанным исключением, игрок не получал
+    вообще никакого ответа. Со стороны это выглядит как "команда перестала
+    работать" (именно так и было с «эволюция»/«перерождение»), хотя по факту бот
+    просто тихо проглатывал ошибку. Теперь: 1) в лог идёт полный traceback, а не
+    только str(exception), чтобы реальную причину было видно сразу; 2) игроку, если
+    это было сообщение, уходит короткое "попробуй ещё раз" — чтобы никогда не было
+    полной тишины в ответ на команду."""
     if isinstance(exception, TelegramRetryAfter):
         await asyncio.sleep(exception.retry_after)
         return True
-    print(f"Необработанная ошибка: {exception}")
+
+    import traceback
+    traceback.print_exc()
+    print(f"Необработанная ошибка: {exception!r}")
+
+    try:
+        update = getattr(event, "update", None)
+        message = getattr(update, "message", None) if update else None
+        if message is not None:
+            await message.reply("⚠️ Что-то пошло не так при обработке команды, попробуй ещё раз.")
+    except Exception:
+        pass
+
     return True
 
 
@@ -4403,6 +4467,10 @@ async def count_legs(message: Message):
             await _register_leg_flood_hit(user_id, username)
             return
         _leg_farm_last[user_id] = now_mono
+        # Прошло короткий кулдаун — считаем в ДЛИННОМ окне (см. LEG_SUSTAINED_*):
+        # скрипт, бьющий чуть РЕЖЕ LEG_FARM_COOLDOWN специально, чтобы не попасться
+        # выше, всё равно ловится тут за устойчивый нечеловеческий темп.
+        asyncio.create_task(_register_leg_sustained_hit(user_id, username))
 
     row = await ensure_user(user_id, username)
     score, evolution_level, active_item = row[2], row[3], row[6]
@@ -7934,7 +8002,7 @@ async def admin_stupnya_status(message: Message):
         TEXTS["admin_stupnya_1"].format(
             v0=ANTISPAM_LIMIT, v1=ANTISPAM_WINDOW, v2=ANTISPAM_BURST_LIMIT, v3=ANTISPAM_BURST_WINDOW,
             v4=LEG_FARM_COOLDOWN, v5=LEG_FLOOD_STRIKE_LIMIT, v6=LEG_FLOOD_STRIKE_WINDOW,
-            v7=total, v8=lines,
+            v7=total, v8=lines, v9=LEG_SUSTAINED_LIMIT, v10=LEG_SUSTAINED_WINDOW,
         )
     )
 
@@ -8463,10 +8531,16 @@ async def admin_list_banned_chats(message: Message):
     await message.reply(TEXTS["admin_list_banned_chats_2"].format(v0=len(rows), v1="\n".join(lines)))
 
 
-@dp.message(F.text.regexp(r"(?i)^!бан все"))
+@dp.message(F.text.regexp(r"(?i)^!бан(\s+все|\s+вся|\s+всех|\s+всё)?(\s+себе)?$"))
 async def admin_ban_all(message: Message):
     """!бан все — персональный тихий бан игрока (в ответ на его сообщение), уровня
-    "забанить чат", но по user_id и во всех чатах сразу (см. UserBanMiddleware)."""
+    "забанить чат", но по user_id и во всех чатах сразу (см. UserBanMiddleware).
+
+    Также ловит частые опечатки ("!бан вся"/"!бан всех"/"!бан") и голый "!бан" без
+    аргумента — раньше на них бот молчал (regexp не матчил вообще), из-за чего
+    опечатка выглядела как "команда бана не работает", хотя на самом деле она
+    просто не срабатывала. Теперь на любой из этих вариантов бот явно отвечает
+    подсказкой с правильным форматом, если тот не совпал точно."""
     if not is_admin(message):
         return
     await log_admin_action(message)
@@ -8495,8 +8569,10 @@ async def admin_ban_all(message: Message):
     await message.reply(TEXTS["admin_ban_all_1"].format(v0=esc(target_username)))
 
 
-@dp.message(F.text.regexp(r"(?i)^!разбан все"))
+@dp.message(F.text.regexp(r"(?i)^!разбан(\s+все|\s+вся|\s+всех|\s+всё)?(\s+себе)?$"))
 async def admin_unban_all(message: Message):
+    """См. комментарий у admin_ban_all — тот же принцип: ловим опечатки/голый "!разбан",
+    чтобы бот явно отвечал подсказкой вместо молчания."""
     if not is_admin(message):
         return
     await log_admin_action(message)
