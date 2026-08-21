@@ -140,14 +140,14 @@ PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="5237888066886064441">⚡️</t
 # У всех ниже пока нет реального emoji-id (заглушки, обычный юникод-эмодзи без обёртки
 # <tg-emoji>) — см. пояснение про PREMIUM_POWER_AMULET выше. Когда появятся настоящие
 # emoji-id, оберни аналогично '<tg-emoji emoji-id="ЧИСЛО">эмодзи</tg-emoji>'.
-PREMIUM_NOGOST_COIN = '🟤'
-PREMIUM_GODLY_NOGOST_COIN = '🔶'
-PREMIUM_CRAFT_COIN = '🔘'
-PREMIUM_BITCOIN = '🟠'
-PREMIUM_REBIRTH_COIN = '🟣'
-PREMIUM_EVOLUTION_COIN = '🟢'
-PREMIUM_AWAKENING_COIN = '⚪️'
-PREMIUM_BADGE_INVESTOR = '💹'
+PREMIUM_NOGOST_COIN = '<tg-emoji emoji-id="5413879072008724252">🪙</tg-emoji>'
+PREMIUM_GODLY_NOGOST_COIN = '<tg-emoji emoji-id="5361563655924110883">🪙</tg-emoji>'
+PREMIUM_CRAFT_COIN = '<tg-emoji emoji-id="5334956805971792834">🪙</tg-emoji>'
+PREMIUM_BITCOIN = '<tg-emoji emoji-id="5474537505015486009">🪙</tg-emoji>'
+PREMIUM_REBIRTH_COIN = '<tg-emoji emoji-id="6032751750186799376">🪙</tg-emoji>'
+PREMIUM_EVOLUTION_COIN = '<tg-emoji emoji-id="5366230850855777158">🪙</tg-emoji>'
+PREMIUM_AWAKENING_COIN = '<tg-emoji emoji-id="5767231090922101971">🪙</tg-emoji>'
+PREMIUM_BADGE_INVESTOR = '<tg-emoji emoji-id="5298614648138919107">💹</tg-emoji>'
 
 # ---------- Кейс 3: премиум-иконки (заглушки) ----------
 # TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
