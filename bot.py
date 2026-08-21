@@ -14,7 +14,7 @@ from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 from aiogram.types import (
-    Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton,
+    Message, CallbackQuery, ErrorEvent, InlineKeyboardMarkup, InlineKeyboardButton,
     LabeledPrice, PreCheckoutQuery,
 )
 from aiohttp import web
@@ -3566,15 +3566,22 @@ _last_leg_reply = {}
 
 
 @dp.errors()
-async def error_handler(event, exception):
-    """Раньше эта функция ТОЛЬКО печатала exception в консоль и всё — если хендлер
-    (evolve/rebirth/farm/...) падал с необработанным исключением, игрок не получал
-    вообще никакого ответа. Со стороны это выглядит как "команда перестала
-    работать" (именно так и было с «эволюция»/«перерождение»), хотя по факту бот
-    просто тихо проглатывал ошибку. Теперь: 1) в лог идёт полный traceback, а не
-    только str(exception), чтобы реальную причину было видно сразу; 2) игроку, если
-    это было сообщение, уходит короткое "попробуй ещё раз" — чтобы никогда не было
-    полной тишины в ответ на команду."""
+async def error_handler(event: ErrorEvent):
+    """ВАЖНО (баг, который ломал ВСЕ текстовые команды молча): в aiogram 3.x хендлер
+    @dp.errors() получает ОДИН аргумент — объект ErrorEvent (с .update и .exception
+    внутри), а не два отдельных позиционных (event, exception), как было раньше в
+    aiogram 2.x. Со старой сигнатурой def error_handler(event, exception) aiogram на
+    каждый вызов бросал TypeError ("missing 1 required positional argument") ВНУТРИ
+    самого обработчика ошибок — а это значит, что при любом исключении в любом
+    хендляре (farm/эволюция/перерождение/...) юзер не получал вообще ничего: ни
+    результата команды, ни даже фолбэк-сообщения "попробуй ещё раз", потому что
+    сам механизм отправки этого фолбэка падал ещё до отправки. Симптом ровно такой,
+    какой был на скрине: команда молчит всегда, при любом отдельном вызове, без
+    исключений в логах (потому что traceback.print_exc() тоже не успевал выполниться
+    в старой версии — TypeError происходил на уровне вызова хендлера aiogram'ом).
+    Теперь сигнатура правильная: exception достаём из event.exception."""
+    exception = event.exception
+
     if isinstance(exception, TelegramRetryAfter):
         await asyncio.sleep(exception.retry_after)
         return True
@@ -3584,8 +3591,7 @@ async def error_handler(event, exception):
     print(f"Необработанная ошибка: {exception!r}")
 
     try:
-        update = getattr(event, "update", None)
-        message = getattr(update, "message", None) if update else None
+        message = getattr(event.update, "message", None)
         if message is not None:
             await message.reply("⚠️ Что-то пошло не так при обработке команды, попробуй ещё раз.")
     except Exception:
