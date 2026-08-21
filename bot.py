@@ -344,7 +344,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !бан все / !разбан все — полный тихий бан игрока во всех чатах (в ответ на его сообщение)\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников / !список банов игроков — списки\n● !игроки — список всех игроков\n● !найти @user — в каких чатах видели игрока\n● !забанить чат [название] — тихо отключить фарм в чате (без аргумента — текущий чат; при нескольких совпадениях по названию банит их все сразу)\n● !разбанить чат [название] — снять тихий бан с чата (тоже сразу со всех совпадений)\n● !список банов чат — список забаненных чатов\n● !список чат — все чаты, где сейчас состоит бот\n● !логи — последние 20 действий админа\n● !логи вся — вся история действий админа\n● !пинг — задержка БД\n● !ступня — статус античита: пороги + баны за 24ч по причинам\n'
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список ников — списки\n● !игроки — список всех игроков\n● !найти @user — в каких чатах видели игрока\n● !список чат — все чаты, где сейчас состоит бот\n● !логи — последние 20 действий админа\n● !логи вся — вся история действий админа\n● !пинг — задержка БД\n'
     '● !промокод создать "тип" "кол-во" "активаций" "название" — создать промокод (тип: ноги/эво/коин/очкп/крафт или предмет:<ключ>)\n'
     '● !промокод создать бейдж "название_бейджа" "название_промокода" — создать промокод на бейдж (бейджи: тестер/сапорт/потужность/топ1 в прошлом)\n'
     '● !промокод удалить "название" — удалить промокод\n'
@@ -528,13 +528,6 @@ TEXTS = {
     "admin_reset_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
     "admin_reset_3": 'Полный сброс прогресса игрока {v0} выполнен.',
 
-    "admin_ban_top_1": 'Формат: !бан топ [себе] (в ответ на сообщение игрока)',
-    "admin_ban_top_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
-    "admin_ban_top_3": 'Игрок {v0} забанен из топов — теперь не будет в них появляться.',
-    "admin_unban_top_1": 'Формат: !разбан топ [себе] (в ответ на сообщение игрока)',
-    "admin_unban_top_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
-    "admin_unban_top_3": 'Игрок {v0} разбанен — снова может попадать в топы.',
-
     "nick_set_too_long": 'Слишком длинный ник — максимум 50 символов (у тебя {v0}).',
     "nick_set_empty": 'Укажи сам ник: +ник <текст>',
     "nick_set_taken": 'Этот ник уже занят другим игроком.',
@@ -594,18 +587,6 @@ TEXTS = {
         '● Забанено из топов: <code>{v6}</code>'
     ),
 
-    "admin_stupnya_1": (
-        '👣 <b>Античит «Ступня»</b>\n'
-        '━━━━━━━━━━━━━━━━━━\n'
-        '<b>Пороги:</b>\n'
-        '● Флуд команд: <code>{v0}</code> сообщ. / <code>{v1}</code>с\n'
-        '● Burst-бан: <code>{v2}</code> сообщ. / <code>{v3}</code>с\n'
-        '● Кулдаун фарма ног: <code>{v4}</code>с (флуд-бан после <code>{v5}</code> нарушений / <code>{v6}</code>с)\n'
-        '● Устойчивый фарм ног: бан после <code>{v9}</code> начислений подряд / <code>{v10}</code>с\n\n'
-        '<b>Баны за 24ч ({v7} всего):</b>\n{v8}'
-    ),
-    "admin_stupnya_2": '— нет банов за последние 24ч —',
-
     "admin_restart_1": '♻️ Перезапускаю бота...',
 
     "admin_event_custom_1": 'Формат: !ивент х<множитель> <минуты>, например: !ивент х3 30',
@@ -660,9 +641,6 @@ TEXTS = {
     "admin_list_vip_1": 'Сейчас нет игроков с активным VIP.',
     "admin_list_vip_2": '👑 <b>Активный VIP ({v0}):</b>\n{v1}',
 
-    "admin_list_top_banned_1": 'Сейчас никто не забанен из топов.',
-    "admin_list_top_banned_2": '🚫 <b>Забанены из топов ({v0}):</b>\n{v1}',
-
     "admin_list_nicknames_1": 'Сейчас ни у кого не установлен ник.',
     "admin_list_nicknames_2": '📛 <b>Установленные ники ({v0}):</b>\n{v1}',
 
@@ -670,26 +648,6 @@ TEXTS = {
     "admin_find_2": 'Игрок не найден (он ещё не писал ноги в этом боте).',
     "admin_find_3": '🔎 {v0} — бот видел его в {v1} чате(ах):\n{v2}',
     "admin_find_4": 'Бот не встречал этого игрока ни в одном чате.',
-    "admin_ban_chat_1": '✅ Фарм отключён в чате: {v0}',
-    "admin_ban_chat_2": '⚠️ Фарм уже был отключён в этом чате.',
-    "admin_ban_chat_3": 'Чат не найден по названию «{v0}». Бот знает только чаты, где уже писали игроки.',
-    "admin_ban_chat_4": 'Найдено несколько подходящих чатов, уточни название:\n{v0}',
-    "admin_ban_chat_5": '✅ Фарм отключён сразу в {v0} чатах:\n{v1}',
-    "admin_ban_chat_6": '⚠️ Уже были забанены ({v0}):\n{v1}',
-    "admin_unban_chat_1": '✅ Фарм снова разрешён в чате: {v0}',
-    "admin_unban_chat_2": '⚠️ Этот чат и так не был в бане.',
-    "admin_unban_chat_3": '✅ Фарм снова разрешён сразу в {v0} чатах:\n{v1}',
-    "admin_unban_chat_4": '⚠️ И так не были в бане ({v0}):\n{v1}',
-    "admin_list_banned_chats_1": 'Нет забаненных чатов.',
-    "admin_list_banned_chats_2": '🚫 Забаненные чаты ({v0}):\n{v1}',
-    "admin_ban_all_1": '✅ {v0} забанен(а) полностью — бот теперь молчит для него/неё во всех чатах.',
-    "admin_ban_all_2": '⚠️ Этот игрок уже был полностью забанен.',
-    "admin_ban_all_3": 'Формат: !бан все (в ответ на сообщение игрока)',
-    "admin_unban_all_1": '✅ {v0} разбанен(а) полностью — бот снова отвечает во всех чатах.',
-    "admin_unban_all_2": '⚠️ Этот игрок и так не был полностью забанен.',
-    "admin_unban_all_3": 'Формат: !разбан все (в ответ на сообщение игрока)',
-    "admin_list_banned_users_1": 'Нет полностью забаненных игроков.',
-    "admin_list_banned_users_2": '🚫 Полностью забаненные игроки ({v0}):\n{v1}',
     "admin_players_1": 'Игроков пока нет.',
     "admin_players_2": '👥 <b>Игроки ({v0}):</b>\n{v1}',
     "admin_logs_all_1": 'Логов пока нет.',
@@ -1461,8 +1419,6 @@ ADMIN_TAKE_ITEM_RE = re.compile(r"^!снять п (.+?)(\s+себе)?$", re.IGNO
 ADMIN_GIVE_VIP_RE = re.compile(rf"^!дать вип {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_VIP_RE = re.compile(r"^!снять вип(\s+себе)?$", re.IGNORECASE)
 ADMIN_RESET_RE = re.compile(r"^!сбросить(\s+себе)?$", re.IGNORECASE)
-ADMIN_BAN_TOP_RE = re.compile(r"^!бан топ(\s+себе)?$", re.IGNORECASE)
-ADMIN_UNBAN_TOP_RE = re.compile(r"^!разбан топ(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_REBIRTH_RE = re.compile(rf"^!дать очкп {AMOUNT}(\s+себе)?$", re.IGNORECASE)
 ADMIN_TAKE_REBIRTH_RE = re.compile(rf"^!снять очкп (?:{AMOUNT}|все)(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_CRAFT_RE = re.compile(rf"^!дать (?:крафт|очкк) {AMOUNT}(\s+себе)?$", re.IGNORECASE)
@@ -1507,15 +1463,6 @@ ADMIN_VIP_FOREVER_RE = re.compile(r"^!вип навсегда(\s+себе)?$", r
 ADMIN_ULTRA_REBIRTH_RE = re.compile(r"^!ультра навсегда(\s+себе)?$", re.IGNORECASE)
 ADMIN_RESET_NICK_RE = re.compile(r"^!сброс ник\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_FIND_RE = re.compile(r"^!найти\s+@?(\w+)$", re.IGNORECASE)
-# !забанить чат [название] — без аргумента банит текущий чат, с аргументом ищет по
-# подстроке названия среди чатов из chat_members. Тихий бан: бот остаётся в чате,
-# просто "ферма"/"фарма" перестаёт работать (без ответа, см. хендлер farm()).
-ADMIN_BAN_CHAT_RE = re.compile(r"^!забанить чат(?:\s+(.+))?$", re.IGNORECASE)
-ADMIN_UNBAN_CHAT_RE = re.compile(r"^!разбанить чат(?:\s+(.+))?$", re.IGNORECASE)
-# !бан все / !разбан все — персональный тихий бан игрока (в ответ на его сообщение),
-# работает на уровне "забанить чат", но для конкретного user_id во всех чатах сразу.
-ADMIN_BAN_ALL_RE = re.compile(r"^!бан все(\s+себе)?$", re.IGNORECASE)
-ADMIN_UNBAN_ALL_RE = re.compile(r"^!разбан все(\s+себе)?$", re.IGNORECASE)
 
 # ---------- Промокоды ----------
 # Аргументы в кавычках: !промокод создать "тип" "количество" "активаций" "название"
@@ -1543,8 +1490,8 @@ FIXED_COMMANDS = {
     "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ", "крафты", "крафт",
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
     "мои зелья", "зелья",
-    "!список вип", "!список банов топ", "!список ников", "!список банов чат", "!список чат", "!логи", "!логи вся", "!пинг", "!ивент стоп", "!ивент статус", "!ступня",
-    "!забанить чат", "!разбанить чат", "!игроки", "!список банов игроков",
+    "!список вип", "!список ников", "!список чат", "!логи", "!логи вся", "!пинг", "!ивент стоп", "!ивент статус",
+    "!игроки",
     "ультра перерождение", "ультра перерождение подтверждаю",
     "авто эво вкл", "авто эво выкл", "авто эволюция вкл", "авто эволюция выкл",
     "авто перерождение вкл", "авто перерождение выкл", "авто рб вкл", "авто рб выкл",
@@ -1556,11 +1503,11 @@ PREFIX_COMMANDS = (
     "!дать коин", "!снять коин", "!дать б", "!снять б", "!дать п", "!снять п", "!дать вип", "!снять вип", "!сбросить",
     "передать ", "дать ", "кейс ", NEWS_PREFIX, "инфо ", "продать",
     "!дать очкп", "!снять очкп", "!дать крафт", "открыть кейс", "осмотреть кейс", "осмотр кейс", "крафты ", "крафт ", "уничтожение",
-    "+ник ", "!бан топ", "!разбан топ", "!бан все", "!разбан все", "!установить ног", "!установить эво",
+    "+ник ", "!установить ног", "!установить эво",
     "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
     "!установить очкп", "!обнулить экономику", "!мультипликатор ферма", "!дать предмет",
     "!очистить инвентарь", "!дать апгрейд", "!вип навсегда", "!сброс ник", "!найти ", "!ультра навсегда",
-    "вип открыть кейс", "бустеры поиск ", "!дать ключ", "!забанить чат ", "!разбанить чат ",
+    "вип открыть кейс", "бустеры поиск ", "!дать ключ",
 )
 
 
@@ -2455,27 +2402,6 @@ def _invalidate_user_cache(user_id):
     _user_cache.pop(user_id, None)
 
 
-# ---------- Кэш банов чатов/игроков (в памяти процесса) ----------
-# ChatBanMiddleware и UserBanMiddleware раньше делали SELECT в БД на КАЖДОЕ
-# сообщение и КАЖДЫЙ callback от КАЖДОГО юзера — даже для тех, кто вообще
-# никогда не был забанен (подавляющее большинство). Под спамом это удваивало
-# число запросов в очередь БД-воркера ДО троттлинга. Списки banned_chats/
-# banned_users на практике маленькие (десятки записей) и меняются редко —
-# держим их целиком в памяти, грузим один раз при старте (см. init_db) и
-# точечно обновляем при !забанить/разбанить чат и !бан/разбан все — без
-# похода в БД на чтение.
-_banned_chats_cache: set = set()
-_banned_users_cache: set = set()
-
-
-async def _load_ban_caches():
-    global _banned_chats_cache, _banned_users_cache
-    chat_rows = await db_query("SELECT chat_id FROM banned_chats")
-    user_rows = await db_query("SELECT user_id FROM banned_users")
-    _banned_chats_cache = {r[0] for r in chat_rows}
-    _banned_users_cache = {r[0] for r in user_rows}
-
-
 def _connect(worker_idx):
     # Каждый воркер держит РОВНО одно своё соединение, создаваемое один раз при
     # первом обращении и переиспользуемое дальше — не 32 соединения "по требованию",
@@ -2712,8 +2638,9 @@ async def init_db():
         CREATE INDEX IF NOT EXISTS idx_player_action_log_user_ts
         ON player_action_log (user_id, ts)
     """)
-    # Чаты, в которых фарм отключён (тихий бан — "ферма" молча ничего не делает).
-    # Бот из чата НЕ выходит, только блокирует фарм-геймплей для всех участников.
+    # Таблицы banned_chats/banned_users больше не используются ботом (бан-система
+    # убрана целиком) — оставлены в схеме нетронутыми, чтобы не трогать структуру
+    # живой БД. CREATE TABLE IF NOT EXISTS ниже безвреден и ничего не создаёт заново.
     await db_exec("""
         CREATE TABLE IF NOT EXISTS banned_chats (
             chat_id INTEGER PRIMARY KEY,
@@ -2722,9 +2649,6 @@ async def init_db():
             banned_at INTEGER
         )
     """)
-    # Персональный тихий бан игрока (см. !бан все) — работает как banned_chats, но по
-    # user_id и во ВСЕХ чатах сразу: весь игровой функционал бота для этого игрока молча
-    # не отвечает, независимо от того, забанен ли сам чат.
     await db_exec("""
         CREATE TABLE IF NOT EXISTS banned_users (
             user_id INTEGER PRIMARY KEY,
@@ -2796,9 +2720,6 @@ async def init_db():
             await db_exec(stmt)
         except Exception:
             pass
-
-    await _load_ban_caches()
-
 
 async def get_user(user_id: int):
     if user_id in _user_cache:
@@ -3442,88 +3363,7 @@ def get_chat(event):
     return None
 
 
-class ChatBanMiddleware(BaseMiddleware):
-    """Тихий бан чата (см. !забанить чат): если chat_id в banned_chats, ВЕСЬ игровой
-    функционал в этом чате молча не работает — ни текстовые команды, ни инлайн-кнопки.
-    Бот из чата не выходит, просто игнорирует всё до хендлера.
-
-    Исключение — админ-команды управления самим баном (!забанить чат / !разбанить чат /
-    !список банов чат), чтобы забаненный чат можно было разбанить, не выходя из него,
-    и не для остальных owner-команд (!дебаг, !дать и т.п. в забаненном чате тоже глохнут,
-    администрирование игроков всё равно доступно в других чатах/лички).
-    Работает как outer_middleware — стоит раньше троттлинга и трекинга участников,
-    чтобы забаненный чат вообще не грузил остальную логику."""
-    BAN_MGMT_PREFIXES = ("!забанить чат", "!разбанить чат", "!список банов чат")
-
-    async def __call__(self, handler, event, data):
-        chat = get_chat(event)
-        if chat is not None and chat.id is not None:
-            text = getattr(event, "text", None)
-            if isinstance(event, CallbackQuery):
-                text = None  # у callback нет .text — сверяем только по chat_id ниже
-            is_ban_mgmt = bool(text) and text.strip().lower().startswith(self.BAN_MGMT_PREFIXES)
-            if not is_ban_mgmt:
-                # Кэш в памяти вместо SELECT на каждое сообщение/callback — см.
-                # _banned_chats_cache и комментарий там же.
-                if chat.id in _banned_chats_cache:
-                    if isinstance(event, CallbackQuery):
-                        try:
-                            await event.answer()
-                        except Exception:
-                            pass
-                    return
-        return await handler(event, data)
-
-
-class UserBanMiddleware(BaseMiddleware):
-    """Тихий персональный бан игрока (см. !бан все): если user_id в banned_users, ВЕСЬ
-    игровой функционал бота для этого игрока молча не работает — ни текстовые команды,
-    ни инлайн-кнопки, в ЛЮБОМ чате и в личке. Работает как ChatBanMiddleware, но по
-    user_id, а не по chat_id — не завязан на конкретный чат.
-
-    Уведомление о причине: банят обычно другие механизмы (AntiSpamMiddleware,
-    _register_leg_flood_hit, econ_guard) и те уже отвечают ОДИН раз сразу в момент
-    бана. Но если игрок узнал о бане не сразу (например, забанили за chat-flood, и
-    следующее сообщение шлёт позже) — при первом заблокированном обращении В ЛИЧКЕ
-    ему один раз показываем причину (см. banned_users.reason), дальше снова тишина —
-    чтобы не превращать тихий бан в повод флудить и получать ответы бота бесконечно.
-
-    Исключение — команды управления самим баном (!бан все / !разбан все / !список банов
-    игроков), чтобы забаненного игрока можно было разбанить, и админ (is_admin) никогда
-    не блокируется сам собой."""
-    BAN_MGMT_PREFIXES = ("!бан все", "!разбан все", "!список банов игроков")
-
-    async def __call__(self, handler, event, data):
-        user = getattr(event, "from_user", None)
-        if user is not None and user.id is not None and user.id != ADMIN_USER_ID:
-            text = getattr(event, "text", None)
-            if isinstance(event, CallbackQuery):
-                text = None  # у callback нет .text — сверяем только по user_id ниже
-            is_ban_mgmt = bool(text) and text.strip().lower().startswith(self.BAN_MGMT_PREFIXES)
-            if not is_ban_mgmt:
-                # Кэш в памяти вместо SELECT на каждое сообщение/callback — см.
-                # _banned_users_cache и комментарий у _load_ban_caches.
-                if user.id in _banned_users_cache:
-                    if isinstance(event, CallbackQuery):
-                        try:
-                            await event.answer()
-                        except Exception:
-                            pass
-                    elif isinstance(event, Message) and event.chat.type == "private":
-                        # Личка, один раз — сообщаем причину бана (см. docstring выше).
-                        asyncio.create_task(_notify_ban_reason_once(user.id, event))
-                    return
-        return await handler(event, data)
-
-
-# ==================== АНТИЧИТ «СТУПНЯ» ====================
-# Общее название всей защиты бота от абуза: гонки/дубли в экономике (econ_guard),
-# флуд-бан (AntiSpamMiddleware + burst-детектор), личный кулдаун и антифлуд фарма
-# ног (LEG_FARM_COOLDOWN/_register_leg_flood_hit). Все причины банов см. в
-# BAN_REASON_TEXT, все срабатывания пишутся в banned_users.reason.
-# =============================================================
-
-# ---------- Анти-абуз экономики (гонки/дубли на фарме, крафте, кейсах, продаже) ----------
+# ---------- Защита экономики от гонок (гонки/дубли на фарме, крафте, кейсах, продаже) ----------
 # Проблема: хендлеры вида farm()/craft_do()/sell_item()/open_case_instant() читают
 # состояние игрока (score, last_farm, инвентарь...), затем ДОЛГО считают (несколько await:
 # бонусы, проки, авто-эво/перерождение), и только в конце пишут UPDATE. Всё это время
@@ -3541,18 +3381,7 @@ class UserBanMiddleware(BaseMiddleware):
 # каждое действие всё равно выполнится, просто по очереди и с гарантированно свежим
 # состоянием на момент своего чтения.
 #
-# Поверх лока — счётчик "гонок": если во время удержания лока пришёл ЕЩЁ один запрос
-# на тот же экшен от того же игрока быстрее ECON_RACE_SUSPICIOUS_GAP секунд — это
-# статистически не человек с двойным тапом (тот упирается в ThrottleMiddleware), а скорее
-# скрипт, специально бьющий параллельно в обход троттлинга. RACE_STRIKE_LIMIT таких
-# засечек за RACE_STRIKE_WINDOW — тихий бан той же системой, что и AntiSpamMiddleware.
 _econ_locks: dict = {}          # user_id -> asyncio.Lock
-_econ_lock_holders: dict = {}   # user_id -> monotonic-таймстамп захвата (для обнаружения гонки)
-_econ_race_strikes: dict = {}   # user_id -> список monotonic-таймстампов подозрительных гонок
-
-ECON_RACE_SUSPICIOUS_GAP = 0.25   # запрос того же экшена быстрее этого после начала предыдущего — подозрительно
-RACE_STRIKE_LIMIT = 4             # столько подозрительных гонок подряд...
-RACE_STRIKE_WINDOW = 30.0         # ...за это окно (сек) — бан
 
 
 def _get_econ_lock(user_id: int) -> asyncio.Lock:
@@ -3563,22 +3392,10 @@ def _get_econ_lock(user_id: int) -> asyncio.Lock:
     return lock
 
 
-async def _register_race_strike(user_id: int, username: str, action: str):
-    now = time.monotonic()
-    hits = _econ_race_strikes.setdefault(user_id, [])
-    hits.append(now)
-    cutoff = now - RACE_STRIKE_WINDOW
-    while hits and hits[0] < cutoff:
-        hits.pop(0)
-    if len(hits) >= RACE_STRIKE_LIMIT:
-        _econ_race_strikes.pop(user_id, None)
-        await _antispam_ban_user(user_id, username, f"econ_race_{action}")
-
-
 def econ_guard(action: str):
     """Декоратор для экономических хендлеров (message или callback). Сериализует все
-    вызовы одного user_id через asyncio.Lock и считает подозрительно частые попытки
-    выполнить тот же экшен, пока предыдущий вызов ещё не отпустил лок (см. блок выше).
+    вызовы одного user_id через asyncio.Lock, чтобы гонка параллельных запросов не
+    давала дублировать результат (двойной фарм/крафт/продажа за одну команду).
 
     Применять на хендлеры, где есть паттерн read->compute->write над балансом/инвентарём:
     farm, craft_do, sell_item/sell_booster/sell_passive, open_case_instant, rebirth и т.п."""
@@ -3588,16 +3405,8 @@ def econ_guard(action: str):
             if user is None:
                 return await handler(event, *args, **kwargs)
             user_id = user.id
-            if user_id == ADMIN_USER_ID:
-                return await handler(event, *args, **kwargs)
 
             lock = _get_econ_lock(user_id)
-            if lock.locked():
-                # Кто-то уже внутри этого же (или другого econ_guard) действия для
-                # этого игрока — считаем это гонкой, а не легитимным повтором.
-                username = user.username or user.first_name or str(user_id)
-                asyncio.create_task(_register_race_strike(user_id, username, action))
-
             async with lock:
                 return await handler(event, *args, **kwargs)
         wrapper.__name__ = getattr(handler, "__name__", "econ_guarded")
@@ -3605,246 +3414,8 @@ def econ_guard(action: str):
     return decorator
 
 
-# ---------- Анти-спам (флуд-бан) ----------
-# Порог срабатывания: ANTISPAM_LIMIT сообщений за ANTISPAM_WINDOW секунд.
-# Считаем ДВА независимых счётчика:
-#   1) по user_id — один и тот же игрок шлёт >= ANTISPAM_LIMIT сообщений подряд
-#      быстрее, чем физически может человек (например, кликер/скрипт).
-#   2) по chat_id — суммарно В ОДНОМ ЧАТЕ пришло >= ANTISPAM_LIMIT сообщений от
-#      КОГО УГОДНО за то же окно — ловит скоординированный спам с нескольких
-#      разных аккаунтов одновременно (см. инцидент: 10 ботов разом положили Render).
-#      В этом случае баним всех, кто реально прислал сообщение в этом окне —
-#      не весь чат целиком, а только участников самого всплеска.
-ANTISPAM_LIMIT = 6            # ужесточено с 10 — реальный человек физически не шлёт 6+ сообщений так быстро
-ANTISPAM_WINDOW = 2.0          # ужесточено с 2.7
-# Доп. "burst"-порог поверх основного окна: если пришло BURST_LIMIT сообщений почти
-# одновременно (за BURST_WINDOW секунд) — это почти наверняка скрипт/кликер, баним
-# сразу, не дожидаясь ANTISPAM_WINDOW. Ловит короткие резкие вспышки, которые основное
-# окно (2.0с) может пропустить, если атака идёт короткими сериями с паузами между ними.
-ANTISPAM_BURST_LIMIT = 4
-ANTISPAM_BURST_WINDOW = 0.8
-
-# Причины бана -> человекочитаемое объяснение для сообщения игроку (см. _ban_reason_text).
-BAN_REASON_TEXT = {
-    "manual": "ручной бан от администрации",
-    "antispam": "слишком частая отправка сообщений (флуд)",
-    "antispam_chat_flood": "участие в массовом флуде в чате",
-    "antispam_burst": "аномально быстрая серия сообщений подряд (похоже на скрипт/кликер)",
-    "leg_farm_flood": "накрутка очков за 🦵/🦿 мимо личного кулдауна фарма (похоже на скрипт)",
-    "leg_sustained_farm": "устойчивый нечеловеческий темп фарма 🦵/🦿 на длинном окне (похоже на скрипт/селфбот)",
-    "econ_race_farm": "попытка обойти кулдаун фермы параллельными запросами",
-    "econ_race_craft": "попытка провести повторный крафт параллельными запросами",
-    "econ_race_sell": "попытка продать один и тот же предмет параллельными запросами",
-    "econ_race_transfer": "попытка передать один и тот же предмет/валюту параллельными запросами",
-    "econ_race_case": "попытка открыть кейс за одну оплату несколько раз подряд",
-    "econ_race_rebirth": "попытка провести перерождение параллельными запросами",
-    "econ_race_ultra_rebirth": "попытка провести ультра перерождение параллельными запросами",
-    "econ_race_evolve": "попытка провести эволюцию параллельными запросами",
-    "econ_race_promo": "попытка активировать промокод несколько раз параллельными запросами",
-}
-
-
-def _ban_reason_text(reason: str) -> str:
-    return BAN_REASON_TEXT.get(reason, reason)
-
-
-def ban_notice_text(reason: str) -> str:
-    return (
-        f"🚫 Вы забанены. Причина: {_ban_reason_text(reason)}.\n"
-        f"Если это ошибка, напишите овнеру @{ADMIN_USERNAME}"
-    )
-
-
-ANTISPAM_BAN_MESSAGE = ban_notice_text("antispam")  # сохранено для обратной совместимости
-
-# user_id -> список monotonic-таймстампов недавних сообщений
-_antispam_user_hits: dict = {}
-# chat_id -> список (monotonic-таймстамп, user_id) недавних сообщений
-_antispam_chat_hits: dict = {}
 # user_id -> последний monotonic-таймстамп начисления очков за 🦵/🦿 (см. LEG_FARM_COOLDOWN)
 _leg_farm_last: dict = {}
-# user_id -> список monotonic-таймстампов попыток фарма ног, упёршихся в личный кулдаун
-_leg_flood_hits: dict = {}
-# user_id -> список monotonic-таймстампов ВСЕХ успешных (не упёршихся в кулдаун)
-# начислений за 🦵/🦿 — отдельно от _leg_flood_hits, см. LEG_SUSTAINED_* ниже.
-_leg_farm_success_hits: dict = {}
-
-LEG_FLOOD_STRIKE_LIMIT = 5     # столько попыток подряд мимо LEG_FARM_COOLDOWN...
-LEG_FLOOD_STRIKE_WINDOW = 6.0  # ...за это окно (сек) — тихий бан
-
-# ---- Детектор УСТОЙЧИВОГО фарма ног (главная дыра, которую эти пороги закрывают) ----
-# LEG_FARM_COOLDOWN и LEG_FLOOD_STRIKE_* ловят только "слишком БЫСТРЫЙ" всплеск — если
-# скрипт шлёт сообщения РЕЖЕ кулдауна (например, 1 раз в секунду, а не в 0.8с), каждое
-# сообщение легально проходит и НИКОГДА не задевает пороги выше. Реальный человек не
-# способен методично слать сообщение с эмодзи ноги раз в секунду десятки раз подряд —
-# он отвлекается, печатает медленнее, останавливается почитать чат. Поэтому считаем
-# ОТДЕЛЬНО каждое УСПЕШНОЕ (не отсеянное кулдауном) начисление за длинное окно: если
-# их набирается LEG_SUSTAINED_LIMIT за LEG_SUSTAINED_WINDOW секунд — это устойчивый
-# автоматический фарм, а не игра человека, тихий бан с причиной leg_sustained_farm.
-LEG_SUSTAINED_LIMIT = 20        # столько успешных начислений ног подряд...
-LEG_SUSTAINED_WINDOW = 25.0     # ...за это окно (сек, ~1 каждые 1.25с в среднем) — бан
-
-
-async def _register_leg_flood_hit(user_id: int, username: str):
-    """Считает, сколько раз подряд игрок присылал 🦵/🦿 быстрее LEG_FARM_COOLDOWN.
-    Редкий дабл-тап человека — это 1-2 срабатывания и тишина; постоянный поток на
-    грани кулдауна (скрипт, подгоняющий интервал под лимит) быстро набирает
-    LEG_FLOOD_STRIKE_LIMIT и банится тем же путём, что и обычный антиспам."""
-    now = time.monotonic()
-    hits = _leg_flood_hits.setdefault(user_id, [])
-    hits.append(now)
-    cutoff = now - LEG_FLOOD_STRIKE_WINDOW
-    while hits and hits[0] < cutoff:
-        hits.pop(0)
-    if len(hits) >= LEG_FLOOD_STRIKE_LIMIT:
-        _leg_flood_hits.pop(user_id, None)
-        await _antispam_ban_user(user_id, username, "leg_farm_flood")
-
-
-async def _register_leg_sustained_hit(user_id: int, username: str):
-    """Считает КАЖДОЕ успешное (прошедшее LEG_FARM_COOLDOWN) начисление за 🦵/🦿 в
-    длинном окне (см. LEG_SUSTAINED_WINDOW/LIMIT выше) — ловит скрипты, которые бьют
-    РЕЖЕ короткого кулдауна специально, чтобы не задеть _register_leg_flood_hit, но
-    всё равно поддерживают темп, недостижимый для живого игрока."""
-    now = time.monotonic()
-    hits = _leg_farm_success_hits.setdefault(user_id, [])
-    hits.append(now)
-    cutoff = now - LEG_SUSTAINED_WINDOW
-    while hits and hits[0] < cutoff:
-        hits.pop(0)
-    if len(hits) >= LEG_SUSTAINED_LIMIT:
-        _leg_farm_success_hits.pop(user_id, None)
-        await _antispam_ban_user(user_id, username, "leg_sustained_farm")
-
-
-async def _antispam_ban_user(user_id: int, username: str, reason: str):
-    """Мгновенный необратимый (до ручного !разбан все) бан — переиспользует ту же
-    таблицу/кэш, что и ручной !бан все, поэтому дальше UserBanMiddleware-логика тут
-    не нужна: если юзер уже забанен ЕЮ, повторно писать в БД незачем."""
-    if user_id in _banned_users_cache:
-        return
-    _banned_users_cache.add(user_id)  # сразу, до await, чтобы гонки не дали дубликат
-    try:
-        await db_exec(
-            "INSERT INTO banned_users (user_id, username, banned_by, banned_at, reason) "
-            "VALUES (?, ?, ?, ?, ?) ON CONFLICT(user_id) DO NOTHING",
-            (user_id, username, "AntiSpamMiddleware", int(time.time()), reason),
-        )
-    except Exception as e:
-        print(f"_antispam_ban_user ошибка записи в БД: {e}")
-
-
-# user_id -> уже показывали причину бана в личке при первом заблокированном обращении
-# (см. UserBanMiddleware) — не пишем в БД, память процесса достаточно: цель просто не
-# отвечать бесконечно, а не вести журнал показов.
-_ban_reason_notified: set = set()
-
-
-async def _notify_ban_reason_once(user_id: int, message: Message):
-    if user_id in _ban_reason_notified:
-        return
-    _ban_reason_notified.add(user_id)
-    try:
-        row = await db_query_one("SELECT reason FROM banned_users WHERE user_id = ?", (user_id,))
-        reason = row[0] if row and row[0] else "manual"
-        await message.reply(ban_notice_text(reason))
-    except Exception:
-        pass
-
-
-class AntiSpamMiddleware(BaseMiddleware):
-    """Мгновенный бан без предупреждений — ТРИ независимых детектора:
-      1) burst по user_id — ANTISPAM_BURST_LIMIT сообщений почти одновременно
-         (за ANTISPAM_BURST_WINDOW сек) — ловит скрипты/кликеры мгновенно, не
-         дожидаясь основного окна.
-      2) счётчик по user_id — ANTISPAM_LIMIT сообщений за ANTISPAM_WINDOW сек.
-      3) счётчик по chat_id — суммарно В ОДНОМ ЧАТЕ пришло >= ANTISPAM_LIMIT
-         сообщений от КОГО УГОДНО за то же окно (скоординированный чат-флуд).
-    Виновники молча банятся в banned_users (тот же тихий бан, что и у !бан все),
-    но теперь получают ОДНО сообщение с явной причиной бана (см. ban_notice_text).
-    Работает как outer_middleware ДО ChatBanMiddleware/UserBanMiddleware.
-
-    Админ (ADMIN_USER_ID) никогда не считается и не банится."""
-
-    async def __call__(self, handler, event, data):
-        if not isinstance(event, Message):
-            return await handler(event, data)
-
-        user = event.from_user
-        if user is None or user.id == ADMIN_USER_ID:
-            return await handler(event, data)
-
-        # Уже забанен (этим же фильтром или вручную) — молчим, дальше по цепочке
-        # UserBanMiddleware всё равно дропнет, но не тратим время на подсчёт.
-        if user.id in _banned_users_cache:
-            return await handler(event, data)
-
-        now = time.monotonic()
-        username = user.username or user.first_name or str(user.id)
-
-        # ---- 0) burst-детектор по user_id (самый жёсткий и быстрый) ----
-        hits = _antispam_user_hits.setdefault(user.id, [])
-        hits.append(now)
-        cutoff = now - ANTISPAM_WINDOW
-        while hits and hits[0] < cutoff:
-            hits.pop(0)
-
-        burst_cutoff = now - ANTISPAM_BURST_WINDOW
-        burst_count = sum(1 for t in hits if t >= burst_cutoff)
-        burst_triggered = burst_count >= ANTISPAM_BURST_LIMIT
-
-        user_triggered = burst_triggered or len(hits) >= ANTISPAM_LIMIT
-        user_ban_reason = "antispam_burst" if burst_triggered else "antispam"
-
-        # ---- chat-flood детектор (кто угодно в чате) ----
-        chat = event.chat
-        chat_triggered_ids = []
-        if chat is not None:
-            chat_hits = _antispam_chat_hits.setdefault(chat.id, [])
-            chat_hits.append((now, user.id))
-            while chat_hits and chat_hits[0][0] < cutoff:
-                chat_hits.pop(0)
-            if len(chat_hits) >= ANTISPAM_LIMIT:
-                # баним каждого уникального участника этого всплеска в чате,
-                # а не только текущего отправителя
-                chat_triggered_ids = list({uid for _, uid in chat_hits if uid != ADMIN_USER_ID})
-
-        if not user_triggered and not chat_triggered_ids:
-            # Обычное редкое сообщение — не даём словарям расти бесконечно:
-            # если после чистки окна остался всего 1 свежий хит (только что
-            # добавленный), это неактивный юзер/чат, безопасно выкинуть ключ
-            # и пересоздать при следующем сообщении через setdefault выше.
-            if len(hits) <= 1:
-                _antispam_user_hits.pop(user.id, None)
-            if chat is not None and len(_antispam_chat_hits.get(chat.id, [])) <= 1:
-                _antispam_chat_hits.pop(chat.id, None)
-            return await handler(event, data)
-
-        # Срабатывание — баним и отвечаем один раз (с конкретной причиной), дальше
-        # для этих юзеров включается штатный UserBanMiddleware (тихое игнорирование).
-        if user_triggered:
-            await _antispam_ban_user(user.id, username, user_ban_reason)
-            _antispam_user_hits.pop(user.id, None)
-            try:
-                await event.reply(ban_notice_text(user_ban_reason))
-            except Exception:
-                pass
-
-        for uid in chat_triggered_ids:
-            if uid == user.id and user_triggered:
-                continue  # уже забанен и уведомлён выше
-            await _antispam_ban_user(uid, str(uid), "antispam_chat_flood")
-            _antispam_user_hits.pop(uid, None)
-
-        if chat_triggered_ids:
-            _antispam_chat_hits.pop(chat.id, None)
-            if not user_triggered:
-                try:
-                    await event.reply(ban_notice_text("antispam_chat_flood"))
-                except Exception:
-                    pass
-
-        return
 
 
 class AliasNormalizeMiddleware(BaseMiddleware):
@@ -3984,11 +3555,6 @@ class StaleCallbackGuardMiddleware(BaseMiddleware):
 dp.callback_query.middleware(StaleCallbackGuardMiddleware())
 
 
-dp.message.outer_middleware(ChatBanMiddleware())
-dp.callback_query.outer_middleware(ChatBanMiddleware())
-dp.message.outer_middleware(UserBanMiddleware())
-dp.callback_query.outer_middleware(UserBanMiddleware())
-dp.message.outer_middleware(AntiSpamMiddleware())
 dp.message.outer_middleware(AliasNormalizeMiddleware())
 # PrivateBlockMiddleware больше не подключается — личка разлочена для всех
 # (раньше в ЛС отвечал только ADMIN_USERNAME, остальные получали тишину).
@@ -4464,13 +4030,8 @@ async def count_legs(message: Message):
         now_mono = time.monotonic()
         last = _leg_farm_last.get(user_id, 0)
         if now_mono - last < LEG_FARM_COOLDOWN:
-            await _register_leg_flood_hit(user_id, username)
             return
         _leg_farm_last[user_id] = now_mono
-        # Прошло короткий кулдаун — считаем в ДЛИННОМ окне (см. LEG_SUSTAINED_*):
-        # скрипт, бьющий чуть РЕЖЕ LEG_FARM_COOLDOWN специально, чтобы не попасться
-        # выше, всё равно ловится тут за устойчивый нечеловеческий темп.
-        asyncio.create_task(_register_leg_sustained_hit(user_id, username))
 
     row = await ensure_user(user_id, username)
     score, evolution_level, active_item = row[2], row[3], row[6]
@@ -4867,13 +4428,6 @@ async def top_overall_global(message: Message):
 @dp.message(F.text.lower().in_({"ферма", "фарма"}))
 @econ_guard("farm")
 async def farm(message: Message):
-    # Тихий бан чата: ChatBanMiddleware (outer_middleware) уже фильтрует забаненные
-    # чаты раньше этого хендлера — эта проверка была дублирующим SELECT на КАЖДЫЙ
-    # вызов самого частого действия в игре (фарм). Кэш вместо запроса — на случай
-    # прямого вызова функции в обход диспетчера, без похода в БД на горячем пути.
-    if message.chat.id in _banned_chats_cache:
-        return
-
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     now = int(time.time())
@@ -7671,50 +7225,6 @@ async def admin_reset(message: Message):
     await message.reply(TEXTS["admin_reset_3"].format(v0=esc(target_username)))
 
 
-@dp.message(F.text.lower().startswith("!бан топ"))
-async def admin_ban_top(message: Message):
-    if not is_admin(message):
-        return
-    await log_admin_action(message)
-    match = ADMIN_BAN_TOP_RE.match(message.text.strip())
-    if not match:
-        await message.reply(TEXTS["admin_ban_top_1"])
-        return
-
-    target = await resolve_target(message, bool(match.group(1)))
-    if not target:
-        await message.reply(TEXTS["admin_ban_top_2"])
-        return
-
-    target_username = target.username or target.first_name or "Без имени"
-    await ensure_user(target.id, target_username)
-    await db_exec("UPDATE users SET top_banned = 1 WHERE user_id = ?", (target.id,))
-
-    await message.reply(TEXTS["admin_ban_top_3"].format(v0=esc(target_username)))
-
-
-@dp.message(F.text.lower().startswith("!разбан топ"))
-async def admin_unban_top(message: Message):
-    if not is_admin(message):
-        return
-    await log_admin_action(message)
-    match = ADMIN_UNBAN_TOP_RE.match(message.text.strip())
-    if not match:
-        await message.reply(TEXTS["admin_unban_top_1"])
-        return
-
-    target = await resolve_target(message, bool(match.group(1)))
-    if not target:
-        await message.reply(TEXTS["admin_unban_top_2"])
-        return
-
-    target_username = target.username or target.first_name or "Без имени"
-    await ensure_user(target.id, target_username)
-    await db_exec("UPDATE users SET top_banned = 0 WHERE user_id = ?", (target.id,))
-
-    await message.reply(TEXTS["admin_unban_top_3"].format(v0=esc(target_username)))
-
-
 @dp.message(F.text.lower().startswith("!установить ног"))
 async def admin_set_legs(message: Message):
     if not is_admin(message):
@@ -7976,33 +7486,6 @@ async def admin_stats(message: Message):
         TEXTS["admin_stats_1"].format(
             v0=players, v1=total_score, v2=total_coins, v3=total_rebirth,
             v4=total_cases, v5=vip_count or 0, v6=banned_count or 0,
-        )
-    )
-
-
-@dp.message(F.text.lower() == "!ступня")
-async def admin_stupnya_status(message: Message):
-    """Статус античита «Ступня» — текущие пороги + баны по причинам за последние 24ч."""
-    if not is_admin(message):
-        return
-    await log_admin_action(message)
-
-    since = int(time.time()) - 86400
-    rows = await db_query(
-        "SELECT reason, COUNT(*) FROM banned_users WHERE banned_at >= ? GROUP BY reason ORDER BY COUNT(*) DESC",
-        (since,),
-    )
-    total = sum(count for _, count in rows) if rows else 0
-    if rows:
-        lines = "\n".join(f"● {_ban_reason_text(reason or 'manual')}: <code>{count}</code>" for reason, count in rows)
-    else:
-        lines = TEXTS["admin_stupnya_2"]
-
-    await message.reply(
-        TEXTS["admin_stupnya_1"].format(
-            v0=ANTISPAM_LIMIT, v1=ANTISPAM_WINDOW, v2=ANTISPAM_BURST_LIMIT, v3=ANTISPAM_BURST_WINDOW,
-            v4=LEG_FARM_COOLDOWN, v5=LEG_FLOOD_STRIKE_LIMIT, v6=LEG_FLOOD_STRIKE_WINDOW,
-            v7=total, v8=lines, v9=LEG_SUSTAINED_LIMIT, v10=LEG_SUSTAINED_WINDOW,
         )
     )
 
@@ -8343,20 +7826,6 @@ async def admin_list_vip(message: Message):
     await message.reply(TEXTS["admin_list_vip_2"].format(v0=len(rows), v1="\n".join(lines)))
 
 
-@dp.message(F.text.lower() == "!список банов топ")
-async def admin_list_top_banned(message: Message):
-    if not is_admin(message):
-        return
-    await log_admin_action(message)
-    rows = await db_query("SELECT username, nickname FROM users WHERE top_banned = 1 LIMIT 50")
-    if not rows:
-        await message.reply(TEXTS["admin_list_top_banned_1"])
-        return
-
-    lines = [f"● {esc(display_name(username, nickname))}" for username, nickname in rows]
-    await message.reply(TEXTS["admin_list_top_banned_2"].format(v0=len(rows), v1="\n".join(lines)))
-
-
 @dp.message(F.text.lower() == "!список ников")
 async def admin_list_nicknames(message: Message):
     if not is_admin(message):
@@ -8405,221 +7874,6 @@ async def admin_find(message: Message):
     await message.reply(TEXTS["admin_find_3"].format(v0=esc(row[1]), v1=len(chat_rows), v2="\n".join(lines)))
 
 
-async def _resolve_chats_by_query(message: Message, query: str):
-    """Ищет chat_id по подстроке названия среди чатов, известных боту (chat_members).
-    Возвращает список [(chat_id, title), ...] всех совпадений (может быть пустым), и
-    сам отправляет игроку сообщение, если совпадений вообще не нашлось."""
-    rows = await db_query("SELECT DISTINCT chat_id FROM chat_members")
-    query_lower = query.lower()
-    matches = []
-    for (chat_id,) in rows:
-        try:
-            chat = await bot.get_chat(chat_id)
-            title = chat.title or chat.full_name or str(chat_id)
-        except Exception:
-            continue
-        if query_lower in title.lower():
-            matches.append((chat_id, title))
-
-    if not matches:
-        await message.reply(TEXTS["admin_ban_chat_3"].format(v0=esc(query)))
-    return matches
-
-
-@dp.message(F.text.regexp(r"(?i)^!забанить чат"))
-async def admin_ban_chat(message: Message):
-    if not is_admin(message):
-        return
-    await log_admin_action(message)
-    match = ADMIN_BAN_CHAT_RE.match(message.text.strip())
-    query = (match.group(1) if match else None) or ""
-    query = query.strip()
-
-    if query:
-        # Если по названию находится несколько подходящих чатов — банятся ВСЕ
-        # совпадения сразу одной командой, без запроса на уточнение.
-        targets = await _resolve_chats_by_query(message, query)
-        if not targets:
-            return
-    else:
-        targets = [(message.chat.id, message.chat.title or message.chat.full_name or str(message.chat.id))]
-
-    admin_username = message.from_user.username or str(message.from_user.id)
-    banned_now = []
-    already_banned = []
-    for chat_id, title in targets:
-        existing = await db_query_one("SELECT chat_id FROM banned_chats WHERE chat_id = ?", (chat_id,))
-        if existing:
-            already_banned.append(title)
-            continue
-        await db_exec(
-            "INSERT INTO banned_chats (chat_id, title, banned_by, banned_at) VALUES (?, ?, ?, ?)",
-            (chat_id, title, admin_username, int(time.time())),
-        )
-        _banned_chats_cache.add(chat_id)
-        banned_now.append(title)
-
-    if len(targets) == 1:
-        if banned_now:
-            await message.reply(TEXTS["admin_ban_chat_1"].format(v0=esc(banned_now[0])))
-        else:
-            await message.reply(TEXTS["admin_ban_chat_2"])
-        return
-
-    lines = [f"● {esc(t)}" for t in banned_now]
-    text = TEXTS["admin_ban_chat_5"].format(v0=len(banned_now), v1="\n".join(lines) or "—")
-    if already_banned:
-        skipped_lines = "\n".join(f"● {esc(t)}" for t in already_banned)
-        text += "\n\n" + TEXTS["admin_ban_chat_6"].format(v0=len(already_banned), v1=skipped_lines)
-    await message.reply(text)
-
-
-@dp.message(F.text.regexp(r"(?i)^!разбанить чат"))
-async def admin_unban_chat(message: Message):
-    if not is_admin(message):
-        return
-    await log_admin_action(message)
-    match = ADMIN_UNBAN_CHAT_RE.match(message.text.strip())
-    query = (match.group(1) if match else None) or ""
-    query = query.strip()
-
-    if query:
-        # Как и при бане — при нескольких совпадениях по названию снимаем бан со всех сразу.
-        targets = await _resolve_chats_by_query(message, query)
-        if not targets:
-            return
-    else:
-        targets = [(message.chat.id, message.chat.title or message.chat.full_name or str(message.chat.id))]
-
-    unbanned_now = []
-    not_banned = []
-    for chat_id, title in targets:
-        existing = await db_query_one("SELECT chat_id FROM banned_chats WHERE chat_id = ?", (chat_id,))
-        if not existing:
-            not_banned.append(title)
-            continue
-        await db_exec("DELETE FROM banned_chats WHERE chat_id = ?", (chat_id,))
-        _banned_chats_cache.discard(chat_id)
-        unbanned_now.append(title)
-
-    if len(targets) == 1:
-        if unbanned_now:
-            await message.reply(TEXTS["admin_unban_chat_1"].format(v0=esc(unbanned_now[0])))
-        else:
-            await message.reply(TEXTS["admin_unban_chat_2"])
-        return
-
-    lines = [f"● {esc(t)}" for t in unbanned_now]
-    text = TEXTS["admin_unban_chat_3"].format(v0=len(unbanned_now), v1="\n".join(lines) or "—")
-    if not_banned:
-        skipped_lines = "\n".join(f"● {esc(t)}" for t in not_banned)
-        text += "\n\n" + TEXTS["admin_unban_chat_4"].format(v0=len(not_banned), v1=skipped_lines)
-    await message.reply(text)
-
-
-@dp.message(F.text.lower() == "!список банов чат")
-async def admin_list_banned_chats(message: Message):
-    if not is_admin(message):
-        return
-    await log_admin_action(message)
-    rows = await db_query("SELECT title, chat_id FROM banned_chats ORDER BY banned_at DESC LIMIT 50")
-    if not rows:
-        await message.reply(TEXTS["admin_list_banned_chats_1"])
-        return
-
-    lines = [f"● {esc(title or str(chat_id))}" for title, chat_id in rows]
-    await message.reply(TEXTS["admin_list_banned_chats_2"].format(v0=len(rows), v1="\n".join(lines)))
-
-
-@dp.message(F.text.regexp(r"(?i)^!бан(\s+все|\s+вся|\s+всех|\s+всё)?(\s+себе)?$"))
-async def admin_ban_all(message: Message):
-    """!бан все — персональный тихий бан игрока (в ответ на его сообщение), уровня
-    "забанить чат", но по user_id и во всех чатах сразу (см. UserBanMiddleware).
-
-    Также ловит частые опечатки ("!бан вся"/"!бан всех"/"!бан") и голый "!бан" без
-    аргумента — раньше на них бот молчал (regexp не матчил вообще), из-за чего
-    опечатка выглядела как "команда бана не работает", хотя на самом деле она
-    просто не срабатывала. Теперь на любой из этих вариантов бот явно отвечает
-    подсказкой с правильным форматом, если тот не совпал точно."""
-    if not is_admin(message):
-        return
-    await log_admin_action(message)
-    match = ADMIN_BAN_ALL_RE.match(message.text.strip())
-    if not match:
-        await message.reply(TEXTS["admin_ban_all_3"])
-        return
-
-    target = await resolve_target(message, bool(match.group(1)))
-    if not target:
-        await message.reply(TEXTS["admin_ban_all_3"])
-        return
-
-    existing = await db_query_one("SELECT user_id FROM banned_users WHERE user_id = ?", (target.id,))
-    if existing:
-        await message.reply(TEXTS["admin_ban_all_2"])
-        return
-
-    target_username = target.username or target.first_name or "Без имени"
-    admin_username = message.from_user.username or str(message.from_user.id)
-    await db_exec(
-        "INSERT INTO banned_users (user_id, username, banned_by, banned_at) VALUES (?, ?, ?, ?)",
-        (target.id, target_username, admin_username, int(time.time())),
-    )
-    _banned_users_cache.add(target.id)
-    await message.reply(TEXTS["admin_ban_all_1"].format(v0=esc(target_username)))
-
-
-@dp.message(F.text.regexp(r"(?i)^!разбан(\s+все|\s+вся|\s+всех|\s+всё)?(\s+себе)?$"))
-async def admin_unban_all(message: Message):
-    """См. комментарий у admin_ban_all — тот же принцип: ловим опечатки/голый "!разбан",
-    чтобы бот явно отвечал подсказкой вместо молчания."""
-    if not is_admin(message):
-        return
-    await log_admin_action(message)
-    match = ADMIN_UNBAN_ALL_RE.match(message.text.strip())
-    if not match:
-        await message.reply(TEXTS["admin_unban_all_3"])
-        return
-
-    target = await resolve_target(message, bool(match.group(1)))
-    if not target:
-        await message.reply(TEXTS["admin_unban_all_3"])
-        return
-
-    existing = await db_query_one("SELECT user_id FROM banned_users WHERE user_id = ?", (target.id,))
-    if not existing:
-        await message.reply(TEXTS["admin_unban_all_2"])
-        return
-
-    target_username = target.username or target.first_name or "Без имени"
-    await db_exec("DELETE FROM banned_users WHERE user_id = ?", (target.id,))
-    _banned_users_cache.discard(target.id)
-    await message.reply(TEXTS["admin_unban_all_1"].format(v0=esc(target_username)))
-
-
-@dp.message(F.text.lower() == "!список банов игроков")
-async def admin_list_banned_users(message: Message):
-    if not is_admin(message):
-        return
-    await log_admin_action(message)
-    rows = await db_query(
-        "SELECT username, user_id, reason FROM banned_users ORDER BY banned_at DESC LIMIT 50"
-    )
-    if not rows:
-        await message.reply(TEXTS["admin_list_banned_users_1"])
-        return
-
-    reason_labels = {
-        "antispam": " (флуд, авто)",
-        "antispam_chat_flood": " (флуд в чате, авто)",
-    }
-    lines = [
-        f"● {esc(username or str(user_id))}{reason_labels.get(reason, '')}"
-        for username, user_id, reason in rows
-    ]
-    await message.reply(TEXTS["admin_list_banned_users_2"].format(v0=len(rows), v1="\n".join(lines)))
-
-
 @dp.message(F.text.lower() == "!игроки")
 async def admin_list_players(message: Message):
     """!игроки — показ всех игроков (username/ник + основные показатели)."""
@@ -8652,8 +7906,6 @@ async def admin_list_chats(message: Message):
     await log_admin_action(message)
 
     chat_ids = await db_query("SELECT DISTINCT chat_id FROM chat_members")
-    banned_rows = await db_query("SELECT chat_id FROM banned_chats")
-    banned_ids = {cid for (cid,) in banned_rows}
 
     lines = []
     for (chat_id,) in chat_ids:
@@ -8662,8 +7914,7 @@ async def admin_list_chats(message: Message):
             title = chat.title or chat.full_name or str(chat_id)
         except Exception:
             continue
-        mark = " 🚫" if chat_id in banned_ids else ""
-        lines.append(f"● {esc(title)}{mark}")
+        lines.append(f"● {esc(title)}")
 
     if not lines:
         await message.reply(TEXTS["admin_list_chats_1"])
