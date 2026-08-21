@@ -5374,10 +5374,12 @@ async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirt
     Возвращает (итоговый evolution_level, итоговый score, текст для добавления к ответу)."""
     evolutions_done = 0
     unlock_text = ""
+    score_before_last_reset = score
     while True:
         required = level_threshold(39, evolution_level, rebirth_count, active_items)
         if score < required:
             break
+        score_before_last_reset = score
         score = 0
         evolution_level += 1
         evolutions_done += 1
@@ -5396,7 +5398,7 @@ async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirt
     if inventory_map.get("evolution_coin", 0) > 0 or inventory_map.get("awakening_coin", 0) > 0:
         evolution_level += 1
         coin_save_text += "\n🟢 Дерево монет: доп. эволюция сверху!"
-    save_result = await apply_coin_tree_save(user_id, inventory_map, "evolution", score, evolution_level)
+    save_result = await apply_coin_tree_save(user_id, inventory_map, "evolution", score_before_last_reset, evolution_level)
     score = save_result["kept_score"]
     coin_save_text += save_result["extra_text"]
 
