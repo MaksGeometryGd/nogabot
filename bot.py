@@ -5845,11 +5845,30 @@ def craft_level_of(upgrades: dict) -> int:
     return upgrade_level(upgrades, "crafts")
 
 
-def available_recipes(craft_level: int, query: str = None) -> list:
-    """Рецепты, доступные по уровню крафта игрока, отфильтрованные по подстроке в названии результата."""
+def recipe_is_discovered(recipe: dict, inventory_map: dict) -> bool:
+    """Как в Minecraft: рецепт «открыт» (виден в списке), если у игрока есть хотя бы
+    1 шт. любого предметного ингредиента. Валюта (монеты/очки/💠/🉑) на открытие не влияет —
+    только на возможность реально скрафтить (см. recipe_missing_ingredients)."""
+    ingredients = recipe.get("ingredients", {})
+    if not ingredients and not recipe.get("needs_all_amulets"):
+        return True  # рецепт без предметных ингредиентов (чисто за валюту) — виден всегда
+    for ing_key in ingredients:
+        if inventory_map.get(ing_key, 0) > 0:
+            return True
+    if recipe.get("needs_all_amulets"):
+        if any(inventory_map.get(ing_key, 0) > 0 for ing_key in ALL_PLAYER_AMULETS):
+            return True
+    return False
+
+
+def available_recipes(craft_level: int, inventory_map: dict, query: str = None) -> list:
+    """Рецепты, доступные по уровню крафта игрока И уже «открытые» (есть хотя бы 1 нужный
+    предмет в инвентаре — валюта не считается), отфильтрованные по подстроке в названии результата."""
     result = []
     for key, recipe in RECIPES.items():
         if recipe["level"] > craft_level:
+            continue
+        if not recipe_is_discovered(recipe, inventory_map):
             continue
         if query and query.lower() not in ITEMS[key][1].lower():
             continue
@@ -5877,8 +5896,12 @@ def crafts_keyboard(recipe_keys: list, user_id: int, page: int = 0, query: str =
 def format_crafts_text(recipe_keys: list, craft_level: int, query: str, page: int = 0) -> str:
     if not recipe_keys:
         if query:
-            return f"🔨 Нет доступных рецептов по запросу «{esc(query)}» (либо не хватает уровня крафта {craft_level}/{CRAFT_MAX_LEVEL})."
-        return f"🔨 Нет доступных рецептов на твоём уровне крафта ({craft_level}/{CRAFT_MAX_LEVEL}). Качай апгрейд «Крафты» в прокачке!"
+            return f"🔨 Нет доступных рецептов по запросу «{esc(query)}» (либо не хватает уровня крафта, либо нет ни одного нужного ингредиента в инвентаре)."
+        return (
+            f"🔨 Нет открытых рецептов ({craft_level}/{CRAFT_MAX_LEVEL} ур. крафта).\n"
+            f"Рецепт появляется в списке, когда у тебя есть хотя бы 1 нужный предмет — "
+            f"добывай ингредиенты в кейсах и качай апгрейд «Крафты» в прокачке!"
+        )
 
     page_keys, page, total_pages = _paginate(recipe_keys, page)
     page_suffix = f" — стр. {page + 1}/{total_pages}" if total_pages > 1 else ""
@@ -5901,8 +5924,10 @@ async def crafts_command(message: Message):
     row = await ensure_user(user_id, username)
     upgrades = parse_upgrades(row[16])
     craft_level = craft_level_of(upgrades)
+    inv_rows = await get_inventory(user_id)
+    inventory_map = {k: q for k, q in inv_rows}
 
-    recipe_keys = available_recipes(craft_level, query)
+    recipe_keys = available_recipes(craft_level, inventory_map, query)
     await message.reply(
         format_crafts_text(recipe_keys, craft_level, query or "", 0),
         reply_markup=crafts_keyboard(recipe_keys, user_id, 0, query or "") if recipe_keys else None,
@@ -5923,7 +5948,9 @@ async def crafts_page_nav(callback: CallbackQuery):
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
     craft_level = craft_level_of(upgrades)
-    recipe_keys = available_recipes(craft_level, query)
+    inv_rows = await get_inventory(owner_id)
+    inventory_map = {k: q for k, q in inv_rows}
+    recipe_keys = available_recipes(craft_level, inventory_map, query)
 
     await safe_edit_text(callback, 
         format_crafts_text(recipe_keys, craft_level, query or "", page),
