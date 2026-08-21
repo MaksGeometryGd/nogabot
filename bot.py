@@ -283,6 +283,12 @@ VIP_BOOST = 2.0  # +200%
 
 # ---------- Прочие настройки (собраны сюда из разных мест файла) ----------
 LEG_REPLY_COOLDOWN = 1                       # сек. между повторными реакциями бота на "нога"
+LEG_FARM_COOLDOWN = 0.8                      # сек. — личный антиспам-кулдаун НАЧИСЛЕНИЯ очков за 🦵/🦿
+                                              # (отдельно от ответа бота): защищает от скриптов,
+                                              # шлющих много сообщений подряд мимо ThrottleMiddleware
+                                              # (count_legs не входит в is_command_text -> не троттлится
+                                              # обычным механизмом команд). Не банит — просто отсеивает
+                                              # начисление, реальному игроку это незаметно.
 VIP_STARS_PRICE = 15                         # цена VIP навсегда в звёздах Telegram
 VIP_FOREVER_SECONDS = 100 * 365 * 86400      # "навсегда" — технически 100 лет
 PING_INTERVAL = 600                          # сек. между self-ping запросами (анти-сон Render)
@@ -338,7 +344,7 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !бан все / !разбан все — полный тихий бан игрока во всех чатах (в ответ на его сообщение)\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников / !список банов игроков — списки\n● !игроки — список всех игроков\n● !найти @user — в каких чатах видели игрока\n● !забанить чат [название] — тихо отключить фарм в чате (без аргумента — текущий чат; при нескольких совпадениях по названию банит их все сразу)\n● !разбанить чат [название] — снять тихий бан с чата (тоже сразу со всех совпадений)\n● !список банов чат — список забаненных чатов\n● !список чат — все чаты, где сейчас состоит бот\n● !логи — последние 20 действий админа\n● !логи вся — вся история действий админа\n● !пинг — задержка БД\n'
+    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !бан топ / !разбан топ — скрыть/вернуть в топы\n● !бан все / !разбан все — полный тихий бан игрока во всех чатах (в ответ на его сообщение)\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список банов топ / !список ников / !список банов игроков — списки\n● !игроки — список всех игроков\n● !найти @user — в каких чатах видели игрока\n● !забанить чат [название] — тихо отключить фарм в чате (без аргумента — текущий чат; при нескольких совпадениях по названию банит их все сразу)\n● !разбанить чат [название] — снять тихий бан с чата (тоже сразу со всех совпадений)\n● !список банов чат — список забаненных чатов\n● !список чат — все чаты, где сейчас состоит бот\n● !логи — последние 20 действий админа\n● !логи вся — вся история действий админа\n● !пинг — задержка БД\n● !ступня — статус античита: пороги + баны за 24ч по причинам\n'
     '● !промокод создать "тип" "кол-во" "активаций" "название" — создать промокод (тип: ноги/эво/коин/очкп/крафт или предмет:<ключ>)\n'
     '● !промокод создать бейдж "название_бейджа" "название_промокода" — создать промокод на бейдж (бейджи: тестер/сапорт/потужность/топ1 в прошлом)\n'
     '● !промокод удалить "название" — удалить промокод\n'
@@ -587,6 +593,17 @@ TEXTS = {
         '● Активных VIP: <code>{v5}</code>\n'
         '● Забанено из топов: <code>{v6}</code>'
     ),
+
+    "admin_stupnya_1": (
+        '👣 <b>Античит «Ступня»</b>\\n'
+        '━━━━━━━━━━━━━━━━━━\\n'
+        '<b>Пороги:</b>\\n'
+        '● Флуд команд: <code>{v0}</code> сообщ. / <code>{v1}</code>с\\n'
+        '● Burst-бан: <code>{v2}</code> сообщ. / <code>{v3}</code>с\\n'
+        '● Кулдаун фарма ног: <code>{v4}</code>с (флуд-бан после <code>{v5}</code> нарушений / <code>{v6}</code>с)\\n\\n'
+        '<b>Баны за 24ч ({v7} всего):</b>\\n{v8}'
+    ),
+    "admin_stupnya_2": '— нет банов за последние 24ч —',
 
     "admin_restart_1": '♻️ Перезапускаю бота...',
 
@@ -1525,7 +1542,7 @@ FIXED_COMMANDS = {
     "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ", "крафты", "крафт",
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
     "мои зелья", "зелья",
-    "!список вип", "!список банов топ", "!список ников", "!список банов чат", "!список чат", "!логи", "!логи вся", "!пинг", "!ивент стоп", "!ивент статус",
+    "!список вип", "!список банов топ", "!список ников", "!список банов чат", "!список чат", "!логи", "!логи вся", "!пинг", "!ивент стоп", "!ивент статус", "!ступня",
     "!забанить чат", "!разбанить чат", "!игроки", "!список банов игроков",
     "ультра перерождение", "ультра перерождение подтверждаю",
     "авто эво вкл", "авто эво выкл", "авто эволюция вкл", "авто эволюция выкл",
@@ -3452,6 +3469,13 @@ class UserBanMiddleware(BaseMiddleware):
     ни инлайн-кнопки, в ЛЮБОМ чате и в личке. Работает как ChatBanMiddleware, но по
     user_id, а не по chat_id — не завязан на конкретный чат.
 
+    Уведомление о причине: банят обычно другие механизмы (AntiSpamMiddleware,
+    _register_leg_flood_hit, econ_guard) и те уже отвечают ОДИН раз сразу в момент
+    бана. Но если игрок узнал о бане не сразу (например, забанили за chat-flood, и
+    следующее сообщение шлёт позже) — при первом заблокированном обращении В ЛИЧКЕ
+    ему один раз показываем причину (см. banned_users.reason), дальше снова тишина —
+    чтобы не превращать тихий бан в повод флудить и получать ответы бота бесконечно.
+
     Исключение — команды управления самим баном (!бан все / !разбан все / !список банов
     игроков), чтобы забаненного игрока можно было разбанить, и админ (is_admin) никогда
     не блокируется сам собой."""
@@ -3473,8 +3497,100 @@ class UserBanMiddleware(BaseMiddleware):
                             await event.answer()
                         except Exception:
                             pass
+                    elif isinstance(event, Message) and event.chat.type == "private":
+                        # Личка, один раз — сообщаем причину бана (см. docstring выше).
+                        asyncio.create_task(_notify_ban_reason_once(user.id, event))
                     return
         return await handler(event, data)
+
+
+# ==================== АНТИЧИТ «СТУПНЯ» ====================
+# Общее название всей защиты бота от абуза: гонки/дубли в экономике (econ_guard),
+# флуд-бан (AntiSpamMiddleware + burst-детектор), личный кулдаун и антифлуд фарма
+# ног (LEG_FARM_COOLDOWN/_register_leg_flood_hit). Все причины банов см. в
+# BAN_REASON_TEXT, все срабатывания пишутся в banned_users.reason.
+# =============================================================
+
+# ---------- Анти-абуз экономики (гонки/дубли на фарме, крафте, кейсах, продаже) ----------
+# Проблема: хендлеры вида farm()/craft_do()/sell_item()/open_case_instant() читают
+# состояние игрока (score, last_farm, инвентарь...), затем ДОЛГО считают (несколько await:
+# бонусы, проки, авто-эво/перерождение), и только в конце пишут UPDATE. Всё это время
+# юзер может прислать вторую параллельную команду/нажать кнопку ещё раз — она читает ещё
+# СТАРОЕ состояние (в т.ч. из _user_cache) и проходит те же проверки повторно. Результат —
+# задвоенный/утроенный фарм, повторный крафт с одним набором ингредиентов, повторная продажа
+# несуществующего уже предмета и т.п. ThrottleMiddleware (0.6с) и CallbackThrottleMiddleware
+# защищают от честного дабл-тапа, но НЕ гарантируют атомарность — их легко обойти двумя
+# разными командами/кнопками или чуть большей задержкой между запросами.
+#
+# Решение — простой и жёсткий asyncio.Lock на каждого игрока: пока один экономический
+# экшен этого user_id не завершился целиком (расчёты + запись в БД), следующий с тем же
+# user_id физически ждёт своей очереди на уровне event loop, а не гоняет параллельные
+# запросы к БД. Это НЕ троттлинг (не отбрасывает запрос) — это сериализация, поэтому
+# каждое действие всё равно выполнится, просто по очереди и с гарантированно свежим
+# состоянием на момент своего чтения.
+#
+# Поверх лока — счётчик "гонок": если во время удержания лока пришёл ЕЩЁ один запрос
+# на тот же экшен от того же игрока быстрее ECON_RACE_SUSPICIOUS_GAP секунд — это
+# статистически не человек с двойным тапом (тот упирается в ThrottleMiddleware), а скорее
+# скрипт, специально бьющий параллельно в обход троттлинга. RACE_STRIKE_LIMIT таких
+# засечек за RACE_STRIKE_WINDOW — тихий бан той же системой, что и AntiSpamMiddleware.
+_econ_locks: dict = {}          # user_id -> asyncio.Lock
+_econ_lock_holders: dict = {}   # user_id -> monotonic-таймстамп захвата (для обнаружения гонки)
+_econ_race_strikes: dict = {}   # user_id -> список monotonic-таймстампов подозрительных гонок
+
+ECON_RACE_SUSPICIOUS_GAP = 0.25   # запрос того же экшена быстрее этого после начала предыдущего — подозрительно
+RACE_STRIKE_LIMIT = 4             # столько подозрительных гонок подряд...
+RACE_STRIKE_WINDOW = 30.0         # ...за это окно (сек) — бан
+
+
+def _get_econ_lock(user_id: int) -> asyncio.Lock:
+    lock = _econ_locks.get(user_id)
+    if lock is None:
+        lock = asyncio.Lock()
+        _econ_locks[user_id] = lock
+    return lock
+
+
+async def _register_race_strike(user_id: int, username: str, action: str):
+    now = time.monotonic()
+    hits = _econ_race_strikes.setdefault(user_id, [])
+    hits.append(now)
+    cutoff = now - RACE_STRIKE_WINDOW
+    while hits and hits[0] < cutoff:
+        hits.pop(0)
+    if len(hits) >= RACE_STRIKE_LIMIT:
+        _econ_race_strikes.pop(user_id, None)
+        await _antispam_ban_user(user_id, username, f"econ_race_{action}")
+
+
+def econ_guard(action: str):
+    """Декоратор для экономических хендлеров (message или callback). Сериализует все
+    вызовы одного user_id через asyncio.Lock и считает подозрительно частые попытки
+    выполнить тот же экшен, пока предыдущий вызов ещё не отпустил лок (см. блок выше).
+
+    Применять на хендлеры, где есть паттерн read->compute->write над балансом/инвентарём:
+    farm, craft_do, sell_item/sell_booster/sell_passive, open_case_instant, rebirth и т.п."""
+    def decorator(handler):
+        async def wrapper(event, *args, **kwargs):
+            user = event.from_user
+            if user is None:
+                return await handler(event, *args, **kwargs)
+            user_id = user.id
+            if user_id == ADMIN_USER_ID:
+                return await handler(event, *args, **kwargs)
+
+            lock = _get_econ_lock(user_id)
+            if lock.locked():
+                # Кто-то уже внутри этого же (или другого econ_guard) действия для
+                # этого игрока — считаем это гонкой, а не легитимным повтором.
+                username = user.username or user.first_name or str(user_id)
+                asyncio.create_task(_register_race_strike(user_id, username, action))
+
+            async with lock:
+                return await handler(event, *args, **kwargs)
+        wrapper.__name__ = getattr(handler, "__name__", "econ_guarded")
+        return wrapper
+    return decorator
 
 
 # ---------- Анти-спам (флуд-бан) ----------
@@ -3487,17 +3603,74 @@ class UserBanMiddleware(BaseMiddleware):
 #      разных аккаунтов одновременно (см. инцидент: 10 ботов разом положили Render).
 #      В этом случае баним всех, кто реально прислал сообщение в этом окне —
 #      не весь чат целиком, а только участников самого всплеска.
-ANTISPAM_LIMIT = 10
-ANTISPAM_WINDOW = 2.7
-ANTISPAM_BAN_MESSAGE = (
-    "🚫 Вы превысили лимит отправки сообщений. Если это случайно, "
-    f"напишите овнеру @{ADMIN_USERNAME}"
-)
+ANTISPAM_LIMIT = 6            # ужесточено с 10 — реальный человек физически не шлёт 6+ сообщений так быстро
+ANTISPAM_WINDOW = 2.0          # ужесточено с 2.7
+# Доп. "burst"-порог поверх основного окна: если пришло BURST_LIMIT сообщений почти
+# одновременно (за BURST_WINDOW секунд) — это почти наверняка скрипт/кликер, баним
+# сразу, не дожидаясь ANTISPAM_WINDOW. Ловит короткие резкие вспышки, которые основное
+# окно (2.0с) может пропустить, если атака идёт короткими сериями с паузами между ними.
+ANTISPAM_BURST_LIMIT = 4
+ANTISPAM_BURST_WINDOW = 0.8
+
+# Причины бана -> человекочитаемое объяснение для сообщения игроку (см. _ban_reason_text).
+BAN_REASON_TEXT = {
+    "manual": "ручной бан от администрации",
+    "antispam": "слишком частая отправка сообщений (флуд)",
+    "antispam_chat_flood": "участие в массовом флуде в чате",
+    "antispam_burst": "аномально быстрая серия сообщений подряд (похоже на скрипт/кликер)",
+    "leg_farm_flood": "накрутка очков за 🦵/🦿 мимо личного кулдауна фарма (похоже на скрипт)",
+    "econ_race_farm": "попытка обойти кулдаун фермы параллельными запросами",
+    "econ_race_craft": "попытка провести повторный крафт параллельными запросами",
+    "econ_race_sell": "попытка продать один и тот же предмет параллельными запросами",
+    "econ_race_transfer": "попытка передать один и тот же предмет/валюту параллельными запросами",
+    "econ_race_case": "попытка открыть кейс за одну оплату несколько раз подряд",
+    "econ_race_rebirth": "попытка провести перерождение параллельными запросами",
+    "econ_race_ultra_rebirth": "попытка провести ультра перерождение параллельными запросами",
+    "econ_race_evolve": "попытка провести эволюцию параллельными запросами",
+    "econ_race_promo": "попытка активировать промокод несколько раз параллельными запросами",
+}
+
+
+def _ban_reason_text(reason: str) -> str:
+    return BAN_REASON_TEXT.get(reason, reason)
+
+
+def ban_notice_text(reason: str) -> str:
+    return (
+        f"🚫 Вы забанены. Причина: {_ban_reason_text(reason)}.\n"
+        f"Если это ошибка, напишите овнеру @{ADMIN_USERNAME}"
+    )
+
+
+ANTISPAM_BAN_MESSAGE = ban_notice_text("antispam")  # сохранено для обратной совместимости
 
 # user_id -> список monotonic-таймстампов недавних сообщений
 _antispam_user_hits: dict = {}
 # chat_id -> список (monotonic-таймстамп, user_id) недавних сообщений
 _antispam_chat_hits: dict = {}
+# user_id -> последний monotonic-таймстамп начисления очков за 🦵/🦿 (см. LEG_FARM_COOLDOWN)
+_leg_farm_last: dict = {}
+# user_id -> список monotonic-таймстампов попыток фарма ног, упёршихся в личный кулдаун
+_leg_flood_hits: dict = {}
+
+LEG_FLOOD_STRIKE_LIMIT = 5     # столько попыток подряд мимо LEG_FARM_COOLDOWN...
+LEG_FLOOD_STRIKE_WINDOW = 6.0  # ...за это окно (сек) — тихий бан
+
+
+async def _register_leg_flood_hit(user_id: int, username: str):
+    """Считает, сколько раз подряд игрок присылал 🦵/🦿 быстрее LEG_FARM_COOLDOWN.
+    Редкий дабл-тап человека — это 1-2 срабатывания и тишина; постоянный поток на
+    грани кулдауна (скрипт, подгоняющий интервал под лимит) быстро набирает
+    LEG_FLOOD_STRIKE_LIMIT и банится тем же путём, что и обычный антиспам."""
+    now = time.monotonic()
+    hits = _leg_flood_hits.setdefault(user_id, [])
+    hits.append(now)
+    cutoff = now - LEG_FLOOD_STRIKE_WINDOW
+    while hits and hits[0] < cutoff:
+        hits.pop(0)
+    if len(hits) >= LEG_FLOOD_STRIKE_LIMIT:
+        _leg_flood_hits.pop(user_id, None)
+        await _antispam_ban_user(user_id, username, "leg_farm_flood")
 
 
 async def _antispam_ban_user(user_id: int, username: str, reason: str):
@@ -3517,14 +3690,35 @@ async def _antispam_ban_user(user_id: int, username: str, reason: str):
         print(f"_antispam_ban_user ошибка записи в БД: {e}")
 
 
+# user_id -> уже показывали причину бана в личке при первом заблокированном обращении
+# (см. UserBanMiddleware) — не пишем в БД, память процесса достаточно: цель просто не
+# отвечать бесконечно, а не вести журнал показов.
+_ban_reason_notified: set = set()
+
+
+async def _notify_ban_reason_once(user_id: int, message: Message):
+    if user_id in _ban_reason_notified:
+        return
+    _ban_reason_notified.add(user_id)
+    try:
+        row = await db_query_one("SELECT reason FROM banned_users WHERE user_id = ?", (user_id,))
+        reason = row[0] if row and row[0] else "manual"
+        await message.reply(ban_notice_text(reason))
+    except Exception:
+        pass
+
+
 class AntiSpamMiddleware(BaseMiddleware):
-    """Мгновенный бан без предупреждений: ANTISPAM_LIMIT сообщений за ANTISPAM_WINDOW
-    секунд — либо от одного user_id, либо суммарно в одном chat_id от кого угодно —
-    и виновники молча банятся в banned_users (тот же тихий бан, что и у !бан все).
-    Работает как outer_middleware ДО ChatBanMiddleware/UserBanMiddleware: даже если
-    юзера забанят прямо сейчас, событие, из-за которого сработал бан, ещё не должно
-    доехать до хендлеров — поэтому сообщение с предупреждением шлём отсюда же и
-    возвращаемся, не вызывая handler.
+    """Мгновенный бан без предупреждений — ТРИ независимых детектора:
+      1) burst по user_id — ANTISPAM_BURST_LIMIT сообщений почти одновременно
+         (за ANTISPAM_BURST_WINDOW сек) — ловит скрипты/кликеры мгновенно, не
+         дожидаясь основного окна.
+      2) счётчик по user_id — ANTISPAM_LIMIT сообщений за ANTISPAM_WINDOW сек.
+      3) счётчик по chat_id — суммарно В ОДНОМ ЧАТЕ пришло >= ANTISPAM_LIMIT
+         сообщений от КОГО УГОДНО за то же окно (скоординированный чат-флуд).
+    Виновники молча банятся в banned_users (тот же тихий бан, что и у !бан все),
+    но теперь получают ОДНО сообщение с явной причиной бана (см. ban_notice_text).
+    Работает как outer_middleware ДО ChatBanMiddleware/UserBanMiddleware.
 
     Админ (ADMIN_USER_ID) никогда не считается и не банится."""
 
@@ -3544,16 +3738,21 @@ class AntiSpamMiddleware(BaseMiddleware):
         now = time.monotonic()
         username = user.username or user.first_name or str(user.id)
 
-        # ---- 1) счётчик по user_id ----
+        # ---- 0) burst-детектор по user_id (самый жёсткий и быстрый) ----
         hits = _antispam_user_hits.setdefault(user.id, [])
         hits.append(now)
         cutoff = now - ANTISPAM_WINDOW
         while hits and hits[0] < cutoff:
             hits.pop(0)
 
-        user_triggered = len(hits) >= ANTISPAM_LIMIT
+        burst_cutoff = now - ANTISPAM_BURST_WINDOW
+        burst_count = sum(1 for t in hits if t >= burst_cutoff)
+        burst_triggered = burst_count >= ANTISPAM_BURST_LIMIT
 
-        # ---- 2) счётчик по chat_id (кто угодно в чате) ----
+        user_triggered = burst_triggered or len(hits) >= ANTISPAM_LIMIT
+        user_ban_reason = "antispam_burst" if burst_triggered else "antispam"
+
+        # ---- chat-flood детектор (кто угодно в чате) ----
         chat = event.chat
         chat_triggered_ids = []
         if chat is not None:
@@ -3577,13 +3776,13 @@ class AntiSpamMiddleware(BaseMiddleware):
                 _antispam_chat_hits.pop(chat.id, None)
             return await handler(event, data)
 
-        # Срабатывание — баним и отвечаем один раз, дальше для этих юзеров
-        # включается штатный UserBanMiddleware (тихое игнорирование).
+        # Срабатывание — баним и отвечаем один раз (с конкретной причиной), дальше
+        # для этих юзеров включается штатный UserBanMiddleware (тихое игнорирование).
         if user_triggered:
-            await _antispam_ban_user(user.id, username, "antispam")
+            await _antispam_ban_user(user.id, username, user_ban_reason)
             _antispam_user_hits.pop(user.id, None)
             try:
-                await event.reply(ANTISPAM_BAN_MESSAGE)
+                await event.reply(ban_notice_text(user_ban_reason))
             except Exception:
                 pass
 
@@ -3597,7 +3796,7 @@ class AntiSpamMiddleware(BaseMiddleware):
             _antispam_chat_hits.pop(chat.id, None)
             if not user_triggered:
                 try:
-                    await event.reply(ANTISPAM_BAN_MESSAGE)
+                    await event.reply(ban_notice_text("antispam_chat_flood"))
                 except Exception:
                     pass
 
@@ -4193,6 +4392,18 @@ async def count_legs(message: Message):
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     text = message.text
 
+    # Личный антиспам-кулдаун начисления (см. LEG_FARM_COOLDOWN) — ДО любых запросов
+    # к БД: count_legs не проходит через ThrottleMiddleware (не команда), поэтому без
+    # этой проверки скрипт может слать десятки сообщений с 🦵 в секунду и на каждое
+    # получать очки. Админ не ограничен.
+    if user_id != ADMIN_USER_ID:
+        now_mono = time.monotonic()
+        last = _leg_farm_last.get(user_id, 0)
+        if now_mono - last < LEG_FARM_COOLDOWN:
+            await _register_leg_flood_hit(user_id, username)
+            return
+        _leg_farm_last[user_id] = now_mono
+
     row = await ensure_user(user_id, username)
     score, evolution_level, active_item = row[2], row[3], row[6]
     levelup_notify, vip_until = row[11], row[12]
@@ -4586,6 +4797,7 @@ async def top_overall_global(message: Message):
 
 
 @dp.message(F.text.lower().in_({"ферма", "фарма"}))
+@econ_guard("farm")
 async def farm(message: Message):
     # Тихий бан чата: ChatBanMiddleware (outer_middleware) уже фильтрует забаненные
     # чаты раньше этого хендлера — эта проверка была дублирующим SELECT на КАЖДЫЙ
@@ -5015,6 +5227,7 @@ _TRANSFER_CURRENCY_TOKENS = {"ног": "ног", "коин": "коин"}
 
 
 @dp.message(F.text.regexp(r"(?i)^(дать|передать)\s+(.+)$"))
+@econ_guard("transfer")
 async def give_or_transfer(message: Message):
     """Умный хендлер: 'дать 888 коин' -> валюта, 'дать свеча' / 'передать свеча' -> предмет.
     Синтаксис определяется автоматически по структуре аргументов."""
@@ -5128,11 +5341,13 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
 
 
 @dp.message(F.text.lower().startswith("продать б "))
+@econ_guard("sell")
 async def sell_booster(message: Message):
     await sell_item(message, "продать б ", only_passive=False)
 
 
 @dp.message(F.text.lower().startswith("продать п "))
+@econ_guard("sell")
 async def sell_passive(message: Message):
     await sell_item(message, "продать п ", only_passive=True)
 
@@ -5959,6 +6174,7 @@ async def crafts_page_nav(callback: CallbackQuery):
 
 
 @dp.callback_query(F.data.startswith("craft:"))
+@econ_guard("craft")
 async def craft_do(callback: CallbackQuery):
     _, owner_str, recipe_key = callback.data.split(":")
     owner_id = int(owner_str)
@@ -6104,6 +6320,7 @@ async def case_inspect_command(message: Message):
 
 
 @dp.message(F.text.lower().regexp(r"^открыть кейс\s+(\d+)$"))
+@econ_guard("case")
 async def case_open_command(message: Message):
     match = re.match(r"^открыть кейс\s+(\d+)$", message.text.strip().lower())
     await open_case_instant(message, int(match.group(1)))
@@ -6146,6 +6363,7 @@ async def inspect_case_callback(callback: CallbackQuery):
 
 
 @dp.callback_query(F.data.startswith("buy_case:"))
+@econ_guard("case")
 async def buy_case(callback: CallbackQuery):
     _, case_num_str, owner_str = callback.data.split(":")
     case_num = int(case_num_str)
@@ -6272,6 +6490,7 @@ async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirt
 
 
 @dp.message(F.text.lower() == "эволюция")
+@econ_guard("evolve")
 async def evolve(message: Message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
@@ -6669,6 +6888,7 @@ async def try_auto_rebirth(user_id: int, score: int, evolution_level: int, rebir
 
 
 @dp.message(F.text.lower() == "перерождение")
+@econ_guard("rebirth")
 async def rebirth(message: Message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
@@ -6766,6 +6986,7 @@ async def ultra_rebirth_cancel(callback: CallbackQuery):
 
 
 @dp.callback_query(F.data.startswith("ultra_ok:"))
+@econ_guard("ultra_rebirth")
 async def ultra_rebirth_confirm(callback: CallbackQuery):
     owner_id = int(callback.data.split(":")[1])
     if callback.from_user.id != owner_id:
@@ -7691,6 +7912,33 @@ async def admin_stats(message: Message):
     )
 
 
+@dp.message(F.text.lower() == "!ступня")
+async def admin_stupnya_status(message: Message):
+    """Статус античита «Ступня» — текущие пороги + баны по причинам за последние 24ч."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+
+    since = int(time.time()) - 86400
+    rows = await db_query(
+        "SELECT reason, COUNT(*) FROM banned_users WHERE banned_at >= ? GROUP BY reason ORDER BY COUNT(*) DESC",
+        (since,),
+    )
+    total = sum(count for _, count in rows) if rows else 0
+    if rows:
+        lines = "\n".join(f"● {_ban_reason_text(reason or 'manual')}: <code>{count}</code>" for reason, count in rows)
+    else:
+        lines = TEXTS["admin_stupnya_2"]
+
+    await message.reply(
+        TEXTS["admin_stupnya_1"].format(
+            v0=ANTISPAM_LIMIT, v1=ANTISPAM_WINDOW, v2=ANTISPAM_BURST_LIMIT, v3=ANTISPAM_BURST_WINDOW,
+            v4=LEG_FARM_COOLDOWN, v5=LEG_FLOOD_STRIKE_LIMIT, v6=LEG_FLOOD_STRIKE_WINDOW,
+            v7=total, v8=lines,
+        )
+    )
+
+
 @dp.message(F.text.lower() == "!рестарт")
 async def admin_restart(message: Message):
     if not is_admin(message):
@@ -8485,6 +8733,7 @@ async def admin_promo_list(message: Message):
 
 
 @dp.message(F.text.regexp(r'(?i)^(?:промокод|промо)\s+\S+$'))
+@econ_guard("promo")
 async def redeem_promo(message: Message):
     match = PROMO_REDEEM_RE.match(message.text.strip())
     if not match:
