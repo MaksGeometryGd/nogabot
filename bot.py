@@ -20,12 +20,6 @@ from aiogram.types import (
 )
 from aiohttp import web
 
-# Некоторые хостинги (например Pterodactyl-панели без готового UI для секретов)
-# не дают способа задать переменные окружения через свою панель — только файлы.
-# Поэтому дополнительно читаем /home/container/.env (или .env рядом со скриптом),
-# если он есть — это НЕ заменяет os.environ, а просто подмешивает в него значения
-# из файла, если их там ещё не было. На хостах, где переменные окружения задаются
-# штатно (Render, Koyeb и т.п.), файла .env просто не будет, и этот блок не сработает.
 def _load_dotenv_if_present():
     for path in ("/home/container/.env", os.path.join(os.path.dirname(__file__), ".env")):
         if not os.path.isfile(path):
@@ -42,20 +36,16 @@ def _load_dotenv_if_present():
                     os.environ.setdefault(key, value)
         except Exception as e:
             print(f".env не удалось прочитать ({path}): {e}")
-        break  # первый найденный файл — этого достаточно
-
+        break
 
 _load_dotenv_if_present()
 
 TOKEN = os.environ.get("BOT_TOKEN")
 ADMIN_USERNAME = "MaksGeometryGd"
-# user_id — основная проверка админки (см. is_admin): в отличие от username,
-# не меняется и не может «утечь» другому аккаунту.
 ADMIN_USER_ID = 7148430462
 TURSO_URL = os.environ.get("TURSO_DATABASE_URL")
 TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN")
 
-# ---------- Премиум-эмодзи ----------
 PREMIUM_MIKU = '<tg-emoji emoji-id="5199793038410391513">🤩</tg-emoji>'
 PREMIUM_MGG = '<tg-emoji emoji-id="6327920744789444368">🥰</tg-emoji>'
 
@@ -74,7 +64,6 @@ PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5276381049851498060">🐆</tg-emoji>'
 PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="6206233738494347353">↗️</tg-emoji>'
 PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">💔</tg-emoji>'
 
-# заглушки — замени на реальные emoji-id, когда достанешь (см. инструкцию про custom_emoji_id)
 PREMIUM_OWNER_BADGE = '<tg-emoji emoji-id="5204056085509477484">💠</tg-emoji>'
 PREMIUM_VIP_BADGE = '<tg-emoji emoji-id="5233333941263437275">💎</tg-emoji>'
 PREMIUM_VIP_ITEM = '<tg-emoji emoji-id="5344025423258864934">🎗️</tg-emoji>'
@@ -82,11 +71,6 @@ PREMIUM_MK_MARY = '<tg-emoji emoji-id="6328022870521808963">🌹</tg-emoji>'
 PREMIUM_MK_VERON03 = '<tg-emoji emoji-id="5429446558930182229">🔷</tg-emoji>'
 PREMIUM_STRANGE_COIN = '<tg-emoji emoji-id="5035428694441592026">🪙</tg-emoji>'
 
-# Крафтовые предметы: реальных emoji-id для них ещё нет, поэтому используем обычные
-# emoji без обёртки <tg-emoji>. С фейковым emoji-id Telegram отклонял всё сообщение
-# (Bad Request), из-за чего падал показ ЛЮБЫХ премиум-иконок в этом же сообщении —
-# в том числе валидных (кейс, вип и т.д.). Когда появятся настоящие emoji-id, верни
-# обёртку '<tg-emoji emoji-id="...">...</tg-emoji>' по аналогии с PREMIUM_MK_* выше.
 PREMIUM_POWER_AMULET = '<tg-emoji emoji-id="5364047860713143546">💪</tg-emoji>'
 PREMIUM_GALAXY_POWER_AMULET = '<tg-emoji emoji-id="5451648825431175858">🌠</tg-emoji>'
 PREMIUM_GALAXY_MIGHT_AMULET = '<tg-emoji emoji-id="5335070858828344908">🌋</tg-emoji>'
@@ -102,26 +86,16 @@ PREMIUM_LUCKY_CHARM = '<tg-emoji emoji-id="5435935451355555165">🍀</tg-emoji>'
 PREMIUM_SWIFT_PILL = '<tg-emoji emoji-id="5886217713839246898">⚡</tg-emoji>'
 PREMIUM_PARTY_SET = '<tg-emoji emoji-id="5852607601883221665">🎉</tg-emoji>'
 PREMIUM_WARM_CANDLE = '<tg-emoji emoji-id="5253717838870363235">🕯</tg-emoji>'
-# TODO: заменить emoji-id на реальный premium-эмодзи для амулета кошко-девочки, когда он будет.
 PREMIUM_KOSHKO_AMULET = '<tg-emoji emoji-id="5371041424680710006">🐈</tg-emoji>'
 
-# Очки крафта (💠) — отдельная валюта дерева крафта, получаемая обменом Очков Перерождения.
-# Алиасы команд: "крафт" и "очкк" (см. CRAFT_EXCHANGE_RE, ADMIN_GIVE_CRAFT_RE, ADMIN_TAKE_CRAFT_RE).
-# TODO: заменить emoji-id на реальный premium-эмодзи для очков крафта, когда он будет.
 PREMIUM_CRAFT_POINT = '<tg-emoji emoji-id="5254028100979787948">💠</tg-emoji>'
 
-# ---------- Промо-эксклюзив: недоступные вне промокодов/админ-команд предметы и бейджи ----------
-# Нельзя выбить, продать или передать — выдаются только через админ-команды или промокоды
-# (см. NON_TRADABLE_ITEMS ниже и PROMO_BADGES).
-# TODO: заменить emoji-id на реальные premium-эмодзи, когда достанешь (см. инструкцию про
-# custom_emoji_id) — сейчас это заглушки, аналогично PREMIUM_POWER_AMULET и другим выше.
 PREMIUM_KOTYARA_AMULET = '<tg-emoji emoji-id="5415692772273312091">🐱</tg-emoji>'
 PREMIUM_MIKU_AMULET = '<tg-emoji emoji-id="5397821533613735774">🎤</tg-emoji>'
 PREMIUM_GOLDA_ITEM = '<tg-emoji emoji-id="5330230039843709983">🥇</tg-emoji>'
 PREMIUM_KARAMBIT_GOLD = '<tg-emoji emoji-id="5060114895148680390">🔪</tg-emoji>'
 PREMIUM_BUTTERFLY_LEGACY = '<tg-emoji emoji-id="4943160586331490355">🦋</tg-emoji>'
 
-# Новые бустеры (мини-апдейт): крест / фати / фанат Мику.
 PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5282820155015971423">✝️</tg-emoji>'
 PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5404393696865041225">🤲</tg-emoji>'
 PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5199714801286132798">🎧</tg-emoji>'
@@ -131,16 +105,11 @@ PREMIUM_BADGE_SUPPORT = '<tg-emoji emoji-id="5947343263194157527">🛠️</tg-em
 PREMIUM_BADGE_POWER = '<tg-emoji emoji-id="5780703608760700844">💪</tg-emoji>'
 PREMIUM_BADGE_TOP1_PAST = '<tg-emoji emoji-id="5363999757079429238">👑</tg-emoji>'
 
-# ---------- Безумные крафты (ур.1/ур.3) ----------
 PREMIUM_CHAOS_ORB = '<tg-emoji emoji-id="5201679280672616755">🌀</tg-emoji>'
 PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="5237697056805510735">⏰</tg-emoji>'
 PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="5305669252181672918">🔮</tg-emoji>'
 PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="5237888066886064441">⚡️</tg-emoji>'
 
-# ---------- Дерево монет (крафт-апдейт: странная монета -> ...) ----------
-# У всех ниже пока нет реального emoji-id (заглушки, обычный юникод-эмодзи без обёртки
-# <tg-emoji>) — см. пояснение про PREMIUM_POWER_AMULET выше. Когда появятся настоящие
-# emoji-id, оберни аналогично '<tg-emoji emoji-id="ЧИСЛО">эмодзи</tg-emoji>'.
 PREMIUM_NOGOST_COIN = '<tg-emoji emoji-id="5413879072008724252">🪙</tg-emoji>'
 PREMIUM_GODLY_NOGOST_COIN = '<tg-emoji emoji-id="5361563655924110883">🪙</tg-emoji>'
 PREMIUM_CRAFT_COIN = '<tg-emoji emoji-id="5334956805971792834">🪙</tg-emoji>'
@@ -150,10 +119,6 @@ PREMIUM_EVOLUTION_COIN = '<tg-emoji emoji-id="5366230850855777158">🪙</tg-emoj
 PREMIUM_AWAKENING_COIN = '<tg-emoji emoji-id="5767231090922101971">🪙</tg-emoji>'
 PREMIUM_BADGE_INVESTOR = '<tg-emoji emoji-id="5298614648138919107">💹</tg-emoji>'
 
-# ---------- Кейс 3: премиум-иконки (заглушки) ----------
-# TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
-# <tg-emoji>) — как найдёшь/сделаешь премиум-версию в Telegram, оберни так же, как выше:
-# '<tg-emoji emoji-id="ЧИСЛО">эмодзи</tg-emoji>'. Пока оставлено безопасно (не ломает отправку).
 PREMIUM_ICE_SHARD = '<tg-emoji emoji-id="5363812028353898315">🧊</tg-emoji>'
 PREMIUM_EMBER = '<tg-emoji emoji-id="5773638078321135255">🔥</tg-emoji>'
 PREMIUM_DRAGON_CLAW = '<tg-emoji emoji-id="5307771389564954063">🐉</tg-emoji>'
@@ -171,11 +136,9 @@ PREMIUM_KOSHKO_GIFT = '<tg-emoji emoji-id="6217230280701251264">🎀</tg-emoji>'
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 
-# ---------- Уровни 1-20 (визуальный рост) ----------
 REGULAR_THRESHOLDS = [10, 50, 150, 300, 500, 800, 1200, 1600, 2000, 2400,
                        3000, 3600, 4200, 4800, 5400, 6000, 6600, 7200, 7800, 8400]
 
-# ---------- Уровни 21-39 (именные) ----------
 CUSTOM_LEVELS = [
     (9000,  "🦵🍀", "нога удачи"),
     (9600,  "🦵🌬️", "нога воздухана"),
@@ -199,9 +162,8 @@ CUSTOM_LEVELS = [
 ]
 
 ALL_THRESHOLDS = REGULAR_THRESHOLDS + [t for t, _, _ in CUSTOM_LEVELS]
-MAX_LEVEL_SCORE = ALL_THRESHOLDS[-1]  # база (эво 0) для требования эволюции — 39 ур
+MAX_LEVEL_SCORE = ALL_THRESHOLDS[-1]
 
-# ---------- Уровни 40+ (престиж-грайнд для топов) ----------
 EXTRA_TIERS = [
     (40, 45, "🦵☄️", "нога Метеорита"),
     (46, 50, "🦵🪐", "нога Планеты"),
@@ -227,49 +189,31 @@ MGG_MEGA_LEVEL = 20001
 MGG_MEGA_EMOJI = PREMIUM_MGG
 MGG_MEGA_NAME = "нога кошко-девочки MGG"
 
-# ---------- Ультра перерождение (Ultra Rebirth) — эндгейм-механика ----------
-# Условия активации (обязательны все три):
-#   evolution_level >= ULTRA_REQUIRED_EVO (50)
-#   уровень ноги (get_level_index) >= ULTRA_REQUIRED_LEG_LEVEL (20001 = MGG_MEGA_LEVEL,
-#   максимум для тех, кто ещё НЕ прошёл Ультра перерождение)
-#   rebirth_count >= ULTRA_REQUIRED_REBIRTHS (5, текущий максимум обычных перерождений)
-# Это Boolean-статус (0/1) в колонке ultra_rebirth — повторно недоступен (в отличие
-# от обычного перерождения, у которого есть счётчик rebirth_count).
 ULTRA_REQUIRED_EVO = 50
-ULTRA_REQUIRED_LEG_LEVEL = MGG_MEGA_LEVEL  # 20001
+ULTRA_REQUIRED_LEG_LEVEL = MGG_MEGA_LEVEL
 ULTRA_REQUIRED_REBIRTHS = 5
 
-# Уровень 20002 — следующий уровень ноги после 20001, открыт только тем, у кого
-# ultra_rebirth = 1. После активации прогрессия ноги идёт как обычно (0-20000+),
-# просто верхняя граница для таких игроков поднимается — и дальше уже не ограничена
-# практически ничем (см. ULTRA_LEVEL_CAP), а не жёстко зажата на 20002.
 ULTRA_LEG_LEVEL = 20002
 ULTRA_LEG_EMOJI = "🦵🧪"
 ULTRA_LEG_NAME = "тест нога"
 
-# Потолок для get_level_index после Ультра перерождения — практически бесконечность
-# (пара гуголов), чтобы прогрессия не упиралась в потолок даже при огромном score.
-# Гугол = 10**100.
 ULTRA_LEVEL_CAP = 2 * 10 ** 100
 
-# Пост-ультра буст: постоянный множитель добычи за сам факт статуса (не за уровни —
-# у Ультра перерождения их нет), выдаётся один раз и держится вечно, применяется
-# поверх всех обычных бустов (эво/VIP/предметы/прокачки).
-ULTRA_REBIRTH_BOOST = 5.0  # +500% к добыче
+ULTRA_REBIRTH_BOOST = 5.0
 
 LEG_POINT = 1
 LEG_LIMIT = 5
-MEK_POINT = 18  # нерф с 25
+MEK_POINT = 18
 MEK_LIMIT = 10
 
 FARM_COOLDOWN = 1200
-FARM_BASE = (70, 170)      # нерф с (100, 250)
-FARM_EVOLVED = (500, 900)  # нерф с (700, 1250)
+FARM_BASE = (70, 170)
+FARM_EVOLVED = (500, 900)
 
 EXCHANGE_RATE = 200
-REVERSE_EXCHANGE_RATE = 150  # 1 коин = 150 очков ног (обратный обменник, п.5 ТЗ)
-CRAFT_POINTS_EXCHANGE_RATE = 100  # 100 🉑 (очков перерождения) = 1 💠 (очко крафта)
-CRAFT_MAX_LEVEL = 3  # максимальный уровень апгрейда "crafts" (0/1/2/3)
+REVERSE_EXCHANGE_RATE = 150
+CRAFT_POINTS_EXCHANGE_RATE = 100
+CRAFT_MAX_LEVEL = 3
 
 DAILY_TABLE = [100, 250, 500, 750, 1000]
 DAILY_MIN_GAP = 20 * 3600
@@ -277,27 +221,16 @@ DAILY_STREAK_LIMIT = 48 * 3600
 
 BADGE_EVO_TOTAL = 30000
 
-EVO_HARDNESS_RATE = 0.10  # +10% к порогу очков за каждый уровень эволюции (линейно, не по нарастающей)
-EVO_BOOST_STEP = 0.10      # нерф с 0.30/0.20
+EVO_HARDNESS_RATE = 0.10
+EVO_BOOST_STEP = 0.10
 
-VIP_BOOST = 2.0  # +200%
+VIP_BOOST = 2.0
 
-# ---------- Прочие настройки (собраны сюда из разных мест файла) ----------
-LEG_REPLY_COOLDOWN = 1                       # сек. между повторными реакциями бота на "нога"
-LEG_FARM_COOLDOWN = 0.8                      # сек. — личный антиспам-кулдаун НАЧИСЛЕНИЯ очков за 🦵/🦿
-                                              # (отдельно от ответа бота): защищает от скриптов,
-                                              # шлющих много сообщений подряд мимо ThrottleMiddleware
-                                              # (count_legs не входит в is_command_text -> не троттлится
-                                              # обычным механизмом команд). Не банит — просто отсеивает
-                                              # начисление, реальному игроку это незаметно.
-VIP_STARS_PRICE = 15                         # цена VIP навсегда в звёздах Telegram
-VIP_FOREVER_SECONDS = 100 * 365 * 86400      # "навсегда" — технически 100 лет
-PING_INTERVAL = 600                          # сек. между self-ping запросами (анти-сон Render)
-
-# ---------- ТЕКСТЫ БОТА ----------
-# Все ответные фразы бота собраны здесь по функциям, в которых они используются.
-# Чтобы поменять формулировку — не ищи по всему файлу, а найди нужный ключ ниже.
-# {v0}, {v1}... — места подстановки переменных (что именно подставляется см. в коде вызова).
+LEG_REPLY_COOLDOWN = 1
+LEG_FARM_COOLDOWN = 0.8
+VIP_STARS_PRICE = 15
+VIP_FOREVER_SECONDS = 100 * 365 * 86400
+PING_INTERVAL = 600
 
 TEXTS = {
     "promo_create_1": 'Формат: !промокод создать "тип" "количество" "активаций" "название"\n'
@@ -345,11 +278,6 @@ TEXTS = {
     "vip_case_open_6": '💎📦 Открыто {v0}× «{v1}» за {v2} 🪙 (осталось {v3} 🪙):\n{v4}',
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
-    "help_command_1": '📜 <b>Команды:</b>\n● моя нога — твой профиль\n● ферма — фарм очков (по кулдауну)\n● топ ног / топ коин / топ эво / топ очкп — топы (+ «гл» для глобальных)\n● инвентарь — бустеры, предметы и зелья\n● бустеры / предметы / зелья — сразу открыть нужную вкладку инвентаря\n● бустеры поиск <название> — найти бустер по имени\n● кейс, кейсы — открытие кейсов\n● эволюция — перейти на след. уровень эволюции\n● перерождение — сброс ног/эво за 🉑\n● ультра перерождение — разовый эндгейм-сброс (эво 50 + нога 20001 + 5 перерождений)\n● апгрейд / прокачка — меню прокачки за 🉑\n● престиж — бесконечное дерево прокачки за 🔮 (даётся за перерождения)\n● баланс — монеты и 🉑\n● обменять <число> — очки в монеты\n● обменять <число> крафт/очкк — потратить <число> 🉑 на 💠 очки крафта (курс 100:1)\n● обменять крафт/очкк <число> — получить ровно <число> 💠 очков крафта (бот сам посчитает 🉑)\n● вип — купить VIP-статус за звёзды\n● крафты [предмет] — доступные рецепты крафта\n● продать б/п <название> — продать бустер/предмет\n● уничтожение б/п <название> — уничтожить без награды\n● бонус — ежедневный бонус\n● бейджи — управление бейджами\n● +ник <текст> — установить свой ник (до 50 символов)\n● -ник — сбросить ник\n● промокод <название> (или промо <название>) — активировать промокод\n\n<b>Зелья</b> (вкладка ⚗️ в инвентаре, варка+использование кнопками):\n● 🧪⚡ ускорения — x2 к добыче фермы\n● 🧪🍀 удачи — x2 к шансу проков ваз/Эссенции Бога\n● 🧪🌀 без КД — 3 фарма без ожидания кулдауна\n\n<b>VIP:</b>\n● авто эво вкл/выкл — эволюция срабатывает сама, как только хватит очков\n● авто перерождение вкл/выкл — перерождение срабатывает само, как только эволюция достигнет минимума\n● авто продажа вкл/выкл/настройка — авто-продажа отмеченных предметов из кейсов 1/2/3 сразу при выпадении\n● вип открыть кейс <номер> <кол-во> — открыть до 20 кейсов разом за монеты\n\n<b>Owner:</b>\n● !установить ног/эво <число> — задать точное значение\n● !дать ноги лвл<число> — задать РОВНО указанный уровень ноги\n● !снять ноги/эво/коин/очкп все — обнулить показатель полностью\n● !сброс кд / !сброс бонус — сбросить кулдауны\n● !дать кейс <номер> <кол-во> — открыть кейс бесплатно\n● !дебаг @user — сырые данные игрока\n● !текст <ключ> — показать шаблон фразы\n● !симулировать эволюция @user — проверить условие эво\n● !стата — статистика бота\n● !ивент х<множитель> <минуты> / !ивент стоп / !ивент статус — управление ивентом\n● !рестарт — перезапуск бота\n● !установить очкп <число> — задать 🉑 напрямую\n● !дать крафт/очкк <число> — выдать 💠 очки крафта напрямую\n● !снять крафт/очкк <число|все> — забрать 💠 очки крафта\n● !обнулить экономику @user — сброс очков/монет/🉑\n● !мультипликатор ферма <число> <минуты> — личный буст фермы\n● !дать предмет <ключ> <кол-во> — выдать предмет напрямую\n● !очистить инвентарь @user — снести весь инвентарь\n● !дать апгрейд <ключ> <уровень> — задать уровень апгрейда\n● !вип навсегда себе — VIP без звёзд\n● !ультра навсегда себе — статус Ультра перерождения без сброса прогресса\n● !сброс ник @user — сбросить чужой ник\n● !список вип / !список ников — списки\n● !игроки — список всех игроков\n● !найти @user — в каких чатах видели игрока\n● !список чат — все чаты, где сейчас состоит бот\n● !логи — последние 20 действий админа\n● !логи вся — вся история действий админа\n● !пинг — задержка БД\n'
-    '● !промокод создать "тип" "кол-во" "активаций" "название" — создать промокод (тип: ноги/эво/коин/очкп/крафт или предмет:<ключ>)\n'
-    '● !промокод создать бейдж "название_бейджа" "название_промокода" — создать промокод на бейдж (бейджи: тестер/сапорт/потужность/топ1 в прошлом)\n'
-    '● !промокод удалить "название" — удалить промокод\n'
-    '● !промокод список — список активных промокодов',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
     "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
     "toggle_badge_1": 'Это не твои значки!',
@@ -673,8 +601,6 @@ TEXTS = {
     "admin_event_status_forever": 'без ограничения по времени',
 }
 
-
-# ---------- Предметы (нерф % и шансов дропа) ----------
 ITEMS = {
     "amulet": ("🪬", "Амулет галактики", 17, 10),
     "orb":    ("🔮", "Шар парадокса", 14, 20),
@@ -691,11 +617,10 @@ ITEMS = {
     "mk_vector":    (PREMIUM_MK_VECTOR, "Амулет Vector", 40, 4.02),
     "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 1, 60),
     "mk_mary":      (PREMIUM_MK_MARY, "Амулет Mary", 45, 5.75),
-    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 60, 10),  # шанс понижен с 19% до 10%
+    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 60, 10),
     "vip_charm":    (PREMIUM_VIP_ITEM, "VIP-амулет", 250, 0),
     "strange_coin": (PREMIUM_STRANGE_COIN, "Странная монета", 0, 0.7),
 
-    # ---------- Крафтовые предметы (система крафтов) ----------
     "power_amulet":        (PREMIUM_POWER_AMULET, "Амулет силы", 40, 0),
     "galaxy_power_amulet": (PREMIUM_GALAXY_POWER_AMULET, "Амулет силы галактики", 80, 0),
     "galaxy_might_amulet": (PREMIUM_GALAXY_MIGHT_AMULET, "Амулет Мощи галактики", 100, 0),
@@ -709,13 +634,11 @@ ITEMS = {
     "golden_vase":         (PREMIUM_GOLDEN_VASE, "Золотая ваза", 0, 0),
     "godly_vase":          (PREMIUM_GODLY_VASE, "Боготворная ваза", 0, 0),
 
-    # ---------- Базовые крафты (ур.0) ----------
     "lucky_charm":  (PREMIUM_LUCKY_CHARM, "Малый амулет удачи", 15, 0),
     "swift_pill":   (PREMIUM_SWIFT_PILL, "Ускоренная таблетка", 12, 0),
     "party_set":    (PREMIUM_PARTY_SET, "Праздничный набор", 18, 0),
     "warm_candle":  (PREMIUM_WARM_CANDLE, "Тёплая свеча", 0, 0),
 
-    # ---------- Кейс 3 (буст-предметы + крафт-материалы) ----------
     "ice_shard":     (PREMIUM_ICE_SHARD, "Ледяной осколок", 65, 12),
     "ember":         (PREMIUM_EMBER, "Уголёк", 45, 12),
     "dragon_claw":   (PREMIUM_DRAGON_CLAW, "Коготь дракона", 55, 8),
@@ -730,8 +653,6 @@ ITEMS = {
     "ancient_stone": (PREMIUM_ANCIENT_STONE, "Древний камень", 0, 18),
     "fate_thread":   (PREMIUM_FATE_THREAD, "Нить судьбы", 0, 4),
 
-    # ---------- Промо-эксклюзив: только через промокоды или админ-команды ----------
-    # Нельзя выбить (drop_weight=0), продать или передать (см. NON_TRADABLE_ITEMS).
     "kotyara_amulet":  (PREMIUM_KOTYARA_AMULET, "Амулет Котяры", 60, 0),
     "miku_amulet":     (PREMIUM_MIKU_AMULET, "Амулет Мику", 50, 0),
     "golda":           (PREMIUM_GOLDA_ITEM, "Голда", 52, 0),
@@ -740,24 +661,12 @@ ITEMS = {
     "krest_amulet":    (PREMIUM_KREST_AMULET, "Амулет Креста", 100, 0),
     "fati_amulet":     (PREMIUM_FATI_AMULET, "Амулет Фати", 80, 0),
 
-    # ---------- Безумные крафты (см. RECIPES: chaos_orb / chronos_clock / chronos_orb) ----------
-    # Не выбиваются из кейсов — только крафт (см. CRAFT_MAX_LEVEL) или промо/админка.
-    # ВАЖНО: у chronos_orb фикс. % НЕ используется для итогового буста — у него отдельный
-    # рандомный буст 1-200% (см. CHRONOS_BOOST_MIN/MAX, chronos_orb_boost_loop, get_multiplier).
-    # 120 здесь — это только базовое/отображаемое значение (напр. для сортировки/UI), не бустит дважды.
     "chaos_orb":     (PREMIUM_CHAOS_ORB, "Шар хаоса", 0, 100),
     "chronos_clock": (PREMIUM_CHRONOS_CLOCK, "Часы Хроноса", 0, 120),
     "chronos_orb":   (PREMIUM_CHRONOS_ORB, "Шар Хроноса", 0, 120),
 
-    # ---------- Новые крафты (мини-апдейт) ----------
-    # Не выбивается и не выдаётся промо/админкой — получить можно только крафтом.
     "miku_fan_amulet": (PREMIUM_MIKU_FAN_AMULET, "Амулет Фаната Мику", 300, 0),
 
-    # ---------- Дерево монет (крафт-апдейт) ----------
-    # Всё дерево не выбивается из кейсов (drop_weight=0) — только крафт от strange_coin.
-    # boost_percent=0 у всех, кроме nogost_coin/godly_nogost_coin — их пассивный множитель
-    # фарма (x3/x6) реализован именно через boost_percent (складывается в get_multiplier(),
-    # как у обычных бустеров), см. RECIPES ниже и apply_farm_bonuses/count_legs.
     "nogost_coin":       (PREMIUM_NOGOST_COIN, "Монета Ногости", 200, 0),
     "godly_nogost_coin": (PREMIUM_GODLY_NOGOST_COIN, "Монета Бога Ногости", 500, 0),
     "craft_coin":        (PREMIUM_CRAFT_COIN, "Монета Крафта", 0, 0),
@@ -767,34 +676,21 @@ ITEMS = {
     "awakening_coin":    (PREMIUM_AWAKENING_COIN, "Монета Пробуждения", 0, 0),
 }
 
-# Предметы, которые нельзя продать/передать/уничтожить — личные заглушки/значки.
 NON_TRADABLE_ITEMS = {
     "vip_charm",
-    # Промо-эксклюзив (см. PREM_⚡): нельзя выбить, продать или передать —
-    # доступны только через админ-команды или промокоды.
     "kotyara_amulet", "miku_amulet", "golda", "karambit_gold", "butterfly_legacy",
     "krest_amulet", "fati_amulet",
-    # Безумные крафты — важные эндгейм-предметы, нельзя продать/передать.
     "chaos_orb", "chronos_clock", "chronos_orb",
-    # Крафтовый эксклюзив — важный эндгейм-предмет, нельзя продать/передать.
     "miku_fan_amulet",
-    # Дерево монет — эндгейм-крафт-предметы, нельзя продать/передать (только использовать
-    # как ингредиент в следующем крафте, либо экипировать nogost_coin/godly_nogost_coin).
     "nogost_coin", "godly_nogost_coin", "craft_coin", "bitcoin",
     "rebirth_coin", "evolution_coin", "awakening_coin",
 }
 
 PASSIVE_ITEMS = {
     "strange_coin",
-    # крафтовые пассивки и чистые крафт-материалы (не экипируются)
     "hybrid_amulet", "friendship_essence", "time_particle", "devotion_coin",
     "old_vase", "golden_vase", "godly_vase", "warm_candle",
-    # крафт-материалы из кейса 3 (сырьё под будущие рецепты, не экипируются)
     "broken_clock", "essence_drop", "comet_shard", "koshko_gift", "ancient_stone", "fate_thread",
-    # Дерево монет: эти 5 работают пассивно просто лёжа в инвентаре (см. apply_farm_bonuses /
-    # apply_coin_tree_procs) — НЕ экипируются. nogost_coin и godly_nogost_coin, наоборот,
-    # экипируются (их x3/x6 буст фармы идёт через boost_percent -> get_multiplier), поэтому
-    # их здесь нет.
     "craft_coin", "bitcoin", "rebirth_coin", "evolution_coin", "awakening_coin",
 }
 
@@ -830,21 +726,16 @@ CASES = {
                  "broken_clock", "essence_drop", "comet_shard", "koshko_gift", "ancient_stone", "fate_thread"]},
 }
 
-# Все предметы, которые вообще могут выпасть из кейсов 1/2/3 — единственные, что доступны
-# для настройки авто-продажи (см. auto_sell вкл/выкл, "авто продажа настройка").
 CASE_SELLABLE_ITEMS = list(dict.fromkeys(
     CASES[1]["pool"] + CASES[2]["pool"] + CASES[3]["pool"]
 ))
-AUTOSELL_PAGE_SIZE = 8  # предметов на страницу в меню настройки авто-продажи
-
+AUTOSELL_PAGE_SIZE = 8
 
 def parse_auto_sell_items(raw: str) -> set:
     return set(x for x in (raw or "").split(",") if x)
 
-
 def format_auto_sell_items(items: set) -> str:
     return ",".join(sorted(items))
-
 
 async def apply_case_reward(user_id: int, item_key: str, upgrades: dict,
                              auto_sell_enabled: bool, auto_sell_items: set) -> tuple[int, str]:
@@ -859,21 +750,12 @@ async def apply_case_reward(user_id: int, item_key: str, upgrades: dict,
     await add_item(user_id, item_key)
     return 0, ""
 
-# Все "амулеты игроков", которые может сожрать рецепт Неактивированного гибридного амулета —
-# все предметы с "амулет" в названии КРОМЕ VIP-амулета и Сломанного амулета (см. уточнение ТЗ).
 ALL_PLAYER_AMULETS = [
     "amulet", "mk_mgg", "mk_sandsmoon", "mk_fixsahal1", "mk_mk",
     "mk_panther", "mk_vector", "mk_mary", "mk_veron03",
 ]
 
-# ---------- Система крафтов ----------
-# Уровень крафта игрока = уровень апгрейда "crafts" (0/1/2/3, апгрейд "апгрейд"/"прокачка").
-# Ур.3 стоит 5000 🉑 + 10 💠 (очков крафта, см. CRAFT_POINTS_EXCHANGE_RATE) — открывает будущие
-# рецепты уровня 3 (RECIPES с "level": 3, пока не добавлены).
-# ingredients: {item_key: qty}. special_ingredients поддерживает доп. требования
-# (валюта и "все амулеты игрока"), которых нет в обычных ITEMS-рецептах.
 RECIPES = {
-    # ---------- Базовые крафты (ур.0) ----------
     "lucky_charm": {
         "level": 0,
         "ingredients": {"amulet": 1, "orb": 1},
@@ -906,7 +788,7 @@ RECIPES = {
     "hybrid_amulet": {
         "level": 2,
         "ingredients": {"orb": 1, "galaxy_might_amulet": 1},
-        "needs_all_amulets": True,  # + по 1 шт. каждого предмета из ALL_PLAYER_AMULETS
+        "needs_all_amulets": True,
     },
     "friendship_essence": {
         "level": 2,
@@ -919,7 +801,7 @@ RECIPES = {
     "god_essence": {
         "level": 2,
         "ingredients": {"time_particle": 1, "friendship_essence": 1, "mk_broken": 1},
-        "craft_points_cost": 1,  # + 1 💠 очко крафта
+        "craft_points_cost": 1,
     },
     "koshko_amulet": {
         "level": 2,
@@ -938,10 +820,9 @@ RECIPES = {
     "godly_vase": {
         "level": 2,
         "ingredients": {"golden_vase": 1, "devotion_coin": 1},
-        "craft_points_cost": 1,  # + 1 💠 очко крафта
+        "craft_points_cost": 1,
     },
 
-    # ---------- Безумные крафты ----------
     "chaos_orb": {
         "level": 1,
         "ingredients": {"orb": 10, "paradox_charm": 2},
@@ -949,25 +830,23 @@ RECIPES = {
     "chronos_clock": {
         "level": 1,
         "ingredients": {"broken_clock": 10, "essence_drop": 1},
-        "rebirth_cost": 5,  # + 5 🉑 очков перерождения
+        "rebirth_cost": 5,
     },
     "chronos_orb": {
         "level": 3,
         "ingredients": {"chaos_orb": 69, "chronos_clock": 1, "essence_drop": 5},
-        "craft_points_cost": 20,  # + 20 💠 очков крафта
+        "craft_points_cost": 20,
     },
 
-    # ---------- Новые крафты (мини-апдейт) ----------
     "miku_fan_amulet": {
         "level": 1,
         "ingredients": {"mk_sandsmoon": 1, "miku_amulet": 1},
     },
 
-    # ---------- Дерево монет (крафт-апдейт) ----------
     "nogost_coin": {
         "level": 2,
         "ingredients": {"strange_coin": 1},
-        "score_cost": 10_000_000,  # + 10 000 000 очков ног
+        "score_cost": 10_000_000,
     },
     "godly_nogost_coin": {
         "level": 3,
@@ -976,17 +855,17 @@ RECIPES = {
     "craft_coin": {
         "level": 3,
         "ingredients": {"strange_coin": 1},
-        "craft_points_cost": 50,  # + 50 💠 очков крафта
+        "craft_points_cost": 50,
     },
     "bitcoin": {
         "level": 2,
         "ingredients": {"strange_coin": 5},
-        "coin_cost": 1_000_000,  # + 1 000 000 🪙 монет
+        "coin_cost": 1_000_000,
     },
     "rebirth_coin": {
         "level": 3,
         "ingredients": {"strange_coin": 1},
-        "rebirth_cost": 5000,  # + 5000 🉑 очков перерождения
+        "rebirth_cost": 5000,
     },
     "evolution_coin": {
         "level": 2,
@@ -998,74 +877,57 @@ RECIPES = {
     },
 }
 
-# Иерархия "уникальных" бустеров (от слабого к сильному) — используется для правила
-# "при конфликте активен сильнейший": его сообщение/эмодзи/лимиты, но проценты всех
-# экипированных бустеров всё равно суммируются как обычно через get_multiplier().
 UNIQUE_BOOSTER_TIERS = ["power_amulet", "galaxy_power_amulet", "galaxy_might_amulet", "god_essence", "koshko_amulet"]
 
-# Модификации лимитов эмодзи 🦵/🦿/🌌/⭐️/🐾 за сообщение, которые даёт САМЫЙ сильный из
-# экипированных уникальных бустеров (не суммируется с более слабыми).
-# 🌌 и ⭐️ работают ТОЧНО КАК роботноги 🦿 (считаются в сообщении, дают MEK_POINT за штуку),
-# но только пока экипирован соответствующий бустер — иначе их лимит 0 и они не считаются.
-# 🐾 работает как робо-нога 🦿, но даёт втрое больше очков — только пока экипирован
-# Амулет кошко-девочки (см. koshko_amulet), иначе лимит 0 и эмодзи не считается.
 UNIQUE_LIMIT_OVERRIDES = {
     "power_amulet": {"mek_limit": 15},
     "galaxy_power_amulet": {"galaxy_limit": 1},
     "galaxy_might_amulet": {"galaxy_limit": 1},
     "god_essence": {"mek_limit": 30, "leg_limit": 15, "galaxy_limit": 5, "star_limit": 1},
-    # Амулет кошко-девочки полностью наследует бусты Эссенции Бога + даёт лимит на 🐾.
     "koshko_amulet": {"mek_limit": 30, "leg_limit": 15, "galaxy_limit": 5, "star_limit": 1, "paw_limit": 3},
 }
-GOD_ESSENCE_TIMER_CUT = 5         # -5 сек к кулдауну фермы, пока экипирована
-GOD_ESSENCE_FARM_SPEED = 5        # фарм в 5 раз быстрее
-TIME_PARTICLE_FARM_SPEED = 4      # фарм в 4 раза быстрее (пассивно, лежит в инвентаре)
-PAW_POINT_MULTIPLIER = 3          # 🐾 даёт втрое больше очков, чем обычная робо-нога 🦿
-ICE_SHARD_SAVE_CHANCE = 0.20      # 🧊 Ледяной осколок: шанс не сбросить очки/эво при эволюции/перерождении
+GOD_ESSENCE_TIMER_CUT = 5
+GOD_ESSENCE_FARM_SPEED = 5
+TIME_PARTICLE_FARM_SPEED = 4
+PAW_POINT_MULTIPLIER = 3
+ICE_SHARD_SAVE_CHANCE = 0.20
 
-# ---------- Дерево монет: сейв очков/эво при эволюции и перерождении ----------
-# В отличие от 🧊 Ледяного осколка (шанс), эти три — ГАРАНТИРОВАННЫЙ сейв доли (%) очков/эво
-# при каждом срабатывании, и работают лёжа в инвентаре (не нужно экипировать). Если у игрока
-# несколько монет дерева одновременно — действует только САМАЯ СИЛЬНАЯ (приоритет по списку).
-EVOLUTION_COIN_SAVE_PCT = 0.30    # 🟢 Монета Эволюции: сейвит 30% ног при ЭВОЛЮЦИИ (не перерождении)
-REBIRTH_COIN_SAVE_PCT = 0.50      # 🟣 Монета Перерождения: сейвит 50% ног И ЭВО при ПЕРЕРОЖДЕНИИ (не эволюции)
-AWAKENING_COIN_SAVE_PCT = 0.70    # ⚪️ Монета Пробуждения: сейвит 70% ног И ЭВО при ЭВОЛЮЦИИ ИЛИ ПЕРЕРОЖДЕНИИ
-AWAKENING_COIN_PRESTIGE_CHANCE = 0.01   # шанс дать 3 очка престижа при перерождении/эволюции
+EVOLUTION_COIN_SAVE_PCT = 0.30
+REBIRTH_COIN_SAVE_PCT = 0.50
+AWAKENING_COIN_SAVE_PCT = 0.70
+AWAKENING_COIN_PRESTIGE_CHANCE = 0.01
 AWAKENING_COIN_PRESTIGE_AMOUNT = 3
-AWAKENING_COIN_BADGE_CHANCE = 0.0001    # 0.01% — бейдж "Инвестировал в #####"
-DRAGON_CLAW_POTION_MULT = 4       # 🐉 Коготь дракона: усиливает зелье скорости с x2 до x4
-TIDE_WAVE_PROC_CHANCE = 0.05      # 🌊 Волна прилива: шанс на доп. предмет из кейса 1 или 2 при фарме ног
+AWAKENING_COIN_BADGE_CHANCE = 0.0001
+DRAGON_CLAW_POTION_MULT = 4
+TIDE_WAVE_PROC_CHANCE = 0.05
 
-# ---------- Безумные крафты: шансы при фарме ног (см. apply_chaos_orb_proc / apply_chronos_orb_procs) ----------
-CHAOS_ORB_FARM_CHANCE = 0.02          # 🌀 Шар хаоса: шанс поймать бонус-фарму (1 - 10 000 000 ног)
+CHAOS_ORB_FARM_CHANCE = 0.02
 CHAOS_ORB_FARM_MIN = 1
 CHAOS_ORB_FARM_MAX = 10_000_000
 
-CHRONOS_ORB_REBIRTH_CHANCE = 0.009       # шанс поймать очки перерождения (1-500)
+CHRONOS_ORB_REBIRTH_CHANCE = 0.009
 CHRONOS_ORB_REBIRTH_MIN, CHRONOS_ORB_REBIRTH_MAX = 1, 500
-CHRONOS_ORB_FARM_MULT_MIN, CHRONOS_ORB_FARM_MULT_MAX = 0.1, 5.0  # рандом-множитель к добыче фарма (x0.1..x5)
-CHRONOS_ORB_COIN_CHANCE = 0.05           # шанс выдачи монет (1-10 000)
+CHRONOS_ORB_FARM_MULT_MIN, CHRONOS_ORB_FARM_MULT_MAX = 0.1, 5.0
+CHRONOS_ORB_COIN_CHANCE = 0.05
 CHRONOS_ORB_COIN_MIN, CHRONOS_ORB_COIN_MAX = 1, 10_000
-CHRONOS_ORB_LEGS_CHANCE = 0.02           # шанс выдачи ног (1-10 000 000)
+CHRONOS_ORB_LEGS_CHANCE = 0.02
 CHRONOS_ORB_LEGS_MIN, CHRONOS_ORB_LEGS_MAX = 1, 10_000_000
-CHRONOS_ORB_NO_CD_CHANCE = 0.07          # шанс на моментальное исчезновение кулдауна фермы
-CHRONOS_ORB_PRESTIGE_CHANCE = 0.01       # шанс выдачи очков престижа (0-20)
+CHRONOS_ORB_NO_CD_CHANCE = 0.07
+CHRONOS_ORB_PRESTIGE_CHANCE = 0.01
 CHRONOS_ORB_PRESTIGE_MIN, CHRONOS_ORB_PRESTIGE_MAX = 0, 20
-CHRONOS_ORB_POTION_CHANCE = 0.01         # шанс выдачи рандомного зелья
-CHRONOS_ORB_BOOSTER_CHANCE = 0.01        # шанс выдачи любого бустера (кроме предметов 1+ ур. крафта)
-CHRONOS_ORB_BADGE_CHANCE = 0.001         # шанс выдачи бейджа "Мастер Хаоса⚡️"
-CHRONOS_ORB_STRANGE_COIN_CHANCE = 0.0069 # шанс получить странную монету
-CHRONOS_ORB_OLD_VASE_CHANCE = 0.0069     # шанс получить старую вазу
+CHRONOS_ORB_POTION_CHANCE = 0.01
+CHRONOS_ORB_BOOSTER_CHANCE = 0.01
+CHRONOS_ORB_BADGE_CHANCE = 0.001
+CHRONOS_ORB_STRANGE_COIN_CHANCE = 0.0069
+CHRONOS_ORB_OLD_VASE_CHANCE = 0.0069
 
-CHRONOS_BOOST_INTERVAL = 300      # 5 минут — период пересчёта рандомного буста Шара Хроноса
-CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX = 1, 200  # диапазон % буста
+CHRONOS_BOOST_INTERVAL = 300
+CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX = 1, 200
 
-GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активирована."  # заменяет обычный префикс ответа фермы
-KOSHKO_AMULET_FLAVOR = f"{PREMIUM_KOSHKO_AMULET} Сила кошко-девочки активна."  # то же самое, но для амулета кошко-девочки
-CHRONOS_ORB_FLAVOR = f"{PREMIUM_CHRONOS_ORB} ХАОС! ХАОС! ХАОС!"  # флейвор Шара Хроноса — приоритет ВЫШЕ god_essence/koshko_amulet
-# Тиры, полностью наследующие "god_essence"-механики (скорость фарма, гарант монет/очков перерождения).
+GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активирована."
+KOSHKO_AMULET_FLAVOR = f"{PREMIUM_KOSHKO_AMULET} Сила кошко-девочки активна."
+CHRONOS_ORB_FLAVOR = f"{PREMIUM_CHRONOS_ORB} ХАОС! ХАОС! ХАОС!"
 GOD_TIER_LIKE = {"god_essence", "koshko_amulet"}
-
 
 def get_active_unique_tier(active_items):
     """Самый сильный уникальный крафт-бустер среди экипированных, либо None."""
@@ -1075,7 +937,6 @@ def get_active_unique_tier(active_items):
         if key in equipped:
             best = key
     return best
-
 
 def active_farm_limits(active_items, prestige_upgrades: dict = None) -> dict:
     """Лимиты за сообщение (🦵/🦿/🌌/⭐️) с учётом сильнейшего уникального бустера
@@ -1099,7 +960,6 @@ def active_farm_limits(active_items, prestige_upgrades: dict = None) -> dict:
         "star_limit": overrides.get("star_limit", 0),
         "paw_limit": overrides.get("paw_limit", 0),
     }
-
 
 def recipe_missing_ingredients(inventory_map: dict, coins: int, score: int, recipe: dict,
                                 prestige_upgrades: dict = None, craft_points: int = 0, rebirth_points: int = 0) -> list:
@@ -1128,7 +988,6 @@ def recipe_missing_ingredients(inventory_map: dict, coins: int, score: int, reci
         missing.append(f"Очки перерождения: {rebirth_points}/{rebirth_cost} 🉑")
     return missing
 
-
 def format_recipe_requirements(recipe: dict) -> str:
     parts = [f"{qty}x {ITEMS[k][1]}" for k, qty in recipe.get("ingredients", {}).items()]
     if recipe.get("needs_all_amulets"):
@@ -1143,27 +1002,18 @@ def format_recipe_requirements(recipe: dict) -> str:
         parts.append(f"{recipe['rebirth_cost']} 🉑")
     return " + ".join(parts)
 
-
-# ---------- Перерождение (Rebirth) ----------
-REBIRTH_MIN_EVO = 5                # минимальный уровень эволюции, чтобы перерождение стало доступно
-REBIRTH_EVO_STEP = 3               # каждые 3 уровня эволюции...
-REBIRTH_POINTS_PER_STEP = 2        # ...дают 2 Очка Перерождения
-REBIRTH_HARDNESS_STEP = 0.125      # +12.5% к сложности эволюций за каждое перерождение (середина диапазона 10-15%)
-PRESTIGE_PER_REBIRTH = 1           # Очков Престижа за каждое обычное перерождение
-PRESTIGE_PER_ULTRA_REBIRTH = 50    # Очков Престижа за Ультра перерождение (разово, крупный бонус)
-
-# ---------- Меню прокачки (апгрейды за Очки Перерождения) ----------
-# Каждый апгрейд: max_level, базовая цена (лвл 1), правило прироста цены за уровень.
-# cost(level) — цена, чтобы поднять апгрейд С (level-1) НА level.
+REBIRTH_MIN_EVO = 5
+REBIRTH_EVO_STEP = 3
+REBIRTH_POINTS_PER_STEP = 2
+REBIRTH_HARDNESS_STEP = 0.125
+PRESTIGE_PER_REBIRTH = 1
+PRESTIGE_PER_ULTRA_REBIRTH = 50
 
 def _linear_cost(base: int, step: int):
     return lambda level: base + step * (level - 1)
 
-
 def _per_n_levels_cost(base: int, step: int, n: int):
-    # цена растёт на `step` каждые `n` уровней (используется для Бустера: +1 🉑 каждые 3 лвл)
     return lambda level: base + step * ((level - 1) // n)
-
 
 UPGRADES = {
     "farm_yield": {
@@ -1191,7 +1041,7 @@ UPGRADES = {
         "name": "Авто-Ферма КОИНЫ",
         "desc": "1:1 коин/5мин · 2:5 коин/5мин · 3:10 коин/3мин",
         "max_level": 3,
-        "cost": _linear_cost(1, 2),  # базовая прогрессия 1/3/5
+        "cost": _linear_cost(1, 2),
         "category": 1,
     },
     "booster": {
@@ -1225,11 +1075,8 @@ UPGRADES = {
     "crafts": {
         "name": "Крафты", "desc": "Открывает уровни рецептов крафта (0/1/2/3) за 🉑",
         "max_level": CRAFT_MAX_LEVEL,
-        # Ур.1 = 15🉑, ур.2 = 35🉑 (обычная линейная прогрессия), ур.3 = 5000🉑 + 10💠 (особая цена).
         "cost": lambda level: 5000 if level == CRAFT_MAX_LEVEL else _linear_cost(15, 20)(level),
         "category": 3,
-        # 3-й уровень крафта требует ДОПОЛНИТЕЛЬНО очки крафта (💠) поверх 🉑 из cost().
-        # extra_cost(level) -> (currency_field, amount) или None, если для этого уровня нет доп. валюты.
         "extra_cost": lambda level: (
             ("craft_points", 10) if level == CRAFT_MAX_LEVEL else None
         ),
@@ -1248,29 +1095,13 @@ UPGRADES = {
         "cost": _linear_cost(5, 5),
         "category": 3,
     },
-    # В разработке — не покупаем, только отображается
     "exchanger": {"name": "Обменник", "desc": "В разработке", "max_level": 2, "cost": None, "category": 3, "wip": True},
 }
 UPGRADE_ORDER = list(UPGRADES.keys())
 UPGRADE_CATEGORIES = {1: "🌾 Ферма", 2: "🎒 Экономика", 3: "🔨 Крафты и прочее"}
 
-# ---------- Дерево престижа (бесконечные ветки за Очки Престижа) ----------
-# Отдельная валюта prestige_points — НИКОГДА не тратится на обычные UPGRADES и наоборот.
-# Начисляется только за перерождения (см. rebirth()/ultra_rebirth_confirm()).
-#
-# У каждой ветки нет max_level — она бесконечна. Вместо этого есть два независимых правила:
-#   cost(level)   — сколько prestige_points стоит поднять ветку с (level-1) на level (растёт вечно)
-#   bonus(level)  — текущее значение эффекта на данном уровне (НЕ линейно — см. step_gap ниже)
-#
-# "Разреженность" — чем выше уровень, тем РЕЖЕ выдаётся следующий +1 к эффекту (см. _echelon_bonus:
-# 1-5 ур по +1 бонусу за уровень, дальше шаг удваивается на каждой границе, которая тоже удваивается:
-# 5-10 шаг 2, 10-20 шаг 4, 20-40 шаг 8, и так далее — бесконечно, без предзаготовленного списка).
-# "Слоты" — особый случай с гораздо более редкой (штучной) кривой, задан явно.
-
 def _prestige_cost(base: int, growth: float):
-    # Бесконечный рост цены — база растёт в geometric progression с уровнем.
     return lambda level: round(base * (growth ** (level - 1)))
-
 
 def _echelon_bonus(level: int) -> int:
     """Общий паттерн разреженности: чем выше уровень, тем реже даётся следующая "ступенька" эффекта.
@@ -1296,7 +1127,6 @@ def _echelon_bonus(level: int) -> int:
             break
     return bonus
 
-
 def _milestone_bonus(milestones: list):
     """Особая кривая для 'штучных' веток (напр. Слоты: +1 на 1 ур, следующий +1 только на 100 ур).
     milestones — отсортированный список уровней, на которых бонус увеличивается на 1.
@@ -1305,105 +1135,94 @@ def _milestone_bonus(milestones: list):
         return bisect.bisect_right(milestones, level)
     return _fn
 
-
 def _per_level_bonus(level: int) -> int:
     """Прямая (не разреженная) кривая: каждый купленный уровень сразу даёт +1 к эффекту.
     Используется только для 'Слоты' — это очень мощный бонус, поэтому взамен разреженности
     его цена растёт в 10 раз за уровень (см. _prestige_cost(2, 10) в p_slots)."""
     return max(0, level)
 
-
-# ---------- НЕРФ ПРЕСТИЖА (переработка) ----------
-# Раньше цены веток росли от базы 3-10 с шагом роста x1.15-1.30 за уровень — прогрессия быстро
-# улетала за пределы разумного фарма. Теперь база снижена в 5-10 раз, а рост цены за уровень
-# смягчён (было 1.15-1.30, стало 1.08-1.12), кроме "Слотов" — они остаются дорогими нарочно,
-# т.к. дают прямой +1 слот КАЖДЫЙ уровень (без разреженности), а не редкий милстоун раз в 100 ур.
 PRESTIGE_UPGRADES = {
     "p_legs": {
         "name": "Обычные ноги", "emoji": "🦵",
         "desc": "+1 к лимиту 🦵",
-        "cost": _prestige_cost(1, 1.08),   # было base=3, growth=1.15
+        "cost": _prestige_cost(1, 1.08),
         "bonus": _echelon_bonus,
     },
     "p_mek": {
         "name": "Робо ноги", "emoji": "🦿",
         "desc": "+1 к лимиту 🦿",
-        "cost": _prestige_cost(1, 1.09),   # было base=5, growth=1.18
+        "cost": _prestige_cost(1, 1.09),
         "bonus": _echelon_bonus,
     },
     "p_slots": {
         "name": "Слоты", "emoji": "🎒",
         "desc": "+1 слот экипировки за КАЖДЫЙ уровень (цена растёт x10 за уровень — самая дорогая ветка)",
-        "cost": _prestige_cost(2, 10.0),   # было base=10, growth=1.30 с редкими милстоунами
-        "bonus": _per_level_bonus,          # теперь каждый уровень = +1 слот сразу, без милстоунов
+        "cost": _prestige_cost(2, 10.0),
+        "bonus": _per_level_bonus,
     },
     "p_farm_speed": {
         "name": "Скорость фарма", "emoji": "⏱️",
         "desc": "-1% к КД фермы",
-        "cost": _prestige_cost(1, 1.08),   # было base=4, growth=1.15
+        "cost": _prestige_cost(1, 1.08),
         "bonus": _echelon_bonus,
     },
     "p_farm_yield": {
         "name": "Добыча", "emoji": "📈",
         "desc": "+0.5% к множителю фермы",
-        "cost": _prestige_cost(1, 1.08),   # было base=4, growth=1.15
+        "cost": _prestige_cost(1, 1.08),
         "bonus": _echelon_bonus,
     },
     "p_brew_speed": {
         "name": "Скорость варки", "emoji": "🔥",
         "desc": "-2% времени варки зелий",
-        "cost": _prestige_cost(1, 1.08),   # было base=4, growth=1.15
+        "cost": _prestige_cost(1, 1.08),
         "bonus": _echelon_bonus,
     },
     "p_craft_discount": {
         "name": "Скидка крафта", "emoji": "🔨",
         "desc": "-1% к стоимости крафта",
-        "cost": _prestige_cost(1, 1.08),   # было base=4, growth=1.15
+        "cost": _prestige_cost(1, 1.08),
         "bonus": _echelon_bonus,
     },
     "p_echo": {
         "name": "Эхо", "emoji": "🔮",
         "desc": "+1% шанс бонус-очка перерождения",
-        "cost": _prestige_cost(1, 1.10),   # было base=5, growth=1.17
+        "cost": _prestige_cost(1, 1.10),
         "bonus": _echelon_bonus,
     },
 }
 PRESTIGE_ORDER = list(PRESTIGE_UPGRADES.keys())
 PRESTIGE_PAGE_SIZE = 4
 
-# ---------- Зелья (варятся за монеты + время; один котёл на игрока) ----------
-# effect: "farm_x2" (x2 к добыче фермы), "luck_x2" (x2 к шансу проков ваз/эссенции бога),
-# "no_cd" (следующие N фармов без ожидания кулдауна — расходуется по использованиям, а не по времени).
 POTIONS = {
     "potion_speed": {
         "emoji": "🧪⚡", "name": "Зелье ускорения",
         "desc": "x2 к добыче фермы",
         "effect": "farm_x2",
-        "brew_cost": 40, "brew_seconds": 600,   # 10 мин варки
-        "duration_seconds": 1800,               # 30 мин действия
+        "brew_cost": 40, "brew_seconds": 600,
+        "duration_seconds": 1800,
     },
     "potion_luck": {
         "emoji": "🧪🍀", "name": "Зелье удачи",
         "desc": "x2 к шансу проков ваз и Эссенции Бога",
         "effect": "luck_x2",
-        "brew_cost": 50, "brew_seconds": 900,   # 15 мин варки
-        "duration_seconds": 1800,               # 30 мин действия
+        "brew_cost": 50, "brew_seconds": 900,
+        "duration_seconds": 1800,
     },
     "potion_haste": {
         "emoji": "🧪🌀", "name": "Зелье без КД",
         "desc": "Следующие 3 фарма без ожидания кулдауна",
         "effect": "no_cd",
-        "brew_cost": 60, "brew_seconds": 1200,  # 20 мин варки
-        "charges": 3,                            # расходуется по использованиям фермы, не по времени
+        "brew_cost": 60, "brew_seconds": 1200,
+        "charges": 3,
     },
 }
 POTION_ORDER = list(POTIONS.keys())
 NO_CD_CHARGES_KEY = "potion_haste"
 
-AUTO_FARM_LEGS_RATES = {1: (10, 60), 2: (100, 30), 3: (1000, 10)}     # лвл: (кол-во ног, за X секунд)
-AUTO_FARM_COINS_RATES = {1: (1, 300), 2: (5, 300), 3: (10, 180)}       # лвл: (кол-во коинов, за X секунд)
+AUTO_FARM_LEGS_RATES = {1: (10, 60), 2: (100, 30), 3: (1000, 10)}
+AUTO_FARM_COINS_RATES = {1: (1, 300), 2: (5, 300), 3: (10, 180)}
 
-# ---------- Regex ----------
 AMOUNT = r"(\d+(?:\.\d+)?к{0,4})"
 _AMOUNT_TOKEN_RE = re.compile(r"^\d+(?:\.\d+)?к{0,4}$", re.IGNORECASE)
 
@@ -1431,11 +1250,7 @@ PEER_GIVE_COIN_RE = re.compile(rf"^дать коин {AMOUNT}$", re.IGNORECASE)
 
 EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT}$", re.IGNORECASE)
 REVERSE_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} коин$", re.IGNORECASE)
-# "обменять <кол-во> крафт" — <кол-во> это 🉑 (очки перерождения), кратно курсу.
-# "обменять <кол-во> очкк" — тот же формат, просто алиас слова "крафт".
 CRAFT_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} (?:крафт|очкк)$", re.IGNORECASE)
-# "обменять крафт <кол-во>" / "обменять очкк <кол-во>" — удобный обратный формат: <кол-во> это
-# сколько ИМЕННО очков крафта 💠 хочешь получить, бот сам считает и списывает нужные 🉑.
 CRAFT_EXCHANGE_TO_RE = re.compile(rf"^обменять (?:крафт|очкк) {AMOUNT}$", re.IGNORECASE)
 CASE_NUM_RE = re.compile(r"^кейс (\d+)$", re.IGNORECASE)
 INFO_RE = re.compile(r"^инфо\s+@?(\w+)$", re.IGNORECASE)
@@ -1455,8 +1270,6 @@ ADMIN_SET_REBIRTH_RE = re.compile(rf"^!установить очкп {AMOUNT}(\s
 ADMIN_WIPE_ECONOMY_RE = re.compile(r"^!обнулить экономику\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_PERSONAL_BOOST_RE = re.compile(r"^!мультипликатор ферма\s+(\d+(?:\.\d+)?)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
 ADMIN_GIVE_ITEM_RE = re.compile(r"^!дать предмет\s+(\S+)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
-# Универсальная выдача чего угодно по техническому ключу ITEMS — удобно сразу после
-# добавления нового предмета/валюты в ITEMS, не дожидаясь отдельной команды под него.
 ADMIN_GIVE_KEY_RE = re.compile(r"^!дать ключ\s+(\S+)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
 ADMIN_CLEAR_INVENTORY_RE = re.compile(r"^!очистить инвентарь\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_SET_UPGRADE_RE = re.compile(r"^!дать апгрейд\s+(\S+)\s+(\d+)(\s+себе)?$", re.IGNORECASE)
@@ -1465,15 +1278,9 @@ ADMIN_ULTRA_REBIRTH_RE = re.compile(r"^!ультра навсегда(\s+себ�
 ADMIN_RESET_NICK_RE = re.compile(r"^!сброс ник\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_FIND_RE = re.compile(r"^!найти\s+@?(\w+)$", re.IGNORECASE)
 
-# ---------- Промокоды ----------
-# Аргументы в кавычках: !промокод создать "тип" "количество" "активаций" "название"
-# Тип — что выдать: "ноги"/"эво"/"коин"/"очкп"/"крафт"/"предмет:<ключ_ITEMS>".
 PROMO_CREATE_RE = re.compile(
     r'^!промокод создать\s+"([^"]+)"\s+"([^"]+)"\s+"([^"]+)"\s+"([^"]+)"$', re.IGNORECASE
 )
-# Отдельный, более короткий синтаксис для выдачи бейджа (см. PROMO_BADGES) — без "количество"
-# и "активаций": бейдж выдаётся один раз на аккаунт, активация промокода всегда одна (1).
-# !промокод создать бейдж "название_бейджа" "название_промокода"
 PROMO_CREATE_BADGE_RE = re.compile(
     r'^!промокод создать бейдж\s+"([^"]+)"\s+"([^"]+)"$', re.IGNORECASE
 )
@@ -1487,7 +1294,7 @@ FIXED_COMMANDS = {
     "моя нога", "топ ног", "гл топ ног", "топ эво", "гл топ эво", "топ коин", "гл топ коин",
     "ферма", "фарма", "инвентарь", "эволюция", "кейс", "кейсы", "бонус",
     "смс выкл", "смс вкл", "вип", "!ивент ноги", "бейджи",
-    "перерождение", "апгрейд", "прокачка", "апг", "престиж", "баланс", "топ очкп", "гл топ очкп", "помощь",
+    "перерождение", "апгрейд", "прокачка", "апг", "престиж", "баланс", "топ очкп", "гл топ очкп",
     "топ ноги вся", "топ коин вся", "топ эво вся", "топ очкп вся", "топ вся", "гл топ", "крафты", "крафт",
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
     "мои зелья", "зелья",
@@ -1511,19 +1318,11 @@ PREFIX_COMMANDS = (
     "вип открыть кейс", "бустеры поиск ", "!дать ключ",
 )
 
-
 def is_command_text(text: str) -> bool:
     t = text.lower()
     if t in FIXED_COMMANDS:
         return True
     return any(t.startswith(p) for p in PREFIX_COMMANDS)
-
-
-# ---------- Алиасы команд ----------
-# Полный явный словарь "фраза целиком (нижний регистр) -> канонический текст команды".
-# Строится из групп синонимов, но раскладывается только в те КОНКРЕТНЫЕ фразы, которые реально
-# соответствуют существующим хендлерам — так синонимы никогда не пересекаются с другими командами
-# ("б"/"п" в "дать б"/"продать б", "кейсы" как отдельная команда от "кейс", и т.п.).
 
 _TOP_WORDS = ["топ", "топчик", "ладдер", "лидеры", "лиддеры", "рейтинг", "top", "ladder", "lider", "liders", "leaders", "rating"]
 _LEG_WORDS = ["ног", "ноги", "ногой", "leg", "legs", "foot", "feet"]
@@ -1535,29 +1334,23 @@ _CASE_WORDS = ["кейс", "сундук", "коробка", "case", "box"]
 _CASES_WORDS = ["кейсы", "сундуки", "коробки", "cases", "boxes"]
 _VIP_WORDS = ["вип", "vip", "випка", "premium", "премиум"]
 _EXCHANGE_WORDS = ["обменять", "обмен", "обменник", "свап", "swap", "exchange"]
-_HELP_WORDS = ["помощь", "команды", "хелп", "help", "cmds", "commands"]
 
 ALIAS_PHRASES = {}
-
 
 def _register_phrases(canon: str, words):
     for w in words:
         ALIAS_PHRASES[w.lower()] = canon
 
-
-# Одиночные слова-команды (весь текст = ровно одно из этих слов)
 _register_phrases("вип", _VIP_WORDS)
 _register_phrases("баланс", _BALANCE_WORDS)
 _register_phrases("перерождение", _REBIRTH_WORDS)
 _register_phrases("эволюция", _EVO_WORDS)
 _register_phrases("кейс", _CASE_WORDS)
 _register_phrases("кейсы", _CASES_WORDS)
-_register_phrases("помощь", _HELP_WORDS)
 ALIAS_PHRASES["моя ношка"] = "моя нога"
 ALIAS_PHRASES["моя ножка"] = "моя нога"
 ALIAS_PHRASES["моя ноги"] = "моя нога"
 
-# "топ <термин>" и "гл топ <термин>" — декартово произведение топ-синонимов на синонимы термина
 for _top in _TOP_WORDS:
     for _leg in _LEG_WORDS:
         ALIAS_PHRASES[f"{_top} {_leg}"] = "топ ног"
@@ -1576,9 +1369,7 @@ for _top in _TOP_WORDS:
         ALIAS_PHRASES[f"гл {_top} {_rb}"] = "гл топ очкп"
         ALIAS_PHRASES[f"{_top} {_rb} вся"] = "топ очкп вся"
     ALIAS_PHRASES[f"{_top} вся"] = "топ вся"
-# сами канонические фразы не должны затираться (на случай, если слово входит в несколько списков)
 ALIAS_PHRASES.pop("топ топ", None)
-
 
 def normalize_alias_text(text: str) -> str:
     """Заменяет известную фразу-алиас на канонический текст команды. Не трогает команды
@@ -1592,10 +1383,6 @@ def normalize_alias_text(text: str) -> str:
     lowered = stripped.lower()
     return ALIAS_PHRASES.get(lowered, text)
 
-
-# ---------- Алиасы для команд с параметрами (дать/снять/передать/обменять/кейс N и т.д.) ----------
-# Тут заменяем только ПЕРВОЕ слово (глагол/термин сразу после "!дать"/"!снять"/само по себе),
-# аргументы (числа, юзернеймы, названия предметов) не трогаем.
 _PARAM_TERM_TO_CANON = {}
 for _w in _LEG_WORDS:
     _PARAM_TERM_TO_CANON[_w.lower()] = "ног"
@@ -1610,12 +1397,9 @@ for _w in _EXCHANGE_WORDS:
 for _w in _CASE_WORDS:
     _PARAM_TERM_TO_CANON[_w.lower()] = "кейс"
 
-# Защищённые токены — никогда не алиасятся, даже если случайно совпали с чем-то (бустер "б"/предмет "п")
 _PARAM_PROTECTED = {"б", "п"}
 
-
 _CASE_WORDS_SET = {w.lower() for w in _CASE_WORDS}
-
 
 def normalize_case_number(text: str) -> str:
     """'сундук 2' / 'box 2' -> 'кейс 2'. Первое слово само является термином кейса,
@@ -1632,7 +1416,6 @@ def normalize_case_number(text: str) -> str:
     if first in _CASE_WORDS_SET and first != "кейс" and rest.strip().isdigit():
         return "кейс " + rest
     return text
-
 
 def normalize_alias_prefix(text: str) -> str:
     """Для команд вида '<преф> <термин> <аргументы...>' заменяет только термин сразу после
@@ -1669,16 +1452,14 @@ def normalize_alias_prefix(text: str) -> str:
         return text
 
     canon_term = _PARAM_TERM_TO_CANON[lterm]
-    # спецслучай: реальный хендлер несимметричен — "!дать ног" / "!снять ноги" (разные словоформы)
     if matched_prefix == "!снять " and canon_term == "ног":
         canon_term = "ноги"
 
     if canon_term == lterm:
-        return text  # уже канонический вид, нечего менять
+        return text
 
     new_text = original_prefix + canon_term + (" " + tail if tail else "")
     return new_text
-
 
 def normalize_exchange_suffix(text: str) -> str:
     """'обменять 10 монет' / 'обменять 10 coin' -> 'обменять 10 коин'. Не трогает 'обменять 10'
@@ -1694,7 +1475,7 @@ def normalize_exchange_suffix(text: str) -> str:
         return text
     parts = rest.split(" ", 1)
     if len(parts) != 2:
-        return text  # только число, без термина — не трогаем (старая команда)
+        return text
     amount_word, term = parts[0], parts[1].strip()
     if not _AMOUNT_TOKEN_RE.match(amount_word):
         return text
@@ -1706,6 +1487,60 @@ def normalize_exchange_suffix(text: str) -> str:
         return text
     return f"обменять {amount_word} {canon_term}"
 
+_FUZZY_CANDIDATES = None
+_FUZZY_MAX_DIST = 1
+_FUZZY_MIN_LEN = 4
+
+def _levenshtein(a: str, b: str) -> int:
+    if a == b:
+        return 0
+    if not a:
+        return len(b)
+    if not b:
+        return len(a)
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        curr = [i] + [0] * len(b)
+        for j, cb in enumerate(b, 1):
+            cost = 0 if ca == cb else 1
+            curr[j] = min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost)
+        prev = curr
+    return prev[-1]
+
+def _get_fuzzy_candidates():
+    global _FUZZY_CANDIDATES
+    if _FUZZY_CANDIDATES is None:
+        _FUZZY_CANDIDATES = sorted(set(FIXED_COMMANDS) | set(ALIAS_PHRASES.keys()))
+    return _FUZZY_CANDIDATES
+
+def normalize_alias_fuzzy(text: str) -> str:
+    if not text:
+        return text
+    stripped = text.strip()
+    if not stripped or " " in stripped:
+        return text
+    lowered = stripped.lower()
+    if lowered in FIXED_COMMANDS or lowered in ALIAS_PHRASES:
+        return text
+    if len(lowered) < _FUZZY_MIN_LEN:
+        return text
+    best_word = None
+    best_dist = _FUZZY_MAX_DIST + 1
+    for cand in _get_fuzzy_candidates():
+        if " " in cand:
+            continue
+        if abs(len(cand) - len(lowered)) > _FUZZY_MAX_DIST:
+            continue
+        d = _levenshtein(lowered, cand)
+        if d < best_dist:
+            best_dist = d
+            best_word = cand
+            if d == 0:
+                break
+    if best_word is None or best_dist > _FUZZY_MAX_DIST:
+        return text
+    canon = ALIAS_PHRASES.get(best_word, best_word)
+    return canon
 
 def apply_command_aliases(text: str) -> str:
     """Единая точка входа: применяет все виды алиасинга по порядку. Возвращает исходный текст,
@@ -1713,13 +1548,6 @@ def apply_command_aliases(text: str) -> str:
     там нет алиасов, и текст останется как есть)."""
     if not text:
         return text
-    # Срезаем только КРАЙНИЕ пробелы/переводы строк, и только если это превращает
-    # текст в распознаваемую команду (точное совпадение с FIXED_COMMANDS/алиасом).
-    # Не трогаем содержимое внутри строки — ники, промокоды, текст с 🦵/🦿 и т.п.
-    # остаются как есть. Без этой подрезки лишний пробел в начале/конце (частый
-    # случай при наборе на телефоне) ломает команды с точным сравнением текста,
-    # например F.text.lower() == "эволюция" / "перерождение" — бот на них молча
-    # не реагирует, и выглядит это как "команда перестала работать".
     if text != text.strip():
         stripped_lower = text.strip().lower()
         if stripped_lower in FIXED_COMMANDS or stripped_lower in ALIAS_PHRASES:
@@ -1734,12 +1562,13 @@ def apply_command_aliases(text: str) -> str:
     if result != text:
         return result
     result = normalize_alias_prefix(text)
+    if result != text:
+        return result
+    result = normalize_alias_fuzzy(text)
     return result
-
 
 def esc(text: str) -> str:
     return (text or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-
 
 def parse_amount(text: str):
     m = re.match(r"^(\d+(?:\.\d+)?)(к{0,4})$", text.strip().lower())
@@ -1749,19 +1578,15 @@ def parse_amount(text: str):
     k_count = len(m.group(2))
     return round(number * (1000 ** k_count))
 
-
 TG_EMOJI_RE = re.compile(r"<tg-emoji[^>]*>(.*?)</tg-emoji>")
-
 
 def plain_emoji(emoji_html: str) -> str:
     m = TG_EMOJI_RE.match(emoji_html or "")
     return m.group(1) if m else (emoji_html or "")
 
-
 def strip_premium_emoji(text: str) -> str:
     """Убирает все <tg-emoji> обёртки из готового текста, оставляя фолбэк-символы."""
     return TG_EMOJI_RE.sub(lambda m: m.group(1), text or "")
-
 
 async def safe_reply(message: Message, text: str, reply_markup=None):
     """Как message.reply(), но если Telegram отклонил сообщение из-за невалидного
@@ -1771,7 +1596,6 @@ async def safe_reply(message: Message, text: str, reply_markup=None):
         return await message.reply(text, reply_markup=reply_markup)
     except TelegramBadRequest:
         return await message.reply(strip_premium_emoji(text), reply_markup=reply_markup)
-
 
 async def safe_edit_text(callback: CallbackQuery, text: str, reply_markup=None):
     """Как callback.message.edit_text(), но не роняет хендлер, если Telegram отклонил
@@ -1798,7 +1622,6 @@ async def safe_edit_text(callback: CallbackQuery, text: str, reply_markup=None):
         except TelegramBadRequest:
             return None
 
-
 def build_regular_visual(level: int) -> str:
     if level <= 5:
         return "🦵" * level
@@ -1809,29 +1632,22 @@ def build_regular_visual(level: int) -> str:
     prev_emoji = ["🦵", "🦵🏻", "🦵🏽"][tier]
     return tier_emoji * pos + prev_emoji * (5 - pos)
 
-
 def base_level_threshold(level: int) -> int:
     if level <= 39:
         return ALL_THRESHOLDS[level - 1]
     return MAX_LEVEL_SCORE + round(200 * (level - 39) ** 1.5)
 
-
 def level_threshold(level: int, evolution_level: int, rebirth_count: int = 0, active_items=None) -> int:
     evo_extra = EVO_HARDNESS_RATE * evolution_level
     rebirth_extra = REBIRTH_HARDNESS_STEP * rebirth_count
-    # 🧿 Оберег парадокса: -50% от усложнения эволюции и перерождения (не от базы, а от надбавки).
     if active_items and "paradox_charm" in set(_normalize_active_items(active_items)):
         evo_extra *= 0.5
         rebirth_extra *= 0.5
     hardness = (1 + evo_extra) * (1 + rebirth_extra)
     return round(base_level_threshold(level) * hardness)
 
-
 def get_level_index(score: int, evolution_level: int = 0, rebirth_count: int = 0,
                      ultra_rebirth: bool = False) -> int:
-    # Потолок прогрессии: 20001 лвл — для всех, кто ещё не прошёл Ультра перерождение.
-    # После него (ultra_rebirth = 1) потолок практически снят (см. ULTRA_LEVEL_CAP) —
-    # нога растёт и дальше 20002 сколько угодно, без искусственного упора.
     cap = ULTRA_LEVEL_CAP if ultra_rebirth else ULTRA_REQUIRED_LEG_LEVEL
     lo, hi = 0, cap
     while lo < hi:
@@ -1842,7 +1658,6 @@ def get_level_index(score: int, evolution_level: int = 0, rebirth_count: int = 0
             hi = mid - 1
     return lo
 
-
 def get_level_visual(level: int):
     if level == 0:
         return "🧍", "обычный безногий челик", True
@@ -1852,7 +1667,6 @@ def get_level_visual(level: int):
         _, emoji, name = CUSTOM_LEVELS[level - 21]
         return emoji, name, True
     if level >= ULTRA_LEG_LEVEL:
-        # Доступна только тем, у кого ultra_rebirth = 1 (проверяется на вызывающей стороне).
         return ULTRA_LEG_EMOJI, ULTRA_LEG_NAME, True
     if level >= MGG_MEGA_LEVEL:
         return MGG_MEGA_EMOJI, MGG_MEGA_NAME, True
@@ -1860,7 +1674,6 @@ def get_level_visual(level: int):
         if start <= level <= end:
             return emoji, name, True
     return "❓", "неизвестный уровень", True
-
 
 def next_level_text(score: int, evolution_level: int, rebirth_count: int = 0,
                      ultra_rebirth: bool = False) -> str:
@@ -1870,7 +1683,6 @@ def next_level_text(score: int, evolution_level: int, rebirth_count: int = 0,
         return "Ты достиг абсолютного предела ноги — дальше только легенды 🌌"
     nxt = level_threshold(level + 1, evolution_level, rebirth_count)
     return f"До {level + 1} уровня осталось {nxt - score} очков"
-
 
 def coin_tree_slot_bonus(inventory_map: dict) -> int:
     """+1 слот экипировки за 🟣 Монету Перерождения, +1 слот за ⚪️ Монету Пробуждения
@@ -1883,20 +1695,16 @@ def coin_tree_slot_bonus(inventory_map: dict) -> int:
         bonus += 1
     return bonus
 
-
 def equipped_slots_max(upgrades: dict, prestige_upgrades: dict = None, bonus_slots: int = 0) -> int:
     prestige_upgrades = prestige_upgrades or {}
     return 1 + upgrade_level(upgrades, "equip_slots") + prestige_bonus(prestige_upgrades, "p_slots") + bonus_slots
-
 
 def parse_equipped(equipped_str: str) -> list:
     """Очередь экипированных предметов: индекс 0 = надет раньше всех (первым вылетит при переполнении)."""
     return [k for k in (equipped_str or "").split(",") if k]
 
-
 def format_equipped(items: list) -> str:
     return ",".join(items)
-
 
 def equip_item(equipped_str: str, item_key: str, max_slots: int) -> list:
     """Добавляет item_key в конец очереди. Если он уже был в очереди — переставляет в конец
@@ -1907,13 +1715,9 @@ def equip_item(equipped_str: str, item_key: str, max_slots: int) -> list:
         items.pop(0)
     return items
 
-
 def unequip_item(equipped_str: str, item_key: str) -> list:
     """Убирает item_key из очереди, если он там есть."""
     return [k for k in parse_equipped(equipped_str) if k != item_key]
-
-
-# ---------- Зелья: парсинг активных эффектов ----------
 
 def parse_potions(potions_str: str) -> dict:
     """'key:value,key:value' -> {key: value}. Для time-based зелий value = unix until_ts,
@@ -1930,10 +1734,8 @@ def parse_potions(potions_str: str) -> dict:
                 pass
     return result
 
-
 def format_potions(potions: dict) -> str:
     return ",".join(f"{k}:{v}" for k, v in potions.items() if v > 0)
-
 
 def active_potions_now(potions_str: str, now: int = None, active_items=None) -> dict:
     """Отфильтровывает истёкшие time-based зелья (charge-based остаются, пока заряды > 0).
@@ -1954,15 +1756,12 @@ def active_potions_now(potions_str: str, now: int = None, active_items=None) -> 
                 result[key] = val
     return result
 
-
 def potion_duration_seconds(key: str, upgrades: dict) -> int:
     base = POTIONS[key]["duration_seconds"]
     bonus = 1 + 0.20 * upgrade_level(upgrades, "brew_duration")
     return round(base * bonus)
 
-
-CHAOS_ORB_BREW_CUT = 0.90  # 🌀 Шар хаоса: -90% к времени варки зелья, пока экипирован
-
+CHAOS_ORB_BREW_CUT = 0.90
 
 def brew_seconds_for(key: str, upgrades: dict, prestige_upgrades: dict = None, active_items=None) -> int:
     base = POTIONS[key]["brew_seconds"]
@@ -1970,16 +1769,14 @@ def brew_seconds_for(key: str, upgrades: dict, prestige_upgrades: dict = None, a
     if prestige_upgrades:
         p_speed = prestige_bonus(prestige_upgrades, "p_brew_speed")
         if p_speed:
-            cut -= 0.02 * p_speed  # -2% за ступень сверху обычного апгрейда
+            cut -= 0.02 * p_speed
     if active_items and "chaos_orb" in set(_normalize_active_items(active_items)):
         cut -= CHAOS_ORB_BREW_CUT
-    cut = max(0.1, cut)  # не даём варке уйти ниже 10% базового времени
+    cut = max(0.1, cut)
     return max(30, round(base * cut))
-
 
 def has_potion_effect(potions: dict, effect: str) -> bool:
     return any(POTIONS[k]["effect"] == effect for k in potions)
-
 
 async def consume_no_cd_charge(user_id: int, potions: dict) -> dict:
     """Списывает 1 заряд зелья 'без КД', если оно активно. Возвращает обновлённый potions dict."""
@@ -1993,7 +1790,6 @@ async def consume_no_cd_charge(user_id: int, potions: dict) -> dict:
         new_potions.pop(NO_CD_CHARGES_KEY, None)
     await db_exec("UPDATE users SET active_potions = ? WHERE user_id = ?", (format_potions(new_potions), user_id))
     return new_potions
-
 
 def parse_potion_stock(stock_str: str) -> dict:
     """Сваренные, но не выпитые зелья: 'key:qty,key:qty' -> {key: qty}."""
@@ -2011,10 +1807,8 @@ def parse_potion_stock(stock_str: str) -> dict:
                 pass
     return result
 
-
 def format_potion_stock(stock: dict) -> str:
     return ",".join(f"{k}:{v}" for k, v in stock.items() if v > 0)
-
 
 def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrades: dict = None,
                     ultra_rebirth: bool = False, chronos_boost_pct: int = 100) -> float:
@@ -2023,13 +1817,6 @@ def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrade
         mult += EVO_BOOST_STEP
     if evolution_level >= 3:
         mult += EVO_BOOST_STEP * (evolution_level - 2)
-    # Процентные бусты экипированных бустеров (амулеты и т.п.) СКЛАДЫВАЮТСЯ между собой
-    # (см. ITEMS[key][2] = boost_percent; ITEMS[key][3] = drop_weight, см. roll_case_item) —
-    # надел 2 предмета с 700% и 800% => +1500%. Слотов экипировки максимум 3
-    # (см. UPGRADES["equip_slots"]), так что сумма не может уйти в неконтролируемый рост.
-    # chronos_orb СОЗНАТЕЛЬНО исключён из этой суммы: у него отдельный рандомный
-    # буст (ветка ниже), а его ITEMS[...][2]=120 — только для UI/отображения, чтобы
-    # не задвоить буст (фикс. % + рандомный % одновременно).
     equipped_set = set(_normalize_active_items(active_items))
     total_boost_percent = 0
     for item_key in equipped_set:
@@ -2037,8 +1824,6 @@ def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrade
             total_boost_percent += ITEMS[item_key][2]
     mult += total_boost_percent / 100
     if "chronos_orb" in equipped_set:
-        # 🔮 Шар Хроноса: буст рандомный (1-200%), меняется раз в 5 минут фоновым тасков
-        # (см. chronos_orb_boost_loop), текущее значение хранится в users.chronos_boost_pct.
         mult += chronos_boost_pct / 100
     if vip_active:
         mult += VIP_BOOST
@@ -2048,25 +1833,20 @@ def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrade
         mult += ULTRA_REBIRTH_BOOST
     return mult
 
-
 def _normalize_active_items(active_items):
     """Принимает список/кортеж ключей предметов, либо None. Строки сюда не передаём —
     для строки очереди сначала вызывай parse_equipped()."""
     if active_items is None:
         return []
     if isinstance(active_items, str):
-        # подстраховка на случай передачи "сырого" item_key одной строкой
         return [active_items] if active_items in ITEMS else parse_equipped(active_items)
     return [k for k in active_items if k]
-
 
 def total_flat_bonus(active_items) -> int:
     return sum(ITEM_FLAT_BONUS.get(k, 0) for k in _normalize_active_items(active_items))
 
-
 def parse_hidden(hidden_str: str) -> set:
     return set(h for h in (hidden_str or "").split(",") if h)
-
 
 def parse_upgrades(upgrades_str: str) -> dict:
     result = {}
@@ -2081,14 +1861,11 @@ def parse_upgrades(upgrades_str: str) -> dict:
                 pass
     return result
 
-
 def format_upgrades(upgrades: dict) -> str:
     return ",".join(f"{k}:{v}" for k, v in upgrades.items() if v > 0)
 
-
 def upgrade_level(upgrades: dict, key: str) -> int:
     return upgrades.get(key, 0)
-
 
 def upgrade_next_cost(key: str, upgrades: dict):
     cfg = UPGRADES[key]
@@ -2098,7 +1875,6 @@ def upgrade_next_cost(key: str, upgrades: dict):
     if level >= cfg["max_level"]:
         return None
     return cfg["cost"](level + 1)
-
 
 def upgrade_next_extra_cost(key: str, upgrades: dict):
     """Доп. стоимость в другой валюте для следующего уровня апгрейда (напр. крафты ур.3 = 🉑+💠).
@@ -2110,7 +1886,6 @@ def upgrade_next_extra_cost(key: str, upgrades: dict):
     if level >= cfg["max_level"]:
         return None
     return cfg["extra_cost"](level + 1)
-
 
 def parse_prestige_upgrades(upgrades_str: str) -> dict:
     result = {}
@@ -2125,26 +1900,21 @@ def parse_prestige_upgrades(upgrades_str: str) -> dict:
                 pass
     return result
 
-
 def format_prestige_upgrades(upgrades: dict) -> str:
     return ",".join(f"{k}:{v}" for k, v in upgrades.items() if v > 0)
 
-
 def prestige_level(upgrades: dict, key: str) -> int:
     return upgrades.get(key, 0)
-
 
 def prestige_next_cost(key: str, upgrades: dict) -> int:
     """Бесконечная ветка — цена следующего уровня всегда определена, потолка нет."""
     level = prestige_level(upgrades, key)
     return PRESTIGE_UPGRADES[key]["cost"](level + 1)
 
-
 def prestige_bonus(upgrades: dict, key: str) -> int:
     """Текущий эффект ветки на её нынешнем уровне (0, если ветка ещё не куплена)."""
     level = prestige_level(upgrades, key)
     return PRESTIGE_UPGRADES[key]["bonus"](level)
-
 
 async def claim_offline_auto_farm(user_id: int, row) -> tuple:
     """Начисляет оффлайн-доход от Авто-Фермы НОГИ/КОИНЫ по разнице времени.
@@ -2157,7 +1927,6 @@ async def claim_offline_auto_farm(user_id: int, row) -> tuple:
     now = int(time.time())
 
     if not legs_lvl and not coins_lvl:
-        # нечего копить — просто обновим метку, чтобы не копился долг на будущее
         if not last_claim:
             await db_exec("UPDATE users SET last_auto_claim = ? WHERE user_id = ?", (now, user_id))
         return 0, 0, score, coins
@@ -2188,19 +1957,16 @@ async def claim_offline_auto_farm(user_id: int, row) -> tuple:
     )
     return legs_gained, coins_gained, new_score, new_coins
 
-
 def rebirth_hardness_multiplier(rebirth_count: int) -> float:
     return 1 + REBIRTH_HARDNESS_STEP * rebirth_count
-
 
 def farm_yield_multiplier(upgrades: dict) -> float:
     return 1 + 0.10 * upgrade_level(upgrades, "farm_yield")
 
-
 def farm_cd_seconds(upgrades: dict, active_items=None, has_time_particle: bool = False,
                      prestige_upgrades: dict = None) -> int:
     reduction = 120 * upgrade_level(upgrades, "farm_cd")
-    cooldown = max(60, FARM_COOLDOWN - reduction)  # не даём КД уйти в ноль/минус
+    cooldown = max(60, FARM_COOLDOWN - reduction)
 
     tier = get_active_unique_tier(active_items) if active_items is not None else None
     if tier in GOD_TIER_LIKE:
@@ -2211,23 +1977,19 @@ def farm_cd_seconds(upgrades: dict, active_items=None, has_time_particle: bool =
     if prestige_upgrades:
         p_speed = prestige_bonus(prestige_upgrades, "p_farm_speed")
         if p_speed:
-            cooldown *= max(0.1, 1 - 0.01 * p_speed)  # -1% за ступень, не даём уйти ниже 10% от базы
+            cooldown *= max(0.1, 1 - 0.01 * p_speed)
 
     return max(30, round(cooldown))
-
 
 def booster_upgrade_multiplier(upgrades: dict) -> float:
     return 1 + 0.05 * upgrade_level(upgrades, "booster")
 
-
 def case_discount(upgrades: dict) -> float:
     return 0.10 * upgrade_level(upgrades, "discount")
-
 
 def case_price_with_discount(base_price: int, upgrades: dict) -> int:
     discount = case_discount(upgrades)
     return max(1, round(base_price * (1 - discount)))
-
 
 def craft_coin_cost_with_discount(base_cost: int, prestige_upgrades: dict = None) -> int:
     """Скидка крафта — целиком за счёт ветки престижа p_craft_discount (обычной скидки крафта
@@ -2237,13 +1999,11 @@ def craft_coin_cost_with_discount(base_cost: int, prestige_upgrades: dict = None
     if not prestige_upgrades:
         return base_cost
     discount = 0.01 * prestige_bonus(prestige_upgrades, "p_craft_discount")
-    discount = min(0.9, discount)  # не даём цене уйти ниже 10% от базовой
+    discount = min(0.9, discount)
     return max(1, round(base_cost * (1 - discount)))
-
 
 def sell_bonus_coins(upgrades: dict) -> int:
     return 2 * upgrade_level(upgrades, "sell_boost")
-
 
 def badge_list(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool,
                 promo_badges: set = frozenset()):
@@ -2260,19 +2020,16 @@ def badge_list(username: str, evolution_level: int, cases_opened: int, total_far
         result.append(("farm", PREMIUM_BADGE_FARM, "30k нафармлено"))
     if evolution_level >= 5:
         result.append(("evo5", PREMIUM_BADGE_EVO5, "5 эволюция"))
-    # Бейджи, выданные вручную через промокод/админ-команду (см. PROMO_BADGES).
     for key in promo_badges:
         if key in PROMO_BADGES:
             emoji, name = PROMO_BADGES[key]
             result.append((key, emoji, name))
     return result
 
-
 def get_badges(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool,
                 hidden: set = frozenset(), promo_badges: set = frozenset()) -> str:
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
     return "".join(emoji for key, emoji, _ in earned if key not in hidden)
-
 
 def badges_keyboard(earned, hidden: set, user_id: int) -> InlineKeyboardMarkup:
     rows = []
@@ -2284,26 +2041,16 @@ def badges_keyboard(earned, hidden: set, user_id: int) -> InlineKeyboardMarkup:
         )])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
-
 def farm_range(evolution_level: int):
     return FARM_EVOLVED if evolution_level >= 1 else FARM_BASE
 
-
 def is_admin(message: Message) -> bool:
-    # Раньше проверялось только по username — если бы ты сменил ник, доступ отвалился
-    # бы у тебя и мог достаться первому, кто займёт освободившийся @MaksGeometryGd
-    # (username в Telegram не привязан к аккаунту навсегда и переиспользуется).
-    # user_id, в отличие от username, у аккаунта не меняется никогда — это основная
-    # проверка. Username оставлен как запасной канал (например, если ADMIN_USER_ID
-    # придётся когда-то поменять на другой аккаунт).
     return message.from_user.id == ADMIN_USER_ID or (message.from_user.username or "").lower() == ADMIN_USERNAME.lower()
-
 
 def roll_case_item(case_num: int) -> str:
     pool = CASES[case_num]["pool"]
     weights = [ITEMS[k][3] for k in pool]
     return random.choices(pool, weights=weights, k=1)[0]
-
 
 def case_drop_table(case_num: int) -> list:
     """Список (item_key, эмодзи, имя, буст%, шанс_в_процентах) для конкретного кейса,
@@ -2318,7 +2065,6 @@ def case_drop_table(case_num: int) -> list:
         rows.append((k, emoji, name, percent, chance))
     rows.sort(key=lambda r: r[4], reverse=True)
     return rows
-
 
 def find_item_by_name(query: str, only_passive=None):
     q = query.strip().lower()
@@ -2335,7 +2081,6 @@ def find_item_by_name(query: str, only_passive=None):
         return matches[0]
     return None
 
-
 async def resolve_target(message: Message, to_self: bool):
     if to_self:
         return message.from_user
@@ -2343,92 +2088,40 @@ async def resolve_target(message: Message, to_self: bool):
         return message.reply_to_message.from_user
     return None
 
-
-# ---------- Слой БД (Turso / libSQL) ----------
-# ИСТОРИЯ ПРАВОК (важно не наступить на те же грабли повторно):
-# 1) Раньше был один общий _conn + глобальный asyncio.Lock на КАЖДЫЙ запрос — все
-#    обращения к БД сериализовались строго по одному, поэтому под нагрузкой кнопки
-#    и команды тормозили (каждый запрос ждал своей очереди).
-# 2) Затем это заменили на "соединение per-thread" через threading.local() + обычный
-#    asyncio.to_thread (дефолтный пул потоков, до 32 воркеров) — это ОКАЗАЛОСЬ ХУЖЕ:
-#    при спаме каждое сообщение могло попасть в новый поток пула и открыть НОВОЕ
-#    сетевое соединение с Turso (лениво, по требованию, в произвольном из 32
-#    потоков) — при всплеске нагрузки это давало резкий скачок числа одновременных
-#    попыток коннекта, что приводило к таймаутам соединения и "отвалу половины
-#    функционала", который сам проходил через время (когда лишние соединения
-#    закрывались по таймауту). Это и есть баг, о котором сообщил игрок.
-# 3) Затем это заменили на одно-единственное постоянное соединение + СТРОГУЮ очередь
-#    запросов через один выделенный поток-воркер (не пул) — это убрало проблему
-#    "размножения соединений" полностью, но ценой полной сериализации: запрос
-#    юзера A физически ждёт своей очереди за всеми запросами юзеров B, C, D...
-#    которые пришли раньше. Под нагрузкой (много одновременных нажатий кнопок)
-#    задержка перед ответом растёт линейно с числом активных пользователей — это
-#    и есть "высокий пинг из-за нагрузки".
-# ИТОГ (текущее решение): НЕСКОЛЬКО (DB_WORKER_COUNT) выделенных воркеров, у
-# каждого — СВОЁ собственное соединение, открытое один раз при первом обращении
-# этого воркера (не лениво на каждый запрос, не в случайном потоке общего пула).
-# Число соединений строго ограничено и стабильно (не 32, а DB_WORKER_COUNT) —
-# никакого "размножения" при спаме быть не может, т.к. воркеров ровно столько,
-# сколько задано на старте, и они переиспользуются, а не создаются заново.
-# Запросы одного и того же user_id всегда обрабатываются последовательно (см.
-# _pick_worker) — это защищает от гонок при чтении/записи одной строки, а вот
-# запросы РАЗНЫХ пользователей теперь могут выполняться параллельно на разных
-# воркерах/соединениях, чего не было в варианте (3).
 from concurrent.futures import ThreadPoolExecutor
 
 DB_WORKER_COUNT = int(os.environ.get("DB_WORKER_COUNT", "1"))
 
-_db_queues: list = []          # список asyncio.Queue, по одной на воркер
+_db_queues: list = []
 _db_worker_tasks: list = []
-_db_conns: list = []           # список соединений libsql, по одному на воркер (thread-local по построению)
+_db_conns: list = []
 _db_executor = ThreadPoolExecutor(max_workers=DB_WORKER_COUNT, thread_name_prefix="db-worker")
 
-
-# ---------- Кэш строк users (в памяти процесса) ----------
-# ГЛАВНЫЙ ИСТОЧНИК "пинга": ensure_user()/get_user() вызывались НА КАЖДОЕ сообщение
-# и callback (80+ мест в коде) и каждый раз были отдельным сетевым round-trip'ом до
-# Turso — именно это давало задержку перед ответом бота на любое действие, даже
-# если данные пользователя вообще не менялись. Теперь строка users читается из
-# сети один раз и кэшируется в памяти; при любой записи в users (100+ мест —
-# db_exec с "UPDATE users ... WHERE user_id = ?") кэш точечно инвалидируется по
-# user_id, так что устаревших score/coins/etc. увидеть нельзя — просто следующее
-# чтение для этого юзера снова сходит в БД. Единственное исключение — глобальный
-# UPDATE users SET chronos_boost_pct = ? (без WHERE, задевает все строки сразу):
-# для него сбрасывается весь кэш целиком.
 _user_cache: dict = {}
 _USERS_WRITE_RE = re.compile(r"\b(?:UPDATE|DELETE\s+FROM)\s+users\b", re.IGNORECASE)
-
 
 def _invalidate_user_cache(user_id):
     _user_cache.pop(user_id, None)
 
-
 def _connect(worker_idx):
-    # Каждый воркер держит РОВНО одно своё соединение, создаваемое один раз при
-    # первом обращении и переиспользуемое дальше — не 32 соединения "по требованию",
-    # а фиксированные DB_WORKER_COUNT штук.
     if _db_conns[worker_idx] is None:
         _db_conns[worker_idx] = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
     return _db_conns[worker_idx]
-
 
 def _exec_sync(worker_idx, sql, params):
     conn = _connect(worker_idx)
     conn.execute(sql, params)
     conn.commit()
 
-
 def _exec_many_sync(worker_idx, sql, params_list):
     conn = _connect(worker_idx)
     conn.executemany(sql, params_list)
     conn.commit()
 
-
 def _query_sync(worker_idx, sql, params):
     conn = _connect(worker_idx)
     cur = conn.execute(sql, params)
     return cur.fetchall()
-
 
 async def _db_worker(worker_idx):
     """Один из DB_WORKER_COUNT потоков. Каждый воркер берёт задачи строго из
@@ -2449,7 +2142,6 @@ async def _db_worker(worker_idx):
         finally:
             queue.task_done()
 
-
 def _ensure_db_workers():
     global _db_queues, _db_worker_tasks, _db_conns
     if not _db_queues:
@@ -2460,21 +2152,11 @@ def _ensure_db_workers():
         if _db_worker_tasks[i] is None or _db_worker_tasks[i].done():
             _db_worker_tasks[i] = asyncio.create_task(_db_worker(i))
 
-
 def _pick_worker(params):
-    # Запросы одного user_id всегда идут в один и тот же воркер — гарантирует
-    # порядок операций над одной строкой (никаких гонок чтение-после-записи для
-    # одного игрока). user_id обычно последний параметр в WHERE (см. весь код
-    # db_exec/db_query выше), поэтому берём первый int-параметр как ключ шардинга;
-    # если параметров нет (например "SELECT 1" для !пинг) — берём воркер 0.
     for p in params:
-        # bool — подкласс int в Python (isinstance(True, int) is True), поэтому
-        # явно исключаем его, иначе случайный флаг True/False мог бы ошибочно
-        # "выбираться" вместо настоящего user_id.
         if isinstance(p, int) and not isinstance(p, bool):
             return p % DB_WORKER_COUNT
     return 0
-
 
 async def _db_submit(fn, sql, params):
     _ensure_db_workers()
@@ -2483,17 +2165,13 @@ async def _db_submit(fn, sql, params):
     await _db_queues[worker_idx].put((fn, sql, params, future))
     return await future
 
-
 async def db_exec(sql, params=()):
     await _db_submit(_exec_sync, sql, params)
     if _USERS_WRITE_RE.search(sql):
         if "WHERE user_id = ?" in sql and params:
             _invalidate_user_cache(params[-1])
         else:
-            # редкий глобальный UPDATE users без WHERE user_id — например
-            # chronos_boost_pct для всех сразу. Безопаснее сбросить весь кэш.
             _user_cache.clear()
-
 
 async def db_exec_many(sql, params_list):
     """Как db_exec, но один запрос в очередь воркера выполняет executemany
@@ -2503,15 +2181,12 @@ async def db_exec_many(sql, params_list):
         return
     await _db_submit(_exec_many_sync, sql, params_list)
 
-
 async def db_query(sql, params=()):
     return await _db_submit(_query_sync, sql, params)
-
 
 async def db_query_one(sql, params=()):
     rows = await db_query(sql, params)
     return rows[0] if rows else None
-
 
 USER_COLUMNS = (
     "user_id, username, score, evolution_level, last_farm, coins, active_item, "
@@ -2521,50 +2196,10 @@ USER_COLUMNS = (
     "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items, craft_points, "
     "promo_badges, chronos_boost_pct"
 )
-# Индексы полей выше при обращении по row[...]:
-#  0 user_id, 1 username, 2 score, 3 evolution_level, 4 last_farm, 5 coins, 6 active_item (устарело, не используется),
-#  7 cases_opened, 8 total_farmed, 9 last_bonus, 10 bonus_streak, 11 levelup_notify, 12 vip_until,
-#  13 hidden_badges, 14 rebirth_points, 15 rebirth_count, 16 upgrades (строка "key:lvl,key:lvl"), 17 last_auto_claim,
-#  21 ultra_rebirth — Boolean (0/1): статус "Ультра перерождение". Разово, необратимо, без уровней.
-#  18 equipped_items — очередь экипированных предметов "key1,key2,key3" (индекс 0 = надет раньше всех,
-#     последний = надет позже всех; новый/повторный клик уходит в конец, при переполнении вылетает индекс 0),
-#  19 nickname — кастомный ник для отображения в топах/профиле (NULL = показывать обычный username),
-#  20 top_banned — 1 если игрок забанен из топов (не попадает в списки топ), 0/NULL иначе
-#  22 auto_evolve — Boolean (0/1), VIP-only: при включении эволюция срабатывает автоматически
-#     сразу же, как только хватает очков (см. try_auto_evolve). Не имеет эффекта без активного VIP.
-#  23 active_potions — активные зелья "key:until_ts,key:until_ts" (см. parse_potions/POTIONS).
-#     Разные виды зелий стакаются одновременно; повторное использование того же вида освежает
-#     таймер (не суммирует эффект).
-#  24 brewing_potion — ключ зелья, которое варится в котле сейчас, либо NULL/'' если котёл свободен.
-#  25 brewing_until — unix-время, когда варка (brewing_potion) завершится. Один котёл на игрока —
-#     пока он занят, начать варку второго зелья нельзя.
-#  26 potion_stock — сваренные, но ещё не использованные зелья "key:qty,key:qty". Хранится ОТДЕЛЬНО
-#     от таблицы inventory (зелья не предметы ITEMS — не экипируются, не продаются/крафтятся оттуда).
-#  27 prestige_points — отдельная валюта "Дерева престижа" (см. PRESTIGE_UPGRADES). Начисляется за
-#     обычные перерождения/ультра-перерождение, НИКОГДА не тратится на обычные апгрейды (upgrades).
-#  28 prestige_upgrades — уровни веток дерева престижа "key:lvl,key:lvl" (тот же формат, что upgrades,
-#     но отдельное поле — ветки бесконечны, без max_level).
-#  29 auto_rebirth — Boolean (0/1), VIP-only: при включении перерождение срабатывает автоматически,
-#     как только эволюция достигает REBIRTH_MIN_EVO (см. try_auto_rebirth). Без активного VIP не работает.
-#  30 auto_sell — Boolean (0/1): глобальный переключатель авто-продажи дропа из кейсов 1/2/3
-#     (см. auto_sell вкл/выкл). Работает только вместе с auto_sell_items — если список пуст,
-#     переключатель ни на что не влияет.
-#  31 auto_sell_items — какие именно предметы из кейсов 1/2/3 продавать сразу при выпадении,
-#     формат "key1,key2,key3" (см. CASE_SELLABLE_ITEMS/apply_case_reward, меню "авто продажа настройка").
-#  32 craft_points (💠) — отдельная валюта "Очки крафта". Получается только обменом Очков
-#     Перерождения (см. команду "обменять <число> крафт", CRAFT_POINTS_EXCHANGE_RATE).
-#     Тратится на 3-й уровень апгрейда "crafts" (см. UPGRADES["crafts"]) вместе с 🉑.
-#  33 promo_badges — бейджи, выданные вручную через промокоды/админ-команды (не автоматические
-#     достижения из badge_list), формат "key1,key2,key3" (см. PROMO_BADGES, parse_promo_badges).
-#  34 chronos_boost_pct — текущий % буста от 🔮 Шара Хроноса (1-200), пересчитывается раз в
-#     5 минут фоновым тасков для ВСЕХ игроков сразу (не только активных). Применяется в
-#     get_multiplier() только пока chronos_orb экипирован.
-
 
 def display_name(username: str, nickname: str = None) -> str:
     """Имя для отображения: ник, если задан, иначе обычный telegram-username."""
     return nickname if nickname else username
-
 
 async def init_db():
     await db_exec("""
@@ -2620,12 +2255,6 @@ async def init_db():
             command TEXT
         )
     """)
-    # Лог КАЖДОЙ команды КАЖДОГО игрока (не только админов) — пишется в
-    # ThrottleMiddleware ДО проверки rate-limit, поэтому видно и заглушённые
-    # троттлингом попытки. Нужен, чтобы отличить массовый живой фарм от ботов/
-    # скриптов, спамящих команды намного чаще, чем физически может человек
-    # (см. !топ спам). Индекс по (user_id, ts) — типичный запрос это "команды
-    # одного игрока за последний час".
     await db_exec("""
         CREATE TABLE IF NOT EXISTS player_action_log (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -2639,9 +2268,6 @@ async def init_db():
         CREATE INDEX IF NOT EXISTS idx_player_action_log_user_ts
         ON player_action_log (user_id, ts)
     """)
-    # Таблицы banned_chats/banned_users больше не используются ботом (бан-система
-    # убрана целиком) — оставлены в схеме нетронутыми, чтобы не трогать структуру
-    # живой БД. CREATE TABLE IF NOT EXISTS ниже безвреден и ничего не создаёт заново.
     await db_exec("""
         CREATE TABLE IF NOT EXISTS banned_chats (
             chat_id INTEGER PRIMARY KEY,
@@ -2662,13 +2288,7 @@ async def init_db():
     try:
         await db_exec("ALTER TABLE banned_users ADD COLUMN reason TEXT DEFAULT 'manual'")
     except Exception:
-        pass  # колонка уже существует на старой БД — не первый запуск
-    # ---------- Система промокодов ----------
-    # reward_type: "legs" (ноги/score), "evo" (эво/evolution_level), "coin" (монеты),
-    # "rebirth" (очкп/rebirth_points), "craft" (очкк/craft_points), "item" (предмет из ITEMS,
-    # тогда reward_key = ключ ITEMS, иначе '' и не используется).
-    # activations_left — сколько раз промокод ещё можно активировать всего (по всем игрокам);
-    # уменьшается на 1 при каждой успешной активации, при 0 промокод больше не работает.
+        pass
     await db_exec("""
         CREATE TABLE IF NOT EXISTS promocodes (
             code TEXT PRIMARY KEY,
@@ -2680,8 +2300,6 @@ async def init_db():
             created_at INTEGER
         )
     """)
-    # Кто уже активировал какой промокод — один игрок не может активировать один и тот же
-    # промокод дважды, даже если activations_left ещё не исчерпан.
     await db_exec("""
         CREATE TABLE IF NOT EXISTS promocode_uses (
             user_id INTEGER,
@@ -2730,10 +2348,8 @@ async def get_user(user_id: int):
         _user_cache[user_id] = row
     return row
 
-
 async def get_user_by_username(username: str):
     return await db_query_one(f"SELECT {USER_COLUMNS} FROM users WHERE lower(username) = lower(?)", (username,))
-
 
 async def ensure_user(user_id: int, username: str):
     row = await get_user(user_id)
@@ -2741,16 +2357,14 @@ async def ensure_user(user_id: int, username: str):
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
         now = int(time.time())
         new_row = (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "", 0, "", "", 0, "", 100)
-        _user_cache[user_id] = new_row  # сразу кладём в кэш — не ждём ещё один SELECT
+        _user_cache[user_id] = new_row
         return new_row
     if row[1] != username:
         await db_exec("UPDATE users SET username = ? WHERE user_id = ?", (username, user_id))
     return row
 
-
 async def get_inventory(user_id: int):
     return await db_query("SELECT item_key, qty FROM inventory WHERE user_id = ? AND qty > 0", (user_id,))
-
 
 async def add_item(user_id: int, item_key: str, qty: int = 1):
     await db_exec(
@@ -2759,10 +2373,6 @@ async def add_item(user_id: int, item_key: str, qty: int = 1):
         (user_id, item_key, qty),
     )
 
-
-# ---------- Промокоды: помощники ----------
-# Ключ слова из команды (рус.) -> (reward_type, человекочитаемое название, колонка в users для
-# валют; для "item" колонка не используется — идёт через inventory).
 PROMO_TYPE_ALIASES = {
     "ноги": "legs", "нога": "legs", "ног": "legs",
     "эво": "evo", "эволюция": "evo",
@@ -2785,12 +2395,6 @@ PROMO_TYPE_LABEL = {
     "craft": "💠 очков крафта",
 }
 
-# ---------- Промо-бейджи ----------
-# Бейджи, которые НЕЛЬЗЯ заработать автоматически (в отличие от badge_list) — выдаются
-# только через "!промокод создать бейдж "название_бейджа" "название_промокода"" или
-# напрямую админ-командой. Хранятся в колонке users.promo_badges как "key1,key2,key3"
-# (тот же формат, что hidden_badges/equipped_items). Совместимы с системой скрытия
-# бейджей в топах (см. badges_menu/toggle_badge — hidden работает и для промо-бейджей).
 PROMO_BADGES = {
     "tester":       (PREMIUM_BADGE_TESTER, "Тестер"),
     "support":      (PREMIUM_BADGE_SUPPORT, "Сапорт"),
@@ -2799,7 +2403,6 @@ PROMO_BADGES = {
     "chaos_master": (PREMIUM_BADGE_CHAOS_MASTER, "Мастер Хаоса⚡️"),
     "investor":     (PREMIUM_BADGE_INVESTOR, "Инвестировал в #####"),
 }
-# Русские названия бейджей (как их вводит админ в команде создания промокода) -> ключ PROMO_BADGES.
 PROMO_BADGE_ALIASES = {
     "тестер": "tester",
     "сапорт": "support",
@@ -2810,26 +2413,21 @@ PROMO_BADGE_ALIASES = {
     "инвестировал в #####": "investor",
 }
 
-
 def parse_promo_badges(raw: str) -> set:
     return set(x for x in (raw or "").split(",") if x)
-
 
 def format_promo_badges(badges: set) -> str:
     return ",".join(sorted(badges))
 
-
 def find_promo_badge_key(name_raw: str):
     """Находит ключ PROMO_BADGES по русскому названию бейджа (из команды создания промокода)."""
     return PROMO_BADGE_ALIASES.get(name_raw.strip().lower())
-
 
 async def add_promo_badge(user_id: int, badge_key: str):
     row = await db_query_one("SELECT promo_badges FROM users WHERE user_id = ?", (user_id,))
     current = parse_promo_badges(row[0] if row else "")
     current.add(badge_key)
     await db_exec("UPDATE users SET promo_badges = ? WHERE user_id = ?", (format_promo_badges(current), user_id))
-
 
 def parse_promo_type(raw: str):
     """Разбирает строку типа награды из команды создания промокода.
@@ -2846,7 +2444,6 @@ def parse_promo_type(raw: str):
     if not reward_type:
         return None
     return (reward_type, "")
-
 
 async def apply_promo_reward(user_id: int, reward_type: str, reward_key: str, amount: int):
     """Выдаёт награду промокода игроку. Возвращает текст для показа в ответе (что именно выдано)."""
@@ -2867,14 +2464,12 @@ async def apply_promo_reward(user_id: int, reward_type: str, reward_key: str, am
     )
     return f"{amount} {PROMO_TYPE_LABEL[reward_type]}"
 
-
 async def remove_item(user_id: int, item_key: str, qty: int = 1) -> bool:
     row = await db_query_one("SELECT qty FROM inventory WHERE user_id = ? AND item_key = ?", (user_id, item_key))
     if not row or row[0] < qty:
         return False
     await db_exec("UPDATE inventory SET qty = ? WHERE user_id = ? AND item_key = ?", (row[0] - qty, user_id, item_key))
     return True
-
 
 async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict, luck_boost: bool = False) -> dict:
     """Считает все монетные пассивки (Странная монета, Тёплая свеча, Монета боготворства) одним
@@ -2907,7 +2502,6 @@ async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict, lu
             (coin_bonus, rebirth_bonus, user_id),
         )
     return {"coins": coin_bonus, "rebirth": rebirth_bonus, "evo": 0, "is_god": is_god, "tier": tier}
-
 
 async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = False) -> str:
     """Проки пассивных ваз при фарме ног. Срабатывает только самая сильная имеющаяся ваза.
@@ -2943,7 +2537,6 @@ async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = 
         return ""
     return ""
 
-
 def _random_booster_pool() -> list:
     """Все выбиваемые/крафтовые бустеры (boost_percent > 0), кроме предметов 1+ уровня крафта
     (см. RECIPES) — используется шансом на выдачу бустера от 🔮 Шара Хроноса."""
@@ -2957,7 +2550,6 @@ def _random_booster_pool() -> list:
         pool.append(key)
     return pool
 
-
 async def apply_chaos_orb_proc(user_id: int, active_items) -> str:
     """🌀 Шар хаоса: пока экипирован, шанс 2% при фарме ног поймать бонус-фарму
     (случайное количество очков ноги от 1 до 10 000 000)."""
@@ -2968,7 +2560,6 @@ async def apply_chaos_orb_proc(user_id: int, active_items) -> str:
     bonus = random.randint(CHAOS_ORB_FARM_MIN, CHAOS_ORB_FARM_MAX)
     await db_exec("UPDATE users SET score = score + ? WHERE user_id = ?", (bonus, user_id))
     return f"\n🌀 Шар хаоса: РЕДКИЙ ПРОК! +{bonus} очков ноги!"
-
 
 def apply_coin_tree_farm_roll(gained: int, active_items) -> tuple:
     """🟤 Монета Ногости / 🔶 Монета Бога Ногости: независимый ролл на КАЖДОМ базовом фарме
@@ -2982,7 +2573,7 @@ def apply_coin_tree_farm_roll(gained: int, active_items) -> tuple:
         if roll < 0.10:
             bonus_gained = gained * 5
             return bonus_gained, f"\n{PREMIUM_GODLY_NOGOST_COIN} Монета Бога Ногости: x5 к фарму! +{bonus_gained - gained} очков ноги!"
-        if roll < 0.30:  # 0.10 + 0.20
+        if roll < 0.30:
             bonus_gained = gained * 3
             return bonus_gained, f"\n{PREMIUM_GODLY_NOGOST_COIN} Монета Бога Ногости: x3 к фарму! +{bonus_gained - gained} очков ноги!"
         return gained, ""
@@ -2991,12 +2582,11 @@ def apply_coin_tree_farm_roll(gained: int, active_items) -> tuple:
         if roll < 0.05:
             bonus_gained = gained * 5
             return bonus_gained, f"\n{PREMIUM_NOGOST_COIN} Монета Ногости: x5 к фарму! +{bonus_gained - gained} очков ноги!"
-        if roll < 0.25:  # 0.05 + 0.20
+        if roll < 0.25:
             bonus_gained = gained * 3
             return bonus_gained, f"\n{PREMIUM_NOGOST_COIN} Монета Ногости: x3 к фарму! +{bonus_gained - gained} очков ноги!"
         return gained, ""
     return gained, ""
-
 
 async def apply_godly_nogost_coin_case_proc(user_id: int, inventory_map: dict) -> str:
     """🔶 Монета Бога Ногости: пассивно (даже не экипирована — работает лёжа в инвентаре, как
@@ -3012,7 +2602,6 @@ async def apply_godly_nogost_coin_case_proc(user_id: int, inventory_map: dict) -
     )
     return f"\n{PREMIUM_GODLY_NOGOST_COIN} Монета Бога Ногости: УДАЧА! +100🔮 и +5 000 000 очков ноги!"
 
-
 async def apply_craft_coin_proc(user_id: int, inventory_map: dict) -> str:
     """🔘 Монета Крафта: пассивно (лёжа в инвентаре) шанс 5% при отправке в чат сообщения
     с эмодзи ноги (🦵/🦿) дать +1 💠 очко крафта."""
@@ -3022,7 +2611,6 @@ async def apply_craft_coin_proc(user_id: int, inventory_map: dict) -> str:
         return ""
     await db_exec("UPDATE users SET craft_points = craft_points + 1 WHERE user_id = ?", (user_id,))
     return f"\n{PREMIUM_CRAFT_COIN} Монета Крафта: +1💠 очко крафта!"
-
 
 async def apply_bitcoin_proc(user_id: int, inventory_map: dict) -> str:
     """🟠 Биткоин: пассивно (лёжа в инвентаре) шанс 0.05% при базовом фарме ног дать
@@ -3034,7 +2622,6 @@ async def apply_bitcoin_proc(user_id: int, inventory_map: dict) -> str:
     await db_exec("UPDATE users SET coins = coins + 15000000 WHERE user_id = ?", (user_id,))
     return f"\n{PREMIUM_BITCOIN} Биткоин: КРИПТО-ДЖЕКПОТ! +15 000 000🪙!"
 
-
 async def apply_rebirth_coin_proc(user_id: int, inventory_map: dict) -> str:
     """🟣 Монета Перерождения: пассивно (лёжа в инвентаре) при КАЖДОМ базовом фарме ног
     даёт +2 🉑 очка перерождения гарантированно."""
@@ -3042,7 +2629,6 @@ async def apply_rebirth_coin_proc(user_id: int, inventory_map: dict) -> str:
         return ""
     await db_exec("UPDATE users SET rebirth_points = rebirth_points + 2 WHERE user_id = ?", (user_id,))
     return "\n🟣 Монета Перерождения: +2🉑!"
-
 
 async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
     """🔮 Шар Хроноса: пока экипирован, при каждом фарме ног независимо проверяются все
@@ -3113,7 +2699,6 @@ async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
 
     return "\n".join(lines), reset_cd, farm_extra_mult
 
-
 async def chronos_orb_boost_loop():
     """Фоновый таск: раз в CHRONOS_BOOST_INTERVAL (5 мин) пересчитывает рандомный % буста
     (1-200%) для ВСЕХ игроков сразу — не только для тех, у кого экипирован Шар Хроноса
@@ -3127,11 +2712,9 @@ async def chronos_orb_boost_loop():
             print(f"chronos_orb_boost_loop ошибка: {e}")
         await asyncio.sleep(CHRONOS_BOOST_INTERVAL)
 
-
-AUTO_LOG_CLEANUP_INTERVAL = 24 * 60 * 60  # раз в сутки
-AUTO_AUDIT_LOG_DAYS = 7        # как дефолт у ручной "!чистлоги"
-AUTO_PLAYER_LOG_DAYS = 2       # как дефолт у ручной "!чистлоги игроки"
-
+AUTO_LOG_CLEANUP_INTERVAL = 24 * 60 * 60
+AUTO_AUDIT_LOG_DAYS = 7
+AUTO_PLAYER_LOG_DAYS = 2
 
 async def auto_log_cleanup_loop():
     """Фоновый таск: раз в сутки сам чистит старые записи логов — те же сроки,
@@ -3150,19 +2733,12 @@ async def auto_log_cleanup_loop():
         except Exception as e:
             print(f"auto_log_cleanup_loop ошибка: {e}")
 
-
 async def is_event_active() -> bool:
     active, _ = await get_event_state()
     return active
 
-
-# Кэш глобального состояния ивента: одно и то же для ВСЕХ игроков, а раньше читалось
-# из БД заново на КАЖДОЕ сообщение с ногой — при массовом фарме много людей одновременно
-# создавали шквал одинаковых запросов, забивая очередь и тормозя вообще всё (в т.ч. кнопки).
-# TTL короткий (3 сек), так что !ивент стоп и админ-правки применяются почти мгновенно.
 _event_state_cache = {"value": None, "until": 0.0}
 _EVENT_STATE_TTL = 3.0
-
 
 async def get_event_state():
     """Возвращает (активен: bool, множитель: float) с учётом автоистечения по времени.
@@ -3190,15 +2766,12 @@ async def get_event_state():
     _event_state_cache["until"] = now_mono + _EVENT_STATE_TTL
     return result
 
-
 def _invalidate_event_state_cache():
     _event_state_cache["value"] = None
-
 
 async def get_event_multiplier() -> float:
     active, mult = await get_event_state()
     return mult if active else 1.0
-
 
 async def get_personal_multiplier(user_id: int) -> float:
     """Личный временный буст фермы игроку (!мультипликатор ферма), с автоистечением."""
@@ -3211,7 +2784,6 @@ async def get_personal_multiplier(user_id: int) -> float:
         return 1.0
     return float(multiplier)
 
-
 async def log_admin_action(message: Message):
     admin_username = message.from_user.username or str(message.from_user.id)
     await db_exec(
@@ -3219,47 +2791,21 @@ async def log_admin_action(message: Message):
         (int(time.time()), admin_username, message.text.strip()[:200]),
     )
 
-
-# Собственный троттлинг записи в player_action_log — отдельно от
-# ThrottleMiddleware.rate. Задача этого лога — увидеть КАЖДУЮ попытку
-# команды, но при реальном спам-шквале (тысячи попыток в минуту от одного
-# user_id) писать в БД на каждую из них означало бы, что сам лог добавляет
-# нагрузку сопоставимую с тем, что мы расследуем. Поэтому пишем не чаще
-# PLAYER_LOG_MIN_INTERVAL на юзера, а между записями считаем пропущенные
-# попытки — "skipped" в тексте команды показывает, что были более частые
-# обращения, даже если каждая из них не попала в лог отдельной строкой.
 PLAYER_LOG_MIN_INTERVAL = 1.0
 _player_log_last = {}
 _player_log_skipped = {}
 _player_log_calls_since_cleanup = 0
 _PLAYER_LOG_CLEANUP_EVERY = 500
 
-# ---------- Батчинг player_action_log ----------
-# С DB_WORKER_COUNT=1 каждый отдельный INSERT в player_action_log физически
-# занимает место в ЕДИНСТВЕННОЙ очереди воркера и на время своего выполнения
-# блокирует все остальные запросы (в т.ч. игровые действия других юзеров),
-# которые пришли следом. При активном чате это давало заметный вклад в
-# задержку ответа, хотя сам лог по смыслу не требует немедленной записи —
-# важно лишь, чтобы запись рано или поздно попала в БД. Поэтому копим строки
-# лога в памяти и сбрасываем их одним batched INSERT раз в
-# PLAYER_LOG_FLUSH_INTERVAL секунд — вместо N отдельных обращений к очереди
-# воркера получаем одно, независимо от того, сколько действий произошло за
-# этот интервал.
 PLAYER_LOG_FLUSH_INTERVAL = 5.0
 _player_log_buffer: list = []
-
 
 def _cleanup_player_log_throttle(now: float):
     ttl = PLAYER_LOG_MIN_INTERVAL * 20
     stale = [uid for uid, t in _player_log_last.items() if now - t > ttl]
     for uid in stale:
         del _player_log_last[uid]
-        # Не роняем накопленный skipped-счётчик стухших юзеров молча — по
-        # ним больше не будет вызовов _log_player_action, которые могли бы
-        # его сбросить, так что не пишем в БД (это фоновая очистка, не
-        # обработка сообщения), просто отбрасываем счётчик вместе с записью.
         _player_log_skipped.pop(uid, None)
-
 
 async def _log_player_action(user_id: int, username: str, text: str):
     global _player_log_calls_since_cleanup
@@ -3279,10 +2825,7 @@ async def _log_player_action(user_id: int, username: str, text: str):
     command = text.strip()[:200]
     if skipped:
         command = f"{command} [+{skipped} пропущено за <{PLAYER_LOG_MIN_INTERVAL:.0f}с]"
-    # Не пишем в БД сразу — кладём в буфер, реальный INSERT делает
-    # _flush_player_log_buffer() пачкой раз в PLAYER_LOG_FLUSH_INTERVAL сек.
     _player_log_buffer.append((int(time.time()), user_id, username, command))
-
 
 async def _flush_player_log_buffer():
     """Фоновый цикл: раз в PLAYER_LOG_FLUSH_INTERVAL сек сбрасывает накопленные
@@ -3301,15 +2844,12 @@ async def _flush_player_log_buffer():
         except Exception as e:
             print(f"_flush_player_log_buffer ошибка: {e}")
 
-
 async def track_membership(user_id: int, chat_id: int):
     await db_exec("INSERT OR IGNORE INTO chat_members (user_id, chat_id) VALUES (?, ?)", (user_id, chat_id))
-
 
 async def get_all_chat_ids():
     rows = await db_query("SELECT DISTINCT chat_id FROM chat_members")
     return [r[0] for r in rows]
-
 
 async def build_top(chat_id, order_column: str, limit: int = 10):
     if chat_id is None:
@@ -3327,10 +2867,8 @@ async def build_top(chat_id, order_column: str, limit: int = 10):
         )
     return rows
 
-
 def is_vip_active(vip_until: int) -> bool:
     return bool(vip_until) and vip_until > int(time.time())
-
 
 def _percent_label(item_key: str, percent: int) -> str:
     """Подпись буста для кнопок/списков. chronos_orb — спец-случай: у него рандомный
@@ -3338,7 +2876,6 @@ def _percent_label(item_key: str, percent: int) -> str:
     if item_key == "chronos_orb":
         return "+1-200%, рандом"
     return f"+{percent}%"
-
 
 def inventory_keyboard(inventory_rows, active_item: str, user_id: int) -> InlineKeyboardMarkup:
     rows = []
@@ -3355,7 +2892,6 @@ def inventory_keyboard(inventory_rows, active_item: str, user_id: int) -> Inline
         )])
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
-
 def get_chat(event):
     if isinstance(event, Message):
         return event.chat
@@ -3363,19 +2899,7 @@ def get_chat(event):
         return event.message.chat
     return None
 
-
-# ---------- Защита экономики от гонок УДАЛЕНА по прямому запросу пользователя ----------
-# Раньше здесь стоял econ_guard — asyncio.Lock на юзера, сериализующий фарм/крафт/
-# продажу/кейсы/эволюцию/перерождение/промокоды, чтобы спам/дабл-тап не задваивал
-# результат (см. историю чата). Убран целиком: определение декоратора, _econ_locks,
-# _get_econ_lock и все 11 навешиваний @econ_guard(...) на хендлерах ниже. Без него
-# теоретически возможен дубль-фарм/дубль-крафт при быстром спаме одной командой —
-# это осознанный компромисс, принятый явно, не побочный эффект.
-
-
-# user_id -> последний monotonic-таймстамп начисления очков за 🦵/🦿 (см. LEG_FARM_COOLDOWN)
 _leg_farm_last: dict = {}
-
 
 class AliasNormalizeMiddleware(BaseMiddleware):
     """Переписывает message.text на канонический вид команды ДО того, как текст попадёт
@@ -3386,7 +2910,6 @@ class AliasNormalizeMiddleware(BaseMiddleware):
             if new_text != event.text:
                 event = event.model_copy(update={"text": new_text})
         return await handler(event, data)
-
 
 class PrivateBlockMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
@@ -3402,13 +2925,11 @@ class PrivateBlockMiddleware(BaseMiddleware):
                 return
         return await handler(event, data)
 
-
 class TrackMembershipMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
         if isinstance(event, Message) and event.chat.type in ("group", "supergroup") and event.from_user:
             await track_membership(event.from_user.id, event.chat.id)
         return await handler(event, data)
-
 
 class ThrottleMiddleware(BaseMiddleware):
     """Троттлинг для текстовых команд."""
@@ -3425,14 +2946,6 @@ class ThrottleMiddleware(BaseMiddleware):
         if not text or not is_command_text(text):
             return await handler(event, data)
 
-        # Пишем попытку команды в лог ДО проверки rate-limit ниже — иначе спам
-        # от ботов гасился бы троттлингом раньше, чем успел бы попасть в лог,
-        # и картина спама была бы не видна. Сама запись в лог тоже троттлится
-        # (см. _log_player_action) отдельным, более мелким интервалом — иначе
-        # при реальном шквале спама логирование само добавляло бы по одному
-        # INSERT'у на каждую попытку и усиливало бы ту же нагрузку, которую
-        # мы пытаемся диагностировать. Не await'им — не задерживаем живых
-        # игроков ради записи в лог.
         username = event.from_user.username or str(user_id)
         asyncio.create_task(_log_player_action(user_id, username, text))
 
@@ -3442,7 +2955,6 @@ class ThrottleMiddleware(BaseMiddleware):
             return
         self.last_call[key] = now
         return await handler(event, data)
-
 
 class CallbackThrottleMiddleware(BaseMiddleware):
     """Троттлинг для инлайн-кнопок. Короткий кулдаун (350-500мс) и, что критично,
@@ -3473,10 +2985,10 @@ class CallbackThrottleMiddleware(BaseMiddleware):
             return await handler(event, data)
 
         now = time.monotonic()
-        key = (user_id, event.data)  # троттлим повтор ТОЙ ЖЕ кнопки, а не любых кнопок подряд
+        key = (user_id, event.data)
         if now - self.last_call.get(key, 0) < self.rate:
             try:
-                await event.answer()  # гасим "часики" немедленно, без show_alert — не мешаем игроку
+                await event.answer()
             except Exception:
                 pass
             return
@@ -3488,7 +3000,6 @@ class CallbackThrottleMiddleware(BaseMiddleware):
             self._cleanup(now)
 
         return await handler(event, data)
-
 
 class StaleCallbackGuardMiddleware(BaseMiddleware):
     """Многие callback-хендлеры делают callback.data.split(":") и int(parts[N]) без
@@ -3510,19 +3021,14 @@ class StaleCallbackGuardMiddleware(BaseMiddleware):
                 pass
             return
 
-
 dp.callback_query.middleware(StaleCallbackGuardMiddleware())
 
-
 dp.message.outer_middleware(AliasNormalizeMiddleware())
-# PrivateBlockMiddleware больше не подключается — личка разлочена для всех
-# (раньше в ЛС отвечал только ADMIN_USERNAME, остальные получали тишину).
 dp.message.middleware(TrackMembershipMiddleware())
 dp.message.middleware(ThrottleMiddleware(0.6))
 dp.callback_query.middleware(CallbackThrottleMiddleware(0.15))
 
 _last_leg_reply = {}
-
 
 @dp.errors()
 async def error_handler(event: ErrorEvent):
@@ -3558,7 +3064,6 @@ async def error_handler(event: ErrorEvent):
 
     return True
 
-
 async def maybe_announce_levelup(message: Message, username: str, old_score: int, new_score: int,
                                   evolution_level: int, notify: bool, rebirth_count: int = 0,
                                   ultra_rebirth: bool = False):
@@ -3573,7 +3078,6 @@ async def maybe_announce_levelup(message: Message, username: str, old_score: int
     name_part = f" {esc(name)}" if name else ""
     await message.reply(TEXTS["maybe_announce_levelup_1"].format(v0=esc(username), v1=emoji, v2=name_part, v3=lvl_part))
 
-
 @dp.message(F.text.lower() == "смс выкл")
 async def notify_off(message: Message):
     user_id = message.from_user.id
@@ -3582,7 +3086,6 @@ async def notify_off(message: Message):
     await db_exec("UPDATE users SET levelup_notify = 0 WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["notify_off_1"])
 
-
 @dp.message(F.text.lower() == "смс вкл")
 async def notify_on(message: Message):
     user_id = message.from_user.id
@@ -3590,7 +3093,6 @@ async def notify_on(message: Message):
     await ensure_user(user_id, username)
     await db_exec("UPDATE users SET levelup_notify = 1 WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["notify_on_1"])
-
 
 @dp.message(F.text.regexp(r"(?i)^\+ник\s+.+$"))
 async def set_nickname(message: Message):
@@ -3622,7 +3124,6 @@ async def set_nickname(message: Message):
     await db_exec("UPDATE users SET nickname = ? WHERE user_id = ?", (nickname, user_id))
     await safe_reply(message, TEXTS["nick_set_ok"].format(v0=esc(nickname)))
 
-
 @dp.message(F.text.lower() == "-ник")
 async def clear_nickname(message: Message):
     user_id = message.from_user.id
@@ -3631,14 +3132,12 @@ async def clear_nickname(message: Message):
     await db_exec("UPDATE users SET nickname = NULL WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["nick_clear_ok"])
 
-
 def buy_vip_keyboard(user_id: int) -> InlineKeyboardMarkup:
     contact_text = quote("Привет! Хочу оформить VIP-статус")
     contact_url = f"https://t.me/{ADMIN_USERNAME}?text={contact_text}"
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="✉️ Написать админу", url=contact_url)],
     ])
-
 
 @dp.message(F.text.lower() == "вип")
 async def vip_info_command(message: Message):
@@ -3656,7 +3155,6 @@ async def vip_info_command(message: Message):
         reply_markup=buy_vip_keyboard(user_id),
     )
 
-
 @dp.message(F.text.lower().in_({"авто эво вкл", "авто эволюция вкл"}))
 async def auto_evolve_on(message: Message):
     user_id = message.from_user.id
@@ -3671,7 +3169,6 @@ async def auto_evolve_on(message: Message):
     await db_exec("UPDATE users SET auto_evolve = 1 WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["auto_evolve_on_1"])
 
-
 @dp.message(F.text.lower().in_({"авто эво выкл", "авто эволюция выкл"}))
 async def auto_evolve_off(message: Message):
     user_id = message.from_user.id
@@ -3680,7 +3177,6 @@ async def auto_evolve_off(message: Message):
 
     await db_exec("UPDATE users SET auto_evolve = 0 WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["auto_evolve_off_1"])
-
 
 @dp.message(F.text.lower().in_({"авто перерождение вкл", "авто рб вкл", "авто ребёрт вкл", "авто реберт вкл"}))
 async def auto_rebirth_on(message: Message):
@@ -3696,7 +3192,6 @@ async def auto_rebirth_on(message: Message):
     await db_exec("UPDATE users SET auto_rebirth = 1 WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["auto_rebirth_on_1"].format(v0=REBIRTH_MIN_EVO))
 
-
 @dp.message(F.text.lower().in_({"авто перерождение выкл", "авто рб выкл", "авто ребёрт выкл", "авто реберт выкл"}))
 async def auto_rebirth_off(message: Message):
     user_id = message.from_user.id
@@ -3705,7 +3200,6 @@ async def auto_rebirth_off(message: Message):
 
     await db_exec("UPDATE users SET auto_rebirth = 0 WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["auto_rebirth_off_1"])
-
 
 @dp.message(F.text.lower() == "авто продажа вкл")
 async def auto_sell_on(message: Message):
@@ -3716,7 +3210,6 @@ async def auto_sell_on(message: Message):
     await db_exec("UPDATE users SET auto_sell = 1 WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["auto_sell_on_1"])
 
-
 @dp.message(F.text.lower() == "авто продажа выкл")
 async def auto_sell_off(message: Message):
     user_id = message.from_user.id
@@ -3725,7 +3218,6 @@ async def auto_sell_off(message: Message):
 
     await db_exec("UPDATE users SET auto_sell = 0 WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["auto_sell_off_1"])
-
 
 @dp.message(F.text.lower().in_({"авто продажа настройка", "авто продажа конфиг", "авто продажа настройки"}))
 async def auto_sell_config(message: Message):
@@ -3739,7 +3231,6 @@ async def auto_sell_config(message: Message):
         reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, user_id),
     )
 
-
 @dp.callback_query(F.data.startswith("autosell_toggle:"))
 async def autosell_toggle(callback: CallbackQuery):
     parts = callback.data.split(":")
@@ -3752,7 +3243,7 @@ async def autosell_toggle(callback: CallbackQuery):
     if item_key not in CASE_SELLABLE_ITEMS:
         await callback.answer()
         return
-    await callback.answer()  # мгновенный ack — убирает "часики" до начала работы с БД
+    await callback.answer()
 
     row = await get_user(owner_id)
     auto_sell_enabled = bool(row[30])
@@ -3768,7 +3259,6 @@ async def autosell_toggle(callback: CallbackQuery):
         format_autosell_text(auto_sell_enabled, auto_sell_items, page),
         reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
     )
-
 
 @dp.callback_query(F.data.startswith("autosell_switch:"))
 async def autosell_switch(callback: CallbackQuery):
@@ -3790,7 +3280,6 @@ async def autosell_switch(callback: CallbackQuery):
         reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
     )
 
-
 @dp.callback_query(F.data.startswith("autosell_page:"))
 async def autosell_page_nav(callback: CallbackQuery):
     _, owner_str, page_str = callback.data.split(":")
@@ -3809,10 +3298,8 @@ async def autosell_page_nav(callback: CallbackQuery):
         reply_markup=autosell_keyboard(auto_sell_enabled, auto_sell_items, owner_id, page),
     )
 
-
 VIP_CASE_OPEN_RE = re.compile(r"^вип открыть кейс\s+(\d+)\s+(\d+)$", re.IGNORECASE)
 VIP_CASE_OPEN_LIMIT = 20
-
 
 @dp.message(F.text.regexp(r"(?i)^вип открыть кейс\s+"))
 async def vip_open_case_bulk(message: Message):
@@ -3880,7 +3367,6 @@ async def vip_open_case_bulk(message: Message):
         TEXTS["vip_case_open_6"].format(v0=count, v1=esc(case["name"]), v2=total_price, v3=new_coins, v4=loot_lines),
     )
 
-
 @dp.callback_query(F.data.startswith("buy_vip:"))
 async def buy_vip_invoice(callback: CallbackQuery):
     owner_id = int(callback.data.split(":")[1])
@@ -3895,10 +3381,9 @@ async def buy_vip_invoice(callback: CallbackQuery):
         payload=f"vip:{owner_id}",
         currency="XTR",
         prices=[LabeledPrice(label="VIP навсегда", amount=VIP_STARS_PRICE)],
-        provider_token="",  # для Telegram Stars provider_token не нужен
+        provider_token="",
     )
     await callback.answer()
-
 
 @dp.pre_checkout_query()
 async def process_pre_checkout(pre_checkout_query: PreCheckoutQuery):
@@ -3907,7 +3392,6 @@ async def process_pre_checkout(pre_checkout_query: PreCheckoutQuery):
         await pre_checkout_query.answer(ok=True)
     else:
         await pre_checkout_query.answer(ok=False, error_message="Неизвестный товар.")
-
 
 @dp.message(F.successful_payment)
 async def process_successful_payment(message: Message):
@@ -3926,14 +3410,6 @@ async def process_successful_payment(message: Message):
 
     await message.reply(TEXTS["process_successful_payment_1"])
 
-
-@dp.message(F.text.lower() == "помощь")
-async def help_command(message: Message):
-    await message.reply(
-        TEXTS["help_command_1"]
-    )
-
-
 @dp.message(F.text.lower() == "бейджи")
 async def badges_menu(message: Message):
     user_id = message.from_user.id
@@ -3951,7 +3427,6 @@ async def badges_menu(message: Message):
 
     kb = badges_keyboard(earned, hidden, user_id)
     await message.reply(TEXTS["badges_menu_2"], reply_markup=kb)
-
 
 @dp.callback_query(F.data.startswith("badge:"))
 async def toggle_badge(callback: CallbackQuery):
@@ -3980,17 +3455,12 @@ async def toggle_badge(callback: CallbackQuery):
     kb = badges_keyboard(earned, hidden, owner_id)
     await safe_edit_text(callback, "🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
 
-
 @dp.message(F.text.regexp(r"[🦵🦿]"))
 async def count_legs(message: Message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     text = message.text
 
-    # Личный антиспам-кулдаун начисления (см. LEG_FARM_COOLDOWN) — ДО любых запросов
-    # к БД: count_legs не проходит через ThrottleMiddleware (не команда), поэтому без
-    # этой проверки скрипт может слать десятки сообщений с 🦵 в секунду и на каждое
-    # получать очки. Админ не ограничен.
     if user_id != ADMIN_USER_ID:
         now_mono = time.monotonic()
         last = _leg_farm_last.get(user_id, 0)
@@ -4024,46 +3494,34 @@ async def count_legs(message: Message):
         mek = min(text.count("🦿"), limits["mek_limit"])
         gained += mek * MEK_POINT
 
-    # 🐾 — отдельные очки (как робо-нога), но втрое больше, работает только пока
-    # экипирован Амулет кошко-девочки — иначе лимит 0 и эмодзи не считается.
     paw = min(text.count("🐾"), limits["paw_limit"])
     gained += paw * MEK_POINT * PAW_POINT_MULTIPLIER
 
-    # 🌌 и ⭐️ — НЕ отдельные очки, а множители к итогу фарма (работают, только пока
-    # экипирован соответствующий бустер — иначе их лимит 0 и они не учитываются).
     galaxy = min(text.count("🌌"), limits["galaxy_limit"])
     star = min(text.count("⭐️"), limits["star_limit"])
 
     if gained == 0:
         return
 
-    gained += flat_bonus  # гарант-бонус применяется один раз к итогу, а не за каждую ногу
+    gained += flat_bonus
     gained = round(gained * farm_yield_multiplier(upgrades))
 
     mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct)
-    # event_mult почти всегда из кэша (см. _event_state_cache) — реального db-запроса нет.
-    # inventory не зависит от score/этих множителей, поэтому его тоже забираем параллельно
-    # заранее, а не после UPDATE score, как раньше — меньше последовательных сетевых
-    # round-trip'ов на КАЖДОЕ сообщение с ногой, что и было причиной подтормаживания при
-    # массовом фарме (много сообщений разом = много цепочек из последовательных запросов).
     event_mult, personal_mult, inv = await asyncio.gather(
         get_event_multiplier(), get_personal_multiplier(user_id), get_inventory(user_id)
     )
     p_yield_mult = 1 + 0.005 * prestige_bonus(prestige_upgrades, "p_farm_yield")
     total = round(gained * mult * event_mult * personal_mult * p_yield_mult)
     if galaxy:
-        total = round(total * (1 + 0.20 * galaxy))   # 🌌: +20% к итогу за каждую штуку
+        total = round(total * (1 + 0.20 * galaxy))
     if star:
-        total = round(total * (2 ** star))            # ⭐️: ×2 к итогу за каждую штуку
+        total = round(total * (2 ** star))
     potion_text = ""
     if "potion_speed" in potions:
-        # 🐉 Коготь дракона: усиливает зелье скорости с x2 до x4, пока экипирован.
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
         total *= speed_mult
         potion_text += f"\n🧪⚡ Зелье ускорения: x{speed_mult} к добыче!"
 
-    # 🔮 Шар Хроноса: рандом-множитель к добыче (x0.1..x5) + куча независимых шансов на разные награды
-    # (без сброса кулдауна — здесь его в принципе нет, только антиспам-задержка ответа).
     chronos_text, _chronos_reset_cd, chronos_farm_mult = await apply_chronos_orb_procs(user_id, active_items)
     if chronos_farm_mult != 1.0:
         total = round(total * chronos_farm_mult)
@@ -4091,9 +3549,6 @@ async def count_legs(message: Message):
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
     chaos_text = await apply_chaos_orb_proc(user_id, active_items)
-    # Дерево монет — пассивки, срабатывающие лёжа в инвентаре при каждом базовом фарме ног
-    # (в т.ч. фарм эмодзи в чате). 🔘 Монета Крафта триггерится именно тут — это и есть
-    # "отправка в чат сообщения с эмодзи ноги".
     coin_tree_text = (
         await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
         + await apply_bitcoin_proc(user_id, inventory_map)
@@ -4109,7 +3564,6 @@ async def count_legs(message: Message):
 
     equipped_set = set(_normalize_active_items(active_items))
 
-    # 🌊 Волна прилива: шанс на доп. предмет из кейса 1 или 2 при фарме ног (отдельная строка).
     tide_text = ""
     if "tide_wave" in equipped_set and random.random() < TIDE_WAVE_PROC_CHANCE:
         tide_item = roll_case_item(random.choice([1, 2]))
@@ -4117,7 +3571,6 @@ async def count_legs(message: Message):
         tide_emoji, tide_name, _, _ = ITEMS[tide_item]
         tide_text = f"\n🌊 Прилив принёс: {tide_emoji} {esc(tide_name)}!"
 
-    # 💀 Череп воина: только эффект — префикс "Смерть близко." перед ответом фарма ног.
     skull_prefix = "💀 Смерть близко.\n" if "warrior_skull" in equipped_set else ""
 
     parts = f"+{legs}🦵"
@@ -4135,7 +3588,6 @@ async def count_legs(message: Message):
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
-        # 🔮 Шар Хроноса приоритетнее флейвора god_essence/koshko_amulet.
         flavor = CHRONOS_ORB_FLAVOR if chronos_equipped else (KOSHKO_AMULET_FLAVOR if bonus.get("tier") == "koshko_amulet" else GOD_ESSENCE_FLAVOR)
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
@@ -4155,7 +3607,6 @@ async def count_legs(message: Message):
         skull_prefix + TEXTS["count_legs_2"].format(v0=parts, v1=total, v2=coin_text, v3=new_score, v4=extra_text)
     )
 
-
 @dp.message(F.text.lower() == "моя нога")
 async def my_profile(message: Message):
     user_id = message.from_user.id
@@ -4172,9 +3623,6 @@ async def my_profile(message: Message):
     vip_active = is_vip_active(vip_until)
     shown_name = display_name(username, nickname)
 
-    # Обычная прогрессия (0-20000+) работает как раньше и после Ультра перерождения —
-    # 20002 лвл ("тест нога") просто становится доступен как следующий уровень поверх
-    # обычной лестницы, а не подменяет вид ноги статичной заглушкой.
     level = get_level_index(score, evolution_level, rebirth_count, ultra_rebirth)
     emoji, name, show_level = get_level_visual(level)
     display_level = level
@@ -4218,7 +3666,6 @@ async def my_profile(message: Message):
     )
     await message.reply(text)
 
-
 @dp.message(F.text.regexp(r"(?i)^инфо\s+@?\w+$"))
 async def info_player(message: Message):
     match = INFO_RE.match(message.text.strip())
@@ -4260,7 +3707,6 @@ async def info_player(message: Message):
     )
     await message.reply(text)
 
-
 async def send_legs_top(message: Message, chat_id, title: str):
     rows = await build_top(chat_id, "score")
 
@@ -4279,7 +3725,6 @@ async def send_legs_top(message: Message, chat_id, title: str):
 
     await message.reply(text)
 
-
 async def send_evo_top(message: Message, chat_id, title: str):
     rows = await build_top(chat_id, "evolution_level")
 
@@ -4293,7 +3738,6 @@ async def send_evo_top(message: Message, chat_id, title: str):
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — эво {evolution_level} ({score} очков)\n"
 
     await message.reply(text)
-
 
 async def send_coin_top(message: Message, chat_id, title: str):
     rows = await build_top(chat_id, "coins")
@@ -4309,7 +3753,6 @@ async def send_coin_top(message: Message, chat_id, title: str):
 
     await message.reply(text)
 
-
 async def send_rebirth_top(message: Message, chat_id, title: str):
     rows = await build_top(chat_id, "rebirth_points")
 
@@ -4324,71 +3767,57 @@ async def send_rebirth_top(message: Message, chat_id, title: str):
 
     await message.reply(text)
 
-
 @dp.message(F.text.lower() == "топ ног")
 async def top_legs_local(message: Message):
     await send_legs_top(message, message.chat.id, "ТОП-10 НОГ ЭТОГО ЧАТА")
-
 
 @dp.message(F.text.lower() == "гл топ ног")
 async def top_legs_global(message: Message):
     await send_legs_top(message, None, "ТОП-10 НОГ ВЕЗДЕ")
 
-
 @dp.message(F.text.lower() == "топ эво")
 async def top_evo_local(message: Message):
     await send_evo_top(message, message.chat.id, "ТОП ЭВОЛЮЦИЙ ЭТОГО ЧАТА")
-
 
 @dp.message(F.text.lower() == "гл топ эво")
 async def top_evo_global(message: Message):
     await send_evo_top(message, None, "ТОП ЭВОЛЮЦИЙ ВЕЗДЕ")
 
-
 @dp.message(F.text.lower() == "топ коин")
 async def top_coin_local(message: Message):
     await send_coin_top(message, message.chat.id, "ТОП МОНЕТ ЭТОГО ЧАТА")
-
 
 @dp.message(F.text.lower() == "гл топ коин")
 async def top_coin_global(message: Message):
     await send_coin_top(message, None, "ТОП МОНЕТ ВЕЗДЕ")
 
-
 @dp.message(F.text.lower() == "топ очкп")
 async def top_rebirth_local(message: Message):
     await send_rebirth_top(message, message.chat.id, "ТОП ОЧКОВ ПЕРЕРОЖДЕНИЯ ЭТОГО ЧАТА")
-
 
 @dp.message(F.text.lower() == "гл топ очкп")
 async def top_rebirth_global(message: Message):
     await send_rebirth_top(message, None, "ТОП ОЧКОВ ПЕРЕРОЖДЕНИЯ ВЕЗДЕ")
 
-
 @dp.message(F.text.lower() == "топ ноги вся")
 async def top_legs_global_suffix(message: Message):
     await send_legs_top(message, None, "ТОП-10 НОГ ВЕЗДЕ")
-
 
 @dp.message(F.text.lower() == "топ коин вся")
 async def top_coin_global_suffix(message: Message):
     await send_coin_top(message, None, "ТОП МОНЕТ ВЕЗДЕ")
 
-
 @dp.message(F.text.lower() == "топ эво вся")
 async def top_evo_global_suffix(message: Message):
     await send_evo_top(message, None, "ТОП ЭВОЛЮЦИЙ ВЕЗДЕ")
-
 
 @dp.message(F.text.lower() == "топ очкп вся")
 async def top_rebirth_global_suffix(message: Message):
     await send_rebirth_top(message, None, "ТОП ОЧКОВ ПЕРЕРОЖДЕНИЯ ВЕЗДЕ")
 
-
 @dp.message(F.text.lower().in_({"топ вся", "гл топ"}))
 async def top_overall_global(message: Message):
     await send_legs_top(message, None, "ОБЩИЙ ТОП ВЕЗДЕ (по очкам ноги)")
-
 
 @dp.message(F.text.lower().in_({"ферма", "фарма"}))
 async def farm(message: Message):
@@ -4423,7 +3852,6 @@ async def farm(message: Message):
         await message.reply(TEXTS["farm_1"].format(v0=m, v1=s))
         return
 
-    # оффлайн-доход от Авто-Фермы — начисляем при действии игрока
     auto_legs, auto_coins, score, _coins_after = await claim_offline_auto_farm(user_id, row)
 
     low, high = farm_range(evolution_level)
@@ -4434,19 +3862,14 @@ async def farm(message: Message):
     gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult * personal_mult * p_yield_mult)
     potion_text = ""
     if "potion_speed" in potions:
-        # 🐉 Коготь дракона: усиливает зелье скорости с x2 до x4, пока экипирован.
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
         gained *= speed_mult
         potion_text += f"\n🧪⚡ Зелье ускорения: x{speed_mult} к добыче!"
 
-    # 🔮 Шар Хроноса: рандом-множитель к добыче (x0.1..x5) + куча независимых шансов на разные награды.
     chronos_text, chronos_reset_cd, chronos_farm_mult = await apply_chronos_orb_procs(user_id, active_items)
     if chronos_farm_mult != 1.0:
         gained = round(gained * chronos_farm_mult)
 
-    # 🟤/🔶 Монета Ногости / Монета Бога Ногости: доп. ролл x3/x5 к уже посчитанной добыче
-    # (после Хроноса, до записи в БД) — их x3/x6 к базовому фарму уже учтён выше через
-    # boost_percent -> get_multiplier(), это отдельный независимый шанс поверх него.
     gained, nogost_coin_text = apply_coin_tree_farm_roll(gained, active_items)
     new_score = score + gained
 
@@ -4465,7 +3888,6 @@ async def farm(message: Message):
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
     chaos_text = await apply_chaos_orb_proc(user_id, active_items)
-    # Дерево монет — пассивки, срабатывающие лёжа в инвентаре при каждом базовом фарме ног.
     coin_tree_text = (
         nogost_coin_text
         + await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
@@ -4499,7 +3921,6 @@ async def farm(message: Message):
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
-        # 🔮 Шар Хроноса приоритетнее флейвора god_essence/koshko_amulet.
         flavor = CHRONOS_ORB_FLAVOR if chronos_equipped else GOD_ESSENCE_FLAVOR
         god_extra = f" +{bonus['rebirth']}🉑" if bonus["rebirth"] else ""
         await safe_reply(
@@ -4518,7 +3939,6 @@ async def farm(message: Message):
     await message.reply(
         TEXTS["farm_3"].format(v0=gained, v1=new_score, v2=coin_text, v3=auto_text, v4=extra_text)
     )
-
 
 @dp.message(F.text.lower() == "бонус")
 async def daily_bonus(message: Message):
@@ -4560,7 +3980,6 @@ async def daily_bonus(message: Message):
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify))
     await message.reply(TEXTS["daily_bonus_2"].format(v0=streak, v1=reward, v2=new_score, v3=item_text))
 
-
 @dp.message(F.text.regexp(REVERSE_EXCHANGE_RE))
 async def reverse_exchange(message: Message):
     """обменять <кол-во> коин -> списывает коины, начисляет очки ног (1 коин = 150 очков)."""
@@ -4590,7 +4009,6 @@ async def reverse_exchange(message: Message):
 
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count)
     await message.reply(TEXTS["reverse_exchange_3"].format(v0=coins_wanted, v1=gained, v2=new_score))
-
 
 @dp.message(F.text.regexp(CRAFT_EXCHANGE_RE))
 async def craft_exchange(message: Message):
@@ -4637,7 +4055,6 @@ async def craft_exchange(message: Message):
         f"Обменял {rebirth_wanted} 🉑 → +{gained} 💠 очков крафта (Всего: {new_craft_points})"
     )
 
-
 @dp.message(F.text.regexp(CRAFT_EXCHANGE_TO_RE))
 async def craft_exchange_to(message: Message):
     """обменять крафт/очкк <кол-во> -> удобный обратный формат: <кол-во> это то, сколько
@@ -4681,7 +4098,6 @@ async def craft_exchange_to(message: Message):
         f"Обменял {rebirth_cost} 🉑 → +{craft_wanted} 💠 очков крафта (Всего: {new_craft_points})"
     )
 
-
 @dp.message(F.text.lower().startswith("обменять "))
 async def exchange(message: Message):
     match = EXCHANGE_RE.match(message.text.strip().lower())
@@ -4718,7 +4134,6 @@ async def exchange(message: Message):
     warn = f"\n⚠️ Уровень упал с {old_level} до {new_level}!" if new_level < old_level else ""
     await message.reply(TEXTS["exchange_4"].format(v0=spent, v1=coins_wanted, v2=new_coins, v3=warn))
 
-
 async def transfer_currency(message: Message, currency: str, amount: int):
     """currency: 'ног' или 'коин'. Общая логика для дать/передать <число> <валюта>."""
     if not message.reply_to_message:
@@ -4751,7 +4166,7 @@ async def transfer_currency(message: Message, currency: str, amount: int):
         await message.reply(TEXTS["transfer_currency_5"].format(v0=esc(sender_username), v1=amount, v2=esc(receiver_username)))
         await maybe_announce_levelup(message, receiver_username, receiver_row[2], new_receiver,
                                       receiver_row[3], bool(receiver_row[11]), receiver_row[15])
-    else:  # коин
+    else:
         if sender_row[5] < amount:
             await message.reply(TEXTS["transfer_currency_6"].format(v0=sender_row[5]))
             return
@@ -4759,7 +4174,6 @@ async def transfer_currency(message: Message, currency: str, amount: int):
         await db_exec("UPDATE users SET coins = coins - ? WHERE user_id = ?", (amount, sender.id))
         await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (amount, receiver.id))
         await message.reply(TEXTS["transfer_currency_7"].format(v0=esc(sender_username), v1=amount, v2=esc(receiver_username)))
-
 
 async def transfer_item_direct(message: Message, item_query: str):
     """Прямой поиск предмета по вхождению строки, без разделения на бустеры/пассивки (п.2 ТЗ)."""
@@ -4807,10 +4221,7 @@ async def transfer_item_direct(message: Message, item_query: str):
 
     await safe_reply(message, TEXTS["transfer_item_direct_6"].format(v0=emoji, v1=esc(name), v2=esc(receiver_username)))
 
-
-# Токены-валюты для распознавания синтаксиса "[число] [валюта]" в дать/передать
 _TRANSFER_CURRENCY_TOKENS = {"ног": "ног", "коин": "коин"}
-
 
 @dp.message(F.text.regexp(r"(?i)^(дать|передать)\s+(.+)$"))
 async def give_or_transfer(message: Message):
@@ -4827,7 +4238,6 @@ async def give_or_transfer(message: Message):
     first_word = parts[0]
     rest = parts[1].strip() if len(parts) > 1 else ""
 
-    # Синтаксис 1: [число] [валюта] — "888 коин" / "50 ног"
     if _AMOUNT_TOKEN_RE.match(first_word) and rest:
         currency_word = rest.split(" ", 1)[0].lower()
         if currency_word in _TRANSFER_CURRENCY_TOKENS:
@@ -4841,7 +4251,6 @@ async def give_or_transfer(message: Message):
             await message.reply(TEXTS["give_or_transfer_3"].format(v0=esc(currency_word)))
             return
 
-    # Синтаксис 2: [валюта] [число] — "коин 50" (на случай другого порядка слов)
     if first_word.lower() in _TRANSFER_CURRENCY_TOKENS and rest and _AMOUNT_TOKEN_RE.match(rest.split(" ", 1)[0]):
         amount_word = rest.split(" ", 1)[0]
         amount = parse_amount(amount_word)
@@ -4851,14 +4260,11 @@ async def give_or_transfer(message: Message):
         await transfer_currency(message, _TRANSFER_CURRENCY_TOKENS[first_word.lower()], amount)
         return
 
-    # Синтаксис 3: название предмета целиком (прямой поиск по вхождению, без фильтров б/п)
     await transfer_item_direct(message, args)
-
 
 async def sell_item(message: Message, prefix: str, only_passive: bool):
     raw = message.text[len(prefix):].strip()
     sell_all = False
-    # "продать б/п <название> все" — продаёт всё количество разом
     if raw.lower().endswith(" все"):
         sell_all = True
         raw = raw[:-len(" все")].strip()
@@ -4924,27 +4330,23 @@ async def sell_item(message: Message, prefix: str, only_passive: bool):
     else:
         await safe_reply(message, TEXTS["sell_item_4"].format(v0=emoji, v1=esc(name), v2=price, v3=bonus_text))
 
-
 @dp.message(F.text.lower().startswith("продать б "))
 async def sell_booster(message: Message):
     await sell_item(message, "продать б ", only_passive=False)
 
-
 @dp.message(F.text.lower().startswith("продать п "))
 async def sell_passive(message: Message):
     await sell_item(message, "продать п ", only_passive=True)
-
 
 @dp.message(F.text.regexp(r"(?i)^продать(\s+.*)?$"))
 async def sell_wrong_format(message: Message):
     """Ловит 'продать <название>' без б/п (или вообще без аргумента) — чтобы не было тишины."""
     lower = message.text.lower()
     if lower.startswith("продать б ") or lower.startswith("продать п "):
-        return  # уже обработано специализированными хендлерами выше
+        return
     await message.reply(
         TEXTS["sell_wrong_format_1"]
     )
-
 
 async def destroy_item(message: Message, prefix: str, only_passive: bool):
     item_query = message.text[len(prefix):].strip()
@@ -4978,16 +4380,13 @@ async def destroy_item(message: Message, prefix: str, only_passive: bool):
 
     await safe_reply(message, TEXTS["destroy_item_4"].format(v0=emoji, v1=esc(name)))
 
-
 @dp.message(F.text.lower().startswith("уничтожение б "))
 async def destroy_booster(message: Message):
     await destroy_item(message, "уничтожение б ", only_passive=False)
 
-
 @dp.message(F.text.lower().startswith("уничтожение п "))
 async def destroy_passive(message: Message):
     await destroy_item(message, "уничтожение п ", only_passive=True)
-
 
 @dp.message(F.text.regexp(r"(?i)^уничтожение(\s+.*)?$"))
 async def destroy_wrong_format(message: Message):
@@ -4998,28 +4397,22 @@ async def destroy_wrong_format(message: Message):
         TEXTS["destroy_wrong_format_1"]
     )
 
-
 def _format_equipped_item_line(item_key: str) -> str:
     emoji, name, boost_percent, _ = ITEMS[item_key]
     if item_key == "chronos_orb":
-        # Буст рандомный (1-200%, пересчитывается раз в 5 мин) — фикс. число тут вводило бы в заблуждение.
         return f"{emoji} {esc(name)} (+1-200%, рандом)"
     return f"{emoji} {esc(name)} (+{boost_percent}%)"
-
 
 def format_inventory_menu_text(active_items, upgrades: dict = None, prestige_upgrades: dict = None, bonus_slots: int = 0):
     items = _normalize_active_items(active_items)
     max_slots = equipped_slots_max(upgrades or {}, prestige_upgrades or {}, bonus_slots)
     equipped = [_format_equipped_item_line(k) for k in items if k in ITEMS]
     equipped_header = f"Экипировано ({len(equipped)}/{max_slots}):"
-    # Каждый экипированный предмет — на своей строке, а не слитно через запятую.
     equipped_text = equipped_header + ("\n" + "\n".join(equipped) if equipped else " ничего")
     return f"🎒 <b>Твой инвентарь</b>\n{equipped_text}\n\nВыбери раздел:"
 
-
-INV_PAGE_SIZE = 5  # кнопок на вкладку — меняй тут, всё остальное посчитается само
-POTION_PAGE_SIZE = 6  # типов зелий на вкладку (для брю/юз кнопок)
-
+INV_PAGE_SIZE = 5
+POTION_PAGE_SIZE = 6
 
 def inventory_menu_keyboard(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[
@@ -5028,14 +4421,12 @@ def inventory_menu_keyboard(user_id: int) -> InlineKeyboardMarkup:
         [InlineKeyboardButton(text="⚗️ Зелья", callback_data=f"inv_cat:{user_id}:potions:0")],
     ])
 
-
 def _paginate(items: list, page: int, page_size: int = INV_PAGE_SIZE):
     """Возвращает (нарезка_страницы, страница_в_границах, всего_страниц)."""
     total_pages = max(1, (len(items) + page_size - 1) // page_size)
     page = max(0, min(page, total_pages - 1))
     start = page * page_size
     return items[start:start + page_size], page, total_pages
-
 
 def _pagination_row(callback_prefix: str, user_id: int, page: int, total_pages: int, extra: str = "") -> list:
     """Строка навигации ◀️ n/N ▶️. extra — доп. часть callback_data (например поисковый запрос)."""
@@ -5049,7 +4440,6 @@ def _pagination_row(callback_prefix: str, user_id: int, page: int, total_pages: 
     if page < total_pages - 1:
         nav.append(InlineKeyboardButton(text="▶️", callback_data=f"{callback_prefix}:{user_id}:{page + 1}{suffix}", style="primary"))
     return nav
-
 
 def boosters_keyboard(rows, active_items, user_id: int, page: int = 0, query: str = None) -> InlineKeyboardMarkup:
     equipped = set(_normalize_active_items(active_items))
@@ -5082,7 +4472,6 @@ def boosters_keyboard(rows, active_items, user_id: int, page: int = 0, query: st
     kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
     return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
-
 def items_keyboard(user_id: int, rows=None, page: int = 0) -> InlineKeyboardMarkup:
     rows = rows or []
     passive = [(k, q) for k, q in rows if k in PASSIVE_ITEMS]
@@ -5094,7 +4483,6 @@ def items_keyboard(user_id: int, rows=None, page: int = 0) -> InlineKeyboardMark
     kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
     return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
-
 def format_autosell_text(auto_sell_enabled: bool, auto_sell_items: set, page: int = 0) -> str:
     _, page, total_pages = _paginate(CASE_SELLABLE_ITEMS, page, AUTOSELL_PAGE_SIZE)
     page_suffix = f" (стр. {page + 1}/{total_pages})" if total_pages > 1 else ""
@@ -5105,7 +4493,6 @@ def format_autosell_text(auto_sell_enabled: bool, auto_sell_items: set, page: in
         f"Отмечено предметов: {len(auto_sell_items)}\n\n"
         f"Жми на предмет, чтобы включить/выключить его авто-продажу:"
     )
-
 
 def autosell_keyboard(auto_sell_enabled: bool, auto_sell_items: set, user_id: int, page: int = 0) -> InlineKeyboardMarkup:
     page_items, page, total_pages = _paginate(CASE_SELLABLE_ITEMS, page, AUTOSELL_PAGE_SIZE)
@@ -5132,7 +4519,6 @@ def autosell_keyboard(auto_sell_enabled: bool, auto_sell_items: set, user_id: in
     kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
     return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
-
 def format_boosters_text(rows, max_slots: int = 1, page: int = 0, query: str = None):
     boosters = [(k, q) for k, q in rows if k not in PASSIVE_ITEMS]
     if query:
@@ -5149,7 +4535,6 @@ def format_boosters_text(rows, max_slots: int = 1, page: int = 0, query: str = N
     page_suffix = f" (стр. {page + 1}/{total_pages})" if total_pages > 1 else ""
     return f"🧪 Твои бустеры (можно носить одновременно {max_slots}){page_suffix}:"
 
-
 def format_items_text(rows, page: int = 0):
     passive = [(k, q) for k, q in rows if k in PASSIVE_ITEMS]
     if not passive:
@@ -5162,7 +4547,6 @@ def format_items_text(rows, page: int = 0):
         lines.append(f"{emoji} {esc(name)} x{qty}")
     return "\n".join(lines)
 
-
 def format_time_left(seconds: int) -> str:
     seconds = max(0, seconds)
     m, s = divmod(seconds, 60)
@@ -5172,7 +4556,6 @@ def format_time_left(seconds: int) -> str:
     if m:
         return f"{m}м {s}с"
     return f"{s}с"
-
 
 def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_potion: str, brewing_until: int,
                          upgrades: dict, now: int = None, page: int = 0) -> str:
@@ -5206,7 +4589,6 @@ def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_p
         lines.append("В запасе: пусто")
 
     return "\n".join(lines)
-
 
 def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until: int, user_id: int,
                       upgrades: dict, now: int = None, prestige_upgrades: dict = None, page: int = 0,
@@ -5250,7 +4632,6 @@ def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until
     kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
     return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
-
 @dp.message(F.text.lower().in_({"инвентарь", "мой инвентарь"}))
 async def inventory(message: Message):
     user_id = message.from_user.id
@@ -5268,7 +4649,6 @@ async def inventory(message: Message):
 
     await safe_reply(message, format_inventory_menu_text(active_items, upgrades, prestige_upgrades), reply_markup=inventory_menu_keyboard(user_id))
 
-
 @dp.message(F.text.lower().in_({"мои предметы", "предметы"}))
 async def my_items_tab(message: Message):
     user_id = message.from_user.id
@@ -5276,7 +4656,6 @@ async def my_items_tab(message: Message):
     await ensure_user(user_id, username)
     rows = await get_inventory(user_id)
     await safe_reply(message, format_items_text(rows), reply_markup=items_keyboard(user_id, rows))
-
 
 @dp.message(F.text.lower().in_({"мои бустеры", "бустеры"}))
 async def my_boosters_tab(message: Message):
@@ -5290,7 +4669,6 @@ async def my_boosters_tab(message: Message):
     inventory_map = {k: q for k, q in rows}
     max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
     await message.reply(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, user_id, 0))
-
 
 @dp.message(F.text.lower().regexp(r"^бустеры поиск\s+.+$"))
 async def my_boosters_search(message: Message):
@@ -5306,7 +4684,6 @@ async def my_boosters_search(message: Message):
         format_boosters_text(rows, page=0, query=query),
         reply_markup=boosters_keyboard(rows, active_items, user_id, 0, query=query),
     )
-
 
 @dp.message(F.text.lower().in_({"мои зелья", "зелья"}))
 async def my_potions_tab(message: Message):
@@ -5324,7 +4701,6 @@ async def my_potions_tab(message: Message):
         reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, user_id, upgrades, prestige_upgrades=prestige_upgrades, active_items=active_items),
     )
 
-
 @dp.callback_query(F.data.startswith("inv_menu:"))
 async def inventory_back_to_menu(callback: CallbackQuery):
     owner_id = int(callback.data.split(":")[1])
@@ -5340,7 +4716,6 @@ async def inventory_back_to_menu(callback: CallbackQuery):
     rows = await get_inventory(owner_id)
     inventory_map = {k: q for k, q in rows}
     await safe_edit_text(callback, format_inventory_menu_text(active_items, upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map)), reply_markup=inventory_menu_keyboard(owner_id))
-
 
 @dp.callback_query(F.data.startswith("inv_cat:"))
 async def inventory_open_category(callback: CallbackQuery):
@@ -5378,7 +4753,6 @@ async def inventory_open_category(callback: CallbackQuery):
     else:
         rows = await get_inventory(owner_id)
         await safe_edit_text(callback, format_items_text(rows, page), reply_markup=items_keyboard(owner_id, rows, page))
-
 
 @dp.callback_query(F.data.startswith("potion_brew:"))
 async def potion_brew_start(callback: CallbackQuery):
@@ -5424,7 +4798,6 @@ async def potion_brew_start(callback: CallbackQuery):
     )
     await callback.answer(TEXTS["potion_brew_started_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=format_time_left(seconds)))
 
-
 @dp.callback_query(F.data.startswith("potion_collect:"))
 async def potion_collect(callback: CallbackQuery):
     owner_id = int(callback.data.split(":")[1])
@@ -5461,7 +4834,6 @@ async def potion_collect(callback: CallbackQuery):
     )
     await callback.answer(TEXTS["potion_collect_ok_1"].format(v0=cfg["emoji"], v1=cfg["name"]))
 
-
 @dp.callback_query(F.data.startswith("potion_use:"))
 async def potion_use(callback: CallbackQuery):
     parts = callback.data.split(":")
@@ -5492,10 +4864,10 @@ async def potion_use(callback: CallbackQuery):
     active = active_potions_now(row[23], now, active_items)
     cfg = POTIONS[potion_key]
     if cfg["effect"] == "no_cd":
-        active[potion_key] = cfg["charges"]  # использование освежает заряды (не суммирует)
+        active[potion_key] = cfg["charges"]
     else:
         duration = potion_duration_seconds(potion_key, upgrades)
-        active[potion_key] = now + duration  # освежает таймер, не продлевает поверх старого
+        active[potion_key] = now + duration
 
     await db_exec(
         "UPDATE users SET potion_stock = ?, active_potions = ? WHERE user_id = ?",
@@ -5512,7 +4884,6 @@ async def potion_use(callback: CallbackQuery):
         await callback.answer(TEXTS["potion_use_ok_charges_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=cfg["charges"]))
     else:
         await callback.answer(TEXTS["potion_use_ok_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=format_time_left(potion_duration_seconds(potion_key, upgrades))))
-
 
 @dp.callback_query(F.data.startswith("inv_boost_page:"))
 async def inventory_boosters_page(callback: CallbackQuery):
@@ -5533,7 +4904,6 @@ async def inventory_boosters_page(callback: CallbackQuery):
     max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
     await safe_edit_text(callback, format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
 
-
 @dp.callback_query(F.data.startswith("inv_boost_search_page:"))
 async def inventory_boosters_search_page(callback: CallbackQuery):
     parts = callback.data.split(":")
@@ -5553,7 +4923,6 @@ async def inventory_boosters_search_page(callback: CallbackQuery):
         reply_markup=boosters_keyboard(rows, active_items, owner_id, page, query=query),
     )
 
-
 @dp.callback_query(F.data.startswith("inv_items_page:"))
 async def inventory_items_page(callback: CallbackQuery):
     _, owner_str, page_str = callback.data.split(":")
@@ -5566,7 +4935,6 @@ async def inventory_items_page(callback: CallbackQuery):
 
     rows = await get_inventory(owner_id)
     await safe_edit_text(callback, format_items_text(rows, page), reply_markup=items_keyboard(owner_id, rows, page))
-
 
 @dp.callback_query(F.data.startswith("inv_potion_page:"))
 async def inventory_potions_page(callback: CallbackQuery):
@@ -5591,11 +4959,9 @@ async def inventory_potions_page(callback: CallbackQuery):
         reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page, active_items=active_items),
     )
 
-
 @dp.callback_query(F.data == "noop")
 async def noop_callback(callback: CallbackQuery):
     await callback.answer()
-
 
 @dp.callback_query(F.data.startswith("equip:"))
 async def toggle_equip(callback: CallbackQuery):
@@ -5633,15 +4999,10 @@ async def toggle_equip(callback: CallbackQuery):
     else:
         await callback.answer(TEXTS["toggle_equip_4"])
 
-
-# ---------- Крафты ("крафты [предмет]") ----------
-
 CRAFT_RE = re.compile(r"^крафт(?:ы)?(?:\s+(.+))?$", re.IGNORECASE)
-
 
 def craft_level_of(upgrades: dict) -> int:
     return upgrade_level(upgrades, "crafts")
-
 
 def recipe_is_discovered(recipe: dict, inventory_map: dict) -> bool:
     """Как в Minecraft: рецепт «открыт» (виден в списке), если у игрока есть хотя бы
@@ -5649,7 +5010,7 @@ def recipe_is_discovered(recipe: dict, inventory_map: dict) -> bool:
     только на возможность реально скрафтить (см. recipe_missing_ingredients)."""
     ingredients = recipe.get("ingredients", {})
     if not ingredients and not recipe.get("needs_all_amulets"):
-        return True  # рецепт без предметных ингредиентов (чисто за валюту) — виден всегда
+        return True
     for ing_key in ingredients:
         if inventory_map.get(ing_key, 0) > 0:
             return True
@@ -5657,7 +5018,6 @@ def recipe_is_discovered(recipe: dict, inventory_map: dict) -> bool:
         if any(inventory_map.get(ing_key, 0) > 0 for ing_key in ALL_PLAYER_AMULETS):
             return True
     return False
-
 
 def available_recipes(craft_level: int, inventory_map: dict, query: str = None) -> list:
     """Рецепты, доступные по уровню крафта игрока И уже «открытые» (есть хотя бы 1 нужный
@@ -5672,7 +5032,6 @@ def available_recipes(craft_level: int, inventory_map: dict, query: str = None) 
             continue
         result.append(key)
     return result
-
 
 def crafts_keyboard(recipe_keys: list, user_id: int, page: int = 0, query: str = "") -> InlineKeyboardMarkup:
     page_items, page, total_pages = _paginate(recipe_keys, page)
@@ -5689,7 +5048,6 @@ def crafts_keyboard(recipe_keys: list, user_id: int, page: int = 0, query: str =
     if nav_row:
         rows.append(nav_row)
     return InlineKeyboardMarkup(inline_keyboard=rows)
-
 
 def format_crafts_text(recipe_keys: list, craft_level: int, query: str, page: int = 0) -> str:
     if not recipe_keys:
@@ -5708,7 +5066,6 @@ def format_crafts_text(recipe_keys: list, craft_level: int, query: str, page: in
         emoji, name, _, _ = ITEMS[key]
         lines.append(f"{emoji} <b>{esc(name)}</b> = {esc(format_recipe_requirements(RECIPES[key]))}")
     return "\n".join(lines)
-
 
 @dp.message(F.text.regexp(r"(?i)^крафт(ы)?(\s+.+)?$"))
 async def crafts_command(message: Message):
@@ -5730,7 +5087,6 @@ async def crafts_command(message: Message):
         format_crafts_text(recipe_keys, craft_level, query or "", 0),
         reply_markup=crafts_keyboard(recipe_keys, user_id, 0, query or "") if recipe_keys else None,
     )
-
 
 @dp.callback_query(F.data.startswith("craft_page:"))
 async def crafts_page_nav(callback: CallbackQuery):
@@ -5754,7 +5110,6 @@ async def crafts_page_nav(callback: CallbackQuery):
         format_crafts_text(recipe_keys, craft_level, query or "", page),
         reply_markup=crafts_keyboard(recipe_keys, owner_id, page, query or "") if recipe_keys else None,
     )
-
 
 @dp.callback_query(F.data.startswith("craft:"))
 async def craft_do(callback: CallbackQuery):
@@ -5788,7 +5143,6 @@ async def craft_do(callback: CallbackQuery):
         await callback.answer("Не хватает: " + "; ".join(missing), show_alert=True)
         return
 
-    # Списываем ингредиенты
     for ing_key, qty in recipe.get("ingredients", {}).items():
         await remove_item(owner_id, ing_key, qty)
     if recipe.get("needs_all_amulets"):
@@ -5818,13 +5172,11 @@ async def craft_do(callback: CallbackQuery):
     await callback.message.reply(result_text)
     await callback.answer(TEXTS["craft_do_4"])
 
-
 def case_offer_keyboard(case_num: int, user_id: int, price: int) -> InlineKeyboardMarkup:
     case = CASES[case_num]
     return InlineKeyboardMarkup(inline_keyboard=[[
         InlineKeyboardButton(text=f"🎁 Открыть {case['name']} ({price} 🪙)", callback_data=f"buy_case:{case_num}:{user_id}")
     ]])
-
 
 def format_case_inspect_text(case_num: int, price: int, base_price: int) -> str:
     case = CASES[case_num]
@@ -5834,7 +5186,6 @@ def format_case_inspect_text(case_num: int, price: int, base_price: int) -> str:
         boost_part = f" (+{percent}%)" if percent else ""
         lines.append(f"{emoji} {esc(name)}{boost_part} — {chance}%")
     return "\n".join(lines)
-
 
 async def send_case_inspect(message: Message, case_num: int):
     """Меню осмотра кейса: список дропа с процентами + кнопка открытия."""
@@ -5849,7 +5200,6 @@ async def send_case_inspect(message: Message, case_num: int):
         format_case_inspect_text(case_num, price, case["price"]),
         reply_markup=case_offer_keyboard(case_num, message.from_user.id, price),
     )
-
 
 async def open_case_instant(message: Message, case_num: int):
     """'открыть кейс N' — мгновенная рулетка, минуя меню осмотра."""
@@ -5883,29 +5233,24 @@ async def open_case_instant(message: Message, case_num: int):
 
     await message.reply(TEXTS["open_case_instant_3"].format(v0=emoji, v1=esc(name), v2=percent, v3=new_coins) + sold_text)
 
-
 @dp.message(F.text.lower() == "кейс")
 async def case_default(message: Message):
     await send_case_inspect(message, 1)
-
 
 @dp.message(F.text.lower().regexp(r"^кейс \d+$"))
 async def case_numbered(message: Message):
     match = CASE_NUM_RE.match(message.text.strip().lower())
     await send_case_inspect(message, int(match.group(1)))
 
-
 @dp.message(F.text.lower().regexp(r"^(осмотреть кейс|осмотр кейс)\s+(\d+)$"))
 async def case_inspect_command(message: Message):
     match = re.match(r"^(?:осмотреть кейс|осмотр кейс)\s+(\d+)$", message.text.strip().lower())
     await send_case_inspect(message, int(match.group(1)))
 
-
 @dp.message(F.text.lower().regexp(r"^открыть кейс\s+(\d+)$"))
 async def case_open_command(message: Message):
     match = re.match(r"^открыть кейс\s+(\d+)$", message.text.strip().lower())
     await open_case_instant(message, int(match.group(1)))
-
 
 @dp.message(F.text.lower() == "кейсы")
 async def case_list(message: Message):
@@ -5920,7 +5265,6 @@ async def case_list(message: Message):
         for num, case in CASES.items()
     ])
     await message.reply(TEXTS["case_list_1"], reply_markup=kb)
-
 
 @dp.callback_query(F.data.startswith("inspect_case:"))
 async def inspect_case_callback(callback: CallbackQuery):
@@ -5941,7 +5285,6 @@ async def inspect_case_callback(callback: CallbackQuery):
         format_case_inspect_text(case_num, price, case["price"]),
         reply_markup=case_offer_keyboard(case_num, owner_id, price),
     )
-
 
 @dp.callback_query(F.data.startswith("buy_case:"))
 async def buy_case(callback: CallbackQuery):
@@ -5981,7 +5324,6 @@ async def buy_case(callback: CallbackQuery):
     )
     await callback.answer(TEXTS["buy_case_3"])
 
-
 async def apply_coin_tree_save(user_id: int, inventory_map: dict, event: str, score: int, evolution_level: int) -> dict:
     """Гарантированный сейв % очков/эво при эволюции или перерождении от 🟢/🟣/⚪️ монет дерева.
     event: "evolution" или "rebirth". Работает пассивно (монеты лежат в инвентаре, экипировать
@@ -6008,8 +5350,6 @@ async def apply_coin_tree_save(user_id: int, inventory_map: dict, event: str, sc
 
     if pct > 0:
         kept_score = round(score * pct)
-        # 🟢 Монета Эволюции сейвит только очки при эволюции, не уровень эволюции (это и так
-        # растёт при эволюции). При перерождении 🟢 не участвует — только 🟣/⚪️ сейвят эво тоже.
         if event == "rebirth" or inventory_map.get("awakening_coin", 0) > 0:
             kept_evolution = round(evolution_level * pct)
         extra_text += f"\n{coin_label}: сохранено {round(pct * 100)}% ({kept_score} очков ноги{f' и {kept_evolution} ур. эво' if kept_evolution else ''})!"
@@ -6027,7 +5367,6 @@ async def apply_coin_tree_save(user_id: int, inventory_map: dict, event: str, sc
                 extra_text += f"\n{PREMIUM_AWAKENING_COIN} Монета Пробуждения: выпал бейдж {badge_emoji} «{badge_name}»!"
 
     return {"kept_score": kept_score, "kept_evolution": kept_evolution, "extra_text": extra_text}
-
 
 async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirth_count: int, active_items=None) -> tuple[int, int, str]:
     """VIP авто-эво: каскадно эволюционирует, пока очков хватает на след. эволюцию —
@@ -6051,8 +5390,6 @@ async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirt
     if evolutions_done == 0:
         return evolution_level, score, ""
 
-    # 🟢/⚪️ Дерево монет: доп. эволюция и %-сейв ног применяются один раз, к финальному
-    # состоянию каскада (не за каждую эволюцию в цепочке отдельно).
     inv_rows = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv_rows}
     coin_save_text = ""
@@ -6067,7 +5404,6 @@ async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirt
     times = f" ×{evolutions_done}" if evolutions_done > 1 else ""
     text = f"\n\n⚙️💎 Авто-эволюция{times}! Теперь {evolution_level} уровень эволюции.{unlock_text}{coin_save_text}"
     return evolution_level, score, text
-
 
 @dp.message(F.text.lower() == "эволюция")
 async def evolve(message: Message):
@@ -6086,8 +5422,6 @@ async def evolve(message: Message):
 
     new_evolution = evolution_level + 1
 
-    # 🧊 Ледяной осколок: с шансом ICE_SHARD_SAVE_CHANCE очки ноги НЕ сбрасываются после эволюции.
-    # Если не сработал — проверяем гарантированный %-сейв от дерева монет (🟢/⚪️, см. apply_coin_tree_save).
     ice_text = ""
     kept_score = 0
     if "ice_shard" in set(_normalize_active_items(active_items)) and random.random() < ICE_SHARD_SAVE_CHANCE:
@@ -6101,7 +5435,6 @@ async def evolve(message: Message):
         save_result = await apply_coin_tree_save(user_id, inventory_map, "evolution", score, evolution_level)
         kept_score = save_result["kept_score"]
         coin_save_text = save_result["extra_text"]
-        # 🟢 Монета Эволюции / ⚪️ Монета Пробуждения: доп. эволюция сверху при каждой эволюции.
         if inventory_map.get("evolution_coin", 0) > 0 or inventory_map.get("awakening_coin", 0) > 0:
             new_evolution += 1
             coin_save_text += "\n🟢 Дерево монет: доп. эволюция сверху!"
@@ -6119,7 +5452,6 @@ async def evolve(message: Message):
         TEXTS["evolve_2"].format(v0=new_evolution, v1=round(EVO_HARDNESS_RATE * new_evolution * 100), v2=unlock_text + ice_text + coin_save_text)
     )
 
-
 @dp.message(F.text.lower() == "!ивент ноги")
 async def toggle_event(message: Message):
     if not is_admin(message):
@@ -6134,7 +5466,6 @@ async def toggle_event(message: Message):
         (new_value,),
     )
     if new_value == "1":
-        # ручной тумблер всегда даёт классический х2 без ограничения по времени
         for key, value in (("event_multiplier", "2"), ("event_until", "0")):
             await db_exec(
                 "INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
@@ -6147,9 +5478,6 @@ async def toggle_event(message: Message):
     else:
         await message.reply(TEXTS["toggle_event_2"])
 
-
-# ---------- Меню прокачки ("апгрейд" / "прокачка" / "апг") ----------
-
 def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int, craft_points: int = 0) -> str:
     craft_line = f"💠 Очки крафта: <code>{craft_points}</code>\n" if category == 3 else ""
     header = (
@@ -6159,7 +5487,6 @@ def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int,
         f"━━━━━━━━━━━━━━━━━━\n"
     )
     return header
-
 
 def upgrade_page_keyboard(upgrades: dict, user_id: int, category: int) -> InlineKeyboardMarkup:
     rows = []
@@ -6189,7 +5516,6 @@ def upgrade_page_keyboard(upgrades: dict, user_id: int, category: int) -> Inline
     rows.append(nav)
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
-
 @dp.message(F.text.lower().in_({"апгрейд", "прокачка", "апг"}))
 async def upgrade_menu(message: Message):
     user_id = message.from_user.id
@@ -6205,11 +5531,9 @@ async def upgrade_menu(message: Message):
         reply_markup=upgrade_page_keyboard(upgrades, user_id, 1),
     )
 
-
 @dp.callback_query(F.data == "upg_noop")
 async def upgrade_noop(callback: CallbackQuery):
     await callback.answer()
-
 
 @dp.callback_query(F.data.startswith("upg_page:"))
 async def upgrade_change_page(callback: CallbackQuery):
@@ -6229,7 +5553,6 @@ async def upgrade_change_page(callback: CallbackQuery):
         format_upgrade_page_text(upgrades, rebirth_points, category, craft_points),
         reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
     )
-
 
 @dp.callback_query(F.data.startswith("upg_buy:"))
 async def upgrade_buy(callback: CallbackQuery):
@@ -6278,9 +5601,6 @@ async def upgrade_buy(callback: CallbackQuery):
     )
     await callback.answer(TEXTS["upgrade_buy_5"].format(v0=UPGRADES[key]['name'], v1=upgrades[key]))
 
-
-# ---------- Дерево престижа ("престиж") ----------
-
 def format_prestige_page_text(prestige_upgrades: dict, prestige_points: int, page: int) -> str:
     total_pages = (len(PRESTIGE_ORDER) - 1) // PRESTIGE_PAGE_SIZE + 1
     header = (
@@ -6303,7 +5623,6 @@ def format_prestige_page_text(prestige_upgrades: dict, prestige_points: int, pag
         )
     return "\n".join(lines)
 
-
 def prestige_page_keyboard(prestige_upgrades: dict, user_id: int, page: int) -> InlineKeyboardMarkup:
     total_pages = (len(PRESTIGE_ORDER) - 1) // PRESTIGE_PAGE_SIZE + 1
     start = page * PRESTIGE_PAGE_SIZE
@@ -6324,7 +5643,6 @@ def prestige_page_keyboard(prestige_upgrades: dict, user_id: int, page: int) -> 
     rows.append(nav)
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
-
 @dp.message(F.text.lower() == "престиж")
 async def prestige_menu(message: Message):
     user_id = message.from_user.id
@@ -6339,11 +5657,9 @@ async def prestige_menu(message: Message):
         reply_markup=prestige_page_keyboard(prestige_upgrades, user_id, 0),
     )
 
-
 @dp.callback_query(F.data == "pr_noop")
 async def prestige_noop(callback: CallbackQuery):
     await callback.answer()
-
 
 @dp.callback_query(F.data.startswith("pr_page:"))
 async def prestige_change_page(callback: CallbackQuery):
@@ -6362,7 +5678,6 @@ async def prestige_change_page(callback: CallbackQuery):
         format_prestige_page_text(prestige_upgrades, prestige_points, page),
         reply_markup=prestige_page_keyboard(prestige_upgrades, owner_id, page),
     )
-
 
 @dp.callback_query(F.data.startswith("pr_buy:"))
 async def prestige_buy(callback: CallbackQuery):
@@ -6398,9 +5713,6 @@ async def prestige_buy(callback: CallbackQuery):
     )
     await callback.answer(TEXTS["upgrade_buy_5"].format(v0=PRESTIGE_UPGRADES[key]['name'], v1=prestige_upgrades[key]))
 
-
-# ---------- Перерождение ----------
-
 async def compute_rebirth_result(user_id: int, score: int, evolution_level: int, rebirth_points: int, rebirth_count: int,
                                   prestige_points: int, prestige_upgrades: dict, active_items, inventory_map: dict) -> dict:
     """Считает результат перерождения (в т.ч. проки дерева монет, требующие БД) — общая логика
@@ -6409,20 +5721,14 @@ async def compute_rebirth_result(user_id: int, score: int, evolution_level: int,
     new_rebirth_points = rebirth_points + points_gained
     new_rebirth_count = rebirth_count + 1
 
-    # Эхо: +1% шанс на бонусное Очко Перерождения за каждую ступень ветки p_echo.
     extra_text = ""
     echo_chance = 0.01 * prestige_bonus(prestige_upgrades, "p_echo")
     if echo_chance > 0 and random.random() < echo_chance:
         new_rebirth_points += 1
         extra_text += "\n🔮 Эхо сработало: +1 доп. Очко Перерождения!"
 
-    # Каждое обычное перерождение даёт +1 Очко Престижа (отдельная валюта, см. PRESTIGE_UPGRADES).
     new_prestige_points = prestige_points + PRESTIGE_PER_REBIRTH
 
-    # 🧊 Ледяной осколок: с шансом ICE_SHARD_SAVE_CHANCE уровень эволюции НЕ сбрасывается после
-    # перерождения. Если не сработал — проверяем гарантированный %-сейв очков+эво от дерева
-    # монет (🟣/⚪️, см. apply_coin_tree_save). Ледяной осколок и дерево монет не складываются —
-    # приоритет у сработавшего ледяного осколка (100% эво), иначе действует %-сейв дерева монет.
     kept_evolution = 0
     kept_score = 0
     if "ice_shard" in set(_normalize_active_items(active_items)) and random.random() < ICE_SHARD_SAVE_CHANCE:
@@ -6444,7 +5750,6 @@ async def compute_rebirth_result(user_id: int, score: int, evolution_level: int,
         "extra_text": extra_text,
     }
 
-
 async def try_auto_rebirth(user_id: int, score: int, evolution_level: int, rebirth_count: int,
                             rebirth_points: int, prestige_points: int, prestige_upgrades: dict,
                             active_items=None) -> tuple[int, int, int, int, int, str]:
@@ -6464,7 +5769,6 @@ async def try_auto_rebirth(user_id: int, score: int, evolution_level: int, rebir
     )
     text = f"\n♻️ Авто-перерождение: +{result['points_gained']}🉑 (всего {result['rebirth_points']}🉑)" + result["extra_text"]
     return result["kept_score"], result["kept_evolution"], result["rebirth_count"], result["rebirth_points"], result["prestige_points"], text
-
 
 @dp.message(F.text.lower() == "перерождение")
 async def rebirth(message: Message):
@@ -6499,7 +5803,6 @@ async def rebirth(message: Message):
         TEXTS["rebirth_2"].format(v0=result["points_gained"], v1=result["rebirth_points"], v2=new_hardness, v3=PRESTIGE_PER_REBIRTH) + result["extra_text"]
     )
 
-
 def ultra_rebirth_eligible(evolution_level: int, leg_level: int, rebirth_count: int) -> bool:
     """Все три условия обязательны одновременно (см. константы ULTRA_REQUIRED_*)."""
     return (
@@ -6508,13 +5811,11 @@ def ultra_rebirth_eligible(evolution_level: int, leg_level: int, rebirth_count: 
         and rebirth_count >= ULTRA_REQUIRED_REBIRTHS
     )
 
-
 def ultra_rebirth_confirm_keyboard(user_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=[[
         InlineKeyboardButton(text="🌌 Подтвердить", callback_data=f"ultra_ok:{user_id}", style="success"),
         InlineKeyboardButton(text="Отмена", callback_data=f"ultra_no:{user_id}", style="danger"),
     ]])
-
 
 @dp.message(F.text.lower() == "ультра перерождение")
 async def ultra_rebirth_info(message: Message):
@@ -6552,7 +5853,6 @@ async def ultra_rebirth_info(message: Message):
         reply_markup=ultra_rebirth_confirm_keyboard(user_id),
     )
 
-
 @dp.callback_query(F.data.startswith("ultra_no:"))
 async def ultra_rebirth_cancel(callback: CallbackQuery):
     owner_id = int(callback.data.split(":")[1])
@@ -6561,7 +5861,6 @@ async def ultra_rebirth_cancel(callback: CallbackQuery):
         return
     await callback.answer()
     await safe_edit_text(callback, TEXTS["ultra_rebirth_cancelled_1"])
-
 
 @dp.callback_query(F.data.startswith("ultra_ok:"))
 async def ultra_rebirth_confirm(callback: CallbackQuery):
@@ -6597,9 +5896,6 @@ async def ultra_rebirth_confirm(callback: CallbackQuery):
         await callback.answer()
         return
 
-    # Мягкий хард-ресет: обнуляются очки, уровень ноги (через score=0), эволюции и
-    # обычные перерождения. upgrades/предметы/coins НЕ трогаем — они остаются навсегда,
-    # как и в обычном перерождении. ultra_rebirth ставится в 1 безвозвратно.
     prestige_points = row[27]
     new_prestige_points = prestige_points + PRESTIGE_PER_ULTRA_REBIRTH
     await db_exec(
@@ -6616,7 +5912,6 @@ async def ultra_rebirth_confirm(callback: CallbackQuery):
         ),
     )
     await callback.answer()
-
 
 @dp.message(F.text.lower() == "баланс")
 async def show_balance(message: Message):
@@ -6637,7 +5932,6 @@ async def show_balance(message: Message):
             v0=score, v1=coins, v2=rebirth_points, v3=rebirth_count, v4=vip_line, v5=craft_points
         )
     )
-
 
 @dp.message(F.text.lower().startswith("!дать очкп"))
 async def admin_give_rebirth(message: Message):
@@ -6665,7 +5959,6 @@ async def admin_give_rebirth(message: Message):
     await db_exec("UPDATE users SET rebirth_points = ? WHERE user_id = ?", (new_points, target.id))
     await message.reply(TEXTS["admin_give_rebirth_4"].format(v0=amount, v1=esc(target_username), v2=new_points))
 
-
 @dp.message(F.text.regexp(r"(?i)^!дать (?:крафт|очкк)\b"))
 async def admin_give_craft(message: Message):
     if not is_admin(message):
@@ -6692,7 +5985,6 @@ async def admin_give_craft(message: Message):
     await db_exec("UPDATE users SET craft_points = ? WHERE user_id = ?", (new_points, target.id))
     await message.reply(f"Выдано {amount} 💠 очков крафта игроку {esc(target_username)} (Всего: {new_points})")
 
-
 @dp.message(F.text.regexp(r"(?i)^!снять (?:крафт|очкк)\b"))
 async def admin_take_craft(message: Message):
     if not is_admin(message):
@@ -6709,7 +6001,7 @@ async def admin_take_craft(message: Message):
         return
     target_username = target.username or target.first_name or "Без имени"
 
-    if match.group(1) is None:  # "!снять крафт все"
+    if match.group(1) is None:
         await db_exec("UPDATE users SET craft_points = 0 WHERE user_id = ?", (target.id,))
         await message.reply(f"Снято все 💠 очки крафта у игрока {esc(target_username)} (Осталось: 0)")
         return
@@ -6723,7 +6015,6 @@ async def admin_take_craft(message: Message):
     new_points = max(0, row[32] - amount)
     await db_exec("UPDATE users SET craft_points = ? WHERE user_id = ?", (new_points, target.id))
     await message.reply(f"Снято {amount} 💠 очков крафта у игрока {esc(target_username)} (Осталось: {new_points})")
-
 
 @dp.message(F.text.lower().startswith("!снять очкп"))
 async def admin_take_rebirth(message: Message):
@@ -6741,7 +6032,7 @@ async def admin_take_rebirth(message: Message):
         return
     target_username = target.username or target.first_name or "Без имени"
 
-    if match.group(1) is None:  # "!снять очкп все"
+    if match.group(1) is None:
         await db_exec("UPDATE users SET rebirth_points = 0 WHERE user_id = ?", (target.id,))
         await message.reply(TEXTS["admin_take_rebirth_4"].format(v0="все", v1=esc(target_username), v2=0))
         return
@@ -6755,7 +6046,6 @@ async def admin_take_rebirth(message: Message):
     new_points = max(0, row[14] - amount)
     await db_exec("UPDATE users SET rebirth_points = ? WHERE user_id = ?", (new_points, target.id))
     await message.reply(TEXTS["admin_take_rebirth_4"].format(v0=amount, v1=esc(target_username), v2=new_points))
-
 
 @dp.message(F.text.lower().startswith(NEWS_PREFIX))
 async def broadcast_news(message: Message):
@@ -6792,7 +6082,6 @@ async def broadcast_news(message: Message):
 
     await message.reply(TEXTS["broadcast_news_2"].format(v0=sent, v1=failed))
 
-
 @dp.message(F.text.regexp(r"(?i)^!дать ног(?!и лвл)"))
 async def admin_give_legs(message: Message):
     if not is_admin(message):
@@ -6821,7 +6110,6 @@ async def admin_give_legs(message: Message):
 
     await message.reply(TEXTS["admin_give_legs_4"].format(v0=amount, v1=esc(target_username), v2=new_score))
 
-
 @dp.message(F.text.lower().startswith("!снять ноги"))
 async def admin_take_legs(message: Message):
     if not is_admin(message):
@@ -6838,7 +6126,7 @@ async def admin_take_legs(message: Message):
         return
     target_username = target.username or target.first_name or "Без имени"
 
-    if match.group(1) is None:  # "!снять ноги все"
+    if match.group(1) is None:
         await db_exec("UPDATE users SET score = 0 WHERE user_id = ?", (target.id,))
         await message.reply(TEXTS["admin_take_legs_4"].format(v0=esc(target_username), v1=0))
         return
@@ -6853,7 +6141,6 @@ async def admin_take_legs(message: Message):
     await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (new_score, target.id))
 
     await message.reply(TEXTS["admin_take_legs_4"].format(v0=esc(target_username), v1=new_score))
-
 
 @dp.message(F.text.lower().startswith("!дать эво"))
 async def admin_give_evo(message: Message):
@@ -6882,7 +6169,6 @@ async def admin_give_evo(message: Message):
 
     await message.reply(TEXTS["admin_give_evo_4"].format(v0=amount, v1=esc(target_username), v2=new_evo))
 
-
 @dp.message(F.text.lower().startswith("!снять эво"))
 async def admin_take_evo(message: Message):
     if not is_admin(message):
@@ -6899,7 +6185,7 @@ async def admin_take_evo(message: Message):
         return
     target_username = target.username or target.first_name or "Без имени"
 
-    if match.group(1) is None:  # "!снять эво все"
+    if match.group(1) is None:
         await db_exec("UPDATE users SET evolution_level = 0 WHERE user_id = ?", (target.id,))
         await message.reply(TEXTS["admin_take_evo_4"].format(v0="все", v1=esc(target_username), v2=0))
         return
@@ -6914,7 +6200,6 @@ async def admin_take_evo(message: Message):
     await db_exec("UPDATE users SET evolution_level = ? WHERE user_id = ?", (new_evo, target.id))
 
     await message.reply(TEXTS["admin_take_evo_4"].format(v0=amount, v1=esc(target_username), v2=new_evo))
-
 
 @dp.message(F.text.lower().startswith("!дать коин"))
 async def admin_give_coin(message: Message):
@@ -6943,7 +6228,6 @@ async def admin_give_coin(message: Message):
 
     await message.reply(TEXTS["admin_give_coin_4"].format(v0=amount, v1=esc(target_username), v2=new_coins))
 
-
 @dp.message(F.text.lower().startswith("!снять коин"))
 async def admin_take_coin(message: Message):
     if not is_admin(message):
@@ -6960,7 +6244,7 @@ async def admin_take_coin(message: Message):
         return
     target_username = target.username or target.first_name or "Без имени"
 
-    if match.group(1) is None:  # "!снять коин все"
+    if match.group(1) is None:
         await db_exec("UPDATE users SET coins = 0 WHERE user_id = ?", (target.id,))
         await message.reply(TEXTS["admin_take_coin_4"].format(v0="все", v1=esc(target_username), v2=0))
         return
@@ -6975,7 +6259,6 @@ async def admin_take_coin(message: Message):
     await db_exec("UPDATE users SET coins = ? WHERE user_id = ?", (new_coins, target.id))
 
     await message.reply(TEXTS["admin_take_coin_4"].format(v0=amount, v1=esc(target_username), v2=new_coins))
-
 
 @dp.message(F.text.lower().startswith("!дать б "))
 async def admin_give_boost(message: Message):
@@ -7003,7 +6286,6 @@ async def admin_give_boost(message: Message):
 
     emoji, name, _, _ = ITEMS[item_key]
     await safe_reply(message, TEXTS["admin_give_boost_4"].format(v0=emoji, v1=esc(name), v2=esc(target_username)))
-
 
 @dp.message(F.text.lower().startswith("!снять б "))
 async def admin_take_boost(message: Message):
@@ -7035,7 +6317,6 @@ async def admin_take_boost(message: Message):
     else:
         await message.reply(TEXTS["admin_take_boost_5"].format(v0=esc(target_username), v1=esc(name)))
 
-
 @dp.message(F.text.lower().startswith("!дать п "))
 async def admin_give_passive(message: Message):
     if not is_admin(message):
@@ -7062,7 +6343,6 @@ async def admin_give_passive(message: Message):
 
     emoji, name, _, _ = ITEMS[item_key]
     await safe_reply(message, TEXTS["admin_give_passive_4"].format(v0=emoji, v1=esc(name), v2=esc(target_username)))
-
 
 @dp.message(F.text.lower().startswith("!снять п "))
 async def admin_take_passive(message: Message):
@@ -7093,7 +6373,6 @@ async def admin_take_passive(message: Message):
         await safe_reply(message, TEXTS["admin_take_passive_4"].format(v0=emoji, v1=esc(name), v2=esc(target_username)))
     else:
         await message.reply(TEXTS["admin_take_passive_5"].format(v0=esc(target_username), v1=esc(name)))
-
 
 @dp.message(F.text.lower().startswith("!дать вип"))
 async def admin_give_vip(message: Message):
@@ -7128,7 +6407,6 @@ async def admin_give_vip(message: Message):
 
     await message.reply(TEXTS["admin_give_vip_4"].format(v0=days, v1=esc(target_username)))
 
-
 @dp.message(F.text.lower().startswith("!снять вип"))
 async def admin_take_vip(message: Message):
     if not is_admin(message):
@@ -7149,7 +6427,6 @@ async def admin_take_vip(message: Message):
     await db_exec("UPDATE users SET vip_until = 0 WHERE user_id = ?", (target.id,))
 
     await message.reply(TEXTS["admin_take_vip_3"].format(v0=esc(target_username)))
-
 
 @dp.message(F.text.lower().startswith("!сбросить"))
 async def admin_reset(message: Message):
@@ -7179,7 +6456,6 @@ async def admin_reset(message: Message):
 
     await message.reply(TEXTS["admin_reset_3"].format(v0=esc(target_username)))
 
-
 @dp.message(F.text.lower().startswith("!установить ног"))
 async def admin_set_legs(message: Message):
     if not is_admin(message):
@@ -7205,7 +6481,6 @@ async def admin_set_legs(message: Message):
     old_score = row[2]
     await db_exec("UPDATE users SET score = ? WHERE user_id = ?", (amount, target.id))
     await maybe_announce_levelup(message, target_username, old_score, amount, row[3], bool(row[11]))
-
 
 @dp.message(F.text.lower().startswith("!дать ноги лвл"))
 async def admin_give_legs_level(message: Message):
@@ -7245,7 +6520,6 @@ async def admin_give_legs_level(message: Message):
 
     await message.reply(TEXTS["admin_set_legs_4"].format(v0=esc(target_username), v1=amount, v2=old_score))
 
-
 @dp.message(F.text.lower().startswith("!установить эво"))
 async def admin_set_evo(message: Message):
     if not is_admin(message):
@@ -7273,7 +6547,6 @@ async def admin_set_evo(message: Message):
 
     await message.reply(TEXTS["admin_set_evo_4"].format(v0=esc(target_username), v1=amount, v2=old_evo))
 
-
 @dp.message(F.text.lower().startswith("!сброс кд"))
 async def admin_reset_cd(message: Message):
     if not is_admin(message):
@@ -7295,7 +6568,6 @@ async def admin_reset_cd(message: Message):
 
     await message.reply(TEXTS["admin_reset_cd_3"].format(v0=esc(target_username)))
 
-
 @dp.message(F.text.lower().startswith("!сброс бонус"))
 async def admin_reset_bonus(message: Message):
     if not is_admin(message):
@@ -7316,7 +6588,6 @@ async def admin_reset_bonus(message: Message):
     await db_exec("UPDATE users SET last_bonus = 0 WHERE user_id = ?", (target.id,))
 
     await message.reply(TEXTS["admin_reset_bonus_3"].format(v0=esc(target_username)))
-
 
 @dp.message(F.text.lower().startswith("!дать кейс"))
 async def admin_give_case(message: Message):
@@ -7359,7 +6630,6 @@ async def admin_give_case(message: Message):
         TEXTS["admin_give_case_5"].format(v0=esc(target_username), v1=esc(case["name"]), v2=count, v3=loot_lines),
     )
 
-
 @dp.message(F.text.regexp(r"(?i)^!дебаг\s+"))
 async def admin_debug(message: Message):
     if not is_admin(message):
@@ -7379,7 +6649,6 @@ async def admin_debug(message: Message):
     dump = "\n".join(f"{name} = {value}" for name, value in zip(fields, row))
     await message.reply(TEXTS["admin_debug_3"].format(v0=esc(row[1]), v1=esc(dump)))
 
-
 @dp.message(F.text.regexp(r"(?i)^!текст\s+"))
 async def admin_show_text(message: Message):
     if not is_admin(message):
@@ -7396,7 +6665,6 @@ async def admin_show_text(message: Message):
         return
 
     await message.reply(TEXTS["admin_show_text_3"].format(v0=esc(key), v1=esc(TEXTS[key])))
-
 
 @dp.message(F.text.regexp(r"(?i)^!симулировать эволюция\s+"))
 async def admin_simulate_evolution(message: Message):
@@ -7422,7 +6690,6 @@ async def admin_simulate_evolution(message: Message):
         TEXTS["admin_simulate_evo_3"].format(v0=esc(username), v1=score, v2=required, v3=evolution_level, v4=verdict)
     )
 
-
 @dp.message(F.text.lower() == "!стата")
 async def admin_stats(message: Message):
     if not is_admin(message):
@@ -7444,7 +6711,6 @@ async def admin_stats(message: Message):
         )
     )
 
-
 @dp.message(F.text.lower() == "!рестарт")
 async def admin_restart(message: Message):
     if not is_admin(message):
@@ -7453,7 +6719,6 @@ async def admin_restart(message: Message):
     await message.reply(TEXTS["admin_restart_1"])
     await bot.session.close()
     os._exit(0)
-
 
 @dp.message(F.text.regexp(r"(?i)^!ивент\s+х\d"))
 async def admin_event_custom(message: Message):
@@ -7480,7 +6745,6 @@ async def admin_event_custom(message: Message):
     _invalidate_event_state_cache()
 
     await message.reply(TEXTS["admin_event_custom_3"].format(v0=mult, v1=minutes))
-
 
 @dp.message(F.text.lower().startswith("!установить очкп"))
 async def admin_set_rebirth(message: Message):
@@ -7509,7 +6773,6 @@ async def admin_set_rebirth(message: Message):
 
     await message.reply(TEXTS["admin_set_rebirth_4"].format(v0=esc(target_username), v1=amount, v2=old_rp))
 
-
 @dp.message(F.text.regexp(r"(?i)^!обнулить экономику\s+"))
 async def admin_wipe_economy(message: Message):
     if not is_admin(message):
@@ -7530,7 +6793,6 @@ async def admin_wipe_economy(message: Message):
         (row[0],),
     )
     await message.reply(TEXTS["admin_wipe_economy_3"].format(v0=esc(row[1])))
-
 
 @dp.message(F.text.regexp(r"(?i)^!мультипликатор ферма\s+"))
 async def admin_personal_boost(message: Message):
@@ -7564,7 +6826,6 @@ async def admin_personal_boost(message: Message):
 
     await message.reply(TEXTS["admin_personal_boost_4"].format(v0=esc(target_username), v1=mult, v2=minutes))
 
-
 @dp.message(F.text.regexp(r"(?i)^!дать предмет\s+"))
 async def admin_give_item(message: Message):
     if not is_admin(message):
@@ -7595,7 +6856,6 @@ async def admin_give_item(message: Message):
 
     emoji, name, _, _ = ITEMS[item_key]
     await message.reply(TEXTS["admin_give_item_5"].format(v0=esc(target_username), v1=emoji, v2=esc(name), v3=count))
-
 
 @dp.message(F.text.regexp(r"(?i)^!дать ключ\s+"))
 async def admin_give_key(message: Message):
@@ -7628,7 +6888,6 @@ async def admin_give_key(message: Message):
     emoji, name, _, _ = ITEMS[item_key]
     await message.reply(TEXTS["admin_give_key_5"].format(v0=esc(target_username), v1=emoji, v2=esc(name), v3=count))
 
-
 @dp.message(F.text.regexp(r"(?i)^!очистить инвентарь\s+"))
 async def admin_clear_inventory(message: Message):
     if not is_admin(message):
@@ -7647,7 +6906,6 @@ async def admin_clear_inventory(message: Message):
     await db_exec("DELETE FROM inventory WHERE user_id = ?", (row[0],))
     await db_exec("UPDATE users SET equipped_items = '' WHERE user_id = ?", (row[0],))
     await message.reply(TEXTS["admin_clear_inventory_3"].format(v0=esc(row[1])))
-
 
 @dp.message(F.text.regexp(r"(?i)^!дать апгрейд\s+"))
 async def admin_set_upgrade(message: Message):
@@ -7687,7 +6945,6 @@ async def admin_set_upgrade(message: Message):
         TEXTS["admin_set_upgrade_5"].format(v0=esc(target_username), v1=esc(UPGRADES[upgrade_key]["name"]), v2=level)
     )
 
-
 @dp.message(F.text.lower().startswith("!вип навсегда"))
 async def admin_vip_forever(message: Message):
     if not is_admin(message):
@@ -7708,7 +6965,6 @@ async def admin_vip_forever(message: Message):
 
     await message.reply(TEXTS["admin_vip_forever_2"].format(v0=esc(target_username)))
 
-
 @dp.message(F.text.lower().startswith("!ультра навсегда"))
 async def admin_ultra_rebirth_forever(message: Message):
     """Owner-инструмент для тестирования: выдаёт статус Ультра перерождения напрямую,
@@ -7728,7 +6984,6 @@ async def admin_ultra_rebirth_forever(message: Message):
     await db_exec("UPDATE users SET ultra_rebirth = 1 WHERE user_id = ?", (target.id,))
 
     await message.reply(TEXTS["admin_ultra_rebirth_2"].format(v0=esc(target_username)))
-
 
 @dp.message(F.text.regexp(r"(?i)^!сброс ник\s+"))
 async def admin_reset_nick(message: Message):
@@ -7752,7 +7007,6 @@ async def admin_reset_nick(message: Message):
 
     await db_exec("UPDATE users SET nickname = NULL WHERE user_id = ?", (row[0],))
     await message.reply(TEXTS["admin_reset_nick_4"].format(v0=esc(row[1]), v1=esc(old_nick)))
-
 
 @dp.message(F.text.lower() == "!список вип")
 async def admin_list_vip(message: Message):
@@ -7780,7 +7034,6 @@ async def admin_list_vip(message: Message):
 
     await message.reply(TEXTS["admin_list_vip_2"].format(v0=len(rows), v1="\n".join(lines)))
 
-
 @dp.message(F.text.lower() == "!список ников")
 async def admin_list_nicknames(message: Message):
     if not is_admin(message):
@@ -7795,7 +7048,6 @@ async def admin_list_nicknames(message: Message):
 
     lines = [f"● {esc(nickname)} (@{esc(username)})" for username, nickname in rows]
     await message.reply(TEXTS["admin_list_nicknames_2"].format(v0=len(rows), v1="\n".join(lines)))
-
 
 @dp.message(F.text.regexp(r"(?i)^!найти\s+"))
 async def admin_find(message: Message):
@@ -7828,7 +7080,6 @@ async def admin_find(message: Message):
 
     await message.reply(TEXTS["admin_find_3"].format(v0=esc(row[1]), v1=len(chat_rows), v2="\n".join(lines)))
 
-
 @dp.message(F.text.lower() == "!игроки")
 async def admin_list_players(message: Message):
     """!игроки — показ всех игроков (username/ник + основные показатели)."""
@@ -7848,7 +7099,6 @@ async def admin_list_players(message: Message):
         for username, nickname, score, evolution_level in rows
     ]
     await message.reply(TEXTS["admin_players_2"].format(v0=len(rows), v1="\n".join(lines)))
-
 
 @dp.message(F.text.lower() == "!список чат")
 async def admin_list_chats(message: Message):
@@ -7876,7 +7126,6 @@ async def admin_list_chats(message: Message):
         return
 
     await message.reply(TEXTS["admin_list_chats_2"].format(v0=len(lines), v1="\n".join(lines)))
-
 
 @dp.message(F.text.regexp(r'(?i)^!промокод создать бейдж\s+'))
 async def admin_promo_create_badge(message: Message):
@@ -7914,7 +7163,6 @@ async def admin_promo_create_badge(message: Message):
 
     emoji, name = PROMO_BADGES[badge_key]
     await message.reply(TEXTS["promo_create_badge_4"].format(v0=esc(code), v1=emoji, v2=esc(name)))
-
 
 @dp.message(F.text.regexp(r'(?i)^!промокод создать\s+(?!бейдж\s)'))
 async def admin_promo_create(message: Message):
@@ -7965,7 +7213,6 @@ async def admin_promo_create(message: Message):
 
     await message.reply(TEXTS["promo_create_6"].format(v0=esc(code), v1=reward_label, v2=amount, v3=activations))
 
-
 @dp.message(F.text.regexp(r'(?i)^!промокод удалить\s+'))
 async def admin_promo_delete(message: Message):
     if not is_admin(message):
@@ -7985,7 +7232,6 @@ async def admin_promo_delete(message: Message):
     await db_exec("DELETE FROM promocodes WHERE code = ?", (code,))
     await db_exec("DELETE FROM promocode_uses WHERE code = ?", (code,))
     await message.reply(TEXTS["promo_delete_3"].format(v0=esc(code)))
-
 
 @dp.message(F.text.lower() == "!промокод список")
 async def admin_promo_list(message: Message):
@@ -8012,7 +7258,6 @@ async def admin_promo_list(message: Message):
         lines.append(f"● «{esc(code)}» — {reward_label} × {amount} (осталось активаций: {activations_left})")
 
     await message.reply(TEXTS["promo_list_2"].format(v0=len(rows), v1="\n".join(lines)))
-
 
 @dp.message(F.text.regexp(r'(?i)^(?:промокод|промо)\s+\S+$'))
 async def redeem_promo(message: Message):
@@ -8045,9 +7290,6 @@ async def redeem_promo(message: Message):
 
     await ensure_user(user_id, username)
 
-    # Гонка: атомарно списываем активацию только если она ещё есть в момент UPDATE
-    # (защита от переактивации при параллельных запросах). Если WHERE не подошёл —
-    # значит активации кончились именно сейчас, между чтением и записью.
     await db_exec(
         "UPDATE promocodes SET activations_left = activations_left - 1 "
         "WHERE code = ? AND activations_left > 0",
@@ -8058,10 +7300,8 @@ async def redeem_promo(message: Message):
         await message.reply(TEXTS["promo_redeem_2"])
         return
     if check[0] < activations_left:
-        # UPDATE применился именно в этом вызове — активация наша, продолжаем.
         pass
     else:
-        # activations_left не изменился нашим запросом — значит уже был 0, кто-то опередил.
         await message.reply(TEXTS["promo_redeem_3"].format(v0=esc(code)))
         return
 
@@ -8071,7 +7311,6 @@ async def redeem_promo(message: Message):
     )
     reward_label = await apply_promo_reward(user_id, reward_type, reward_key, amount)
     await message.reply(TEXTS["promo_redeem_5"].format(v0=esc(code), v1=reward_label))
-
 
 @dp.message(F.text.lower() == "!логи")
 async def admin_logs(message: Message):
@@ -8089,7 +7328,6 @@ async def admin_logs(message: Message):
         lines.append(f"● [{dt}] @{esc(admin_username)}: {esc(command)}")
 
     await message.reply(TEXTS["admin_logs_2"].format(v0=len(rows), v1="\n".join(lines)))
-
 
 @dp.message(F.text.lower().startswith("!топ спам"))
 async def admin_top_spam(message: Message):
@@ -8127,7 +7365,7 @@ async def admin_top_spam(message: Message):
     per_user = {}
     for user_id, username, ts in rows:
         entry = per_user.setdefault(user_id, {"username": username, "count": 0, "min_gap": None, "last_ts": None})
-        entry["username"] = username  # берём самый свежий username
+        entry["username"] = username
         entry["count"] += 1
         if entry["last_ts"] is not None:
             gap = ts - entry["last_ts"]
@@ -8137,8 +7375,6 @@ async def admin_top_spam(message: Message):
 
     ranked = sorted(per_user.items(), key=lambda kv: kv[1]["count"], reverse=True)[:20]
 
-    # Нога (уровень) нужна только для этих ≤20 игроков, а не для всех строк
-    # лога — один точечный запрос по IN(...), а не N+1 обращений в БД.
     leg_by_user = {}
     if ranked:
         ids = [user_id for user_id, _ in ranked]
@@ -8156,10 +7392,6 @@ async def admin_top_spam(message: Message):
     lines = []
     for user_id, info in ranked:
         gap = info["min_gap"]
-        # PLAYER_LOG_MIN_INTERVAL — сам лог не пишет чаще этого на юзера, так
-        # что min_gap меньше него в принципе не бывает; порог подозрения
-        # берём чуть выше — с запасом на то, что реальный человек не жмёт
-        # команды раз в секунду часами подряд.
         suspicious = gap is not None and gap <= PLAYER_LOG_MIN_INTERVAL + 1
         marker = " ⚠️ подозрение на бота" if suspicious else ""
         gap_text = f"{gap}с" if gap is not None else "—"
@@ -8170,7 +7402,6 @@ async def admin_top_spam(message: Message):
         )
 
     await message.reply(TEXTS["admin_top_spam_2"].format(v0=minutes, v1=len(ranked), v2="\n".join(lines)))
-
 
 @dp.message(F.text.lower() == "!логи вся")
 async def admin_logs_all(message: Message):
@@ -8191,7 +7422,7 @@ async def admin_logs_all(message: Message):
 
     total = len(rows)
     header = TEXTS["admin_logs_all_2"].format(v0=total, v1="")
-    chunk_limit = 3800  # запас от лимита Telegram (4096) под HTML-теги и служебный текст
+    chunk_limit = 3800
     chunk_lines = []
     chunk_len = len(header)
     chunks = []
@@ -8211,18 +7442,8 @@ async def admin_logs_all(message: Message):
         else:
             await message.answer("\n".join(chunk))
 
-
 @dp.message(F.text.lower().startswith("!чистлоги"))
 async def admin_clear_logs(message: Message):
-    # !чистлоги            -> удаляет всё старше 7 дней (по умолчанию)
-    # !чистлоги 3          -> удаляет всё старше 3 дней
-    # !чистлоги все        -> удаляет audit_log целиком
-    # !чистлоги игроки ... -> то же самое, но для player_action_log (см. ниже);
-    #                         проверяем ПЕРВЫМ делом в этой же функции, а не
-    #                         отдельным хендлером — иначе этот же startswith
-    #                         перехватил бы "!чистлоги игроки" раньше, чем
-    #                         дошло бы до отдельного хендлера с более узким
-    #                         префиксом (aiogram матчит в порядке регистрации).
     if not is_admin(message):
         return
 
@@ -8238,7 +7459,6 @@ async def admin_clear_logs(message: Message):
         before_row = await db_query_one("SELECT COUNT(*) FROM audit_log")
         before = before_row[0] if before_row else 0
         await db_exec("DELETE FROM audit_log")
-        # логируем ПОСЛЕ очистки, иначе запись о самой команде чистки тоже удалится
         await log_admin_action(message)
         await message.reply(TEXTS["admin_logs_clear_1"].format(v0=before, v1=0))
         return
@@ -8259,17 +7479,7 @@ async def admin_clear_logs(message: Message):
     after = after_row[0] if after_row else 0
     await message.reply(TEXTS["admin_logs_clear_1"].format(v0=before, v1=after))
 
-
 async def _admin_clear_player_logs_impl(message: Message, arg: str):
-    # !чистлоги игроки        -> удаляет player_action_log старше 2 дней (по умолчанию)
-    # !чистлоги игроки 1      -> удаляет всё старше 1 дня
-    # !чистлоги игроки все    -> удаляет player_action_log целиком
-    #
-    # Отдельная ветка, а не общий срок с !чистлоги — player_action_log
-    # пишется на КАЖДУЮ команду каждого игрока (см. ThrottleMiddleware) и
-    # растёт заметно быстрее, чем audit_log (только админ-действия), поэтому
-    # дефолтный срок хранения короче (2 дня, а не 7). is_admin уже проверен
-    # вызывающей admin_clear_logs.
     if arg in ("все", "всё", "all"):
         before_row = await db_query_one("SELECT COUNT(*) FROM player_action_log")
         before = before_row[0] if before_row else 0
@@ -8294,7 +7504,6 @@ async def _admin_clear_player_logs_impl(message: Message, arg: str):
     after = after_row[0] if after_row else 0
     await message.reply(TEXTS["admin_logs_clear_1"].format(v0=before, v1=after))
 
-
 @dp.message(F.text.lower() == "!пинг")
 async def admin_ping(message: Message):
     if not is_admin(message):
@@ -8305,12 +7514,8 @@ async def admin_ping(message: Message):
     elapsed_ms = round((time.monotonic() - start) * 1000)
     await message.reply(TEXTS["admin_ping_1"].format(v0=elapsed_ms))
 
-
 @dp.message(F.text.lower() == "!пинг5")
 async def admin_ping5(message: Message):
-    # Диагностика: 5 последовательных SELECT 1, чтобы отличить разовый пик
-    # (запрос попал в очередь _db_worker следом за другими задачами) от
-    # устойчивой сетевой/региональной задержки до Turso.
     if not is_admin(message):
         return
     await log_admin_action(message)
@@ -8326,7 +7531,6 @@ async def admin_ping5(message: Message):
         )
     )
 
-
 @dp.message(F.text.lower() == "!ивент стоп")
 async def admin_event_stop(message: Message):
     if not is_admin(message):
@@ -8339,7 +7543,6 @@ async def admin_event_stop(message: Message):
     )
     _invalidate_event_state_cache()
     await message.reply(TEXTS["admin_event_stop_1"] if active else TEXTS["admin_event_stop_2"])
-
 
 @dp.message(F.text.lower() == "!ивент статус")
 async def admin_event_status(message: Message):
@@ -8362,15 +7565,10 @@ async def admin_event_status(message: Message):
 
     await message.reply(TEXTS["admin_event_status_1"].format(v0=mult, v1=left_text))
 
-
 async def handle(request):
     return web.Response(text="Бот Нога Работает!")
 
-
 async def keep_alive():
-    # Render задаёт готовый URL с протоколом (RENDER_EXTERNAL_URL). Koyeb вместо этого
-    # даёт только домен без протокола (KOYEB_PUBLIC_DOMAIN) — https:// нужно добавить
-    # самим. Проверяем оба варианта, чтобы один и тот же код работал на обеих платформах.
     url = os.environ.get("RENDER_EXTERNAL_URL")
     if not url:
         domain = os.environ.get("KOYEB_PUBLIC_DOMAIN")
@@ -8388,7 +7586,6 @@ async def keep_alive():
                     print(f"Self-ping: {resp.status}")
             except Exception as e:
                 print(f"Self-ping не удался: {e}")
-
 
 async def main():
     await init_db()
@@ -8410,8 +7607,6 @@ async def main():
     try:
         await dp.start_polling(bot, drop_pending_updates=False)
     finally:
-        # Сохраняем то, что накопилось в буфере логов и ещё не попало в БД,
-        # чтобы штатная остановка (не краш) не теряла последние секунды логов.
         if _player_log_buffer:
             try:
                 batch, _player_log_buffer[:] = _player_log_buffer[:], []
@@ -8423,7 +7618,6 @@ async def main():
                 print(f"Финальный flush player_action_log не удался: {e}")
         await bot.session.close()
         await runner.cleanup()
-
 
 if __name__ == "__main__":
     if not TOKEN:
