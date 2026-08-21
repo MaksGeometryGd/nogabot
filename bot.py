@@ -136,6 +136,19 @@ PREMIUM_CHRONOS_CLOCK = '<tg-emoji emoji-id="5237697056805510735">⏰</tg-emoji>
 PREMIUM_CHRONOS_ORB = '<tg-emoji emoji-id="5305669252181672918">🔮</tg-emoji>'
 PREMIUM_BADGE_CHAOS_MASTER = '<tg-emoji emoji-id="5237888066886064441">⚡️</tg-emoji>'
 
+# ---------- Дерево монет (крафт-апдейт: странная монета -> ...) ----------
+# У всех ниже пока нет реального emoji-id (заглушки, обычный юникод-эмодзи без обёртки
+# <tg-emoji>) — см. пояснение про PREMIUM_POWER_AMULET выше. Когда появятся настоящие
+# emoji-id, оберни аналогично '<tg-emoji emoji-id="ЧИСЛО">эмодзи</tg-emoji>'.
+PREMIUM_NOGOST_COIN = '🟤'
+PREMIUM_GODLY_NOGOST_COIN = '🔶'
+PREMIUM_CRAFT_COIN = '🔘'
+PREMIUM_BITCOIN = '🟠'
+PREMIUM_REBIRTH_COIN = '🟣'
+PREMIUM_EVOLUTION_COIN = '🟢'
+PREMIUM_AWAKENING_COIN = '⚪️'
+PREMIUM_BADGE_INVESTOR = '💹'
+
 # ---------- Кейс 3: премиум-иконки (заглушки) ----------
 # TODO: у всех ниже пока нет реального emoji-id (просто обычный юникод-эмодзи без обёртки
 # <tg-emoji>) — как найдёшь/сделаешь премиум-версию в Telegram, оберни так же, как выше:
@@ -762,6 +775,19 @@ ITEMS = {
     # ---------- Новые крафты (мини-апдейт) ----------
     # Не выбивается и не выдаётся промо/админкой — получить можно только крафтом.
     "miku_fan_amulet": (PREMIUM_MIKU_FAN_AMULET, "Амулет Фаната Мику", 300, 0),
+
+    # ---------- Дерево монет (крафт-апдейт) ----------
+    # Всё дерево не выбивается из кейсов (drop_weight=0) — только крафт от strange_coin.
+    # boost_percent=0 у всех, кроме nogost_coin/godly_nogost_coin — их пассивный множитель
+    # фарма (x3/x6) реализован именно через boost_percent (складывается в get_multiplier(),
+    # как у обычных бустеров), см. RECIPES ниже и apply_farm_bonuses/count_legs.
+    "nogost_coin":       (PREMIUM_NOGOST_COIN, "Монета Ногости", 200, 0),
+    "godly_nogost_coin": (PREMIUM_GODLY_NOGOST_COIN, "Монета Бога Ногости", 500, 0),
+    "craft_coin":        (PREMIUM_CRAFT_COIN, "Монета Крафта", 0, 0),
+    "bitcoin":           (PREMIUM_BITCOIN, "Биткоин", 0, 0),
+    "rebirth_coin":      (PREMIUM_REBIRTH_COIN, "Монета Перерождения", 0, 0),
+    "evolution_coin":    (PREMIUM_EVOLUTION_COIN, "Монета Эволюции", 0, 0),
+    "awakening_coin":    (PREMIUM_AWAKENING_COIN, "Монета Пробуждения", 0, 0),
 }
 
 # Предметы, которые нельзя продать/передать/уничтожить — личные заглушки/значки.
@@ -775,6 +801,10 @@ NON_TRADABLE_ITEMS = {
     "chaos_orb", "chronos_clock", "chronos_orb",
     # Крафтовый эксклюзив — важный эндгейм-предмет, нельзя продать/передать.
     "miku_fan_amulet",
+    # Дерево монет — эндгейм-крафт-предметы, нельзя продать/передать (только использовать
+    # как ингредиент в следующем крафте, либо экипировать nogost_coin/godly_nogost_coin).
+    "nogost_coin", "godly_nogost_coin", "craft_coin", "bitcoin",
+    "rebirth_coin", "evolution_coin", "awakening_coin",
 }
 
 PASSIVE_ITEMS = {
@@ -784,6 +814,11 @@ PASSIVE_ITEMS = {
     "old_vase", "golden_vase", "godly_vase", "warm_candle",
     # крафт-материалы из кейса 3 (сырьё под будущие рецепты, не экипируются)
     "broken_clock", "essence_drop", "comet_shard", "koshko_gift", "ancient_stone", "fate_thread",
+    # Дерево монет: эти 5 работают пассивно просто лёжа в инвентаре (см. apply_farm_bonuses /
+    # apply_coin_tree_procs) — НЕ экипируются. nogost_coin и godly_nogost_coin, наоборот,
+    # экипируются (их x3/x6 буст фармы идёт через boost_percent -> get_multiplier), поэтому
+    # их здесь нет.
+    "craft_coin", "bitcoin", "rebirth_coin", "evolution_coin", "awakening_coin",
 }
 
 SELL_PRICE = {
@@ -799,6 +834,8 @@ SELL_PRICE = {
     "tide_wave": 16, "warrior_skull": 24,
     "broken_clock": 8, "essence_drop": 14, "comet_shard": 30, "koshko_gift": 35,
     "ancient_stone": 6, "fate_thread": 32,
+    "nogost_coin": 300, "godly_nogost_coin": 900, "craft_coin": 150, "bitcoin": 250,
+    "rebirth_coin": 400, "evolution_coin": 350, "awakening_coin": 1200,
 }
 
 ITEM_FLAT_BONUS = {
@@ -948,6 +985,40 @@ RECIPES = {
         "level": 1,
         "ingredients": {"mk_sandsmoon": 1, "miku_amulet": 1},
     },
+
+    # ---------- Дерево монет (крафт-апдейт) ----------
+    "nogost_coin": {
+        "level": 2,
+        "ingredients": {"strange_coin": 1},
+        "score_cost": 10_000_000,  # + 10 000 000 очков ног
+    },
+    "godly_nogost_coin": {
+        "level": 3,
+        "ingredients": {"nogost_coin": 3, "godly_vase": 3},
+    },
+    "craft_coin": {
+        "level": 3,
+        "ingredients": {"strange_coin": 1},
+        "craft_points_cost": 50,  # + 50 💠 очков крафта
+    },
+    "bitcoin": {
+        "level": 2,
+        "ingredients": {"strange_coin": 5},
+        "coin_cost": 1_000_000,  # + 1 000 000 🪙 монет
+    },
+    "rebirth_coin": {
+        "level": 3,
+        "ingredients": {"strange_coin": 1},
+        "rebirth_cost": 5000,  # + 5000 🉑 очков перерождения
+    },
+    "evolution_coin": {
+        "level": 2,
+        "ingredients": {"strange_coin": 1, "galaxy_might_amulet": 5},
+    },
+    "awakening_coin": {
+        "level": 3,
+        "ingredients": {"evolution_coin": 1, "rebirth_coin": 1},
+    },
 }
 
 # Иерархия "уникальных" бустеров (от слабого к сильному) — используется для правила
@@ -974,6 +1045,17 @@ GOD_ESSENCE_FARM_SPEED = 5        # фарм в 5 раз быстрее
 TIME_PARTICLE_FARM_SPEED = 4      # фарм в 4 раза быстрее (пассивно, лежит в инвентаре)
 PAW_POINT_MULTIPLIER = 3          # 🐾 даёт втрое больше очков, чем обычная робо-нога 🦿
 ICE_SHARD_SAVE_CHANCE = 0.20      # 🧊 Ледяной осколок: шанс не сбросить очки/эво при эволюции/перерождении
+
+# ---------- Дерево монет: сейв очков/эво при эволюции и перерождении ----------
+# В отличие от 🧊 Ледяного осколка (шанс), эти три — ГАРАНТИРОВАННЫЙ сейв доли (%) очков/эво
+# при каждом срабатывании, и работают лёжа в инвентаре (не нужно экипировать). Если у игрока
+# несколько монет дерева одновременно — действует только САМАЯ СИЛЬНАЯ (приоритет по списку).
+EVOLUTION_COIN_SAVE_PCT = 0.30    # 🟢 Монета Эволюции: сейвит 30% ног при ЭВОЛЮЦИИ (не перерождении)
+REBIRTH_COIN_SAVE_PCT = 0.50      # 🟣 Монета Перерождения: сейвит 50% ног И ЭВО при ПЕРЕРОЖДЕНИИ (не эволюции)
+AWAKENING_COIN_SAVE_PCT = 0.70    # ⚪️ Монета Пробуждения: сейвит 70% ног И ЭВО при ЭВОЛЮЦИИ ИЛИ ПЕРЕРОЖДЕНИИ
+AWAKENING_COIN_PRESTIGE_CHANCE = 0.01   # шанс дать 3 очка престижа при перерождении/эволюции
+AWAKENING_COIN_PRESTIGE_AMOUNT = 3
+AWAKENING_COIN_BADGE_CHANCE = 0.0001    # 0.01% — бейдж "Инвестировал в #####"
 DRAGON_CLAW_POTION_MULT = 4       # 🐉 Коготь дракона: усиливает зелье скорости с x2 до x4
 TIDE_WAVE_PROC_CHANCE = 0.05      # 🌊 Волна прилива: шанс на доп. предмет из кейса 1 или 2 при фарме ног
 
@@ -1021,14 +1103,18 @@ def get_active_unique_tier(active_items):
 def active_farm_limits(active_items, prestige_upgrades: dict = None) -> dict:
     """Лимиты за сообщение (🦵/🦿/🌌/⭐️) с учётом сильнейшего уникального бустера
     + постоянных бонусов дерева престижа (p_legs/p_mek, см. PRESTIGE_UPGRADES)
-    + плоского бонуса от 🔥 Уголька (+1 к лимиту 🦵, складывается с чем угодно)."""
+    + плоского бонуса от 🔥 Уголька (+1 к лимиту 🦵, складывается с чем угодно)
+    + плоского бонуса от 🔶 Монеты Бога Ногости (+15 к лимиту 🦵, только пока экипирована)."""
     tier = get_active_unique_tier(active_items)
     overrides = UNIQUE_LIMIT_OVERRIDES.get(tier, {})
     prestige_upgrades = prestige_upgrades or {}
     leg_bonus = prestige_bonus(prestige_upgrades, "p_legs")
     mek_bonus = prestige_bonus(prestige_upgrades, "p_mek")
-    if "ember" in set(_normalize_active_items(active_items)):
+    equipped = set(_normalize_active_items(active_items))
+    if "ember" in equipped:
         leg_bonus += 1
+    if "godly_nogost_coin" in equipped:
+        leg_bonus += 15
     return {
         "mek_limit": overrides.get("mek_limit", MEK_LIMIT) + mek_bonus,
         "leg_limit": overrides.get("leg_limit", LEG_LIMIT) + leg_bonus,
@@ -1809,9 +1895,21 @@ def next_level_text(score: int, evolution_level: int, rebirth_count: int = 0,
     return f"До {level + 1} уровня осталось {nxt - score} очков"
 
 
-def equipped_slots_max(upgrades: dict, prestige_upgrades: dict = None) -> int:
+def coin_tree_slot_bonus(inventory_map: dict) -> int:
+    """+1 слот экипировки за 🟣 Монету Перерождения, +1 слот за ⚪️ Монету Пробуждения
+    (суммируются, если есть обе — по 1 шт. каждой достаточно, лёжа в инвентаре, экипировать
+    не нужно)."""
+    bonus = 0
+    if inventory_map.get("rebirth_coin", 0) > 0:
+        bonus += 1
+    if inventory_map.get("awakening_coin", 0) > 0:
+        bonus += 1
+    return bonus
+
+
+def equipped_slots_max(upgrades: dict, prestige_upgrades: dict = None, bonus_slots: int = 0) -> int:
     prestige_upgrades = prestige_upgrades or {}
-    return 1 + upgrade_level(upgrades, "equip_slots") + prestige_bonus(prestige_upgrades, "p_slots")
+    return 1 + upgrade_level(upgrades, "equip_slots") + prestige_bonus(prestige_upgrades, "p_slots") + bonus_slots
 
 
 def parse_equipped(equipped_str: str) -> list:
@@ -2748,6 +2846,7 @@ PROMO_BADGES = {
     "power":        (PREMIUM_BADGE_POWER, "Потужность"),
     "top1_past":    (PREMIUM_BADGE_TOP1_PAST, "Топ 1 в прошлом"),
     "chaos_master": (PREMIUM_BADGE_CHAOS_MASTER, "Мастер Хаоса⚡️"),
+    "investor":     (PREMIUM_BADGE_INVESTOR, "Инвестировал в #####"),
 }
 # Русские названия бейджей (как их вводит админ в команде создания промокода) -> ключ PROMO_BADGES.
 PROMO_BADGE_ALIASES = {
@@ -2757,6 +2856,7 @@ PROMO_BADGE_ALIASES = {
     "топ1 в прошлом": "top1_past",
     "топ 1 в прошлом": "top1_past",
     "мастер хаоса": "chaos_master",
+    "инвестировал в #####": "investor",
 }
 
 
@@ -2917,6 +3017,80 @@ async def apply_chaos_orb_proc(user_id: int, active_items) -> str:
     bonus = random.randint(CHAOS_ORB_FARM_MIN, CHAOS_ORB_FARM_MAX)
     await db_exec("UPDATE users SET score = score + ? WHERE user_id = ?", (bonus, user_id))
     return f"\n🌀 Шар хаоса: РЕДКИЙ ПРОК! +{bonus} очков ноги!"
+
+
+def apply_coin_tree_farm_roll(gained: int, active_items) -> tuple:
+    """🟤 Монета Ногости / 🔶 Монета Бога Ногости: независимый ролл на КАЖДОМ базовом фарме
+    ног (после всех обычных множителей, включая x3/x6 boost_percent самих этих монет —
+    те уже учтены в get_multiplier()). Срабатывает только самая сильная экипированная монета
+    из пары (Бог > обычная), как и остальные парные бустеры в игре.
+    Возвращает (новое gained, текст для ответа)."""
+    equipped = set(_normalize_active_items(active_items))
+    if "godly_nogost_coin" in equipped:
+        roll = random.random()
+        if roll < 0.10:
+            bonus_gained = gained * 5
+            return bonus_gained, f"\n{PREMIUM_GODLY_NOGOST_COIN} Монета Бога Ногости: x5 к фарму! +{bonus_gained - gained} очков ноги!"
+        if roll < 0.30:  # 0.10 + 0.20
+            bonus_gained = gained * 3
+            return bonus_gained, f"\n{PREMIUM_GODLY_NOGOST_COIN} Монета Бога Ногости: x3 к фарму! +{bonus_gained - gained} очков ноги!"
+        return gained, ""
+    if "nogost_coin" in equipped:
+        roll = random.random()
+        if roll < 0.05:
+            bonus_gained = gained * 5
+            return bonus_gained, f"\n{PREMIUM_NOGOST_COIN} Монета Ногости: x5 к фарму! +{bonus_gained - gained} очков ноги!"
+        if roll < 0.25:  # 0.05 + 0.20
+            bonus_gained = gained * 3
+            return bonus_gained, f"\n{PREMIUM_NOGOST_COIN} Монета Ногости: x3 к фарму! +{bonus_gained - gained} очков ноги!"
+        return gained, ""
+    return gained, ""
+
+
+async def apply_godly_nogost_coin_case_proc(user_id: int, inventory_map: dict) -> str:
+    """🔶 Монета Бога Ногости: пассивно (даже не экипирована — работает лёжа в инвентаре, как
+    и остальные пассивные монеты) шанс 10% при базовом фарме ног дать +100 очков престижа
+    и +5 000 000 (5кк) очков ноги одним общим проком за фарм."""
+    if inventory_map.get("godly_nogost_coin", 0) <= 0:
+        return ""
+    if random.random() >= 0.10:
+        return ""
+    await db_exec(
+        "UPDATE users SET score = score + 5000000, prestige_points = prestige_points + 100 WHERE user_id = ?",
+        (user_id,),
+    )
+    return f"\n{PREMIUM_GODLY_NOGOST_COIN} Монета Бога Ногости: УДАЧА! +100🔮 и +5 000 000 очков ноги!"
+
+
+async def apply_craft_coin_proc(user_id: int, inventory_map: dict) -> str:
+    """🔘 Монета Крафта: пассивно (лёжа в инвентаре) шанс 5% при отправке в чат сообщения
+    с эмодзи ноги (🦵/🦿) дать +1 💠 очко крафта."""
+    if inventory_map.get("craft_coin", 0) <= 0:
+        return ""
+    if random.random() >= 0.05:
+        return ""
+    await db_exec("UPDATE users SET craft_points = craft_points + 1 WHERE user_id = ?", (user_id,))
+    return f"\n{PREMIUM_CRAFT_COIN} Монета Крафта: +1💠 очко крафта!"
+
+
+async def apply_bitcoin_proc(user_id: int, inventory_map: dict) -> str:
+    """🟠 Биткоин: пассивно (лёжа в инвентаре) шанс 0.05% при базовом фарме ног дать
+    +15 000 000 (15кк) 🪙 монет."""
+    if inventory_map.get("bitcoin", 0) <= 0:
+        return ""
+    if random.random() >= 0.0005:
+        return ""
+    await db_exec("UPDATE users SET coins = coins + 15000000 WHERE user_id = ?", (user_id,))
+    return f"\n{PREMIUM_BITCOIN} Биткоин: КРИПТО-ДЖЕКПОТ! +15 000 000🪙!"
+
+
+async def apply_rebirth_coin_proc(user_id: int, inventory_map: dict) -> str:
+    """🟣 Монета Перерождения: пассивно (лёжа в инвентаре) при КАЖДОМ базовом фарме ног
+    даёт +2 🉑 очка перерождения гарантированно."""
+    if inventory_map.get("rebirth_coin", 0) <= 0:
+        return ""
+    await db_exec("UPDATE users SET rebirth_points = rebirth_points + 2 WHERE user_id = ?", (user_id,))
+    return "\n🟣 Монета Перерождения: +2🉑!"
 
 
 async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
@@ -4112,6 +4286,15 @@ async def count_legs(message: Message):
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
     chaos_text = await apply_chaos_orb_proc(user_id, active_items)
+    # Дерево монет — пассивки, срабатывающие лёжа в инвентаре при каждом базовом фарме ног
+    # (в т.ч. фарм эмодзи в чате). 🔘 Монета Крафта триггерится именно тут — это и есть
+    # "отправка в чат сообщения с эмодзи ноги".
+    coin_tree_text = (
+        await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
+        + await apply_bitcoin_proc(user_id, inventory_map)
+        + await apply_rebirth_coin_proc(user_id, inventory_map)
+        + await apply_craft_coin_proc(user_id, inventory_map)
+    )
 
     now = time.monotonic()
     chat_id = message.chat.id
@@ -4143,7 +4326,7 @@ async def count_legs(message: Message):
         parts += f" +{star}⭐️"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text + chaos_text + chronos_text
+    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
@@ -4462,6 +4645,11 @@ async def farm(message: Message):
     chronos_text, chronos_reset_cd, chronos_farm_mult = await apply_chronos_orb_procs(user_id, active_items)
     if chronos_farm_mult != 1.0:
         gained = round(gained * chronos_farm_mult)
+
+    # 🟤/🔶 Монета Ногости / Монета Бога Ногости: доп. ролл x3/x5 к уже посчитанной добыче
+    # (после Хроноса, до записи в БД) — их x3/x6 к базовому фарму уже учтён выше через
+    # boost_percent -> get_multiplier(), это отдельный независимый шанс поверх него.
+    gained, nogost_coin_text = apply_coin_tree_farm_roll(gained, active_items)
     new_score = score + gained
 
     new_last_farm = 0 if chronos_reset_cd else now
@@ -4479,6 +4667,13 @@ async def farm(message: Message):
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
     chaos_text = await apply_chaos_orb_proc(user_id, active_items)
+    # Дерево монет — пассивки, срабатывающие лёжа в инвентаре при каждом базовом фарме ног.
+    coin_tree_text = (
+        nogost_coin_text
+        + await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
+        + await apply_bitcoin_proc(user_id, inventory_map)
+        + await apply_rebirth_coin_proc(user_id, inventory_map)
+    )
 
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count, ultra_rebirth)
 
@@ -4502,7 +4697,7 @@ async def farm(message: Message):
         auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + chaos_text + chronos_text
+    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + chaos_text + chronos_text + coin_tree_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
@@ -5014,9 +5209,9 @@ def _format_equipped_item_line(item_key: str) -> str:
     return f"{emoji} {esc(name)} (+{boost_percent}%)"
 
 
-def format_inventory_menu_text(active_items, upgrades: dict = None, prestige_upgrades: dict = None):
+def format_inventory_menu_text(active_items, upgrades: dict = None, prestige_upgrades: dict = None, bonus_slots: int = 0):
     items = _normalize_active_items(active_items)
-    max_slots = equipped_slots_max(upgrades or {}, prestige_upgrades or {})
+    max_slots = equipped_slots_max(upgrades or {}, prestige_upgrades or {}, bonus_slots)
     equipped = [_format_equipped_item_line(k) for k in items if k in ITEMS]
     equipped_header = f"Экипировано ({len(equipped)}/{max_slots}):"
     # Каждый экипированный предмет — на своей строке, а не слитно через запятую.
@@ -5293,8 +5488,9 @@ async def my_boosters_tab(message: Message):
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     prestige_upgrades = parse_prestige_upgrades(row[28])
-    max_slots = equipped_slots_max(upgrades, prestige_upgrades)
     rows = await get_inventory(user_id)
+    inventory_map = {k: q for k, q in rows}
+    max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
     await message.reply(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, user_id, 0))
 
 
@@ -5343,7 +5539,9 @@ async def inventory_back_to_menu(callback: CallbackQuery):
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     prestige_upgrades = parse_prestige_upgrades(row[28])
-    await safe_edit_text(callback, format_inventory_menu_text(active_items, upgrades, prestige_upgrades), reply_markup=inventory_menu_keyboard(owner_id))
+    rows = await get_inventory(owner_id)
+    inventory_map = {k: q for k, q in rows}
+    await safe_edit_text(callback, format_inventory_menu_text(active_items, upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map)), reply_markup=inventory_menu_keyboard(owner_id))
 
 
 @dp.callback_query(F.data.startswith("inv_cat:"))
@@ -5363,7 +5561,8 @@ async def inventory_open_category(callback: CallbackQuery):
         upgrades = parse_upgrades(row[16])
         active_items = parse_equipped(row[18])
         prestige_upgrades = parse_prestige_upgrades(row[28])
-        max_slots = equipped_slots_max(upgrades, prestige_upgrades)
+        inventory_map = {k: q for k, q in rows}
+        max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
         await safe_edit_text(callback, format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
     elif category == "potions":
         row = await get_user(owner_id)
@@ -5531,8 +5730,9 @@ async def inventory_boosters_page(callback: CallbackQuery):
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     prestige_upgrades = parse_prestige_upgrades(row[28])
-    max_slots = equipped_slots_max(upgrades, prestige_upgrades)
     rows = await get_inventory(owner_id)
+    inventory_map = {k: q for k, q in rows}
+    max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
     await safe_edit_text(callback, format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
 
 
@@ -5616,14 +5816,15 @@ async def toggle_equip(callback: CallbackQuery):
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
     prestige_upgrades = parse_prestige_upgrades(row[28])
-    max_slots = equipped_slots_max(upgrades, prestige_upgrades)
+    rows = await get_inventory(owner_id)
+    inventory_map = {k: q for k, q in rows}
+    max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
 
     before = parse_equipped(row[18])
     kicked = before[0] if item_key not in before and len(before) >= max_slots else None
     new_equipped = equip_item(row[18], item_key, max_slots)
 
     await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), owner_id))
-    rows = await get_inventory(owner_id)
 
     await safe_edit_text(callback, 
         format_boosters_text(rows, max_slots, page, query=query),
@@ -5956,6 +6157,53 @@ async def buy_case(callback: CallbackQuery):
     await callback.answer(TEXTS["buy_case_3"])
 
 
+async def apply_coin_tree_save(user_id: int, inventory_map: dict, event: str, score: int, evolution_level: int) -> dict:
+    """Гарантированный сейв % очков/эво при эволюции или перерождении от 🟢/🟣/⚪️ монет дерева.
+    event: "evolution" или "rebirth". Работает пассивно (монеты лежат в инвентаре, экипировать
+    не нужно). Если у игрока есть несколько подходящих монет — действует только САМАЯ СИЛЬНАЯ:
+    ⚪️ Монета Пробуждения (работает и на эво, и на перерождение) > специфичная монета события
+    (🟢 только эво, 🟣 только перерождение). При срабатывании 1% шанс +3 очка престижа и
+    0.01% шанс на бейдж "Инвестировал в #####" — только у ⚪️ Монеты Пробуждения.
+    Возвращает {"kept_score": int, "kept_evolution": int, "extra_text": str}."""
+    kept_score = 0
+    kept_evolution = 0
+    extra_text = ""
+    pct = 0.0
+    coin_label = ""
+
+    if inventory_map.get("awakening_coin", 0) > 0:
+        pct = AWAKENING_COIN_SAVE_PCT
+        coin_label = f"{PREMIUM_AWAKENING_COIN} Монета Пробуждения"
+    elif event == "evolution" and inventory_map.get("evolution_coin", 0) > 0:
+        pct = EVOLUTION_COIN_SAVE_PCT
+        coin_label = f"{PREMIUM_EVOLUTION_COIN} Монета Эволюции"
+    elif event == "rebirth" and inventory_map.get("rebirth_coin", 0) > 0:
+        pct = REBIRTH_COIN_SAVE_PCT
+        coin_label = f"{PREMIUM_REBIRTH_COIN} Монета Перерождения"
+
+    if pct > 0:
+        kept_score = round(score * pct)
+        # 🟢 Монета Эволюции сейвит только очки при эволюции, не уровень эволюции (это и так
+        # растёт при эволюции). При перерождении 🟢 не участвует — только 🟣/⚪️ сейвят эво тоже.
+        if event == "rebirth" or inventory_map.get("awakening_coin", 0) > 0:
+            kept_evolution = round(evolution_level * pct)
+        extra_text += f"\n{coin_label}: сохранено {round(pct * 100)}% ({kept_score} очков ноги{f' и {kept_evolution} ур. эво' if kept_evolution else ''})!"
+
+        if inventory_map.get("awakening_coin", 0) > 0:
+            if random.random() < AWAKENING_COIN_PRESTIGE_CHANCE:
+                await db_exec(
+                    "UPDATE users SET prestige_points = prestige_points + ? WHERE user_id = ?",
+                    (AWAKENING_COIN_PRESTIGE_AMOUNT, user_id),
+                )
+                extra_text += f"\n{PREMIUM_AWAKENING_COIN} Монета Пробуждения: +{AWAKENING_COIN_PRESTIGE_AMOUNT}🔮 очка престижа!"
+            if random.random() < AWAKENING_COIN_BADGE_CHANCE:
+                await add_promo_badge(user_id, "investor")
+                badge_emoji, badge_name = PROMO_BADGES["investor"]
+                extra_text += f"\n{PREMIUM_AWAKENING_COIN} Монета Пробуждения: выпал бейдж {badge_emoji} «{badge_name}»!"
+
+    return {"kept_score": kept_score, "kept_evolution": kept_evolution, "extra_text": extra_text}
+
+
 async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirth_count: int, active_items=None) -> tuple[int, int, str]:
     """VIP авто-эво: каскадно эволюционирует, пока очков хватает на след. эволюцию —
     например, если фарм разом принёс очков на 2 эволюции вперёд, сработают обе.
@@ -5978,9 +6226,21 @@ async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirt
     if evolutions_done == 0:
         return evolution_level, score, ""
 
+    # 🟢/⚪️ Дерево монет: доп. эволюция и %-сейв ног применяются один раз, к финальному
+    # состоянию каскада (не за каждую эволюцию в цепочке отдельно).
+    inv_rows = await get_inventory(user_id)
+    inventory_map = {k: q for k, q in inv_rows}
+    coin_save_text = ""
+    if inventory_map.get("evolution_coin", 0) > 0 or inventory_map.get("awakening_coin", 0) > 0:
+        evolution_level += 1
+        coin_save_text += "\n🟢 Дерево монет: доп. эволюция сверху!"
+    save_result = await apply_coin_tree_save(user_id, inventory_map, "evolution", score, evolution_level)
+    score = save_result["kept_score"]
+    coin_save_text += save_result["extra_text"]
+
     await db_exec("UPDATE users SET score = ?, evolution_level = ? WHERE user_id = ?", (score, evolution_level, user_id))
     times = f" ×{evolutions_done}" if evolutions_done > 1 else ""
-    text = f"\n\n⚙️💎 Авто-эволюция{times}! Теперь {evolution_level} уровень эволюции.{unlock_text}"
+    text = f"\n\n⚙️💎 Авто-эволюция{times}! Теперь {evolution_level} уровень эволюции.{unlock_text}{coin_save_text}"
     return evolution_level, score, text
 
 
@@ -6002,11 +6262,24 @@ async def evolve(message: Message):
     new_evolution = evolution_level + 1
 
     # 🧊 Ледяной осколок: с шансом ICE_SHARD_SAVE_CHANCE очки ноги НЕ сбрасываются после эволюции.
+    # Если не сработал — проверяем гарантированный %-сейв от дерева монет (🟢/⚪️, см. apply_coin_tree_save).
     ice_text = ""
     kept_score = 0
     if "ice_shard" in set(_normalize_active_items(active_items)) and random.random() < ICE_SHARD_SAVE_CHANCE:
         kept_score = score
         ice_text = "\n🧊 Ледяной осколок: очки ноги сохранены!"
+
+    coin_save_text = ""
+    if not kept_score:
+        inv_rows = await get_inventory(user_id)
+        inventory_map = {k: q for k, q in inv_rows}
+        save_result = await apply_coin_tree_save(user_id, inventory_map, "evolution", score, evolution_level)
+        kept_score = save_result["kept_score"]
+        coin_save_text = save_result["extra_text"]
+        # 🟢 Монета Эволюции / ⚪️ Монета Пробуждения: доп. эволюция сверху при каждой эволюции.
+        if inventory_map.get("evolution_coin", 0) > 0 or inventory_map.get("awakening_coin", 0) > 0:
+            new_evolution += 1
+            coin_save_text += "\n🟢 Дерево монет: доп. эволюция сверху!"
 
     await db_exec("UPDATE users SET score = ?, evolution_level = ? WHERE user_id = ?", (kept_score, new_evolution, user_id))
 
@@ -6018,7 +6291,7 @@ async def evolve(message: Message):
         unlock_text = "\nПолучена ⭐️ Звезда перерождения — экипируй в инвентарь!"
 
     await message.reply(
-        TEXTS["evolve_2"].format(v0=new_evolution, v1=round(EVO_HARDNESS_RATE * new_evolution * 100), v2=unlock_text + ice_text)
+        TEXTS["evolve_2"].format(v0=new_evolution, v1=round(EVO_HARDNESS_RATE * new_evolution * 100), v2=unlock_text + ice_text + coin_save_text)
     )
 
 
@@ -6303,10 +6576,10 @@ async def prestige_buy(callback: CallbackQuery):
 
 # ---------- Перерождение ----------
 
-def compute_rebirth_result(evolution_level: int, rebirth_points: int, rebirth_count: int,
-                            prestige_points: int, prestige_upgrades: dict, active_items) -> dict:
-    """Считает результат перерождения (без обращения к БД) — общая логика для ручной
-    команды «перерождение» и авто-перерождения (см. try_auto_rebirth)."""
+async def compute_rebirth_result(user_id: int, score: int, evolution_level: int, rebirth_points: int, rebirth_count: int,
+                                  prestige_points: int, prestige_upgrades: dict, active_items, inventory_map: dict) -> dict:
+    """Считает результат перерождения (в т.ч. проки дерева монет, требующие БД) — общая логика
+    для ручной команды «перерождение» и авто-перерождения (см. try_auto_rebirth)."""
     points_gained = (evolution_level // REBIRTH_EVO_STEP) * REBIRTH_POINTS_PER_STEP
     new_rebirth_points = rebirth_points + points_gained
     new_rebirth_count = rebirth_count + 1
@@ -6321,15 +6594,25 @@ def compute_rebirth_result(evolution_level: int, rebirth_points: int, rebirth_co
     # Каждое обычное перерождение даёт +1 Очко Престижа (отдельная валюта, см. PRESTIGE_UPGRADES).
     new_prestige_points = prestige_points + PRESTIGE_PER_REBIRTH
 
-    # 🧊 Ледяной осколок: с шансом ICE_SHARD_SAVE_CHANCE уровень эволюции НЕ сбрасывается после перерождения.
+    # 🧊 Ледяной осколок: с шансом ICE_SHARD_SAVE_CHANCE уровень эволюции НЕ сбрасывается после
+    # перерождения. Если не сработал — проверяем гарантированный %-сейв очков+эво от дерева
+    # монет (🟣/⚪️, см. apply_coin_tree_save). Ледяной осколок и дерево монет не складываются —
+    # приоритет у сработавшего ледяного осколка (100% эво), иначе действует %-сейв дерева монет.
     kept_evolution = 0
+    kept_score = 0
     if "ice_shard" in set(_normalize_active_items(active_items)) and random.random() < ICE_SHARD_SAVE_CHANCE:
         kept_evolution = evolution_level
         extra_text += "\n🧊 Ледяной осколок: уровень эволюции сохранён!"
+    else:
+        save_result = await apply_coin_tree_save(user_id, inventory_map, "rebirth", score, evolution_level)
+        kept_score = save_result["kept_score"]
+        kept_evolution = save_result["kept_evolution"]
+        extra_text += save_result["extra_text"]
 
     return {
         "points_gained": points_gained,
         "kept_evolution": kept_evolution,
+        "kept_score": kept_score,
         "rebirth_points": new_rebirth_points,
         "rebirth_count": new_rebirth_count,
         "prestige_points": new_prestige_points,
@@ -6346,14 +6629,16 @@ async def try_auto_rebirth(user_id: int, score: int, evolution_level: int, rebir
     if evolution_level < REBIRTH_MIN_EVO:
         return score, evolution_level, rebirth_count, rebirth_points, prestige_points, ""
 
-    result = compute_rebirth_result(evolution_level, rebirth_points, rebirth_count, prestige_points, prestige_upgrades, active_items)
+    inv_rows = await get_inventory(user_id)
+    inventory_map = {k: q for k, q in inv_rows}
+    result = await compute_rebirth_result(user_id, score, evolution_level, rebirth_points, rebirth_count, prestige_points, prestige_upgrades, active_items, inventory_map)
     await db_exec(
-        "UPDATE users SET score = 0, evolution_level = ?, rebirth_points = ?, rebirth_count = ?, "
+        "UPDATE users SET score = ?, evolution_level = ?, rebirth_points = ?, rebirth_count = ?, "
         "prestige_points = ? WHERE user_id = ?",
-        (result["kept_evolution"], result["rebirth_points"], result["rebirth_count"], result["prestige_points"], user_id),
+        (result["kept_score"], result["kept_evolution"], result["rebirth_points"], result["rebirth_count"], result["prestige_points"], user_id),
     )
     text = f"\n♻️ Авто-перерождение: +{result['points_gained']}🉑 (всего {result['rebirth_points']}🉑)" + result["extra_text"]
-    return 0, result["kept_evolution"], result["rebirth_count"], result["rebirth_points"], result["prestige_points"], text
+    return result["kept_score"], result["kept_evolution"], result["rebirth_count"], result["rebirth_points"], result["prestige_points"], text
 
 
 @dp.message(F.text.lower() == "перерождение")
@@ -6374,12 +6659,14 @@ async def rebirth(message: Message):
         )
         return
 
-    result = compute_rebirth_result(evolution_level, rebirth_points, rebirth_count, prestige_points, prestige_upgrades, active_items)
+    inv_rows = await get_inventory(user_id)
+    inventory_map = {k: q for k, q in inv_rows}
+    result = await compute_rebirth_result(user_id, score, evolution_level, rebirth_points, rebirth_count, prestige_points, prestige_upgrades, active_items, inventory_map)
 
     await db_exec(
-        "UPDATE users SET score = 0, evolution_level = ?, rebirth_points = ?, rebirth_count = ?, "
+        "UPDATE users SET score = ?, evolution_level = ?, rebirth_points = ?, rebirth_count = ?, "
         "prestige_points = ? WHERE user_id = ?",
-        (result["kept_evolution"], result["rebirth_points"], result["rebirth_count"], result["prestige_points"], user_id),
+        (result["kept_score"], result["kept_evolution"], result["rebirth_points"], result["rebirth_count"], result["prestige_points"], user_id),
     )
 
     new_hardness = round(REBIRTH_HARDNESS_STEP * result["rebirth_count"] * 100)
