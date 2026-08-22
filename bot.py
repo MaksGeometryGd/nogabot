@@ -599,6 +599,73 @@ TEXTS = {
     "admin_event_status_1": '🌟 Ивент активен. Множитель х{v0}. Осталось: {v1}',
     "admin_event_status_2": 'Ивент сейчас не активен.',
     "admin_event_status_forever": 'без ограничения по времени',
+
+    "help_root_1": (
+        '❓ <b>Помощь</b>\n'
+        'Введите значение: <b>бустер / предмет / зелье / бейдж / команда</b>\n\n'
+        'Например: «помощь бейдж vip», «помощь бустер эссенция бога», «помощь команда апг».'
+    ),
+    "help_unknown_section_1": (
+        '❓ Не понял раздел «{v0}».\n'
+        'Введите значение: <b>бустер / предмет / зелье / бейдж / команда</b>'
+    ),
+
+    "help_badge_general_1": (
+        '🏷 <b>Бейджи</b> — значки за достижения и события, отображаются рядом с ником в топах.\n'
+        'Их можно скрывать/показывать через команду «значки».\n'
+        'Спроси про конкретный: «помощь бейдж <название>» (например vip, владелец, тестер).'
+    ),
+    "help_badge_not_found_1": (
+        '❓ Бейдж «{v0}» не найден.\n'
+        'Доступные: {v1}\n'
+        'Формат: «помощь бейдж <название>»'
+    ),
+
+    "help_booster_general_1": (
+        '🧪 <b>Бустеры</b> — экипируемые предметы, дающие постоянный процентный буст к добыче, пока надеты.\n'
+        'Экипировать/снять можно через «инвентарь» → «Бустеры».\n'
+        'Спроси про конкретный: «помощь бустер <название>» (например эссенция бога).'
+    ),
+    "help_booster_not_found_1": (
+        '❓ Бустер «{v0}» не найден.\n'
+        'Проверь название или посмотри список: «мои бустеры».\n'
+        'Формат: «помощь бустер <название>»'
+    ),
+    "help_booster_info_1": '🧪 <b>{v0} {v1}</b>\n{v2}',
+
+    "help_item_general_1": (
+        '📦 <b>Предметы</b> — вещи без прямого процентного буста: сырьё для крафта, коллекционные или пассивные предметы.\n'
+        'Посмотреть свои: «инвентарь» → «Предметы».\n'
+        'Спроси про конкретный: «помощь предмет <название>» (например странная монета).'
+    ),
+    "help_item_not_found_1": (
+        '❓ Предмет «{v0}» не найден.\n'
+        'Проверь название или посмотри список: «мои предметы».\n'
+        'Формат: «помощь предмет <название>»'
+    ),
+    "help_item_info_1": '📦 <b>{v0} {v1}</b>\n{v2}',
+
+    "help_potion_general_1": (
+        '⚗️ <b>Зелья</b> — варятся в котле за монеты и время, при использовании дают временный эффект.\n'
+        'Открой «мои зелья» — там кнопками: варить, забрать готовое, выпить.\n'
+        'Спроси про конкретное: «помощь зелье <название>».'
+    ),
+    "help_potion_not_found_1": (
+        '❓ Зелье «{v0}» не найдено.\n'
+        'Проверь название или посмотри список: «мои зелья».\n'
+        'Формат: «помощь зелье <название>»'
+    ),
+    "help_potion_info_1": '⚗️ <b>{v0} {v1}</b>\n{v2}',
+
+    "help_command_general_1": (
+        '🛠 <b>Команды</b> — основные действия в боте: ферма, бонус, апгрейд, крафт, кейсы и т.д.\n'
+        'Спроси про конкретную: «помощь команда <название>» (например апг).'
+    ),
+    "help_command_not_found_1": (
+        '❓ Команда «{v0}» не найдена.\n'
+        'Доступные: {v1}\n'
+        'Формат: «помощь команда <название>»'
+    ),
 }
 
 ITEMS = {
@@ -675,6 +742,25 @@ ITEMS = {
     "evolution_coin":    (PREMIUM_EVOLUTION_COIN, "Монета Эволюции", 0, 0),
     "awakening_coin":    (PREMIUM_AWAKENING_COIN, "Монета Пробуждения", 0, 0),
 }
+
+# Разделение ITEMS на «бустеры» (экипируемые, дают процентный буст к добыче) и «предметы»
+# (сырьё для крафта / пассивные / коллекционные) для команды «помощь бустер|предмет».
+# Правило: boost_percent > 0 -> бустер. Единственное исключение — chronos_orb: он тоже
+# экипируется (см. _format_equipped_item_line), но эффект случайный (1-200%), поэтому
+# в ITEMS у него boost_percent = 0 — добавляем его в бустеры вручную.
+HELP_BOOSTER_KEYS = {k for k, v in ITEMS.items() if v[2] > 0} | {"chronos_orb"}
+HELP_ITEM_KEYS = set(ITEMS.keys()) - HELP_BOOSTER_KEYS
+
+def find_item_key_by_name(query: str, allowed_keys: set):
+    """Ищет ключ в ITEMS по русскому названию (регистронезависимо, точное совпадение),
+    ограничиваясь набором allowed_keys (бустеры либо предметы)."""
+    q = (query or "").strip().lower()
+    if not q:
+        return None
+    for key in allowed_keys:
+        if ITEMS[key][1].strip().lower() == q:
+            return key
+    return None
 
 NON_TRADABLE_ITEMS = {
     "vip_charm",
@@ -928,6 +1014,125 @@ GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активиро�
 KOSHKO_AMULET_FLAVOR = f"{PREMIUM_KOSHKO_AMULET} Сила кошко-девочки активна."
 CHRONOS_ORB_FLAVOR = f"{PREMIUM_CHRONOS_ORB} ХАОС! ХАОС! ХАОС!"
 GOD_TIER_LIKE = {"god_essence", "koshko_amulet"}
+
+# ---- Справочные тексты для «помощь бустер <название>» ----
+# Источник получения (крафт/номер кейса) определяем автоматически по RECIPES/CASES —
+# так описание не разъедется с реальными данными при правке рецептов или пулов кейсов.
+# HELP_BOOSTER_SOURCE_OVERRIDE — для бустеров, чей реальный источник не крафт/кейс
+# (например, начисляется напрямую кодом за игровое действие) — переопределяет автоопределение.
+HELP_BOOSTER_SOURCE_OVERRIDE = {
+    "star": "даётся автоматически за каждое перерождение",
+    "daily_charm": "выпадает за ежедневный бонус (команда «бонус») на 5-й день серии",
+    "vip_charm": "выдаётся при покупке VIP-статуса",
+}
+
+def _help_booster_source(key: str) -> str:
+    if key in HELP_BOOSTER_SOURCE_OVERRIDE:
+        return HELP_BOOSTER_SOURCE_OVERRIDE[key]
+    sources = []
+    if key in RECIPES:
+        sources.append("получается в крафтах")
+    for case_num, case_data in CASES.items():
+        if key in case_data["pool"]:
+            sources.append(f"выпадает из «{case_data['name']}»")
+    if not sources:
+        return "выдаётся вручную админом или по промокоду"
+    return ", ".join(sources)
+
+# Дополнительные «изюминки» для особых бустеров — то, что не считать по одной формуле
+# (уникальные слоты, секретные механики, случайный эффект и т.д.).
+HELP_BOOSTER_EXTRA = {
+    "god_essence": (
+        "Это топовый крафтовый бустер уникального яруса — при равном экипе перебивает "
+        "все остальные уникальные бустеры (амулеты силы, амулет кошко-девочки — кроме него самого). "
+        "Также увеличивает лимиты по ногам/мек-ногам/галактикам и ускоряет кулдаун фермы."
+    ),
+    "koshko_amulet": (
+        "Самый сильный уникальный бустер в игре — перебивает даже Эссенцию Бога. "
+        "Даёт максимальные лимиты по ногам/мек-ногам/галактикам/звёздам и открывает лимит «лап»."
+    ),
+    "power_amulet": "Первая ступень уникальных бустеров — открывает увеличенный лимит по мек-ногам.",
+    "galaxy_power_amulet": "Вторая ступень уникальных бустеров — открывает лимит по галактикам.",
+    "galaxy_might_amulet": "Третья ступень уникальных бустеров, требуется для дальнейшего крафта Гибридного амулета.",
+    "chronos_orb": (
+        "Особый бустер: вместо фиксированного процента даёт СЛУЧАЙНЫЙ буст добычи от 1% до 200% "
+        "при каждом фарме — иногда почти ничего, иногда джекпот. Дополнительно может случайно "
+        "подарить очки перерождения, монеты, ноги, снять кулдаун фермы, дать очки престижа, "
+        "зелье, другой бустер, бейдж, странную монету или старую вазу — всё это ХАОС!"
+    ),
+    "vip_charm": "Мощный бустер, доступный только тем, у кого куплен VIP-статус (см. «помощь бейдж vip»).",
+}
+
+def format_help_booster_text(key: str) -> str:
+    emoji, name, boost, _ = ITEMS[key]
+    lines = [f"+{boost}% к добыче, пока экипирован." if key != "chronos_orb" else "Даёт случайный буст добычи (см. ниже)."]
+    lines.append(f"Как получить: {_help_booster_source(key)}.")
+    extra = HELP_BOOSTER_EXTRA.get(key)
+    if extra:
+        lines.append(extra)
+    return "\n".join(lines)
+
+# ---- Справочные тексты для «помощь предмет <название>» ----
+# Кто использует этот предмет как ингредиент в крафте — считаем по RECIPES, чтобы карта
+# «зачем он нужен» не расходилась с реальными рецептами.
+_HELP_ITEM_USED_IN = {}
+for _target, _recipe in RECIPES.items():
+    for _ing in _recipe["ingredients"]:
+        _HELP_ITEM_USED_IN.setdefault(_ing, []).append(_target)
+
+# Пассивные эффекты — срабатывают, просто пока предмет лежит в инвентаре (экипировать не нужно).
+# Для «сейв-монет» (evolution/rebirth/awakening) используем реальные проценты из констант,
+# для остального — текст по факту того, что делает соответствующий apply_*_proc.
+HELP_ITEM_EXTRA = {
+    "strange_coin": "Пассивный эффект: пока лежит в инвентаре — +1 🪙 к каждому базовому фарму ног.",
+    "warm_candle": "Пассивный эффект: пока лежит в инвентаре — +1 🪙 к каждому базовому фарму ног.",
+    "devotion_coin": "Пассивный эффект: пока лежит в инвентаре — +10 🪙 к фарму (иногда +30 🪙 с шансом 10%).",
+    "old_vase": "Пассивный эффект: при фарме ног — небольшой шанс (~1%) на +1 🉑 очко перерождения.",
+    "golden_vase": "Пассивный эффект: при фарме ног — шанс (~6%) на +1 🉑 очко перерождения (сильнее Старой вазы).",
+    "godly_vase": (
+        "Пассивный эффект: при фарме ног — шанс на очки перерождения по нарастающей, "
+        "вплоть до редкого джекпота +200 🉑 (сильнее всех остальных ваз)."
+    ),
+    "bitcoin": "Пассивный эффект: при базовом фарме ног — очень редкий шанс (0.05%) на джекпот +15 000 000 🪙.",
+    "rebirth_coin": "Пассивный эффект: пока лежит в инвентаре — гарантированно +2 🉑 к каждому базовому фарму ног.",
+    "craft_coin": "Пассивный эффект: при фарме ног — шанс дать +1 💠 очко крафта.",
+    "evolution_coin": f"При эволюции сохраняет {round(EVOLUTION_COIN_SAVE_PCT * 100)}% очков ноги вместо полного обнуления.",
+    "rebirth_coin": (
+        "Пассивный эффект: пока лежит в инвентаре — гарантированно +2 🉑 к каждому базовому фарму ног. "
+        f"Также при перерождении сохраняет {round(REBIRTH_COIN_SAVE_PCT * 100)}% очков ноги."
+    ),
+    "awakening_coin": (
+        f"Самая мощная сейв-монета: сохраняет {round(AWAKENING_COIN_SAVE_PCT * 100)}% очков ноги и "
+        "уровня эволюции при ЛЮБОМ сбросе (и эволюция, и перерождение). Есть небольшой шанс "
+        "дополнительно дать очки престижа или редкий бейдж."
+    ),
+    "chaos_orb": "Крафт-сырьё для Шара Хроноса — сам по себе лежит пассивно без эффекта, нужен только для крафта.",
+}
+
+def _help_item_source(key: str) -> str:
+    if key in RECIPES:
+        return "получается в крафтах"
+    for case_num, case_data in CASES.items():
+        if key in case_data["pool"]:
+            return f"выпадает из «{case_data['name']}»"
+    return "выдаётся вручную админом или по промокоду"
+
+def format_help_item_text(key: str) -> str:
+    lines = [f"Как получить: {_help_item_source(key)}."]
+
+    used_in = _HELP_ITEM_USED_IN.get(key)
+    if used_in:
+        used_names = ", ".join(esc(ITEMS[u][1]) for u in used_in if u in ITEMS)
+        lines.append(f"Используется как ингредиент в крафте: {used_names}.")
+
+    extra = HELP_ITEM_EXTRA.get(key)
+    if extra:
+        lines.append(extra)
+
+    if not used_in and not extra:
+        lines.append("Коллекционный предмет — можно продать или уничтожить, прямого эффекта не даёт.")
+
+    return "\n".join(lines)
 
 def get_active_unique_tier(active_items):
     """Самый сильный уникальный крафт-бустер среди экипированных, либо None."""
@@ -2412,6 +2617,46 @@ PROMO_BADGE_ALIASES = {
     "мастер хаоса": "chaos_master",
     "инвестировал в #####": "investor",
 }
+
+# Справочник для команды «помощь бейдж <название>»: ключ (как в badge_list/PROMO_BADGES) ->
+# (эмодзи, русские алиасы для поиска, текст объяснения). Алиасы через запятую в подсказке —
+# просто самый первый считается «каноничным» именем бейджа.
+HELP_BADGES = {
+    "owner":       (PREMIUM_OWNER_BADGE, ["владелец", "овнер", "admin", "админ"],
+                    "Этот бейдж есть только у владельца бота — выдаётся автоматически по нику, вручную получить нельзя."),
+    "vip":         (PREMIUM_VIP_BADGE, ["vip", "вип"],
+                    "Этот бейдж даётся всем игрокам у кого есть VIP-статус. Пропадает, если VIP закончился."),
+    "evo":         (PREMIUM_BADGE_EVO, ["1+ эволюция", "эволюция", "эво"],
+                    "Даётся за первую эволюцию (39 уровень ноги, «ногу мгг»). Один раз пройдёшь эволюцию — бейдж останется навсегда."),
+    "case":        (PREMIUM_BADGE_CASE, ["5+ кейсов", "кейсы", "кейс"],
+                    "Даётся за открытие 5 или более кейсов (любых, суммарно)."),
+    "farm":        (PREMIUM_BADGE_FARM, ["30k нафармлено", "ферма", "фарм"],
+                    f"Даётся, когда суммарно нафармлено {BADGE_EVO_TOTAL} очков ноги (считается всё время, не сбрасывается)."),
+    "evo5":        (PREMIUM_BADGE_EVO5, ["5 эволюция", "5эво", "5 эво"],
+                    "Даётся по достижению 5 уровня эволюции."),
+    "tester":      (PREMIUM_BADGE_TESTER, ["тестер"],
+                    "Выдаётся вручную админом или по промокоду тем, кто помогал тестировать бота."),
+    "support":     (PREMIUM_BADGE_SUPPORT, ["сапорт", "support"],
+                    "Выдаётся вручную админом или по промокоду тем, кто помогает с поддержкой игроков."),
+    "power":       (PREMIUM_BADGE_POWER, ["потужность"],
+                    "Выдаётся вручную админом или по промокоду — почётный значок за вклад в развитие бота."),
+    "top1_past":   (PREMIUM_BADGE_TOP1_PAST, ["топ1 в прошлом", "топ 1 в прошлом", "топ1"],
+                    "Выдаётся тем, кто когда-то был на первом месте в топе игроков."),
+    "chaos_master": (PREMIUM_BADGE_CHAOS_MASTER, ["мастер хаоса"],
+                    "Редкий бейдж, связанный с Шаром Хаоса и Хроносом — выдаётся вручную или по промокоду."),
+    "investor":    (PREMIUM_BADGE_INVESTOR, ["инвестировал в #####"],
+                    "Выдаётся вручную админом или по промокоду за поддержку проекта."),
+}
+
+def find_help_badge_key(query: str):
+    """Ищет ключ HELP_BADGES по русскому названию/алиасу (регистронезависимо)."""
+    q = (query or "").strip().lower()
+    if not q:
+        return None
+    for key, (_, aliases, _) in HELP_BADGES.items():
+        if q == key.lower() or q in (a.lower() for a in aliases):
+            return key
+    return None
 
 def parse_promo_badges(raw: str) -> set:
     return set(x for x in (raw or "").split(",") if x)
@@ -4557,6 +4802,34 @@ def format_time_left(seconds: int) -> str:
         return f"{m}м {s}с"
     return f"{s}с"
 
+# ---- Справочные тексты для «помощь зелье <название>» ----
+def find_potion_key_by_name(query: str):
+    """Ищет ключ POTIONS по русскому названию (регистронезависимо, точное совпадение)."""
+    q = (query or "").strip().lower()
+    if not q:
+        return None
+    for key, cfg in POTIONS.items():
+        if cfg["name"].strip().lower() == q:
+            return key
+    return None
+
+def format_help_potion_text(key: str) -> str:
+    cfg = POTIONS[key]
+    lines = [cfg["desc"] + "."]
+
+    if cfg["effect"] == "no_cd":
+        lines.append(f"Действует: {cfg['charges']} следующих использования фермы.")
+    else:
+        lines.append(f"Длительность эффекта: {format_time_left(cfg['duration_seconds'])} после выпития.")
+
+    lines.append(
+        f"Варка: {cfg['brew_cost']} 🪙, занимает {format_time_left(cfg['brew_seconds'])} "
+        "— открой «мои зелья» и жми «⚗️ Варить»."
+    )
+    lines.append("Забрать готовое и выпить — тоже кнопками там же («✅ Забрать» / «▶️ Использовать»).")
+    lines.append("Скорость и длительность варки можно улучшить в апгрейдах: «Скорость готовки зелья», «Длительность зелья».")
+    return "\n".join(lines)
+
 def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_potion: str, brewing_until: int,
                          upgrades: dict, now: int = None, page: int = 0) -> str:
     now = now or int(time.time())
@@ -5934,6 +6207,101 @@ async def show_balance(message: Message):
             v0=score, v1=coins, v2=rebirth_points, v3=rebirth_count, v4=vip_line, v5=craft_points
         )
     )
+
+HELP_SECTION_ALIASES = {
+    "бейдж": "бейдж", "бейджи": "бейдж", "значок": "бейдж", "значки": "бейдж",
+    "бустер": "бустер", "бустеры": "бустер",
+    "предмет": "предмет", "предметы": "предмет",
+    "зелье": "зелье", "зелья": "зелье", "зелий": "зелье",
+    "команда": "команда", "команды": "команда",
+}
+
+@dp.message(F.text.lower() == "помощь")
+async def help_root(message: Message):
+    await message.reply(TEXTS["help_root_1"])
+
+@dp.message(F.text.regexp(r"(?i)^помощь\s+(\S+)(?:\s+(.+))?$"))
+async def help_dispatch(message: Message):
+    match = re.match(r"(?i)^помощь\s+(\S+)(?:\s+(.+))?$", message.text.strip())
+    raw_section = match.group(1).strip().lower()
+    query = (match.group(2) or "").strip()
+
+    section = HELP_SECTION_ALIASES.get(raw_section)
+    if not section:
+        await message.reply(TEXTS["help_unknown_section_1"].format(v0=esc(match.group(1))))
+        return
+
+    if section == "бейдж":
+        await help_badge(message, query)
+        return
+
+    if section == "бустер":
+        await help_booster(message, query)
+        return
+
+    if section == "предмет":
+        await help_item(message, query)
+        return
+
+    if section == "зелье":
+        await help_potion(message, query)
+        return
+
+    # Раздел «команда» подключается следующей частью.
+    await message.reply(TEXTS["help_unknown_section_1"].format(v0=esc(raw_section)))
+
+async def help_badge(message: Message, query: str):
+    if not query:
+        await message.reply(TEXTS["help_badge_general_1"])
+        return
+
+    key = find_help_badge_key(query)
+    if not key:
+        available = ", ".join(aliases[0] for _, aliases, _ in HELP_BADGES.values())
+        await message.reply(TEXTS["help_badge_not_found_1"].format(v0=esc(query), v1=esc(available)))
+        return
+
+    emoji, aliases, desc = HELP_BADGES[key]
+    await message.reply(f"🏷 <b>{emoji} {esc(aliases[0].capitalize())}</b>\n{desc}")
+
+async def help_booster(message: Message, query: str):
+    if not query:
+        await message.reply(TEXTS["help_booster_general_1"])
+        return
+
+    key = find_item_key_by_name(query, HELP_BOOSTER_KEYS)
+    if not key:
+        await message.reply(TEXTS["help_booster_not_found_1"].format(v0=esc(query)))
+        return
+
+    emoji, name, _, _ = ITEMS[key]
+    await message.reply(TEXTS["help_booster_info_1"].format(v0=emoji, v1=esc(name), v2=format_help_booster_text(key)))
+
+async def help_item(message: Message, query: str):
+    if not query:
+        await message.reply(TEXTS["help_item_general_1"])
+        return
+
+    key = find_item_key_by_name(query, HELP_ITEM_KEYS)
+    if not key:
+        await message.reply(TEXTS["help_item_not_found_1"].format(v0=esc(query)))
+        return
+
+    emoji, name, _, _ = ITEMS[key]
+    await message.reply(TEXTS["help_item_info_1"].format(v0=emoji, v1=esc(name), v2=format_help_item_text(key)))
+
+async def help_potion(message: Message, query: str):
+    if not query:
+        await message.reply(TEXTS["help_potion_general_1"])
+        return
+
+    key = find_potion_key_by_name(query)
+    if not key:
+        await message.reply(TEXTS["help_potion_not_found_1"].format(v0=esc(query)))
+        return
+
+    cfg = POTIONS[key]
+    await message.reply(TEXTS["help_potion_info_1"].format(v0=cfg["emoji"], v1=esc(cfg["name"]), v2=format_help_potion_text(key)))
 
 @dp.message(F.text.lower().startswith("!дать очкп"))
 async def admin_give_rebirth(message: Message):
