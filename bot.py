@@ -620,6 +620,9 @@ TEXTS = {
         'Доступные: {v1}\n'
         'Формат: «помощь бейдж <название>»'
     ),
+    "help_badge_ambiguous_1": (
+        '❓ Уточни, какой бейдж имеешь в виду «{v0}»:\n{v1}'
+    ),
 
     "help_booster_general_1": (
         '🧪 <b>Бустеры</b> — экипируемые предметы, дающие постоянный процентный буст к добыче, пока надеты.\n'
@@ -630,6 +633,9 @@ TEXTS = {
         '❓ Бустер «{v0}» не найден.\n'
         'Проверь название или посмотри список: «мои бустеры».\n'
         'Формат: «помощь бустер <название>»'
+    ),
+    "help_booster_ambiguous_1": (
+        '❓ Уточни, какой бустер имеешь в виду «{v0}»:\n{v1}'
     ),
     "help_booster_info_1": '🧪 <b>{v0} {v1}</b>\n{v2}',
 
@@ -643,6 +649,9 @@ TEXTS = {
         'Проверь название или посмотри список: «мои предметы».\n'
         'Формат: «помощь предмет <название>»'
     ),
+    "help_item_ambiguous_1": (
+        '❓ Уточни, какой предмет имеешь в виду «{v0}»:\n{v1}'
+    ),
     "help_item_info_1": '📦 <b>{v0} {v1}</b>\n{v2}',
 
     "help_potion_general_1": (
@@ -655,6 +664,9 @@ TEXTS = {
         'Проверь название или посмотри список: «мои зелья».\n'
         'Формат: «помощь зелье <название>»'
     ),
+    "help_potion_ambiguous_1": (
+        '❓ Уточни, какое зелье имеешь в виду «{v0}»:\n{v1}'
+    ),
     "help_potion_info_1": '⚗️ <b>{v0} {v1}</b>\n{v2}',
 
     "help_command_general_1": (
@@ -666,6 +678,15 @@ TEXTS = {
         'Доступные: {v1}\n'
         'Формат: «помощь команда <название>»'
     ),
+    "help_command_ambiguous_1": (
+        '❓ Уточни, какую команду имеешь в виду «{v0}»:\n{v1}'
+    ),
+    "help_command_info_1": '🛠 <b>{v0} {v1}</b>\n{v2}',
+
+    "admin_give_all_1": '❓ Не понял, кому выдавать. Ответь на сообщение игрока командой «!дать всё» или напиши «!дать всё себе».',
+    "admin_give_all_2": '✅ {v0} получил(а) все предметы, бустеры и зелья (по 1 шт. каждого): {v1} 📦🧪 + {v2} ⚗️.',
+
+    "admin_levelup_notify_off_all_1": '✅ Показ нового уровня отключён у всех игроков ({v0}).',
 }
 
 ITEMS = {
@@ -752,15 +773,24 @@ HELP_BOOSTER_KEYS = {k for k, v in ITEMS.items() if v[2] > 0} | {"chronos_orb"}
 HELP_ITEM_KEYS = set(ITEMS.keys()) - HELP_BOOSTER_KEYS
 
 def find_item_key_by_name(query: str, allowed_keys: set):
-    """Ищет ключ в ITEMS по русскому названию (регистронезависимо, точное совпадение),
-    ограничиваясь набором allowed_keys (бустеры либо предметы)."""
+    """Ищет ключ в ITEMS по русскому названию, ограничиваясь набором allowed_keys
+    (бустеры либо предметы). Как find_item_by_name (см. команды «!дать б/п»): сначала точное
+    совпадение, иначе — по вхождению подстроки в название.
+    Возвращает (key, None) при однозначном совпадении, (None, [варианты]) если совпадений
+    несколько, (None, []) если не найдено вообще."""
     q = (query or "").strip().lower()
     if not q:
-        return None
+        return None, []
     for key in allowed_keys:
         if ITEMS[key][1].strip().lower() == q:
-            return key
-    return None
+            return key, None
+    matches = [key for key in allowed_keys if q in ITEMS[key][1].lower()]
+    if len(matches) == 1:
+        return matches[0], None
+    if len(matches) > 1:
+        matches.sort(key=lambda k: ITEMS[k][1])
+        return None, matches
+    return None, []
 
 NON_TRADABLE_ITEMS = {
     "vip_charm",
@@ -1482,6 +1512,8 @@ ADMIN_VIP_FOREVER_RE = re.compile(r"^!вип навсегда(\s+себе)?$", r
 ADMIN_ULTRA_REBIRTH_RE = re.compile(r"^!ультра навсегда(\s+себе)?$", re.IGNORECASE)
 ADMIN_RESET_NICK_RE = re.compile(r"^!сброс ник\s+@?(\w+)$", re.IGNORECASE)
 ADMIN_FIND_RE = re.compile(r"^!найти\s+@?(\w+)$", re.IGNORECASE)
+ADMIN_GIVE_ALL_RE = re.compile(r"^!дать всё(\s+себе)?$", re.IGNORECASE)
+ADMIN_LEVELUP_NOTIFY_OFF_ALL_RE = re.compile(r"^!смс выкл всем$", re.IGNORECASE)
 
 PROMO_CREATE_RE = re.compile(
     r'^!промокод создать\s+"([^"]+)"\s+"([^"]+)"\s+"([^"]+)"\s+"([^"]+)"$', re.IGNORECASE
@@ -1510,6 +1542,7 @@ FIXED_COMMANDS = {
     "авто перерождение вкл", "авто перерождение выкл", "авто рб вкл", "авто рб выкл",
     "авто ребёрт вкл", "авто ребёрт выкл", "авто реберт вкл", "авто реберт выкл",
     "авто продажа вкл", "авто продажа выкл", "авто продажа настройка", "авто продажа конфиг", "авто продажа настройки",
+    "!смс выкл всем",
 }
 PREFIX_COMMANDS = (
     "обменять ", "!дать ног", "!снять ноги", "!дать эво", "!снять эво",
@@ -1520,7 +1553,7 @@ PREFIX_COMMANDS = (
     "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
     "!установить очкп", "!обнулить экономику", "!мультипликатор ферма", "!дать предмет",
     "!очистить инвентарь", "!дать апгрейд", "!вип навсегда", "!сброс ник", "!найти ", "!ультра навсегда",
-    "вип открыть кейс", "бустеры поиск ", "!дать ключ",
+    "вип открыть кейс", "бустеры поиск ", "!дать ключ", "!дать всё",
 )
 
 def is_command_text(text: str) -> bool:
@@ -2649,14 +2682,23 @@ HELP_BADGES = {
 }
 
 def find_help_badge_key(query: str):
-    """Ищет ключ HELP_BADGES по русскому названию/алиасу (регистронезависимо)."""
+    """Ищет ключ HELP_BADGES по русскому названию/алиасу. Сначала точное совпадение,
+    иначе — по вхождению подстроки в любой из алиасов (как find_item_by_name).
+    Возвращает (key, None) при однозначном совпадении, (None, [варианты]) при неоднозначности,
+    (None, []) если не найдено."""
     q = (query or "").strip().lower()
     if not q:
-        return None
+        return None, []
     for key, (_, aliases, _) in HELP_BADGES.items():
         if q == key.lower() or q in (a.lower() for a in aliases):
-            return key
-    return None
+            return key, None
+    matches = [key for key, (_, aliases, _) in HELP_BADGES.items() if any(q in a.lower() for a in aliases)]
+    if len(matches) == 1:
+        return matches[0], None
+    if len(matches) > 1:
+        matches.sort(key=lambda k: HELP_BADGES[k][1][0])
+        return None, matches
+    return None, []
 
 def parse_promo_badges(raw: str) -> set:
     return set(x for x in (raw or "").split(",") if x)
@@ -4804,14 +4846,22 @@ def format_time_left(seconds: int) -> str:
 
 # ---- Справочные тексты для «помощь зелье <название>» ----
 def find_potion_key_by_name(query: str):
-    """Ищет ключ POTIONS по русскому названию (регистронезависимо, точное совпадение)."""
+    """Ищет ключ POTIONS по русскому названию. Сначала точное совпадение, иначе — по
+    вхождению подстроки (как find_item_by_name). Возвращает (key, None) при однозначном
+    совпадении, (None, [варианты]) при неоднозначности, (None, []) если не найдено."""
     q = (query or "").strip().lower()
     if not q:
-        return None
+        return None, []
     for key, cfg in POTIONS.items():
         if cfg["name"].strip().lower() == q:
-            return key
-    return None
+            return key, None
+    matches = [key for key, cfg in POTIONS.items() if q in cfg["name"].lower()]
+    if len(matches) == 1:
+        return matches[0], None
+    if len(matches) > 1:
+        matches.sort(key=lambda k: POTIONS[k]["name"])
+        return None, matches
+    return None, []
 
 def format_help_potion_text(key: str) -> str:
     cfg = POTIONS[key]
@@ -6216,6 +6266,79 @@ HELP_SECTION_ALIASES = {
     "команда": "команда", "команды": "команда",
 }
 
+# Справочник для «помощь команда <название>»: ключ -> (эмодзи, алиасы команды, описание).
+# Первый алиас — «каноничное» отображаемое имя команды.
+HELP_COMMANDS = {
+    "farm": ("🦵", ["ферма", "фарма"],
+             "Основная команда добычи очков ноги — жми регулярно (или отправляй 🦵/🦿), копится опыт для эволюций и перерождений."),
+    "bonus": ("🎁", ["бонус"],
+              "Ежедневная награда очками ноги — стрик за подряд идущие дни. На 5-й день серии дополнительно даёт Дневной амулет."),
+    "upgrade": ("⬆️", ["апгрейд", "прокачка", "апг"],
+                "Прокачка постоянных улучшений за очки перерождения/крафта: лимиты, скорость варки зелий, слоты бустеров и т.д."),
+    "craft": ("🛠", ["крафт", "крафты"],
+              "Меню крафта — соединяй предметы/бустеры по рецептам и получай более сильные вещи (вплоть до Эссенции Бога)."),
+    "case": ("🎰", ["кейс", "кейсы"],
+             "Открытие кейсов за монеты — выпадают случайные предметы и бустеры из пула конкретного кейса."),
+    "evolution": ("🧬", ["эволюция"],
+                  "Переход на новый уровень эволюции при достижении нужного количества очков ноги — открывает новые возможности."),
+    "prestige": ("🌟", ["престиж"],
+                 "Система престижа — сброс части прогресса ради постоянных бонусов более высокого порядка."),
+    "rebirth": ("🉑", ["перерождение"],
+                "Сбрасывает ногу и эволюцию, взамен даёт очки перерождения — их тратят на апгрейды и крафт уникальных бустеров."),
+    "ultra_rebirth": ("💫", ["ультра перерождение"],
+                       "Более требовательная версия перерождения на поздней стадии игры — даёт больше очков перерождения за раз."),
+    "exchange": ("💱", ["обменять"],
+                 "Обменивает очки ноги на монеты по фиксированному курсу: «обменять <число>»."),
+    "inventory": ("🎒", ["инвентарь", "мой инвентарь"],
+                  "Общее меню инвентаря — оттуда переходишь в разделы Бустеры/Предметы/Зелья."),
+    "boosters": ("🧪", ["бустеры", "мои бустеры"],
+                 "Список твоих бустеров с возможностью экипировать/снять прямо из меню."),
+    "items": ("📦", ["предметы", "мои предметы"],
+              "Список твоих обычных предметов (сырьё для крафта, коллекционные вещи)."),
+    "potions": ("⚗️", ["зелья", "мои зелья"],
+                "Меню зелий — варка в котле, забор готового и использование, все кнопками."),
+    "give": ("🤝", ["дать", "передать"],
+             "Передать другому игроку (ответом на его сообщение) монеты, очки ноги или предмет из своего инвентаря: «дать 100 коин», «дать эссенция дружбы»."),
+    "sell": ("💰", ["продать"],
+             "Продажа бустеров/предметов из инвентаря за монеты по фиксированной цене: «продать б <название>» / «продать п <название>»."),
+    "destroy": ("🗑", ["уничтожение"],
+                "Безвозвратно уничтожает бустер/предмет из инвентаря (без монет взамен) — полезно для нетоварных вещей: «уничтожение б/п <название>»."),
+    "balance": ("💳", ["баланс"],
+                "Показывает текущий баланс: очки ноги, монеты, очки перерождения/крафта и статус VIP."),
+    "vip": ("💎", ["вип"],
+            "Информация о VIP-статусе и его покупке — постоянный сильный бустер и доступ к особым фичам."),
+    "badges_toggle": ("🏷", ["бейджи"],
+                       "Меню управления своими бейджами — какие показывать рядом с ником в топах."),
+    "top": ("🏆", ["топ ног", "топ эво", "топ коин", "топ очкп"],
+            "Топы игроков по разным метрикам (ноги/эволюция/монеты/очки перерождения), в своём чате или глобально («гл топ ...»)."),
+    "info": ("ℹ️", ["инфо"],
+             "Показывает игровую карточку другого игрока по юзернейму: «инфо @ник»."),
+    "promo": ("🎟", ["промокод", "промо"],
+              "Активирует промокод и выдаёт награду, если код существует и ещё не использован тобой: «промокод <код>»."),
+    "nick": ("✏️", ["+ник", "-ник"],
+             "Устанавливает или сбрасывает отображаемый игровой ник: «+ник <текст>» / «-ник»."),
+    "help": ("❓", ["помощь"],
+             "Эта самая справка — «помощь бустер/предмет/зелье/бейдж/команда <название>»."),
+}
+
+def find_help_command_key(query: str):
+    """Ищет ключ HELP_COMMANDS по названию/алиасу команды. Сначала точное совпадение,
+    иначе — по вхождению подстроки в любой алиас. Возвращает (key, None) при однозначном
+    совпадении, (None, [варианты]) при неоднозначности, (None, []) если не найдено."""
+    q = (query or "").strip().lower()
+    if not q:
+        return None, []
+    for key, (_, aliases, _) in HELP_COMMANDS.items():
+        if q in (a.lower() for a in aliases):
+            return key, None
+    matches = [key for key, (_, aliases, _) in HELP_COMMANDS.items() if any(q in a.lower() for a in aliases)]
+    if len(matches) == 1:
+        return matches[0], None
+    if len(matches) > 1:
+        matches.sort(key=lambda k: HELP_COMMANDS[k][1][0])
+        return None, matches
+    return None, []
+
 @dp.message(F.text.lower() == "помощь")
 async def help_root(message: Message):
     await message.reply(TEXTS["help_root_1"])
@@ -6247,7 +6370,10 @@ async def help_dispatch(message: Message):
         await help_potion(message, query)
         return
 
-    # Раздел «команда» подключается следующей частью.
+    if section == "команда":
+        await help_command(message, query)
+        return
+
     await message.reply(TEXTS["help_unknown_section_1"].format(v0=esc(raw_section)))
 
 async def help_badge(message: Message, query: str):
@@ -6255,53 +6381,92 @@ async def help_badge(message: Message, query: str):
         await message.reply(TEXTS["help_badge_general_1"])
         return
 
-    key = find_help_badge_key(query)
-    if not key:
-        available = ", ".join(aliases[0] for _, aliases, _ in HELP_BADGES.values())
-        await message.reply(TEXTS["help_badge_not_found_1"].format(v0=esc(query), v1=esc(available)))
+    key, matches = find_help_badge_key(query)
+    if key:
+        emoji, aliases, desc = HELP_BADGES[key]
+        await message.reply(f"🏷 <b>{emoji} {esc(aliases[0].capitalize())}</b>\n{desc}")
         return
 
-    emoji, aliases, desc = HELP_BADGES[key]
-    await message.reply(f"🏷 <b>{emoji} {esc(aliases[0].capitalize())}</b>\n{desc}")
+    if matches:
+        options = "\n".join(f"• {HELP_BADGES[m][1][0]}" for m in matches)
+        await message.reply(TEXTS["help_badge_ambiguous_1"].format(v0=esc(query), v1=options))
+        return
+
+    available = ", ".join(aliases[0] for _, aliases, _ in HELP_BADGES.values())
+    await message.reply(TEXTS["help_badge_not_found_1"].format(v0=esc(query), v1=esc(available)))
 
 async def help_booster(message: Message, query: str):
     if not query:
         await message.reply(TEXTS["help_booster_general_1"])
         return
 
-    key = find_item_key_by_name(query, HELP_BOOSTER_KEYS)
-    if not key:
-        await message.reply(TEXTS["help_booster_not_found_1"].format(v0=esc(query)))
+    key, matches = find_item_key_by_name(query, HELP_BOOSTER_KEYS)
+    if key:
+        emoji, name, _, _ = ITEMS[key]
+        await message.reply(TEXTS["help_booster_info_1"].format(v0=emoji, v1=esc(name), v2=format_help_booster_text(key)))
         return
 
-    emoji, name, _, _ = ITEMS[key]
-    await message.reply(TEXTS["help_booster_info_1"].format(v0=emoji, v1=esc(name), v2=format_help_booster_text(key)))
+    if matches:
+        options = "\n".join(f"• {ITEMS[m][1]}" for m in matches)
+        await message.reply(TEXTS["help_booster_ambiguous_1"].format(v0=esc(query), v1=options))
+        return
+
+    await message.reply(TEXTS["help_booster_not_found_1"].format(v0=esc(query)))
 
 async def help_item(message: Message, query: str):
     if not query:
         await message.reply(TEXTS["help_item_general_1"])
         return
 
-    key = find_item_key_by_name(query, HELP_ITEM_KEYS)
-    if not key:
-        await message.reply(TEXTS["help_item_not_found_1"].format(v0=esc(query)))
+    key, matches = find_item_key_by_name(query, HELP_ITEM_KEYS)
+    if key:
+        emoji, name, _, _ = ITEMS[key]
+        await message.reply(TEXTS["help_item_info_1"].format(v0=emoji, v1=esc(name), v2=format_help_item_text(key)))
         return
 
-    emoji, name, _, _ = ITEMS[key]
-    await message.reply(TEXTS["help_item_info_1"].format(v0=emoji, v1=esc(name), v2=format_help_item_text(key)))
+    if matches:
+        options = "\n".join(f"• {ITEMS[m][1]}" for m in matches)
+        await message.reply(TEXTS["help_item_ambiguous_1"].format(v0=esc(query), v1=options))
+        return
+
+    await message.reply(TEXTS["help_item_not_found_1"].format(v0=esc(query)))
 
 async def help_potion(message: Message, query: str):
     if not query:
         await message.reply(TEXTS["help_potion_general_1"])
         return
 
-    key = find_potion_key_by_name(query)
-    if not key:
-        await message.reply(TEXTS["help_potion_not_found_1"].format(v0=esc(query)))
+    key, matches = find_potion_key_by_name(query)
+    if key:
+        cfg = POTIONS[key]
+        await message.reply(TEXTS["help_potion_info_1"].format(v0=cfg["emoji"], v1=esc(cfg["name"]), v2=format_help_potion_text(key)))
         return
 
-    cfg = POTIONS[key]
-    await message.reply(TEXTS["help_potion_info_1"].format(v0=cfg["emoji"], v1=esc(cfg["name"]), v2=format_help_potion_text(key)))
+    if matches:
+        options = "\n".join(f"• {POTIONS[m]['name']}" for m in matches)
+        await message.reply(TEXTS["help_potion_ambiguous_1"].format(v0=esc(query), v1=options))
+        return
+
+    await message.reply(TEXTS["help_potion_not_found_1"].format(v0=esc(query)))
+
+async def help_command(message: Message, query: str):
+    if not query:
+        await message.reply(TEXTS["help_command_general_1"])
+        return
+
+    key, matches = find_help_command_key(query)
+    if key:
+        emoji, aliases, desc = HELP_COMMANDS[key]
+        await message.reply(TEXTS["help_command_info_1"].format(v0=emoji, v1=esc(aliases[0]), v2=desc))
+        return
+
+    if matches:
+        options = "\n".join(f"• {HELP_COMMANDS[m][1][0]}" for m in matches)
+        await message.reply(TEXTS["help_command_ambiguous_1"].format(v0=esc(query), v1=options))
+        return
+
+    available = ", ".join(aliases[0] for _, aliases, _ in HELP_COMMANDS.values())
+    await message.reply(TEXTS["help_command_not_found_1"].format(v0=esc(query), v1=esc(available)))
 
 @dp.message(F.text.lower().startswith("!дать очкп"))
 async def admin_give_rebirth(message: Message):
@@ -7449,6 +7614,49 @@ async def admin_find(message: Message):
         lines.append(f"● {esc(title)}")
 
     await message.reply(TEXTS["admin_find_3"].format(v0=esc(row[1]), v1=len(chat_rows), v2="\n".join(lines)))
+
+@dp.message(F.text.lower().startswith("!дать всё"))
+async def admin_give_all(message: Message):
+    """!дать всё [себе] — выдаёт целевому игроку все существующие предметы, бустеры
+    (все ключи ITEMS, без исключений) и все зелья (все ключи POTIONS) по 1 штуке каждого.
+    Полезно для тестирования — например прогона «помощь бустер/предмет/зелье» по реальному
+    инвентарю."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = ADMIN_GIVE_ALL_RE.match(message.text.strip())
+    target = await resolve_target(message, bool(match.group(1))) if match else None
+    if not target:
+        await message.reply(TEXTS["admin_give_all_1"])
+        return
+
+    target_username = target.username or target.first_name or "Без имени"
+    row = await ensure_user(target.id, target_username)
+
+    for item_key in ITEMS:
+        await add_item(target.id, item_key, 1)
+
+    stock = parse_potion_stock(row[26])
+    for potion_key in POTIONS:
+        stock[potion_key] = stock.get(potion_key, 0) + 1
+    await db_exec("UPDATE users SET potion_stock = ? WHERE user_id = ?", (format_potion_stock(stock), target.id))
+
+    await safe_reply(message, TEXTS["admin_give_all_2"].format(v0=esc(target_username), v1=len(ITEMS), v2=len(POTIONS)))
+
+@dp.message(F.text.lower() == "!смс выкл всем")
+async def admin_levelup_notify_off_all(message: Message):
+    """!смс выкл всем — массово отключает показ уведомления о новом уровне (levelup_notify)
+    у ВСЕХ игроков разом, одним UPDATE без WHERE (тот же паттерн, что chronos_orb_boost_loop)."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+
+    count_row = await db_query_one("SELECT COUNT(*) FROM users")
+    total = count_row[0] if count_row else 0
+
+    await db_exec("UPDATE users SET levelup_notify = 0")
+
+    await message.reply(TEXTS["admin_levelup_notify_off_all_1"].format(v0=total))
 
 @dp.message(F.text.lower() == "!игроки")
 async def admin_list_players(message: Message):
