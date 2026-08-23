@@ -60,7 +60,7 @@ PREMIUM_MK_MGG = '<tg-emoji emoji-id="5420141555233071341">🧿</tg-emoji>'
 PREMIUM_MK_SANDSMOON = '<tg-emoji emoji-id="5197260300490907908">🌙</tg-emoji>'
 PREMIUM_MK_FIXSAHAL1 = '<tg-emoji emoji-id="6325473957755488220">🔧</tg-emoji>'
 PREMIUM_MK_MK = '<tg-emoji emoji-id="5776399733702528178">🪝</tg-emoji>'
-PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5276381049851498060">🐆</tg-emoji>'
+PREMIUM_MK_PANTHER = '<tg-emoji emoji-id="5393538390362705684">⚡️</tg-emoji>'
 PREMIUM_MK_VECTOR = '<tg-emoji emoji-id="6206233738494347353">↗️</tg-emoji>'
 PREMIUM_MK_BROKEN = '<tg-emoji emoji-id="5208923808169222461">💔</tg-emoji>'
 
@@ -100,7 +100,7 @@ PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5282820155015971423">✝️</tg-emoj
 PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5404393696865041225">🤲</tg-emoji>'
 PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5199714801286132798">🎧</tg-emoji>'
 
-PREMIUM_BADGE_TESTER = '<tg-emoji emoji-id="5947528161536251718">🧪</tg-emoji>'
+PREMIUM_BADGE_TESTER = '<tg-emoji emoji-id="5217791863368470760">🥰</tg-emoji>'
 PREMIUM_BADGE_SUPPORT = '<tg-emoji emoji-id="5947343263194157527">🛠️</tg-emoji>'
 PREMIUM_BADGE_POWER = '<tg-emoji emoji-id="5780703608760700844">💪</tg-emoji>'
 PREMIUM_BADGE_TOP1_PAST = '<tg-emoji emoji-id="5363999757079429238">👑</tg-emoji>'
@@ -152,7 +152,7 @@ CUSTOM_LEVELS = [
     (14400, "🦵💀", "нога смерти"),
     (15000, "🦵😎", "нога Fixsahal1"),
     (15600, "🦵👼", "нога ангела"),
-    (16200, "🦵🦵", "нога Panther"),
+    (16200, "🦵🐺", "нога Волка"),
     (16800, PREMIUM_MIKU, "нога Мику"),
     (17400, "🦵🏇", "нога героя"),
     (18000, "🦵👁", "нога полу-бога"),
@@ -317,8 +317,8 @@ TEXTS = {
     "promo_redeem_5": '🎉 Промокод «{v0}» активирован! Получено: {v1}',
 
     "promo_create_badge_1": 'Формат: !промокод создать бейдж "название_бейджа" "название_промокода"\n'
-                             'Доступные бейджи: тестер, сапорт, потужность, топ1 в прошлом.',
-    "promo_create_badge_2": '❌ Неизвестный бейдж: «{v0}». Смотри список доступных бейджей: тестер, сапорт, потужность, топ1 в прошлом.',
+                             'Доступные бейджи: фанат мику, сапорт, потужность, топ1 в прошлом.',
+    "promo_create_badge_2": '❌ Неизвестный бейдж: «{v0}». Смотри список доступных бейджей: фанат мику, сапорт, потужность, топ1 в прошлом.',
     "promo_create_badge_3": '❌ Промокод «{v0}» уже существует. Сначала удали его: !промокод удалить "{v0}".',
     "promo_create_badge_4": '✅ Промокод «{v0}» создан!\nНаграда: {v1} бейдж «{v2}»\nАктиваций: 1',
 
@@ -441,17 +441,19 @@ TEXTS = {
         '● Эволюция: {v0}/{v1}\n'
         '● Уровень ноги: {v2}/{v3}\n'
         '● Перерождений: {v4}/{v5}\n'
-        '⚠️ Нужны все три условия сразу.'
+        '● Монета Пробуждения в инвентаре: {v6}\n'
+        '● Хвост Джевила в инвентаре: {v7}\n'
+        '⚠️ Нужны все пять условий сразу.'
     ),
     "ultra_rebirth_already_1": '🌌 Ты уже прошёл Ультра перерождение — второй раз нельзя.',
     "ultra_rebirth_confirm_1": (
-        '🌌 <b>Точка невозврата.</b>\n'
-        'Ультра перерождение обнулит очки, эволюцию и перерождения — необратимо, один раз за игру.\n'
-        'Взамен: {v0} {v1} ({v2} лвл) и постоянный буст +{v3}% к добыче.\n'
-        'Прокачки и предметы остаются с тобой.'
+        '🌌 <b>Тайны ждут вас.</b>\n'
+        'За порогом — обнуление очков, эволюции и перерождений. Пути назад не будет.\n'
+        'Открой то, что видели не все: {v0} {v1} ({v2} лвл) и постоянный буст +{v3}% к добыче.\n'
+        'Прокачки и предметы шагнут в неизвестность вместе с тобой.'
     ),
     "ultra_rebirth_success_1": (
-        '🌌✨ <b>Ультра перерождение свершилось!</b>\n'
+        '🌌✨ <b>Порог пройден. Тайны раскрыты.</b>\n'
         'Открыт {v0} {v1} ({v2} лвл) и постоянный буст добычи +{v3}%.\n'
         'Получено +{v4} 🔮 очков престижа.\n'
         'Прокачки и предметы остались с тобой навсегда.'
@@ -678,7 +680,7 @@ TEXTS = {
     "help_badge_general_1": (
         '🏷 <b>Бейджи</b> — значки за достижения и события, отображаются рядом с ником в топах.\n'
         'Их можно скрывать/показывать через команду «значки».\n'
-        'Спроси про конкретный: «помощь бейдж <название>» (например vip, владелец, тестер).'
+        'Спроси про конкретный: «помощь бейдж <название>» (например vip, владелец, фанат мику).'
     ),
     "help_badge_not_found_1": (
         '❓ Бейдж «{v0}» не найден.\n'
@@ -758,7 +760,7 @@ ITEMS = {
     "amulet": ("🪬", "Амулет галактики", 17, 10),
     "orb":    ("🔮", "Шар парадокса", 14, 20),
     "pill":   ("💊", "Таблетка силы", 12, 30),
-    "candle": ("🪔", "Свеча солнцестояния", 6, 35),
+    "candle": ("🪔", "Свеча солнцестояния", 14, 35),
     "gift":   ("💮", "Подарок кошко-девочки", 45, 5),
     "star":   ("⭐️", "Звезда перерождения", 30, 0),
     "daily_charm": (PREMIUM_DAILY_CHARM, "Дневной амулет", 15, 0),
@@ -766,7 +768,7 @@ ITEMS = {
     "mk_sandsmoon": (PREMIUM_MK_SANDSMOON, "Амулет SandsMoon", 40, 3.45),
     "mk_fixsahal1": (PREMIUM_MK_FIXSAHAL1, "Амулет Fixsahal1", 30, 5.75),
     "mk_mk":        (PREMIUM_MK_MK, "Амулет Mk", 90, 1.72),
-    "mk_panther":   (PREMIUM_MK_PANTHER, "Амулет Panther", 20, 8.04),
+    "mk_panther":   (PREMIUM_MK_PANTHER, "Амулет Haos", 60, 8.04),
     "mk_vector":    (PREMIUM_MK_VECTOR, "Амулет Vector", 40, 4.02),
     "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 1, 60),
     "mk_mary":      (PREMIUM_MK_MARY, "Амулет Mary", 45, 5.75),
@@ -792,7 +794,7 @@ ITEMS = {
     "party_set":    (PREMIUM_PARTY_SET, "Праздничный набор", 18, 0),
     "warm_candle":  (PREMIUM_WARM_CANDLE, "Тёплая свеча", 0, 0),
 
-    "ice_shard":     (PREMIUM_ICE_SHARD, "Ледяной осколок", 65, 12),
+    "ice_shard":     (PREMIUM_ICE_SHARD, "Ледяной осколок", 80, 12),
     "ember":         (PREMIUM_EMBER, "Уголёк", 45, 12),
     "dragon_claw":   (PREMIUM_DRAGON_CLAW, "Коготь дракона", 55, 8),
     "paradox_charm": (PREMIUM_PARADOX_CHARM, "Оберег парадокса", 65, 5),
@@ -806,8 +808,8 @@ ITEMS = {
     "ancient_stone": (PREMIUM_ANCIENT_STONE, "Древний камень", 0, 18),
     "fate_thread":   (PREMIUM_FATE_THREAD, "Нить судьбы", 0, 4),
 
-    "kotyara_amulet":  (PREMIUM_KOTYARA_AMULET, "Амулет Котяры", 60, 0),
-    "miku_amulet":     (PREMIUM_MIKU_AMULET, "Амулет Мику", 50, 0),
+    "kotyara_amulet":  (PREMIUM_KOTYARA_AMULET, "Амулет Котяры", 95, 0),
+    "miku_amulet":     (PREMIUM_MIKU_AMULET, "Амулет Мику", 75, 0),
     "golda":           (PREMIUM_GOLDA_ITEM, "Голда", 52, 0),
     "karambit_gold":   (PREMIUM_KARAMBIT_GOLD, "Керамбит голд", 228, 0),
     "butterfly_legacy": (PREMIUM_BUTTERFLY_LEGACY, "Бабочка легаси", 69, 0),
@@ -816,7 +818,7 @@ ITEMS = {
 
     "chaos_orb":     (PREMIUM_CHAOS_ORB, "Шар хаоса", 0, 100),
     "chronos_clock": (PREMIUM_CHRONOS_CLOCK, "Часы Хроноса", 0, 120),
-    "chronos_orb":   (PREMIUM_CHRONOS_ORB, "Шар Хроноса", 0, 120),
+    "chronos_orb":   (PREMIUM_CHRONOS_ORB, "Хвост Джевила", 0, 120),
 
     "miku_fan_amulet": (PREMIUM_MIKU_FAN_AMULET, "Амулет Фаната Мику", 300, 0),
 
@@ -832,7 +834,7 @@ ITEMS = {
 # Разделение ITEMS на «бустеры» (экипируемые, дают процентный буст к добыче) и «предметы»
 # (сырьё для крафта / пассивные / коллекционные) для команды «помощь бустер|предмет».
 # Правило: boost_percent > 0 -> бустер. Единственное исключение — chronos_orb: он тоже
-# экипируется (см. _format_equipped_item_line), но эффект случайный (1-200%), поэтому
+# экипируется (см. _format_equipped_item_line), но эффект случайный (10-400%), поэтому
 # в ITEMS у него boost_percent = 0 — добавляем его в бустеры вручную.
 HELP_BOOSTER_KEYS = {k for k, v in ITEMS.items() if v[2] > 0} | {"chronos_orb"}
 HELP_ITEM_KEYS = set(ITEMS.keys()) - HELP_BOOSTER_KEYS
@@ -1103,7 +1105,7 @@ CHRONOS_ORB_STRANGE_COIN_CHANCE = 0.0069
 CHRONOS_ORB_OLD_VASE_CHANCE = 0.0069
 
 CHRONOS_BOOST_INTERVAL = 300
-CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX = 1, 200
+CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX = 10, 400
 
 GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активирована."
 KOSHKO_AMULET_FLAVOR = f"{PREMIUM_KOSHKO_AMULET} Сила кошко-девочки активна."
@@ -1150,7 +1152,7 @@ HELP_BOOSTER_EXTRA = {
     "galaxy_power_amulet": "Вторая ступень уникальных бустеров — открывает лимит по галактикам.",
     "galaxy_might_amulet": "Третья ступень уникальных бустеров, требуется для дальнейшего крафта Гибридного амулета.",
     "chronos_orb": (
-        "Особый бустер: вместо фиксированного процента даёт СЛУЧАЙНЫЙ буст добычи от 1% до 200% "
+        "Особый бустер: вместо фиксированного процента даёт СЛУЧАЙНЫЙ буст добычи от 10% до 400% "
         "при каждом фарме — иногда почти ничего, иногда джекпот. Дополнительно может случайно "
         "подарить очки перерождения, монеты, ноги, снять кулдаун фермы, дать очки престижа, "
         "зелье, другой бустер, бейдж, странную монету или старую вазу — всё это ХАОС!"
@@ -1179,9 +1181,9 @@ for _target, _recipe in RECIPES.items():
 # Для «сейв-монет» (evolution/rebirth/awakening) используем реальные проценты из констант,
 # для остального — текст по факту того, что делает соответствующий apply_*_proc.
 HELP_ITEM_EXTRA = {
-    "strange_coin": "Пассивный эффект: пока лежит в инвентаре — +1 🪙 к каждому базовому фарму ног.",
-    "warm_candle": "Пассивный эффект: пока лежит в инвентаре — +1 🪙 к каждому базовому фарму ног.",
-    "devotion_coin": "Пассивный эффект: пока лежит в инвентаре — +10 🪙 к фарму (иногда +30 🪙 с шансом 10%).",
+    "strange_coin": "Пассивный эффект: пока лежит в инвентаре — +5 🪙 к каждому базовому фарму ног.",
+    "warm_candle": "Пассивный эффект: пока лежит в инвентаре — +3 🪙 к каждому базовому фарму ног.",
+    "devotion_coin": "Пассивный эффект: пока лежит в инвентаре — +15 🪙 к фарму (иногда +35 🪙 с шансом 10%).",
     "old_vase": "Пассивный эффект: при фарме ног — небольшой шанс (~1%) на +1 🉑 очко перерождения.",
     "golden_vase": "Пассивный эффект: при фарме ног — шанс (~6%) на +1 🉑 очко перерождения (сильнее Старой вазы).",
     "godly_vase": (
@@ -2731,7 +2733,7 @@ PROMO_TYPE_LABEL = {
 }
 
 PROMO_BADGES = {
-    "tester":       (PREMIUM_BADGE_TESTER, "Тестер"),
+    "tester":       (PREMIUM_BADGE_TESTER, "Фанат Мику"),
     "support":      (PREMIUM_BADGE_SUPPORT, "Сапорт"),
     "power":        (PREMIUM_BADGE_POWER, "Потужность"),
     "top1_past":    (PREMIUM_BADGE_TOP1_PAST, "Топ 1 в прошлом"),
@@ -2739,7 +2741,7 @@ PROMO_BADGES = {
     "investor":     (PREMIUM_BADGE_INVESTOR, "Инвестировал в #####"),
 }
 PROMO_BADGE_ALIASES = {
-    "тестер": "tester",
+    "фанат мику": "tester",
     "сапорт": "support",
     "потужность": "power",
     "топ1 в прошлом": "top1_past",
@@ -2764,8 +2766,8 @@ HELP_BADGES = {
                     f"Даётся, когда суммарно нафармлено {BADGE_EVO_TOTAL} очков ноги (считается всё время, не сбрасывается)."),
     "evo5":        (PREMIUM_BADGE_EVO5, ["5 эволюция", "5эво", "5 эво"],
                     "Даётся по достижению 5 уровня эволюции."),
-    "tester":      (PREMIUM_BADGE_TESTER, ["тестер"],
-                    "Выдаётся вручную админом или по промокоду тем, кто помогал тестировать бота."),
+    "tester":      (PREMIUM_BADGE_TESTER, ["фанат мику"],
+                    "Выдаётся вручную админом или по промокоду преданным фанатам Мику."),
     "support":     (PREMIUM_BADGE_SUPPORT, ["сапорт", "support"],
                     "Выдаётся вручную админом или по промокоду тем, кто помогает с поддержкой игроков."),
     "power":       (PREMIUM_BADGE_POWER, ["потужность"],
@@ -2861,11 +2863,11 @@ async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict, lu
     зелье удачи). Один UPDATE. Возвращает {'coins': N, 'rebirth': N, 'evo': 0 (не используется), 'is_god': bool}."""
     coin_bonus = 0
     if inventory_map.get("strange_coin", 0) > 0:
-        coin_bonus += 1
+        coin_bonus += 5
     if inventory_map.get("warm_candle", 0) > 0:
-        coin_bonus += 1
+        coin_bonus += 3
     if inventory_map.get("devotion_coin", 0) > 0:
-        coin_bonus += 10
+        coin_bonus += 15
         if random.random() < 0.10:
             coin_bonus += 20
 
@@ -2893,31 +2895,31 @@ async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = 
     roll_scale = 0.5 if luck_boost else 1.0
     if inventory_map.get("godly_vase", 0) > 0:
         roll = random.random() * roll_scale
-        if roll < 0.001:
-            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 200 WHERE user_id = ?", (user_id,))
-            return "\n🏺✨ Боготворная ваза: СУПЕР УДАЧА! +200🉑!"
-        if roll < 0.011:
+        if roll < 0.002:
+            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 400 WHERE user_id = ?", (user_id,))
+            return f"\n{PREMIUM_GODLY_VASE} Боготворная ваза: СУПЕР УДАЧА! +400🉑!"
+        if roll < 0.022:
+            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 20 WHERE user_id = ?", (user_id,))
+            return f"\n{PREMIUM_GODLY_VASE} Боготворная ваза: +20🉑!"
+        if roll < 0.122:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 10 WHERE user_id = ?", (user_id,))
-            return "\n🏺 Боготворная ваза: +10🉑!"
-        if roll < 0.061:
-            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 5 WHERE user_id = ?", (user_id,))
-            return "\n🏺 Боготворная ваза: +5🉑!"
-        if roll < 0.161:
-            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 3 WHERE user_id = ?", (user_id,))
-            return "\n🏺 Боготворная ваза: +3🉑!"
-        if roll < 0.561:
-            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
-            return "\n🏺 Боготворная ваза: +1🉑!"
+            return f"\n{PREMIUM_GODLY_VASE} Боготворная ваза: +10🉑!"
+        if roll < 0.322:
+            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 6 WHERE user_id = ?", (user_id,))
+            return f"\n{PREMIUM_GODLY_VASE} Боготворная ваза: +6🉑!"
+        if roll < 1.122:
+            await db_exec("UPDATE users SET rebirth_points = rebirth_points + 2 WHERE user_id = ?", (user_id,))
+            return f"\n{PREMIUM_GODLY_VASE} Боготворная ваза: +2🉑!"
         return ""
     if inventory_map.get("golden_vase", 0) > 0:
         if random.random() * roll_scale < 0.06:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
-            return "\n🏺 Золотая ваза: +1🉑!"
+            return f"\n{PREMIUM_GOLDEN_VASE} Золотая ваза: +1🉑!"
         return ""
     if inventory_map.get("old_vase", 0) > 0:
-        if random.random() * roll_scale < 0.01:
+        if random.random() * roll_scale < 0.05:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
-            return "\n🏺 Старая ваза: +1🉑!"
+            return f"\n{PREMIUM_OLD_VASE} Старая ваза: +1🉑!"
         return ""
     return ""
 
@@ -2974,11 +2976,11 @@ def apply_coin_tree_farm_roll(gained: int, active_items) -> tuple:
 
 async def apply_godly_nogost_coin_case_proc(user_id: int, inventory_map: dict) -> str:
     """🔶 Монета Бога Ногости: пассивно (даже не экипирована — работает лёжа в инвентаре, как
-    и остальные пассивные монеты) шанс 10% при базовом фарме ног дать +100 очков престижа
+    и остальные пассивные монеты) шанс 0.7% при базовом фарме ног дать +100 очков престижа
     и +5 000 000 (5кк) очков ноги одним общим проком за фарм."""
     if inventory_map.get("godly_nogost_coin", 0) <= 0:
         return ""
-    if random.random() >= 0.10:
+    if random.random() >= 0.007:
         return ""
     await db_exec(
         "UPDATE users SET score = score + 5000000, prestige_points = prestige_points + 100 WHERE user_id = ?",
@@ -3004,7 +3006,7 @@ async def apply_bitcoin_proc(user_id: int, inventory_map: dict) -> str:
     if random.random() >= 0.0005:
         return ""
     await db_exec("UPDATE users SET coins = coins + 15000000 WHERE user_id = ?", (user_id,))
-    return f"\n{PREMIUM_BITCOIN} Биткоин: КРИПТО-ДЖЕКПОТ! +15 000 000🪙!"
+    return f"\n{PREMIUM_BITCOIN} Биткоин: КРИПТО-ДЖЕКПОТ! +15 000 000{PREMIUM_BITCOIN}!"
 
 async def apply_rebirth_coin_proc(user_id: int, inventory_map: dict) -> str:
     """🟣 Монета Перерождения: пассивно (лёжа в инвентаре) при КАЖДОМ базовом фарме ног
@@ -3012,10 +3014,10 @@ async def apply_rebirth_coin_proc(user_id: int, inventory_map: dict) -> str:
     if inventory_map.get("rebirth_coin", 0) <= 0:
         return ""
     await db_exec("UPDATE users SET rebirth_points = rebirth_points + 2 WHERE user_id = ?", (user_id,))
-    return "\n🟣 Монета Перерождения: +2🉑!"
+    return f"\n{PREMIUM_REBIRTH_COIN} Монета Перерождения: +2🉑!"
 
 async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
-    """🔮 Шар Хроноса: пока экипирован, при каждом фарме ног независимо проверяются все
+    """🔮 Хвост Джевила: пока экипирован, при каждом фарме ног независимо проверяются все
     эффекты — несколько могут сработать за один фарм одновременно.
     Возвращает (текст_для_ответа, сбросить_кулдаун: bool, доп_множитель_фарма: float)."""
     if "chronos_orb" not in set(_normalize_active_items(active_items)):
@@ -3024,32 +3026,32 @@ async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
     lines = []
     reset_cd = False
     farm_extra_mult = random.uniform(CHRONOS_ORB_FARM_MULT_MIN, CHRONOS_ORB_FARM_MULT_MAX)
-    lines.append(f"\n🔮 Шар Хроноса: рандом-множитель фарма x{farm_extra_mult:.2f}")
+    lines.append(f"\n🔮 Хвост Джевила: рандом-множитель фарма x{farm_extra_mult:.2f}")
 
     if random.random() < CHRONOS_ORB_REBIRTH_CHANCE:
         amount = random.randint(CHRONOS_ORB_REBIRTH_MIN, CHRONOS_ORB_REBIRTH_MAX)
         await db_exec("UPDATE users SET rebirth_points = rebirth_points + ? WHERE user_id = ?", (amount, user_id))
-        lines.append(f"🔮 Шар Хроноса: +{amount} 🉑!")
+        lines.append(f"🔮 Хвост Джевила: +{amount} 🉑!")
 
     if random.random() < CHRONOS_ORB_COIN_CHANCE:
         amount = random.randint(CHRONOS_ORB_COIN_MIN, CHRONOS_ORB_COIN_MAX)
         await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (amount, user_id))
-        lines.append(f"🔮 Шар Хроноса: +{amount} 🪙!")
+        lines.append(f"🔮 Хвост Джевила: +{amount} 🪙!")
 
     if random.random() < CHRONOS_ORB_LEGS_CHANCE:
         amount = random.randint(CHRONOS_ORB_LEGS_MIN, CHRONOS_ORB_LEGS_MAX)
         await db_exec("UPDATE users SET score = score + ? WHERE user_id = ?", (amount, user_id))
-        lines.append(f"🔮 Шар Хроноса: +{amount} очков ноги!")
+        lines.append(f"🔮 Хвост Джевила: +{amount} очков ноги!")
 
     if random.random() < CHRONOS_ORB_NO_CD_CHANCE:
         reset_cd = True
-        lines.append("🔮 Шар Хроноса: кулдаун фермы обнулён!")
+        lines.append("🔮 Хвост Джевила: кулдаун фермы обнулён!")
 
     if random.random() < CHRONOS_ORB_PRESTIGE_CHANCE:
         amount = random.randint(CHRONOS_ORB_PRESTIGE_MIN, CHRONOS_ORB_PRESTIGE_MAX)
         if amount > 0:
             await db_exec("UPDATE users SET prestige_points = prestige_points + ? WHERE user_id = ?", (amount, user_id))
-            lines.append(f"🔮 Шар Хроноса: +{amount} 🔮 очков престижа!")
+            lines.append(f"🔮 Хвост Джевила: +{amount} 🔮 очков престижа!")
 
     if random.random() < CHRONOS_ORB_POTION_CHANCE:
         potion_key = random.choice(POTION_ORDER)
@@ -3058,7 +3060,7 @@ async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
         stock[potion_key] = stock.get(potion_key, 0) + 1
         await db_exec("UPDATE users SET potion_stock = ? WHERE user_id = ?", (format_potion_stock(stock), user_id))
         cfg = POTIONS[potion_key]
-        lines.append(f"🔮 Шар Хроноса: +1 {cfg['emoji']} {esc(cfg['name'])}!")
+        lines.append(f"🔮 Хвост Джевила: +1 {cfg['emoji']} {esc(cfg['name'])}!")
 
     if random.random() < CHRONOS_ORB_BOOSTER_CHANCE:
         pool = _random_booster_pool()
@@ -3066,26 +3068,26 @@ async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
             booster_key = random.choice(pool)
             await add_item(user_id, booster_key, 1)
             emoji, name, _, _ = ITEMS[booster_key]
-            lines.append(f"🔮 Шар Хроноса: +1 {emoji} {esc(name)}!")
+            lines.append(f"🔮 Хвост Джевила: +1 {emoji} {esc(name)}!")
 
     if random.random() < CHRONOS_ORB_BADGE_CHANCE:
         await add_promo_badge(user_id, "chaos_master")
         emoji, name = PROMO_BADGES["chaos_master"]
-        lines.append(f"🔮 Шар Хроноса: ПОЛУЧЕН БЕЙДЖ {emoji} «{esc(name)}»!!!")
+        lines.append(f"🔮 Хвост Джевила: ПОЛУЧЕН БЕЙДЖ {emoji} «{esc(name)}»!!!")
 
     if random.random() < CHRONOS_ORB_STRANGE_COIN_CHANCE:
         await add_item(user_id, "strange_coin", 1)
-        lines.append(f"🔮 Шар Хроноса: +1 {ITEMS['strange_coin'][0]} Странная монета!")
+        lines.append(f"🔮 Хвост Джевила: +1 {ITEMS['strange_coin'][0]} Странная монета!")
 
     if random.random() < CHRONOS_ORB_OLD_VASE_CHANCE:
         await add_item(user_id, "old_vase", 1)
-        lines.append(f"🔮 Шар Хроноса: +1 {ITEMS['old_vase'][0]} Старая ваза!")
+        lines.append(f"🔮 Хвост Джевила: +1 {ITEMS['old_vase'][0]} Старая ваза!")
 
     return "\n".join(lines), reset_cd, farm_extra_mult
 
 async def chronos_orb_boost_loop():
     """Фоновый таск: раз в CHRONOS_BOOST_INTERVAL (5 мин) пересчитывает рандомный % буста
-    (1-200%) для ВСЕХ игроков сразу — не только для тех, у кого экипирован Шар Хроноса
+    (10-400%) для ВСЕХ игроков сразу — не только для тех, у кого экипирован Хвост Джевила
     (дёшево одним UPDATE, а не по каждому фарму), см. get_multiplier(). Первый пересчёт —
     сразу при старте бота, чтобы буст не простаивал на 0%/100% до первого 5-минутного тика."""
     while True:
@@ -3256,9 +3258,9 @@ def is_vip_active(vip_until: int) -> bool:
 
 def _percent_label(item_key: str, percent: int) -> str:
     """Подпись буста для кнопок/списков. chronos_orb — спец-случай: у него рандомный
-    буст 1-200% (пересчитывается раз в 5 мин), фикс. число тут вводило бы в заблуждение."""
+    буст 10-400% (пересчитывается раз в 5 мин), фикс. число тут вводило бы в заблуждение."""
     if item_key == "chronos_orb":
-        return "+1-200%, рандом"
+        return "+10-400%, рандом"
     return f"+{percent}%"
 
 def inventory_keyboard(inventory_rows, active_item: str, user_id: int) -> InlineKeyboardMarkup:
@@ -4784,7 +4786,7 @@ async def destroy_wrong_format(message: Message):
 def _format_equipped_item_line(item_key: str) -> str:
     emoji, name, boost_percent, _ = ITEMS[item_key]
     if item_key == "chronos_orb":
-        return f"{emoji} {esc(name)} (+1-200%, рандом)"
+        return f"{emoji} {esc(name)} (+10-400%, рандом)"
     return f"{emoji} {esc(name)} (+{boost_percent}%)"
 
 def format_inventory_menu_text(active_items, upgrades: dict = None, prestige_upgrades: dict = None, bonus_slots: int = 0):
@@ -6225,12 +6227,17 @@ async def rebirth(message: Message):
         TEXTS["rebirth_2"].format(v0=result["points_gained"], v1=result["rebirth_points"], v2=new_hardness, v3=PRESTIGE_PER_REBIRTH) + result["extra_text"]
     )
 
-def ultra_rebirth_eligible(evolution_level: int, leg_level: int, rebirth_count: int) -> bool:
-    """Все три условия обязательны одновременно (см. константы ULTRA_REQUIRED_*)."""
+def ultra_rebirth_eligible(evolution_level: int, leg_level: int, rebirth_count: int,
+                            has_awakening_coin: bool, has_chronos_orb: bool) -> bool:
+    """Все пять условий обязательны одновременно (см. константы ULTRA_REQUIRED_*):
+    эволюция, уровень ноги, число перерождений, а также владение Монетой Пробуждения
+    и Хвостом Джевила (просто лежат в инвентаре — экипировать не нужно, не расходуются)."""
     return (
         evolution_level >= ULTRA_REQUIRED_EVO
         and leg_level >= ULTRA_REQUIRED_LEG_LEVEL
         and rebirth_count >= ULTRA_REQUIRED_REBIRTHS
+        and has_awakening_coin
+        and has_chronos_orb
     )
 
 def ultra_rebirth_confirm_keyboard(user_id: int) -> InlineKeyboardMarkup:
@@ -6257,12 +6264,19 @@ async def ultra_rebirth_info(message: Message):
 
     leg_level = get_level_index(score, evolution_level, rebirth_count)
 
-    if not ultra_rebirth_eligible(evolution_level, leg_level, rebirth_count):
+    inv_rows = await get_inventory(user_id)
+    inventory_map = {k: q for k, q in inv_rows}
+    has_awakening_coin = inventory_map.get("awakening_coin", 0) > 0
+    has_chronos_orb = inventory_map.get("chronos_orb", 0) > 0
+
+    if not ultra_rebirth_eligible(evolution_level, leg_level, rebirth_count, has_awakening_coin, has_chronos_orb):
         await message.reply(
             TEXTS["ultra_rebirth_locked_1"].format(
                 v0=evolution_level, v1=ULTRA_REQUIRED_EVO,
                 v2=leg_level, v3=ULTRA_REQUIRED_LEG_LEVEL,
                 v4=rebirth_count, v5=ULTRA_REQUIRED_REBIRTHS,
+                v6="✅" if has_awakening_coin else "❌",
+                v7="✅" if has_chronos_orb else "❌",
             )
         )
         return
@@ -6306,13 +6320,20 @@ async def ultra_rebirth_confirm(callback: CallbackQuery):
 
     leg_level = get_level_index(score, evolution_level, rebirth_count)
 
-    if not ultra_rebirth_eligible(evolution_level, leg_level, rebirth_count):
+    inv_rows = await get_inventory(user_id)
+    inventory_map = {k: q for k, q in inv_rows}
+    has_awakening_coin = inventory_map.get("awakening_coin", 0) > 0
+    has_chronos_orb = inventory_map.get("chronos_orb", 0) > 0
+
+    if not ultra_rebirth_eligible(evolution_level, leg_level, rebirth_count, has_awakening_coin, has_chronos_orb):
         await safe_edit_text(
             callback,
             TEXTS["ultra_rebirth_locked_1"].format(
                 v0=evolution_level, v1=ULTRA_REQUIRED_EVO,
                 v2=leg_level, v3=ULTRA_REQUIRED_LEG_LEVEL,
                 v4=rebirth_count, v5=ULTRA_REQUIRED_REBIRTHS,
+                v6="✅" if has_awakening_coin else "❌",
+                v7="✅" if has_chronos_orb else "❌",
             ),
         )
         await callback.answer()
@@ -6383,7 +6404,10 @@ HELP_COMMANDS = {
     "rebirth": ("🉑", ["перерождение"],
                 "Сбрасывает ногу и эволюцию, взамен даёт очки перерождения — их тратят на апгрейды и крафт уникальных бустеров."),
     "ultra_rebirth": ("💫", ["ультра перерождение"],
-                       "Более требовательная версия перерождения на поздней стадии игры — даёт больше очков перерождения за раз."),
+                       "Разовый необратимый прыжок за грань обычного мира: обнуляет ногу, эволюцию и перерождения, "
+                       "но взамен открывает второй, ULTRA-мир уровней (потолок улетает с 20001 в астрономические дали), "
+                       "даёт постоянный буст добычи и очки престижа (отдельная валюта для престиж-апгрейдов). "
+                       "Условия: эволюция 50+, уровень ноги 20001+, 5+ перерождений, а также Монета Пробуждения и Хвост Джевила в инвентаре."),
     "exchange": ("💱", ["обменять"],
                  "Обменивает очки ноги на монеты по фиксированному курсу: «обменять <число>»."),
     "inventory": ("🎒", ["инвентарь", "мой инвентарь"],
