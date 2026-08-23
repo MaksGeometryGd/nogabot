@@ -2409,13 +2409,12 @@ async def is_subscribed(user_id: int) -> bool:
     try:
         member = await bot.get_chat_member(REQUIRED_CHANNEL_CHAT_ID, user_id)
         subscribed = member.status not in ("left", "kicked")
-    except TelegramBadRequest as e:
-        # Бот не админ канала / канал не найден и т.п. — не блокируем игру из-за своей ошибки конфигурации
-        print(f"Проверка подписки не удалась ({REQUIRED_CHANNEL_CHAT_ID}, user={user_id}): {e}")
-        subscribed = True
+        print(f"[sub-check] user={user_id} status={member.status} -> subscribed={subscribed}")
     except Exception as e:
-        print(f"Проверка подписки: непредвиденная ошибка ({user_id}): {e}")
-        subscribed = True
+        # ВРЕМЕННО (диагностика): раньше любая ошибка тут пропускала пользователя (subscribed=True).
+        # Сейчас логируем во весь голос, чтобы увидеть причину. Пока не разберёмся — считаем НЕ подписанным.
+        print(f"[sub-check] ОШИБКА при проверке ({REQUIRED_CHANNEL_CHAT_ID}, user={user_id}): {type(e).__name__}: {e}")
+        subscribed = False
 
     _subscription_cache[user_id] = (subscribed, now)
     return subscribed
