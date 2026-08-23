@@ -46,6 +46,13 @@ ADMIN_USER_ID = 7148430462
 TURSO_URL = os.environ.get("TURSO_DATABASE_URL")
 TURSO_TOKEN = os.environ.get("TURSO_AUTH_TOKEN")
 
+# --- Обязательная подписка на канал (проверяется на !ферма, эволюция, перерождение) ---
+REQUIRED_CHANNEL_USERNAME = "mggnoganews"          # без @ и без ссылки
+REQUIRED_CHANNEL_URL = "https://t.me/mggnoganews"
+REQUIRED_CHANNEL_CHAT_ID = f"@{REQUIRED_CHANNEL_USERNAME}"
+SUBSCRIPTION_CHECK_CACHE_TTL = 300  # сек, чтобы не долбить Telegram API на каждый фарм
+_subscription_cache: dict[int, tuple[bool, float]] = {}
+
 PREMIUM_MIKU = '<tg-emoji emoji-id="5199793038410391513">🤩</tg-emoji>'
 PREMIUM_MGG = '<tg-emoji emoji-id="6327920744789444368">🥰</tg-emoji>'
 
@@ -354,6 +361,7 @@ TEXTS = {
     "send_evo_top_1": 'В топе пока пусто.',
     "send_coin_top_1": 'В топе пока пусто.',
     "send_rebirth_top_1": 'В топе пока пусто.',
+    "require_subscription_1": '📝 Для работы на ферме нужно быть подписанным на канал.\nПодписывайтесь на канал и бегом обратно фармить',
     "farm_1": 'Ферма на кулдауне ⏳ Осталось {v0} мин {v1} сек',
     "farm_2": '{v0} 🦵 +{v1} очков (Всего: {v2}){v3}{v4}{v5}{v6}',
     "farm_3": 'Наферметил ногу! 🦵 +{v0} очков (Всего: {v1}){v2}{v3}{v4}',
@@ -2384,6 +2392,58 @@ def farm_range(evolution_level: int):
 def is_admin(message: Message) -> bool:
     return message.from_user.id == ADMIN_USER_ID or (message.from_user.username or "").lower() == ADMIN_USERNAME.lower()
 
+def subscription_keyboard() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="📢 Подписаться на канал", url=REQUIRED_CHANNEL_URL)],
+        [InlineKeyboardButton(text="✅ Я подписался", callback_data="check_sub")],
+    ])
+
+async def is_subscribed(user_id: int) -> bool:
+    """Проверяет подписку на REQUIRED_CHANNEL_CHAT_ID с коротким кэшем,
+    чтобы не спамить getChatMember на каждый фарм/эво/перерождение."""
+    cached = _subscription_cache.get(user_id)
+    now = time.monotonic()
+    if cached and now - cached[1] < SUBSCRIPTION_CHECK_CACHE_TTL:
+        return cached[0]
+
+    try:
+        member = await bot.get_chat_member(REQUIRED_CHANNEL_CHAT_ID, user_id)
+        subscribed = member.status not in ("left", "kicked")
+    except TelegramBadRequest as e:
+        # Бот не админ канала / канал не найден и т.п. — не блокируем игру из-за своей ошибки конфигурации
+        print(f"Проверка подписки не удалась ({REQUIRED_CHANNEL_CHAT_ID}, user={user_id}): {e}")
+        subscribed = True
+    except Exception as e:
+        print(f"Проверка подписки: непредвиденная ошибка ({user_id}): {e}")
+        subscribed = True
+
+    _subscription_cache[user_id] = (subscribed, now)
+    return subscribed
+
+async def require_subscription(message: Message) -> bool:
+    """Возвращает True если можно продолжать выполнение команды.
+    Если пользователь не подписан — отправляет требование подписаться и возвращает False."""
+    user_id = message.from_user.id
+    if is_admin(message):
+        return True
+    if await is_subscribed(user_id):
+        return True
+    await message.reply(TEXTS["require_subscription_1"], reply_markup=subscription_keyboard())
+    return False
+
+@dp.callback_query(F.data == "check_sub")
+async def check_sub_callback(callback: CallbackQuery):
+    user_id = callback.from_user.id
+    _subscription_cache.pop(user_id, None)  # форс-рекheck, не ждём TTL кэша
+    if await is_subscribed(user_id):
+        await callback.answer("✅ Подписка подтверждена! Можешь фармить дальше.", show_alert=True)
+        try:
+            await callback.message.delete()
+        except TelegramBadRequest:
+            pass
+    else:
+        await callback.answer("❌ Подписки пока не вижу. Подпишись на канал и попробуй ещё раз.", show_alert=True)
+
 def roll_case_item(case_num: int) -> str:
     pool = CASES[case_num]["pool"]
     weights = [ITEMS[k][3] for k in pool]
@@ -4207,6 +4267,8 @@ async def top_overall_global(message: Message):
 
 @dp.message(F.text.lower().in_({"ферма", "фарма"}))
 async def farm(message: Message):
+    if not await require_subscription(message):
+        return
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     now = int(time.time())
@@ -5831,6 +5893,8 @@ async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirt
 
 @dp.message(F.text.lower() == "эволюция")
 async def evolve(message: Message):
+    if not await require_subscription(message):
+        return
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
 
@@ -6196,6 +6260,8 @@ async def try_auto_rebirth(user_id: int, score: int, evolution_level: int, rebir
 
 @dp.message(F.text.lower() == "перерождение")
 async def rebirth(message: Message):
+    if not await require_subscription(message):
+        return
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name or "Без имени"
 
