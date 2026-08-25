@@ -14,7 +14,10 @@ from premium_emoji import (
     PREMIUM_REBIRTH_COIN,
 )
 from config import (
-    EVO_HARDNESS_RATE, FARM_EVOLVED, MEK_LIMIT, MEK_POINT, TEXTS,
+    EVO_FARM_BONUS_LVL10, EVO_FLOW_EXTRA_CHANCE, EVO_FLOW_UNLOCK_LEVEL,
+    EVO_HARDNESS_RATE, EVO_LEG_TIERS, EVO_LEG_UNLOCK_BY_LEVEL, EVO_UNLOCK_MEK2_LEVEL,
+    EVO_UNLOCK_NECKLACE_CRAFTS_LEVEL, EVO_UNLOCK_REBIRTH_SPARK_LEVEL,
+    FARM_EVOLVED, MEK_LIMIT, MEK_POINT, TEXTS,
     ULTRA_LEG_EMOJI, ULTRA_LEG_LEVEL, ULTRA_LEG_NAME, ULTRA_REBIRTH_BOOST,
     ULTRA_REQUIRED_EVO, ULTRA_REQUIRED_LEG_LEVEL, ULTRA_REQUIRED_REBIRTHS,
 )
@@ -25,7 +28,7 @@ from game_data import (
     PRESTIGE_PAGE_SIZE, PRESTIGE_PER_REBIRTH, PRESTIGE_PER_ULTRA_REBIRTH,
     PRESTIGE_UPGRADES, REBIRTH_COIN_SAVE_PCT, REBIRTH_EVO_STEP,
     REBIRTH_HARDNESS_STEP, REBIRTH_MIN_EVO, REBIRTH_POINTS_PER_STEP,
-    UPGRADES, UPGRADE_CATEGORIES, UPGRADE_ORDER, apply_case_reward,
+    UPGRADES, UPGRADE_CATEGORIES, UPGRADE_ORDER,
     parse_auto_sell_items,
 )
 from command_patterns import CASE_NUM_RE
@@ -33,7 +36,8 @@ from text_utils import esc, plain_emoji, safe_edit_text
 from state import dp
 from economy import (
     PROMO_BADGES, _invalidate_event_state_cache, _normalize_active_items,
-    add_item, add_promo_badge, case_price_with_discount, db_exec, ensure_user,
+    add_item, add_promo_badge, apply_case_reward, case_price_with_discount,
+    db_exec, ensure_user,
     format_prestige_upgrades, format_upgrades, get_inventory, get_level_index,
     get_user, is_event_active, level_threshold, log_admin_action,
     parse_equipped, parse_prestige_upgrades, parse_upgrades, prestige_bonus,
@@ -239,6 +243,32 @@ async def apply_coin_tree_save(user_id: int, inventory_map: dict, event: str, sc
 
     return {"kept_score": kept_score, "kept_evolution": kept_evolution, "extra_text": extra_text}
 
+async def evo_level_unlock_text(user_id: int, evolution_level: int) -> str:
+    """Общая точка разблокировок за уровень эволюции — вызывается и из авто-эво (каскадно,
+    на каждом промежуточном уровне), и из ручной «эволюция» (один уровень за раз), чтобы
+    список разблокировок не расходился между ними."""
+    if evolution_level == 1:
+        return f"\nОткрыта фарма {FARM_EVOLVED[0]}-{FARM_EVOLVED[1]} очков и эмодзи 🦿 ({MEK_POINT} очков, до {MEK_LIMIT} раз в соо)!"
+    if evolution_level == 2:
+        await add_item(user_id, "star")
+        return "\nПолучена ⭐️ Звезда перерождения — экипируй в инвентарь!"
+
+    text = ""
+    if evolution_level == EVO_UNLOCK_REBIRTH_SPARK_LEVEL:
+        await add_item(user_id, "rebirth_spark")
+        text += f"\nПолучена {ITEMS['rebirth_spark'][0]} Искра перерождения — сырьё для новых крафтов!"
+    if evolution_level in EVO_LEG_UNLOCK_BY_LEVEL:
+        emoji = EVO_LEG_UNLOCK_BY_LEVEL[evolution_level]
+        tier = EVO_LEG_TIERS[emoji]
+        text += f"\nОткрыты новые ноги {emoji} (+{tier['bonus_pct']}% к добыче робоног, лимит {tier['limit']} за сообщение)!"
+    if evolution_level == EVO_UNLOCK_MEK2_LEVEL:
+        text += f"\nДобыча команды «ферма» увеличена на +{EVO_FARM_BONUS_LVL10} очков!"
+    if evolution_level == EVO_UNLOCK_NECKLACE_CRAFTS_LEVEL:
+        text += "\nОткрыты новые крафты: Ожерелье из звёзд, Ожерелье пылающей звезды, Карманная звезда!"
+    if evolution_level == EVO_FLOW_UNLOCK_LEVEL:
+        text += f"\nОткрыт пассивный буст «Поток эволюции» — {round(EVO_FLOW_EXTRA_CHANCE * 100)}% шанс на доп. эволюцию сверху при каждой эволюции!"
+    return text
+
 async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirth_count: int, active_items=None) -> tuple[int, int, str]:
     """VIP авто-эво: каскадно эволюционирует, пока очков хватает на след. эволюцию —
     например, если фарм разом принёс очков на 2 эволюции вперёд, сработают обе.
@@ -254,11 +284,12 @@ async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirt
         score = 0
         evolution_level += 1
         evolutions_done += 1
-        if evolution_level == 1:
-            unlock_text += f"\nОткрыта фарма {FARM_EVOLVED[0]}-{FARM_EVOLVED[1]} очков и эмодзи 🦿 ({MEK_POINT} очков, до {MEK_LIMIT} раз в соо)!"
-        elif evolution_level == 2:
-            await add_item(user_id, "star")
-            unlock_text += "\nПолучена ⭐️ Звезда перерождения — экипируй в инвентарь!"
+        unlock_text += await evo_level_unlock_text(user_id, evolution_level)
+        if evolution_level >= EVO_FLOW_UNLOCK_LEVEL and random.random() < EVO_FLOW_EXTRA_CHANCE:
+            evolution_level += 1
+            evolutions_done += 1
+            unlock_text += "\n🌊 Поток эволюции: доп. эволюция сверху!"
+            unlock_text += await evo_level_unlock_text(user_id, evolution_level)
 
     if evolutions_done == 0:
         return evolution_level, score, ""
@@ -316,12 +347,7 @@ async def evolve(message: Message):
 
     await db_exec("UPDATE users SET score = ?, evolution_level = ? WHERE user_id = ?", (kept_score, new_evolution, user_id))
 
-    unlock_text = ""
-    if new_evolution == 1:
-        unlock_text = f"\nОткрыта фарма {FARM_EVOLVED[0]}-{FARM_EVOLVED[1]} очков и эмодзи 🦿 ({MEK_POINT} очков, до {MEK_LIMIT} раз в соо)!"
-    elif new_evolution == 2:
-        await add_item(user_id, "star")
-        unlock_text = "\nПолучена ⭐️ Звезда перерождения — экипируй в инвентарь!"
+    unlock_text = await evo_level_unlock_text(user_id, new_evolution)
 
     await message.reply(
         TEXTS["evolve_2"].format(v0=new_evolution, v1=round(EVO_HARDNESS_RATE * new_evolution * 100), v2=unlock_text + ice_text + coin_save_text)

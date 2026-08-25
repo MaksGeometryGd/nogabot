@@ -17,23 +17,25 @@ from urllib.parse import quote
 
 from premium_emoji import PREMIUM_VIP_BADGE
 from config import (
-    ADMIN_USERNAME, ADMIN_USER_ID, LEG_FARM_COOLDOWN, LEG_POINT,
-    LEG_REPLY_COOLDOWN, MEK_POINT, TEXTS, VIP_BOOST, VIP_FOREVER_SECONDS,
-    VIP_STARS_PRICE,
+    ADMIN_USERNAME, ADMIN_USER_ID, EVO_LEG_TIERS, LEG_FARM_COOLDOWN, LEG_POINT,
+    LEG_REPLY_COOLDOWN, MEK_POINT, POCKET_STAR_LEG_FARM_MULT, TEXTS, VIP_BOOST,
+    VIP_FOREVER_SECONDS, VIP_STARS_PRICE,
 )
 from game_data import (
     CASES, CASE_SELLABLE_ITEMS, CHRONOS_ORB_FLAVOR, DRAGON_CLAW_POTION_MULT,
     GOD_ESSENCE_FLAVOR, ITEMS, KOSHKO_AMULET_FLAVOR, PAW_POINT_MULTIPLIER,
     REBIRTH_MIN_EVO, TIDE_WAVE_PROC_CHANCE, active_farm_limits,
-    apply_case_reward, format_auto_sell_items, parse_auto_sell_items,
+    format_auto_sell_items, parse_auto_sell_items,
 )
 from command_patterns import INFO_RE, NICK_SET_RE
 from text_utils import esc, safe_edit_text, safe_reply
 from state import bot, dp
 from economy import (
     _normalize_active_items, active_potions_now, add_item, apply_bitcoin_proc,
-    apply_chaos_orb_proc, apply_chronos_orb_procs, apply_craft_coin_proc,
-    apply_farm_bonuses, apply_godly_nogost_coin_case_proc, apply_rebirth_coin_proc,
+    apply_blazing_necklace_proc, apply_case_reward, apply_chaos_orb_proc,
+    apply_chronos_orb_procs, apply_craft_coin_proc, apply_farm_bonuses,
+    apply_godly_nogost_coin_case_proc, apply_rebirth_coin_proc,
+    apply_star_necklace_proc,
     apply_vase_proc, badge_list, badges_keyboard, build_top,
     case_price_with_discount, db_exec, db_query_one, display_name, ensure_user,
     farm_yield_multiplier, get_badges, get_event_multiplier, get_inventory,
@@ -407,13 +409,38 @@ async def badges_menu(message: Message):
         await message.reply(TEXTS["badges_menu_1"])
         return
 
-    kb = badges_keyboard(earned, hidden, user_id)
+    kb = badges_keyboard(earned, hidden, user_id, page=0)
     await message.reply(TEXTS["badges_menu_2"], reply_markup=kb)
+
+@dp.callback_query(F.data == "badge_noop")
+async def badge_noop(callback: CallbackQuery):
+    await callback.answer()
+
+@dp.callback_query(F.data.startswith("badge_page:"))
+async def badge_change_page(callback: CallbackQuery):
+    _, owner_str, page_str = callback.data.split(":")
+    owner_id = int(owner_str)
+    page = int(page_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["toggle_badge_1"], show_alert=True)
+        return
+    await callback.answer()
+
+    row = await get_user(owner_id)
+    username, evolution_level, cases_opened, total_farmed, vip_until = row[1], row[3], row[7], row[8], row[12]
+    hidden = parse_hidden(row[13] if len(row) > 13 else "")
+    promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
+    vip_active = is_vip_active(vip_until)
+
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
+    kb = badges_keyboard(earned, hidden, owner_id, page=page)
+    await safe_edit_text(callback, TEXTS["badges_menu_2"], reply_markup=kb)
 
 @dp.callback_query(F.data.startswith("badge:"))
 async def toggle_badge(callback: CallbackQuery):
-    _, owner_str, key = callback.data.split(":")
+    _, owner_str, page_str, key = callback.data.split(":")
     owner_id = int(owner_str)
+    page = int(page_str)
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["toggle_badge_1"], show_alert=True)
         return
@@ -434,7 +461,7 @@ async def toggle_badge(callback: CallbackQuery):
 
     vip_active = is_vip_active(vip_until)
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
-    kb = badges_keyboard(earned, hidden, owner_id)
+    kb = badges_keyboard(earned, hidden, owner_id, page=page)
     await safe_edit_text(callback, "🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
 
 @dp.message(F.text.regexp(r"[🦵🦿]"))
@@ -476,6 +503,13 @@ async def count_legs(message: Message):
         mek = min(text.count("🦿"), limits["mek_limit"])
         gained += mek * MEK_POINT
 
+    for emoji, tier in EVO_LEG_TIERS.items():
+        if evolution_level < tier["level"]:
+            continue
+        count = min(text.count(emoji), tier["limit"])
+        if count:
+            gained += count * round(MEK_POINT * (1 + tier["bonus_pct"] / 100))
+
     paw = min(text.count("🐾"), limits["paw_limit"])
     gained += paw * MEK_POINT * PAW_POINT_MULTIPLIER
 
@@ -498,6 +532,9 @@ async def count_legs(message: Message):
         total = round(total * (1 + 0.20 * galaxy))
     if star:
         total = round(total * (2 ** star))
+    inventory_map = {k: q for k, q in inv}
+    if inventory_map.get("pocket_star", 0) > 0:
+        total = round(total * POCKET_STAR_LEG_FARM_MULT)
     potion_text = ""
     if "potion_speed" in potions:
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
@@ -531,6 +568,10 @@ async def count_legs(message: Message):
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
     chaos_text = await apply_chaos_orb_proc(user_id, active_items)
+    necklace_text = (
+        await apply_blazing_necklace_proc(user_id, active_items)
+        + await apply_star_necklace_proc(user_id, active_items)
+    )
     coin_tree_text = (
         await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
         + await apply_bitcoin_proc(user_id, inventory_map)
@@ -566,7 +607,7 @@ async def count_legs(message: Message):
         parts += f" +{star}⭐️"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text
+    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:

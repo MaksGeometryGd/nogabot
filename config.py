@@ -175,6 +175,66 @@ LEG_LIMIT = 5
 MEK_POINT = 18
 MEK_LIMIT = 10
 
+# ==== Эво-апгрейд: новые «ноги»-эмодзи, открывающиеся по уровню эволюции ====
+# Каждая запись: emoji -> (evolution_level_required, точки за штуку, лимит символов в сообщении).
+# Точки считаются как MEK_POINT * (1 + bonus_pct/100), т.е. «на X% выше, чем робоноги».
+EVO_LEG_TIERS = {
+    "🦶": {"level": 10, "bonus_pct": 20, "limit": 10},
+    "👣": {"level": 20, "bonus_pct": 30, "limit": 5},
+    "🧦": {"level": 50, "bonus_pct": 50, "limit": 5},
+    "👟": {"level": 100, "bonus_pct": 100, "limit": 5},
+    "🥾": {"level": 250, "bonus_pct": 200, "limit": 5},
+    "🩴": {"level": 500, "bonus_pct": 500, "limit": 3},
+    "👢": {"level": 1000, "bonus_pct": 1200, "limit": 2},
+}
+EVO_LEG_EMOJI_ORDER = ["🦶", "👣", "🧦", "👟", "🥾", "🩴", "👢"]
+# level -> emoji, для быстрой проверки «на этом уровне эволюции разблокировалась новая нога».
+EVO_LEG_UNLOCK_BY_LEVEL = {cfg["level"]: emoji for emoji, cfg in EVO_LEG_TIERS.items()}
+
+# Уровни эволюции для остальных разблокировок «Эво-апгрейда».
+EVO_UNLOCK_REBIRTH_SPARK_LEVEL = 5    # ✨ Искра перерождения
+EVO_UNLOCK_MEK2_LEVEL = 10            # доп. бонус к добыче «фермы» (см. EVO_FARM_BONUS_LVL10); сама 🦶 через EVO_LEG_TIERS
+EVO_UNLOCK_NECKLACE_CRAFTS_LEVEL = 15  # крафты: Ожерелье из звёзд / пылающей звезды / Карманная звезда
+
+# Доп. добыча фермы (команда «ферма») при достижении 10 уровня эволюции.
+EVO_FARM_BONUS_LVL10 = 4000
+
+# 🔥📿 Ожерелье пылающей звезды (крафт-бустер 15 ур. эволюции, +210% к добыче при экипировке):
+# при фарме ног независимые шансы дать очки перерождения / очки престижа.
+BLAZING_NECKLACE_REBIRTH_CHANCE = 0.017
+BLAZING_NECKLACE_REBIRTH_RANGE = (1, 15)
+BLAZING_NECKLACE_PRESTIGE_CHANCE = 0.012
+BLAZING_NECKLACE_PRESTIGE_RANGE = (1, 3)
+
+# 📿 Ожерелье из звёзд (крафт-бустер 15 ур. эволюции, +120% к добыче при экипировке):
+# шанс дать предмет из кейса 1 при фарме ног.
+STAR_NECKLACE_CASE1_DROP_CHANCE = 0.025
+
+# 🌠 Карманная звезда (не бустер, пассивный предмет из крафта 15 ур. эволюции):
+# буст команды «ферма» x1.6 + гарантированные очки перерождения за каждый её вызов,
+# и отдельно буст x1.2 обычной фармы ног (🦵/🦿/... в чате).
+POCKET_STAR_FARM_CMD_MULT = 1.6
+POCKET_STAR_FARM_CMD_REBIRTH_RANGE = (1, 10)
+POCKET_STAR_LEG_FARM_MULT = 1.2
+
+# 30 уровень: пассивный буст «Поток эволюции» — шанс на доп. эволюцию сверху при каждой эволюции.
+EVO_FLOW_UNLOCK_LEVEL = 30
+EVO_FLOW_EXTRA_CHANCE = 0.10
+
+# Бейджи за уровень эволюции — (ключ, название) по возрастанию порога. Сами emoji-константы
+# (PREMIUM_BADGE_EVO<N>) берутся из premium_emoji.py по этому же ключу с префиксом evo_milestone_.
+EVO_MILESTONE_BADGE_LEVELS = [
+    ("evo_milestone_10", 10, "Новичок в эво"),
+    ("evo_milestone_25", 25, "Средний в эво"),
+    ("evo_milestone_50", 50, "Мастер эво"),
+    ("evo_milestone_100", 100, "Эво-чемпион"),
+    ("evo_milestone_250", 250, "Король эво"),
+    ("evo_milestone_500", 500, "Уничтожитель Эво"),
+    ("evo_milestone_1000", 1000, "Всемогущий в эво"),
+    ("evo_milestone_5000", 5000, "Эво-бог"),
+    ("evo_milestone_10000", 10000, "Эво-Титан"),
+]
+
 FARM_COOLDOWN = 1200
 FARM_BASE = (70, 170)
 FARM_EVOLVED = (500, 900)

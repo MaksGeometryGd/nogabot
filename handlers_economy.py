@@ -11,7 +11,9 @@ import time
 from premium_emoji import PREMIUM_DAILY_CHARM
 from config import (
     CRAFT_POINTS_EXCHANGE_RATE, DAILY_MIN_GAP, DAILY_STREAK_LIMIT,
-    DAILY_TABLE, EXCHANGE_RATE, REVERSE_EXCHANGE_RATE, TEXTS,
+    DAILY_TABLE, EVO_FARM_BONUS_LVL10, EVO_UNLOCK_MEK2_LEVEL, EXCHANGE_RATE,
+    POCKET_STAR_FARM_CMD_MULT, POCKET_STAR_FARM_CMD_REBIRTH_RANGE,
+    POCKET_STAR_LEG_FARM_MULT, REVERSE_EXCHANGE_RATE, TEXTS,
 )
 from game_data import (
     CHRONOS_ORB_FLAVOR, DRAGON_CLAW_POTION_MULT, GOD_ESSENCE_FLAVOR, ITEMS,
@@ -25,8 +27,9 @@ from text_utils import esc, parse_amount, safe_reply
 from state import dp
 from economy import (
     _normalize_active_items, active_potions_now, add_item, apply_bitcoin_proc,
-    apply_chaos_orb_proc, apply_chronos_orb_procs, apply_coin_tree_farm_roll,
-    apply_farm_bonuses, apply_godly_nogost_coin_case_proc, apply_rebirth_coin_proc,
+    apply_blazing_necklace_proc, apply_chaos_orb_proc, apply_chronos_orb_procs,
+    apply_coin_tree_farm_roll, apply_farm_bonuses, apply_godly_nogost_coin_case_proc,
+    apply_rebirth_coin_proc, apply_star_necklace_proc,
     apply_vase_proc, claim_offline_auto_farm, consume_no_cd_charge, db_exec,
     db_query_one, ensure_user, farm_cd_seconds, farm_range, farm_yield_multiplier,
     format_equipped, get_event_multiplier, get_inventory, get_level_index,
@@ -82,6 +85,17 @@ async def farm(message: Message):
     personal_mult = await get_personal_multiplier(user_id)
     p_yield_mult = 1 + 0.005 * prestige_bonus(prestige_upgrades, "p_farm_yield")
     gained = round(random.randint(low, high) * farm_yield_multiplier(upgrades) * mult * event_mult * personal_mult * p_yield_mult)
+    if evolution_level >= EVO_UNLOCK_MEK2_LEVEL:
+        gained += EVO_FARM_BONUS_LVL10
+    pocket_star_text = ""
+    if inventory_map.get("pocket_star", 0) > 0:
+        gained = round(gained * POCKET_STAR_FARM_CMD_MULT)
+        rebirth_gain = random.randint(*POCKET_STAR_FARM_CMD_REBIRTH_RANGE)
+        await db_exec(
+            "UPDATE users SET rebirth_points = rebirth_points + ? WHERE user_id = ?",
+            (rebirth_gain, user_id),
+        )
+        pocket_star_text = f"\n{ITEMS['pocket_star'][0]} Карманная звезда: +{rebirth_gain}🉑!"
     potion_text = ""
     if "potion_speed" in potions:
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
@@ -110,6 +124,10 @@ async def farm(message: Message):
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
     chaos_text = await apply_chaos_orb_proc(user_id, active_items)
+    necklace_text = (
+        await apply_blazing_necklace_proc(user_id, active_items)
+        + await apply_star_necklace_proc(user_id, active_items)
+    )
     coin_tree_text = (
         nogost_coin_text
         + await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
@@ -139,7 +157,7 @@ async def farm(message: Message):
         auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + chaos_text + chronos_text + coin_tree_text
+    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + chaos_text + chronos_text + coin_tree_text + pocket_star_text + necklace_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:

@@ -21,7 +21,10 @@ from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
 
 from premium_emoji import (
     PREMIUM_BADGE_CASE, PREMIUM_BADGE_CHAOS_MASTER, PREMIUM_BADGE_EVO,
-    PREMIUM_BADGE_EVO5, PREMIUM_BADGE_FARM, PREMIUM_BADGE_INVESTOR,
+    PREMIUM_BADGE_EVO5, PREMIUM_BADGE_EVO10, PREMIUM_BADGE_EVO25,
+    PREMIUM_BADGE_EVO50, PREMIUM_BADGE_EVO100, PREMIUM_BADGE_EVO250,
+    PREMIUM_BADGE_EVO500, PREMIUM_BADGE_EVO1000, PREMIUM_BADGE_EVO5000,
+    PREMIUM_BADGE_EVO10000, PREMIUM_BADGE_FARM, PREMIUM_BADGE_INVESTOR,
     PREMIUM_BADGE_POWER, PREMIUM_BADGE_SUPPORT, PREMIUM_BADGE_TESTER,
     PREMIUM_BADGE_TOP1_PAST, PREMIUM_BITCOIN, PREMIUM_CRAFT_COIN,
     PREMIUM_GODLY_NOGOST_COIN, PREMIUM_GODLY_VASE, PREMIUM_GOLDEN_VASE,
@@ -29,15 +32,19 @@ from premium_emoji import (
     PREMIUM_REBIRTH_COIN, PREMIUM_VIP_BADGE,
 )
 from config import (
-    ADMIN_USERNAME, ALL_THRESHOLDS, BADGE_EVO_TOTAL, CUSTOM_LEVELS,
-    EVO_BOOST_STEP, EVO_HARDNESS_RATE, EXTRA_TIERS, FARM_BASE, FARM_COOLDOWN,
-    FARM_EVOLVED, MAX_LEVEL_SCORE, MGG_MEGA_EMOJI, MGG_MEGA_LEVEL,
-    MGG_MEGA_NAME, TURSO_TOKEN, TURSO_URL, ULTRA_LEG_EMOJI, ULTRA_LEG_LEVEL,
+    ADMIN_USERNAME, ALL_THRESHOLDS, BADGE_EVO_TOTAL,
+    BLAZING_NECKLACE_PRESTIGE_CHANCE, BLAZING_NECKLACE_PRESTIGE_RANGE,
+    BLAZING_NECKLACE_REBIRTH_CHANCE, BLAZING_NECKLACE_REBIRTH_RANGE,
+    CUSTOM_LEVELS, EVO_BOOST_STEP, EVO_HARDNESS_RATE, EXTRA_TIERS, FARM_BASE,
+    FARM_COOLDOWN, FARM_EVOLVED, MAX_LEVEL_SCORE, MGG_MEGA_EMOJI,
+    MGG_MEGA_LEVEL, MGG_MEGA_NAME, STAR_NECKLACE_CASE1_DROP_CHANCE,
+    TURSO_TOKEN, TURSO_URL, ULTRA_LEG_EMOJI, ULTRA_LEG_LEVEL,
     ULTRA_LEG_NAME, ULTRA_LEVEL_CAP, ULTRA_REBIRTH_BOOST,
     ULTRA_REQUIRED_LEG_LEVEL, ULTRA_TIERS, VIP_BOOST,
 )
 from game_data import (
-    AUTO_FARM_COINS_RATES, AUTO_FARM_LEGS_RATES, CHAOS_ORB_FARM_CHANCE,
+    AUTO_FARM_COINS_RATES, AUTO_FARM_LEGS_RATES, BADGES_PAGE_SIZE, CASES,
+    CHAOS_ORB_FARM_CHANCE,
     CHAOS_ORB_FARM_MAX, CHAOS_ORB_FARM_MIN, CHRONOS_BOOST_INTERVAL,
     CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX,
     CHRONOS_ORB_BADGE_CHANCE, CHRONOS_ORB_BOOSTER_CHANCE,
@@ -49,10 +56,14 @@ from game_data import (
     CHRONOS_ORB_PRESTIGE_MIN, CHRONOS_ORB_PRESTIGE_MAX,
     CHRONOS_ORB_REBIRTH_CHANCE, CHRONOS_ORB_REBIRTH_MIN, CHRONOS_ORB_REBIRTH_MAX,
     CHRONOS_ORB_STRANGE_COIN_CHANCE,
+    EVO_MILESTONE_BADGES,
     GOD_ESSENCE_FARM_SPEED, GOD_ESSENCE_TIMER_CUT, GOD_TIER_LIKE,
-    ITEMS, ITEM_FLAT_BONUS, NO_CD_CHARGES_KEY, POTIONS, POTION_ORDER,
-    PRESTIGE_UPGRADES, REBIRTH_HARDNESS_STEP, RECIPES,
-    TIME_PARTICLE_FARM_SPEED, UPGRADES, get_active_unique_tier,
+    ITEMS, ITEM_FLAT_BONUS, NON_TRADABLE_ITEMS, NO_CD_CHARGES_KEY, POTIONS,
+    POTION_ORDER, PRESTIGE_UPGRADES, REBIRTH_HARDNESS_STEP, RECIPES,
+    SELL_PRICE, TIME_PARTICLE_FARM_SPEED, UPGRADES,
+    _normalize_active_items, craft_coin_cost_with_discount,
+    get_active_unique_tier, parse_equipped, prestige_bonus, prestige_level,
+    sell_bonus_coins, upgrade_level,
 )
 from text_utils import esc, plain_emoji
 
@@ -164,10 +175,6 @@ def coin_tree_slot_bonus(inventory_map: dict) -> int:
 def equipped_slots_max(upgrades: dict, prestige_upgrades: dict = None, bonus_slots: int = 0) -> int:
     prestige_upgrades = prestige_upgrades or {}
     return 1 + upgrade_level(upgrades, "equip_slots") + prestige_bonus(prestige_upgrades, "p_slots") + bonus_slots
-
-def parse_equipped(equipped_str: str) -> list:
-    """Очередь экипированных предметов: индекс 0 = надет раньше всех (первым вылетит при переполнении)."""
-    return [k for k in (equipped_str or "").split(",") if k]
 
 def format_equipped(items: list) -> str:
     return ",".join(items)
@@ -299,15 +306,6 @@ def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrade
         mult += ULTRA_REBIRTH_BOOST
     return mult
 
-def _normalize_active_items(active_items):
-    """Принимает список/кортеж ключей предметов, либо None. Строки сюда не передаём —
-    для строки очереди сначала вызывай parse_equipped()."""
-    if active_items is None:
-        return []
-    if isinstance(active_items, str):
-        return [active_items] if active_items in ITEMS else parse_equipped(active_items)
-    return [k for k in active_items if k]
-
 def total_flat_bonus(active_items) -> int:
     return sum(ITEM_FLAT_BONUS.get(k, 0) for k in _normalize_active_items(active_items))
 
@@ -329,9 +327,6 @@ def parse_upgrades(upgrades_str: str) -> dict:
 
 def format_upgrades(upgrades: dict) -> str:
     return ",".join(f"{k}:{v}" for k, v in upgrades.items() if v > 0)
-
-def upgrade_level(upgrades: dict, key: str) -> int:
-    return upgrades.get(key, 0)
 
 def upgrade_next_cost(key: str, upgrades: dict):
     cfg = UPGRADES[key]
@@ -369,18 +364,10 @@ def parse_prestige_upgrades(upgrades_str: str) -> dict:
 def format_prestige_upgrades(upgrades: dict) -> str:
     return ",".join(f"{k}:{v}" for k, v in upgrades.items() if v > 0)
 
-def prestige_level(upgrades: dict, key: str) -> int:
-    return upgrades.get(key, 0)
-
 def prestige_next_cost(key: str, upgrades: dict) -> int:
     """Бесконечная ветка — цена следующего уровня всегда определена, потолка нет."""
     level = prestige_level(upgrades, key)
     return PRESTIGE_UPGRADES[key]["cost"](level + 1)
-
-def prestige_bonus(upgrades: dict, key: str) -> int:
-    """Текущий эффект ветки на её нынешнем уровне (0, если ветка ещё не куплена)."""
-    level = prestige_level(upgrades, key)
-    return PRESTIGE_UPGRADES[key]["bonus"](level)
 
 async def claim_offline_auto_farm(user_id: int, row) -> tuple:
     """Начисляет оффлайн-доход от Авто-Фермы НОГИ/КОИНЫ по разнице времени.
@@ -457,20 +444,6 @@ def case_price_with_discount(base_price: int, upgrades: dict) -> int:
     discount = case_discount(upgrades)
     return max(1, round(base_price * (1 - discount)))
 
-def craft_coin_cost_with_discount(base_cost: int, prestige_upgrades: dict = None) -> int:
-    """Скидка крафта — целиком за счёт ветки престижа p_craft_discount (обычной скидки крафта
-    в игре не было ранее, эта механика впервые вводится через дерево престижа)."""
-    if not base_cost:
-        return 0
-    if not prestige_upgrades:
-        return base_cost
-    discount = 0.01 * prestige_bonus(prestige_upgrades, "p_craft_discount")
-    discount = min(0.9, discount)
-    return max(1, round(base_cost * (1 - discount)))
-
-def sell_bonus_coins(upgrades: dict) -> int:
-    return 2 * upgrade_level(upgrades, "sell_boost")
-
 def badge_list(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool,
                 promo_badges: set = frozenset()):
     result = []
@@ -486,6 +459,9 @@ def badge_list(username: str, evolution_level: int, cases_opened: int, total_far
         result.append(("farm", PREMIUM_BADGE_FARM, "30k нафармлено"))
     if evolution_level >= 5:
         result.append(("evo5", PREMIUM_BADGE_EVO5, "5 эволюция"))
+    for key, emoji, label, threshold in EVO_MILESTONE_BADGES:
+        if evolution_level >= threshold:
+            result.append((key, emoji, label))
     for key in promo_badges:
         if key in PROMO_BADGES:
             emoji, name = PROMO_BADGES[key]
@@ -497,14 +473,26 @@ def get_badges(username: str, evolution_level: int, cases_opened: int, total_far
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
     return "".join(emoji for key, emoji, _ in earned if key not in hidden)
 
-def badges_keyboard(earned, hidden: set, user_id: int) -> InlineKeyboardMarkup:
+def badges_keyboard(earned, hidden: set, user_id: int, page: int = 0) -> InlineKeyboardMarkup:
+    total_pages = max(1, (len(earned) - 1) // BADGES_PAGE_SIZE + 1)
+    page = max(0, min(page, total_pages - 1))
+    start = page * BADGES_PAGE_SIZE
     rows = []
-    for key, emoji, label in earned:
+    for key, emoji, label in earned[start:start + BADGES_PAGE_SIZE]:
         state = "🙈 скрыт" if key in hidden else "✅ показан"
         rows.append([InlineKeyboardButton(
             text=f"{plain_emoji(emoji)} {label} — {state}",
-            callback_data=f"badge:{user_id}:{key}",
+            callback_data=f"badge:{user_id}:{page}:{key}",
         )])
+
+    if total_pages > 1:
+        nav = []
+        if page > 0:
+            nav.append(InlineKeyboardButton(text="◀️", callback_data=f"badge_page:{user_id}:{page - 1}", style="primary"))
+        nav.append(InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="badge_noop"))
+        if page < total_pages - 1:
+            nav.append(InlineKeyboardButton(text="▶️", callback_data=f"badge_page:{user_id}:{page + 1}", style="primary"))
+        rows.append(nav)
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 def farm_range(evolution_level: int):
@@ -794,6 +782,19 @@ async def add_item(user_id: int, item_key: str, qty: int = 1):
         (user_id, item_key, qty),
     )
 
+async def apply_case_reward(user_id: int, item_key: str, upgrades: dict,
+                             auto_sell_enabled: bool, auto_sell_items: set) -> tuple[int, str]:
+    """Выдаёт выпавший из кейса предмет — либо в инвентарь как обычно, либо, если включена
+    авто-продажа и этот предмет отмечен в конфиге, сразу продаёт его за монеты.
+    Возвращает (получено_монет, текст-пометка для ответа, например ' (авто-продано за 8🪙)')."""
+    if auto_sell_enabled and item_key in auto_sell_items and item_key not in NON_TRADABLE_ITEMS:
+        sell_lvl = upgrade_level(upgrades, "sell_boost")
+        price = SELL_PRICE.get(item_key, 1) + sell_bonus_coins(upgrades)
+        await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (price, user_id))
+        return price, f" (авто-продано за {price}🪙)"
+    await add_item(user_id, item_key)
+    return 0, ""
+
 PROMO_TYPE_ALIASES = {
     "ноги": "legs", "нога": "legs", "ног": "legs",
     "эво": "evo", "эволюция": "evo",
@@ -850,6 +851,24 @@ HELP_BADGES = {
                     f"Даётся, когда суммарно нафармлено {BADGE_EVO_TOTAL} очков ноги (считается всё время, не сбрасывается)."),
     "evo5":        (PREMIUM_BADGE_EVO5, ["5 эволюция", "5эво", "5 эво"],
                     "Даётся по достижению 5 уровня эволюции."),
+    "evo_milestone_10":    (PREMIUM_BADGE_EVO10, ["новичок в эво", "10 эво", "10эво"],
+                    "Даётся по достижению 10 уровня эволюции."),
+    "evo_milestone_25":    (PREMIUM_BADGE_EVO25, ["средний в эво", "25 эво", "25эво"],
+                    "Даётся по достижению 25 уровня эволюции."),
+    "evo_milestone_50":    (PREMIUM_BADGE_EVO50, ["мастер эво", "50 эво", "50эво"],
+                    "Даётся по достижению 50 уровня эволюции."),
+    "evo_milestone_100":   (PREMIUM_BADGE_EVO100, ["эво-чемпион", "эво чемпион", "100 эво", "100эво"],
+                    "Даётся по достижению 100 уровня эволюции."),
+    "evo_milestone_250":   (PREMIUM_BADGE_EVO250, ["король эво", "250 эво", "250эво"],
+                    "Даётся по достижению 250 уровня эволюции."),
+    "evo_milestone_500":   (PREMIUM_BADGE_EVO500, ["уничтожитель эво", "500 эво", "500эво"],
+                    "Даётся по достижению 500 уровня эволюции."),
+    "evo_milestone_1000":  (PREMIUM_BADGE_EVO1000, ["всемогущий в эво", "1000 эво", "1000эво"],
+                    "Даётся по достижению 1000 уровня эволюции."),
+    "evo_milestone_5000":  (PREMIUM_BADGE_EVO5000, ["эво-бог", "эво бог", "5000 эво", "5000эво"],
+                    "Даётся по достижению 5000 уровня эволюции."),
+    "evo_milestone_10000": (PREMIUM_BADGE_EVO10000, ["эво-титан", "эво титан", "10000 эво", "10000эво"],
+                    "Даётся по достижению 10000 уровня эволюции."),
     "tester":      (PREMIUM_BADGE_TESTER, ["фанат мику"],
                     "Выдаётся вручную админом или по промокоду преданным фанатам Мику."),
     "support":     (PREMIUM_BADGE_SUPPORT, ["сапорт", "support"],
@@ -1030,6 +1049,34 @@ async def apply_chaos_orb_proc(user_id: int, active_items) -> str:
     bonus = random.randint(CHAOS_ORB_FARM_MIN, CHAOS_ORB_FARM_MAX)
     await db_exec("UPDATE users SET score = score + ? WHERE user_id = ?", (bonus, user_id))
     return f"\n🌀 Шар хаоса: РЕДКИЙ ПРОК! +{bonus} очков ноги!"
+
+async def apply_blazing_necklace_proc(user_id: int, active_items) -> str:
+    """🔥📿 Ожерелье пылающей звезды: пока экипировано, при фарме ног — шанс 1.7% дать
+    1-15 очков перерождения и независимый шанс 1.2% дать 1-3 очка престижа."""
+    if "blazing_star_necklace" not in set(_normalize_active_items(active_items)):
+        return ""
+    text = ""
+    if random.random() < BLAZING_NECKLACE_REBIRTH_CHANCE:
+        gained = random.randint(*BLAZING_NECKLACE_REBIRTH_RANGE)
+        await db_exec("UPDATE users SET rebirth_points = rebirth_points + ? WHERE user_id = ?", (gained, user_id))
+        text += f"\n{ITEMS['blazing_star_necklace'][0]} Ожерелье пылающей звезды: +{gained}🉑!"
+    if random.random() < BLAZING_NECKLACE_PRESTIGE_CHANCE:
+        gained = random.randint(*BLAZING_NECKLACE_PRESTIGE_RANGE)
+        await db_exec("UPDATE users SET prestige_points = prestige_points + ? WHERE user_id = ?", (gained, user_id))
+        text += f"\n{ITEMS['blazing_star_necklace'][0]} Ожерелье пылающей звезды: +{gained} очков престижа!"
+    return text
+
+async def apply_star_necklace_proc(user_id: int, active_items) -> str:
+    """📿 Ожерелье из звёзд: пока экипировано, при фарме ног — шанс 2.5% выдать
+    случайный предмет из Базового кейса (кейс 1, крафт-уровень 1)."""
+    if "star_necklace" not in set(_normalize_active_items(active_items)):
+        return ""
+    if random.random() >= STAR_NECKLACE_CASE1_DROP_CHANCE:
+        return ""
+    item_key = random.choice(CASES[1]["pool"])
+    await add_item(user_id, item_key)
+    emoji, name, _, _ = ITEMS[item_key]
+    return f"\n{ITEMS['star_necklace'][0]} Ожерелье из звёзд: выпал {emoji} {name}!"
 
 def apply_coin_tree_farm_roll(gained: int, active_items) -> tuple:
     """🟤 Монета Ногости / 🔶 Монета Бога Ногости: независимый ролл на КАЖДОМ базовом фарме

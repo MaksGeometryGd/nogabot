@@ -6,7 +6,12 @@ game_data.py — статичные игровые данные: предмет�
 import bisect
 
 from premium_emoji import *  # noqa: F401,F403
-from config import CRAFT_MAX_LEVEL, LEG_LIMIT, MEK_LIMIT
+from config import (
+    CRAFT_MAX_LEVEL, EVO_MILESTONE_BADGE_LEVELS, LEG_LIMIT, MEK_LIMIT,
+    POCKET_STAR_FARM_CMD_MULT, POCKET_STAR_FARM_CMD_REBIRTH_RANGE,
+    POCKET_STAR_LEG_FARM_MULT,
+)
+from text_utils import esc
 
 ITEMS = {
     "amulet": ("🪬", "Амулет галактики", 17, 10),
@@ -81,6 +86,12 @@ ITEMS = {
     "rebirth_coin":      (PREMIUM_REBIRTH_COIN, "Монета Перерождения", 0, 0),
     "evolution_coin":    (PREMIUM_EVOLUTION_COIN, "Монета Эволюции", 0, 0),
     "awakening_coin":    (PREMIUM_AWAKENING_COIN, "Монета Пробуждения", 0, 0),
+
+    # ==== Эво-апгрейд (10/15 ур. эволюции) ====
+    "rebirth_spark":  ("✨", "Искра перерождения", 0, 20),
+    "star_necklace":  ("📿", "Ожерелье из звёзд", 120, 0),
+    "blazing_star_necklace": ("🔥📿", "Ожерелье пылающей звезды", 210, 0),
+    "pocket_star":    ("🌠", "Карманная звезда", 0, 0),
 }
 
 # Разделение ITEMS на «бустеры» (экипируемые, дают процентный буст к добыче) и «предметы»
@@ -90,6 +101,57 @@ ITEMS = {
 # в ITEMS у него boost_percent = 0 — добавляем его в бустеры вручную.
 HELP_BOOSTER_KEYS = {k for k, v in ITEMS.items() if v[2] > 0} | {"chronos_orb"}
 HELP_ITEM_KEYS = set(ITEMS.keys()) - HELP_BOOSTER_KEYS
+
+# Бейджи за уровень эволюции (см. EVO_MILESTONE_BADGE_LEVELS в config.py). Эмодзи-константы
+# PREMIUM_BADGE_EVO<N> лежат в premium_emoji.py — здесь просто собираем их в один список
+# (key, emoji, label, threshold), который перебирает badge_list() в economy.py.
+EVO_MILESTONE_BADGES = [
+    (key, globals()[f"PREMIUM_BADGE_EVO{threshold}"], label, threshold)
+    for key, threshold, label in EVO_MILESTONE_BADGE_LEVELS
+]
+
+# ==== Экипировка / апгрейды / престиж: чистые парсеры и калькуляторы над данными выше ====
+# Живут здесь (а не в economy.py), т.к. используются другими функциями этого же модуля
+# (recipe_missing_ingredients, active_farm_limits, get_active_unique_tier, apply_case_reward).
+# economy.py импортирует их отсюда и реэкспортирует — рабочий код в других модулях не меняется.
+
+def parse_equipped(equipped_str: str) -> list:
+    """Очередь экипированных предметов: индекс 0 = надет раньше всех (первым вылетит при переполнении)."""
+    return [k for k in (equipped_str or "").split(",") if k]
+
+def _normalize_active_items(active_items):
+    """Принимает список/кортеж ключей предметов, либо None. Строки сюда не передаём —
+    для строки очереди сначала вызывай parse_equipped()."""
+    if active_items is None:
+        return []
+    if isinstance(active_items, str):
+        return [active_items] if active_items in ITEMS else parse_equipped(active_items)
+    return [k for k in active_items if k]
+
+def upgrade_level(upgrades: dict, key: str) -> int:
+    return upgrades.get(key, 0)
+
+def sell_bonus_coins(upgrades: dict) -> int:
+    return 2 * upgrade_level(upgrades, "sell_boost")
+
+def prestige_level(upgrades: dict, key: str) -> int:
+    return upgrades.get(key, 0)
+
+def prestige_bonus(upgrades: dict, key: str) -> int:
+    """Текущий эффект ветки на её нынешнем уровне (0, если ветка ещё не куплена)."""
+    level = prestige_level(upgrades, key)
+    return PRESTIGE_UPGRADES[key]["bonus"](level)
+
+def craft_coin_cost_with_discount(base_cost: int, prestige_upgrades: dict = None) -> int:
+    """Скидка крафта — целиком за счёт ветки престижа p_craft_discount (обычной скидки крафта
+    в игре не было ранее, эта механика впервые вводится через дерево престижа)."""
+    if not base_cost:
+        return 0
+    if not prestige_upgrades:
+        return base_cost
+    discount = 0.01 * prestige_bonus(prestige_upgrades, "p_craft_discount")
+    discount = min(0.9, discount)
+    return max(1, round(base_cost * (1 - discount)))
 
 def find_item_key_by_name(query: str, allowed_keys: set):
     """Ищет ключ в ITEMS по русскому названию, ограничиваясь набором allowed_keys
@@ -119,6 +181,7 @@ NON_TRADABLE_ITEMS = {
     "miku_fan_amulet",
     "nogost_coin", "godly_nogost_coin", "craft_coin", "bitcoin",
     "rebirth_coin", "evolution_coin", "awakening_coin",
+    "pocket_star",
 }
 
 PASSIVE_ITEMS = {
@@ -127,6 +190,7 @@ PASSIVE_ITEMS = {
     "old_vase", "golden_vase", "godly_vase", "warm_candle",
     "broken_clock", "essence_drop", "comet_shard", "koshko_gift", "ancient_stone", "fate_thread",
     "craft_coin", "bitcoin", "rebirth_coin", "evolution_coin", "awakening_coin",
+    "pocket_star",
 }
 
 SELL_PRICE = {
@@ -144,6 +208,7 @@ SELL_PRICE = {
     "ancient_stone": 6, "fate_thread": 32,
     "nogost_coin": 300, "godly_nogost_coin": 900, "craft_coin": 150, "bitcoin": 250,
     "rebirth_coin": 400, "evolution_coin": 350, "awakening_coin": 1200,
+    "rebirth_spark": 25, "star_necklace": 180, "blazing_star_necklace": 420,
 }
 
 ITEM_FLAT_BONUS = {
@@ -171,19 +236,6 @@ def parse_auto_sell_items(raw: str) -> set:
 
 def format_auto_sell_items(items: set) -> str:
     return ",".join(sorted(items))
-
-async def apply_case_reward(user_id: int, item_key: str, upgrades: dict,
-                             auto_sell_enabled: bool, auto_sell_items: set) -> tuple[int, str]:
-    """Выдаёт выпавший из кейса предмет — либо в инвентарь как обычно, либо, если включена
-    авто-продажа и этот предмет отмечен в конфиге, сразу продаёт его за монеты.
-    Возвращает (получено_монет, текст-пометка для ответа, например ' (авто-продано за 8🪙)')."""
-    if auto_sell_enabled and item_key in auto_sell_items and item_key not in NON_TRADABLE_ITEMS:
-        sell_lvl = upgrade_level(upgrades, "sell_boost")
-        price = SELL_PRICE.get(item_key, 1) + sell_bonus_coins(upgrades)
-        await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (price, user_id))
-        return price, f" (авто-продано за {price}🪙)"
-    await add_item(user_id, item_key)
-    return 0, ""
 
 ALL_PLAYER_AMULETS = [
     "amulet", "mk_mgg", "mk_sandsmoon", "mk_fixsahal1", "mk_mk",
@@ -310,6 +362,22 @@ RECIPES = {
         "level": 3,
         "ingredients": {"evolution_coin": 1, "rebirth_coin": 1},
     },
+
+    # ==== Эво-апгрейд: рецепты 15 уровня эволюции ====
+    "star_necklace": {
+        "level": 1,
+        "ingredients": {"star": 2, "mk_broken": 20},
+    },
+    "blazing_star_necklace": {
+        "level": 1,
+        "ingredients": {"star_necklace": 1, "rebirth_spark": 5},
+        "rebirth_cost": 5,
+    },
+    "pocket_star": {
+        "level": 1,
+        "ingredients": {"star": 5},
+        "rebirth_cost": 5,
+    },
 }
 
 UNIQUE_BOOSTER_TIERS = ["power_amulet", "galaxy_power_amulet", "galaxy_might_amulet", "god_essence", "koshko_amulet"]
@@ -410,6 +478,11 @@ HELP_BOOSTER_EXTRA = {
         "зелье, другой бустер, бейдж, странную монету или старую вазу — всё это ХАОС!"
     ),
     "vip_charm": "Мощный бустер, доступный только тем, у кого куплен VIP-статус (см. «помощь бейдж vip»).",
+    "star_necklace": "Пассивный эффект пока экипировано: шанс 2.5% при фарме ног выдать случайный предмет из Базового кейса.",
+    "blazing_star_necklace": (
+        "Пассивный эффект пока экипировано: при фарме ног — шанс 1.7% на 1-15 🉑 очков перерождения "
+        "и независимый шанс 1.2% на 1-3 очка престижа."
+    ),
 }
 
 def format_help_booster_text(key: str) -> str:
@@ -456,6 +529,13 @@ HELP_ITEM_EXTRA = {
         "дополнительно дать очки престижа или редкий бейдж."
     ),
     "chaos_orb": "Крафт-сырьё для Шара Хроноса — сам по себе лежит пассивно без эффекта, нужен только для крафта.",
+    "rebirth_spark": "Даётся автоматически при достижении 5 уровня эволюции. Крафт-сырьё для Ожерелья пылающей звезды.",
+    "pocket_star": (
+        "Пассивный эффект: пока лежит в инвентаре (экипировать не нужно) — команда «ферма» "
+        f"даёт в {POCKET_STAR_FARM_CMD_MULT}x больше и гарантированно "
+        f"+{POCKET_STAR_FARM_CMD_REBIRTH_RANGE[0]}-{POCKET_STAR_FARM_CMD_REBIRTH_RANGE[1]} 🉑 очков перерождения. "
+        f"Обычная фарма ног (🦵/🦿... в чате) — x{POCKET_STAR_LEG_FARM_MULT}."
+    ),
 }
 
 def _help_item_source(key: str) -> str:
@@ -747,6 +827,8 @@ PRESTIGE_UPGRADES = {
 }
 PRESTIGE_ORDER = list(PRESTIGE_UPGRADES.keys())
 PRESTIGE_PAGE_SIZE = 4
+
+BADGES_PAGE_SIZE = 6
 
 POTIONS = {
     "potion_speed": {

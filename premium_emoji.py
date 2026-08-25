@@ -6,6 +6,18 @@ PREMIUM_BADGE_CASE = '<tg-emoji emoji-id="5328257610472775810">🎖️</tg-emoji
 PREMIUM_BADGE_FARM = '<tg-emoji emoji-id="5415966542078683753">🥇</tg-emoji>'
 PREMIUM_BADGE_EVO5 = '<tg-emoji emoji-id="5372812377135789260">👑</tg-emoji>'
 
+# ==== Бейджи за уровень эволюции (10/25/50/100/250/500/1000/5000/10000) ====
+# emoji-id пустые — вставь свои готовые id, fallback-эмодзи уже расставлены по смыслу названия.
+PREMIUM_BADGE_EVO10 = '<tg-emoji emoji-id="">🔰</tg-emoji>'
+PREMIUM_BADGE_EVO25 = '<tg-emoji emoji-id="">🥈</tg-emoji>'
+PREMIUM_BADGE_EVO50 = '<tg-emoji emoji-id="">🥋</tg-emoji>'
+PREMIUM_BADGE_EVO100 = '<tg-emoji emoji-id="">🏆</tg-emoji>'
+PREMIUM_BADGE_EVO250 = '<tg-emoji emoji-id="">👑</tg-emoji>'
+PREMIUM_BADGE_EVO500 = '<tg-emoji emoji-id="">☄️</tg-emoji>'
+PREMIUM_BADGE_EVO1000 = '<tg-emoji emoji-id="">🌌</tg-emoji>'
+PREMIUM_BADGE_EVO5000 = '<tg-emoji emoji-id="">🔱</tg-emoji>'
+PREMIUM_BADGE_EVO10000 = '<tg-emoji emoji-id="">🛡️</tg-emoji>'
+
 PREMIUM_DAILY_CHARM = '<tg-emoji emoji-id="5233570349148311519">🧿</tg-emoji>'
 
 PREMIUM_MK_MGG = '<tg-emoji emoji-id="5420141555233071341">🧿</tg-emoji>'
