@@ -1622,6 +1622,7 @@ PRESTIGE_ORDER = list(PRESTIGE_UPGRADES.keys())
 PRESTIGE_PAGE_SIZE = 4
 
 BADGES_PAGE_SIZE = 6
+BADGES_DISPLAY_LIMIT = 5  # сколько бейджей показывать рядом с ником в топах (как в инвентаре)
 
 POTIONS = {
     "potion_speed": {
@@ -2496,7 +2497,8 @@ def badge_list(username: str, evolution_level: int, cases_opened: int, total_far
 def get_badges(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool,
                 hidden: set = frozenset(), promo_badges: set = frozenset()) -> str:
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
-    return "".join(emoji for key, emoji, _ in earned if key not in hidden)
+    visible = [emoji for key, emoji, _ in earned if key not in hidden]
+    return "".join(visible[:BADGES_DISPLAY_LIMIT])
 
 def badges_keyboard(earned, hidden: set, user_id: int, page: int = 0) -> InlineKeyboardMarkup:
     total_pages = max(1, (len(earned) - 1) // BADGES_PAGE_SIZE + 1)
