@@ -138,6 +138,12 @@ PREMIUM_EVOLUTION_COIN = '<tg-emoji emoji-id="5366230850855777158">🪙</tg-emoj
 PREMIUM_AWAKENING_COIN = '<tg-emoji emoji-id="5767231090922101971">🪙</tg-emoji>'
 PREMIUM_BADGE_INVESTOR = '<tg-emoji emoji-id="5298614648138919107">💹</tg-emoji>'
 
+# ==== Эво-апгрейд: премиум-эмодзи для ожерелий/карманной звезды/искры (вставь свои emoji-id) ====
+PREMIUM_REBIRTH_SPARK = '<tg-emoji emoji-id="5467837274429335080">✨</tg-emoji>'
+PREMIUM_STAR_NECKLACE = '<tg-emoji emoji-id="5415853988165734070">📿</tg-emoji>'
+PREMIUM_BLAZING_STAR_NECKLACE = '<tg-emoji emoji-id="5938541999031325561">📿</tg-emoji>'
+PREMIUM_POCKET_STAR = '<tg-emoji emoji-id="5435957248314579621">🌠</tg-emoji>'
+
 PREMIUM_ICE_SHARD = '<tg-emoji emoji-id="5363812028353898315">🧊</tg-emoji>'
 PREMIUM_EMBER = '<tg-emoji emoji-id="5773638078321135255">🔥</tg-emoji>'
 PREMIUM_DRAGON_CLAW = '<tg-emoji emoji-id="5307771389564954063">🐉</tg-emoji>'
@@ -911,10 +917,10 @@ ITEMS = {
     "awakening_coin":    (PREMIUM_AWAKENING_COIN, "Монета Пробуждения", 0, 0),
 
     # ==== Эво-апгрейд (10/15 ур. эволюции) ====
-    "rebirth_spark":  ("✨", "Искра перерождения", 0, 20),
-    "star_necklace":  ("📿", "Ожерелье из звёзд", 120, 0),
-    "blazing_star_necklace": ("🔥📿", "Ожерелье пылающей звезды", 210, 0),
-    "pocket_star":    ("🌠", "Карманная звезда", 0, 0),
+    "rebirth_spark":  (PREMIUM_REBIRTH_SPARK, "Искра перерождения", 0, 20),
+    "star_necklace":  (PREMIUM_STAR_NECKLACE, "Ожерелье из звёзд", 120, 0),
+    "blazing_star_necklace": (PREMIUM_BLAZING_STAR_NECKLACE, "Ожерелье пылающей звезды", 210, 0),
+    "pocket_star":    (PREMIUM_POCKET_STAR, "Карманная звезда", 0, 0),
 }
 
 # Разделение ITEMS на «бустеры» (экипируемые, дают процентный буст к добыче) и «предметы»
