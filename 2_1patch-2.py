@@ -72,6 +72,58 @@ PREMIUM_BADGE_EVO500 = '<tg-emoji emoji-id="5802946896494334636">☄️</tg-emoj
 PREMIUM_BADGE_EVO1000 = '<tg-emoji emoji-id="5206263763124117710">🌌</tg-emoji>'
 PREMIUM_BADGE_EVO5000 = '<tg-emoji emoji-id="5787496116719195306">🔱</tg-emoji>'
 PREMIUM_BADGE_EVO10000 = '<tg-emoji emoji-id="5267389029011182710">🛡️</tg-emoji>'
+PREMIUM_BADGE_EVO50000 = '<tg-emoji emoji-id="5888974760720732797">💥</tg-emoji>'
+PREMIUM_BADGE_EVO100000 = '<tg-emoji emoji-id="6325484162597784431">📜</tg-emoji>'
+PREMIUM_BADGE_EVO1000000 = '<tg-emoji emoji-id="5431805131630852717">🌟</tg-emoji>'
+
+# ==== Бейджи за открытые кейсы (50/500/5000) ====
+PREMIUM_BADGE_CASE50 = '<tg-emoji emoji-id="5235695112419303615">🎁</tg-emoji>'
+PREMIUM_BADGE_CASE500 = '<tg-emoji emoji-id="5188400169506334671">🎰</tg-emoji>'
+PREMIUM_BADGE_CASE5000 = '<tg-emoji emoji-id="5460938959951513194">💣</tg-emoji>'
+
+# ==== Бейджи за суммарно нафармленные очки ноги ====
+PREMIUM_BADGE_FARM1M = '<tg-emoji emoji-id="5463270938214678914">🌱</tg-emoji>'
+PREMIUM_BADGE_FARM500M = '<tg-emoji emoji-id="5174879174371837069">🚀</tg-emoji>'
+PREMIUM_BADGE_FARM5B = '<tg-emoji emoji-id="5431610634036845778">⚙️</tg-emoji>'
+PREMIUM_BADGE_FARM1T = '<tg-emoji emoji-id="5388722374814214652">⚡️</tg-emoji>'
+PREMIUM_BADGE_FARM1Q = '<tg-emoji emoji-id="5298816567436400568">🌌</tg-emoji>'
+PREMIUM_BADGE_FARM1QI = '<tg-emoji emoji-id="5418296093685342477">🦵</tg-emoji>'
+
+# ==== Бейджи за баланс монет ====
+PREMIUM_BADGE_COIN1K = '<tg-emoji emoji-id="5449418135381759397">🪙</tg-emoji>'
+PREMIUM_BADGE_COIN10K = '<tg-emoji emoji-id="5190526908462292507">💰</tg-emoji>'
+PREMIUM_BADGE_COIN100K = '<tg-emoji emoji-id="5431389597839937743">💵</tg-emoji>'
+PREMIUM_BADGE_COIN10M = '<tg-emoji emoji-id="5415594207068822547">🏦</tg-emoji>'
+PREMIUM_BADGE_COIN1B = '<tg-emoji emoji-id="5285087180488726417">👑</tg-emoji>'
+PREMIUM_BADGE_COIN10B = '<tg-emoji emoji-id="5323396295904209738">🏛️</tg-emoji>'
+
+# ==== Бейджи за баланс очков перерождения ====
+PREMIUM_BADGE_REBIRTH100 = '<tg-emoji emoji-id="6032728694802354547">🕯️</tg-emoji>'
+PREMIUM_BADGE_REBIRTH10K = '<tg-emoji emoji-id="6265068953588994740">✨</tg-emoji>'
+PREMIUM_BADGE_REBIRTH1M = '<tg-emoji emoji-id="5337128947027036693">🌠</tg-emoji>'
+PREMIUM_BADGE_REBIRTH1B = '<tg-emoji emoji-id="5228699714500710949">👁️</tg-emoji>'
+PREMIUM_BADGE_REBIRTH10B = '<tg-emoji emoji-id="5242433645523775166">♾️</tg-emoji>'
+
+# ==== Бейдж за ультра-перерождение ====
+PREMIUM_BADGE_ULTRA_REBIRTH = '<tg-emoji emoji-id="5447546448763699600">🔥</tg-emoji>'
+
+# ==== Бейджи за стрик ежедневного бонуса ====
+PREMIUM_BADGE_STREAK7 = '<tg-emoji emoji-id="5314665117017718786">📅</tg-emoji>'
+PREMIUM_BADGE_STREAK30 = '<tg-emoji emoji-id="5274013522144016987">🗓️</tg-emoji>'
+
+# ==== Бейджи за количество крафтов ====
+PREMIUM_BADGE_CRAFT10 = '<tg-emoji emoji-id="5231151548121244459">🔨</tg-emoji>'
+PREMIUM_BADGE_CRAFT100 = '<tg-emoji emoji-id="5354931010943347669">⚒️</tg-emoji>'
+
+# ==== Бейджи за очки престижа ====
+PREMIUM_BADGE_PRESTIGE10 = '<tg-emoji emoji-id="5049027699067062001">🎭</tg-emoji>'
+PREMIUM_BADGE_PRESTIGE100 = '<tg-emoji emoji-id="5406980362393902143">🧘</tg-emoji>'
+PREMIUM_BADGE_PRESTIGE25000 = '<tg-emoji emoji-id="5386617411342449059">📿</tg-emoji>'
+PREMIUM_BADGE_PRESTIGE50000 = '<tg-emoji emoji-id="5388706032463671610">🕊️</tg-emoji>'
+PREMIUM_BADGE_PRESTIGE100000 = '<tg-emoji emoji-id="6251413878165472946">👁️</tg-emoji>'
+PREMIUM_BADGE_PRESTIGE250000 = '<tg-emoji emoji-id="5460788837959623745">🌀</tg-emoji>'
+PREMIUM_BADGE_PRESTIGE500000 = '<tg-emoji emoji-id="5330274071848438189">🧠</tg-emoji>'
+PREMIUM_BADGE_PRESTIGE1000000 = '<tg-emoji emoji-id="5192703340189871377">♾️</tg-emoji>'
 
 PREMIUM_DAILY_CHARM = '<tg-emoji emoji-id="5233570349148311519">🧿</tg-emoji>'
 
@@ -117,6 +169,7 @@ PREMIUM_BUTTERFLY_LEGACY = '<tg-emoji emoji-id="4943160586331490355">🦋</tg-em
 
 PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5282820155015971423">✝️</tg-emoji>'
 PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5404393696865041225">🤲</tg-emoji>'
+PREMIUM_GUITARIST_CROWN = '<tg-emoji emoji-id="5314775523447034013">🎸</tg-emoji>'
 PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5199714801286132798">🎧</tg-emoji>'
 
 PREMIUM_BADGE_TESTER = '<tg-emoji emoji-id="5217791863368470760">🥰</tg-emoji>'
@@ -342,6 +395,12 @@ POCKET_STAR_LEG_FARM_MULT = 1.2
 EVO_FLOW_UNLOCK_LEVEL = 30
 EVO_FLOW_EXTRA_CHANCE = 0.10
 
+# Шанс кражи предмета у случайного игрока того же чата при фарме ног (🦵/🦿) — не привязан
+# к какому-либо бустеру, срабатывает у всех. Ворует только из CASE_SELLABLE_ITEMS (кейсы
+# 1-2-3), никогда крафтовые/уникальные/эво-предметы. Если у выбранной жертвы нечего украсть —
+# тихий промах, без сообщения.
+LEG_STEAL_CHANCE = 0.01
+
 # Бейджи за уровень эволюции — (ключ, название) по возрастанию порога. Сами emoji-константы
 # (PREMIUM_BADGE_EVO<N>) берутся из premium_emoji.py по этому же ключу с префиксом evo_milestone_.
 EVO_MILESTONE_BADGE_LEVELS = [
@@ -354,6 +413,69 @@ EVO_MILESTONE_BADGE_LEVELS = [
     ("evo_milestone_1000", 1000, "Всемогущий в эво"),
     ("evo_milestone_5000", 5000, "Эво-бог"),
     ("evo_milestone_10000", 10000, "Эво-Титан"),
+    ("evo_milestone_50000", 50000, "Эво-Крушитель"),
+    ("evo_milestone_100000", 100000, "Эво-Легенда"),
+    ("evo_milestone_1000000", 1000000, "Эво-Абсолют"),
+]
+
+# Бейджи за количество открытых кейсов (любых).
+CASE_MILESTONE_BADGE_LEVELS = [
+    ("case_milestone_50", 50, "Любитель кейсов"),
+    ("case_milestone_500", 500, "Кейсовый безумец"),
+    ("case_milestone_5000", 5000, "Разоритель Кейсов"),
+]
+
+# Бейджи за суммарно нафармленные очки ноги (total_farmed).
+FARM_MILESTONE_BADGE_LEVELS = [
+    ("farm_milestone_1m", 1_000_000, "Начальный фармер"),
+    ("farm_milestone_500m", 500_000_000, "Продвинутый фармер"),
+    ("farm_milestone_5b", 5_000_000_000, "Мастер фарма"),
+    ("farm_milestone_1t", 1_000_000_000_000, "Бог фарма"),
+    ("farm_milestone_1q", 1_000_000_000_000_000, "Всемогущий фармер"),
+    ("farm_milestone_1qi", 1_000_000_000_000_000_000, "Фармер-ногость"),
+]
+
+# Бейджи за баланс монет (🪙, coins).
+COIN_MILESTONE_BADGE_LEVELS = [
+    ("coin_milestone_1k", 1_000, "Мелкий вкладчик"),
+    ("coin_milestone_10k", 10_000, "Коллекционер монет"),
+    ("coin_milestone_100k", 100_000, "Денежный мешок"),
+    ("coin_milestone_10m", 10_000_000, "Магнат"),
+    ("coin_milestone_1b", 1_000_000_000, "Коин-Олигарх"),
+    ("coin_milestone_10b", 10_000_000_000, "Хозяин Экономики"),
+]
+
+# Бейджи за баланс очков перерождения (🉑, rebirth_points).
+REBIRTH_MILESTONE_BADGE_LEVELS = [
+    ("rebirth_milestone_100", 100, "Первое дыхание"),
+    ("rebirth_milestone_10k", 10_000, "Искра цикла"),
+    ("rebirth_milestone_1m", 1_000_000, "Странник перерождений"),
+    ("rebirth_milestone_1b", 1_000_000_000, "Владыка Циклов"),
+    ("rebirth_milestone_10b", 10_000_000_000, "Бессмертный"),
+]
+
+# Бейджи за стрик ежедневного бонуса (bonus_streak — дней подряд, см. daily_bonus()).
+STREAK_MILESTONE_BADGE_LEVELS = [
+    ("streak_milestone_7", 7, "Неутомимый"),
+    ("streak_milestone_30", 30, "Железная воля"),
+]
+
+# Бейджи за количество успешных крафтов (crafts_done).
+CRAFT_MILESTONE_BADGE_LEVELS = [
+    ("craft_milestone_10", 10, "Ремесленник"),
+    ("craft_milestone_100", 100, "Мастер-Кузнец"),
+]
+
+# Бейджи за баланс очков престижа (💠🔮 prestige_points).
+PRESTIGE_MILESTONE_BADGE_LEVELS = [
+    ("prestige_milestone_10", 10, "Искушённый"),
+    ("prestige_milestone_100", 100, "Просветлённый"),
+    ("prestige_milestone_25000", 25000, "Хранитель Мудрости"),
+    ("prestige_milestone_50000", 50000, "Вознёсшийся"),
+    ("prestige_milestone_100000", 100000, "Владыка Престижа"),
+    ("prestige_milestone_250000", 250000, "Трансцендентный"),
+    ("prestige_milestone_500000", 500000, "Абсолютный Разум"),
+    ("prestige_milestone_1000000", 1000000, "За Гранью Престижа"),
 ]
 
 FARM_COOLDOWN = 1200
@@ -371,8 +493,13 @@ DAILY_STREAK_LIMIT = 48 * 3600
 
 BADGE_EVO_TOTAL = 30000
 
-EVO_HARDNESS_RATE = 0.10
+EVO_HARDNESS_RATE = 0.20
 EVO_BOOST_STEP = 0.10
+
+# Базовый уровень ноги (порог очков), нужный, чтобы сделать «эволюция» с 0 эво.
+# С каждой пройденной эволюцией сам требуемый уровень растёт на 1 (39 -> 40 -> 41 -> ...),
+# независимо от EVO_HARDNESS_RATE (которое усложняет стоимость ЭТОГО же уровня в процентах).
+EVO_REQUIRED_BASE_LEVEL = 39
 
 VIP_BOOST = 2.0
 
@@ -418,6 +545,10 @@ TEXTS = {
     "auto_rebirth_not_vip_1": '⚠️ Авто-перерождение доступно только с VIP-статусом. Команда «вип» — как получить.',
     "auto_rebirth_on_1": '♻️💎 Авто-перерождение включено. Как только эволюция достигнет {v0} — перерождение сработает само.',
     "auto_rebirth_off_1": '♻️ Авто-перерождение выключено.',
+    "ping_not_vip_1": '⚠️ Команда «пинг» доступна только с VIP-статусом. Команда «вип» — как получить.',
+    "vip_stats_not_vip_1": '⚠️ Команда «стата» доступна только с VIP-статусом. Команда «вип» — как получить.',
+    "compact_off_1": '📋 Краткий режим выключен — бонусы (вазы, монеты, шары и т.д.) снова показываются полностью.',
+    "compact_on_1": '📋 Краткий режим включён — доп. тексты бонусов при фарме скрыты, видна только основная строка.',
     "auto_sell_on_1": '💰 Авто-продажа включена. Настрой список предметов: «авто продажа настройка».',
     "auto_sell_off_1": '💰 Авто-продажа выключена.',
     "vip_case_open_1": 'Формат: вип открыть кейс <номер> <кол-во> (максимум 20 за раз).',
@@ -901,6 +1032,7 @@ ITEMS = {
     "butterfly_legacy": (PREMIUM_BUTTERFLY_LEGACY, "Бабочка легаси", 69, 0),
     "krest_amulet":    (PREMIUM_KREST_AMULET, "Амулет Креста", 100, 0),
     "fati_amulet":     (PREMIUM_FATI_AMULET, "Амулет Фати", 80, 0),
+    "guitarist_crown": (PREMIUM_GUITARIST_CROWN, "Корона Гитариста", 69, 0),
 
     "chaos_orb":     (PREMIUM_CHAOS_ORB, "Шар хаоса", 0, 100),
     "chronos_clock": (PREMIUM_CHRONOS_CLOCK, "Часы Хроноса", 0, 120),
@@ -939,6 +1071,66 @@ EVO_MILESTONE_BADGES = [
     for key, threshold, label in EVO_MILESTONE_BADGE_LEVELS
 ]
 
+# Бейджи за открытые кейсы — тот же паттерн (key, emoji, label, threshold), перебирается в badge_list().
+CASE_MILESTONE_BADGES = [
+    ("case_milestone_50", PREMIUM_BADGE_CASE50, "Любитель кейсов", 50),
+    ("case_milestone_500", PREMIUM_BADGE_CASE500, "Кейсовый безумец", 500),
+    ("case_milestone_5000", PREMIUM_BADGE_CASE5000, "Разоритель Кейсов", 5000),
+]
+
+# Бейджи за суммарно нафармленные очки ноги (total_farmed).
+FARM_MILESTONE_BADGES = [
+    ("farm_milestone_1m", PREMIUM_BADGE_FARM1M, "Начальный фармер", 1_000_000),
+    ("farm_milestone_500m", PREMIUM_BADGE_FARM500M, "Продвинутый фармер", 500_000_000),
+    ("farm_milestone_5b", PREMIUM_BADGE_FARM5B, "Мастер фарма", 5_000_000_000),
+    ("farm_milestone_1t", PREMIUM_BADGE_FARM1T, "Бог фарма", 1_000_000_000_000),
+    ("farm_milestone_1q", PREMIUM_BADGE_FARM1Q, "Всемогущий фармер", 1_000_000_000_000_000),
+    ("farm_milestone_1qi", PREMIUM_BADGE_FARM1QI, "Фармер-ногость", 1_000_000_000_000_000_000),
+]
+
+# Бейджи за баланс монет (🪙).
+COIN_MILESTONE_BADGES = [
+    ("coin_milestone_1k", PREMIUM_BADGE_COIN1K, "Мелкий вкладчик", 1_000),
+    ("coin_milestone_10k", PREMIUM_BADGE_COIN10K, "Коллекционер монет", 10_000),
+    ("coin_milestone_100k", PREMIUM_BADGE_COIN100K, "Денежный мешок", 100_000),
+    ("coin_milestone_10m", PREMIUM_BADGE_COIN10M, "Магнат", 10_000_000),
+    ("coin_milestone_1b", PREMIUM_BADGE_COIN1B, "Коин-Олигарх", 1_000_000_000),
+    ("coin_milestone_10b", PREMIUM_BADGE_COIN10B, "Хозяин Экономики", 10_000_000_000),
+]
+
+# Бейджи за баланс очков перерождения (🉑).
+REBIRTH_MILESTONE_BADGES = [
+    ("rebirth_milestone_100", PREMIUM_BADGE_REBIRTH100, "Первое дыхание", 100),
+    ("rebirth_milestone_10k", PREMIUM_BADGE_REBIRTH10K, "Искра цикла", 10_000),
+    ("rebirth_milestone_1m", PREMIUM_BADGE_REBIRTH1M, "Странник перерождений", 1_000_000),
+    ("rebirth_milestone_1b", PREMIUM_BADGE_REBIRTH1B, "Владыка Циклов", 1_000_000_000),
+    ("rebirth_milestone_10b", PREMIUM_BADGE_REBIRTH10B, "Бессмертный", 10_000_000_000),
+]
+
+# Бейджи за стрик ежедневного бонуса (bonus_streak).
+STREAK_MILESTONE_BADGES = [
+    ("streak_milestone_7", PREMIUM_BADGE_STREAK7, "Неутомимый", 7),
+    ("streak_milestone_30", PREMIUM_BADGE_STREAK30, "Железная воля", 30),
+]
+
+# Бейджи за количество успешных крафтов (crafts_done).
+CRAFT_MILESTONE_BADGES = [
+    ("craft_milestone_10", PREMIUM_BADGE_CRAFT10, "Ремесленник", 10),
+    ("craft_milestone_100", PREMIUM_BADGE_CRAFT100, "Мастер-Кузнец", 100),
+]
+
+# Бейджи за баланс очков престижа (prestige_points).
+PRESTIGE_MILESTONE_BADGES = [
+    ("prestige_milestone_10", PREMIUM_BADGE_PRESTIGE10, "Искушённый", 10),
+    ("prestige_milestone_100", PREMIUM_BADGE_PRESTIGE100, "Просветлённый", 100),
+    ("prestige_milestone_25000", PREMIUM_BADGE_PRESTIGE25000, "Хранитель Мудрости", 25000),
+    ("prestige_milestone_50000", PREMIUM_BADGE_PRESTIGE50000, "Вознёсшийся", 50000),
+    ("prestige_milestone_100000", PREMIUM_BADGE_PRESTIGE100000, "Владыка Престижа", 100000),
+    ("prestige_milestone_250000", PREMIUM_BADGE_PRESTIGE250000, "Трансцендентный", 250000),
+    ("prestige_milestone_500000", PREMIUM_BADGE_PRESTIGE500000, "Абсолютный Разум", 500000),
+    ("prestige_milestone_1000000", PREMIUM_BADGE_PRESTIGE1000000, "За Гранью Престижа", 1000000),
+]
+
 def find_item_key_by_name(query: str, allowed_keys: set):
     """Ищет ключ в ITEMS по русскому названию, ограничиваясь набором allowed_keys
     (бустеры либо предметы). Как find_item_by_name (см. команды «!дать б/п»): сначала точное
@@ -962,12 +1154,12 @@ def find_item_key_by_name(query: str, allowed_keys: set):
 NON_TRADABLE_ITEMS = {
     "vip_charm",
     "kotyara_amulet", "miku_amulet", "golda", "karambit_gold", "butterfly_legacy",
-    "krest_amulet", "fati_amulet",
+    "krest_amulet", "fati_amulet", "guitarist_crown",
     "chaos_orb", "chronos_clock", "chronos_orb",
     "miku_fan_amulet",
     "nogost_coin", "godly_nogost_coin", "craft_coin", "bitcoin",
     "rebirth_coin", "evolution_coin", "awakening_coin",
-    "pocket_star",
+    "pocket_star", "rebirth_spark", "star_necklace", "blazing_star_necklace",
 }
 
 PASSIVE_ITEMS = {
@@ -1268,6 +1460,10 @@ HELP_BOOSTER_EXTRA = {
         "Даёт максимальные лимиты по ногам/мек-ногам/галактикам/звёздам и открывает лимит «лап»."
     ),
     "power_amulet": "Первая ступень уникальных бустеров — открывает увеличенный лимит по мек-ногам.",
+    "guitarist_crown": (
+        f"Пассивный эффект пока экипирована: шанс {round(LEG_STEAL_CHANCE * 100)}% при фарме ног "
+        "украсть 1 предмет из Кейса 1/2/3 у случайного игрока этого же чата."
+    ),
     "galaxy_power_amulet": "Вторая ступень уникальных бустеров — открывает лимит по галактикам.",
     "galaxy_might_amulet": "Третья ступень уникальных бустеров, требуется для дальнейшего крафта Гибридного амулета.",
     "chronos_orb": (
@@ -2477,7 +2673,9 @@ def sell_bonus_coins(upgrades: dict) -> int:
     return 2 * upgrade_level(upgrades, "sell_boost")
 
 def badge_list(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool,
-                promo_badges: set = frozenset()):
+                promo_badges: set = frozenset(), coins: int = 0, rebirth_points: int = 0,
+                ultra_rebirth: bool = False, bonus_streak: int = 0, crafts_done: int = 0,
+                prestige_points: int = 0):
     result = []
     if username and username.lower() == ADMIN_USERNAME.lower():
         result.append(("owner", PREMIUM_OWNER_BADGE, "Владелец"))
@@ -2494,6 +2692,29 @@ def badge_list(username: str, evolution_level: int, cases_opened: int, total_far
     for key, emoji, label, threshold in EVO_MILESTONE_BADGES:
         if evolution_level >= threshold:
             result.append((key, emoji, label))
+    for key, emoji, label, threshold in CASE_MILESTONE_BADGES:
+        if cases_opened >= threshold:
+            result.append((key, emoji, label))
+    for key, emoji, label, threshold in FARM_MILESTONE_BADGES:
+        if total_farmed >= threshold:
+            result.append((key, emoji, label))
+    for key, emoji, label, threshold in COIN_MILESTONE_BADGES:
+        if coins >= threshold:
+            result.append((key, emoji, label))
+    for key, emoji, label, threshold in REBIRTH_MILESTONE_BADGES:
+        if rebirth_points >= threshold:
+            result.append((key, emoji, label))
+    if ultra_rebirth:
+        result.append(("ultra_rebirth", PREMIUM_BADGE_ULTRA_REBIRTH, "Ультра-Феникс"))
+    for key, emoji, label, threshold in STREAK_MILESTONE_BADGES:
+        if bonus_streak >= threshold:
+            result.append((key, emoji, label))
+    for key, emoji, label, threshold in CRAFT_MILESTONE_BADGES:
+        if crafts_done >= threshold:
+            result.append((key, emoji, label))
+    for key, emoji, label, threshold in PRESTIGE_MILESTONE_BADGES:
+        if prestige_points >= threshold:
+            result.append((key, emoji, label))
     for key in promo_badges:
         if key in PROMO_BADGES:
             emoji, name = PROMO_BADGES[key]
@@ -2501,8 +2722,11 @@ def badge_list(username: str, evolution_level: int, cases_opened: int, total_far
     return result
 
 def get_badges(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool,
-                hidden: set = frozenset(), promo_badges: set = frozenset()) -> str:
-    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
+                hidden: set = frozenset(), promo_badges: set = frozenset(), coins: int = 0,
+                rebirth_points: int = 0, ultra_rebirth: bool = False, bonus_streak: int = 0,
+                crafts_done: int = 0, prestige_points: int = 0) -> str:
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges,
+                         coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points)
     visible = [emoji for key, emoji, _ in earned if key not in hidden]
     return "".join(visible[:BADGES_DISPLAY_LIMIT])
 
@@ -2732,7 +2956,7 @@ USER_COLUMNS = (
     "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
     "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock, "
     "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items, craft_points, "
-    "promo_badges, chronos_boost_pct"
+    "promo_badges, chronos_boost_pct, compact_mode, crafts_done"
 )
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -2872,6 +3096,8 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN craft_points INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN promo_badges TEXT DEFAULT ''",
         "ALTER TABLE users ADD COLUMN chronos_boost_pct INTEGER DEFAULT 100",
+        "ALTER TABLE users ADD COLUMN compact_mode INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN crafts_done INTEGER DEFAULT 0",
     ):
         try:
             await db_exec(stmt)
@@ -3126,7 +3352,9 @@ async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = 
 
 def _random_booster_pool() -> list:
     """Все выбиваемые/крафтовые бустеры (boost_percent > 0), кроме предметов 1+ уровня крафта
-    (см. RECIPES) — используется шансом на выдачу бустера от 🔮 Шара Хроноса."""
+    (см. RECIPES) — используется шансом на выдачу бустера от 🔮 Шара Хроноса.
+    Это АВТОМАТИЧЕСКИ исключает эво-предметы star_necklace/blazing_star_necklace (level=1 в
+    RECIPES) — Хвост Джевила и подобные случайные источники их выдать не могут, только крафт."""
     pool = []
     for key, (_, _, boost_percent, _) in ITEMS.items():
         if boost_percent <= 0:
@@ -3175,6 +3403,42 @@ async def apply_star_necklace_proc(user_id: int, active_items) -> str:
     await add_item(user_id, item_key)
     emoji, name, _, _ = ITEMS[item_key]
     return f"\n{ITEMS['star_necklace'][0]} Ожерелье из звёзд: выпал {emoji} {name}!"
+
+async def apply_leg_farm_steal(user_id: int, chat_id: int, active_items) -> str:
+    """👑 Корона Гитариста: пока экипирована, шанс LEG_STEAL_CHANCE при фарме ног (🦵/🦿)
+    украсть 1 случайный предмет из CASE_SELLABLE_ITEMS (только кейсы 1-2-3 — никогда
+    крафтовые/уникальные/эво-предметы) у случайного другого игрока ЭТОГО ЖЕ чата.
+    Если у жертвы нечего украсть — тихий промах."""
+    if "guitarist_crown" not in set(_normalize_active_items(active_items)):
+        return ""
+    if random.random() >= LEG_STEAL_CHANCE:
+        return ""
+
+    candidates = await db_query(
+        "SELECT user_id FROM chat_members WHERE chat_id = ? AND user_id != ?", (chat_id, user_id)
+    )
+    if not candidates:
+        return ""
+
+    victim_id = random.choice(candidates)[0]
+    victim_inv = await get_inventory(victim_id)
+    stealable = [k for k, q in victim_inv if k in CASE_SELLABLE_ITEMS and q > 0]
+    if not stealable:
+        return ""
+
+    item_key = random.choice(stealable)
+    removed = await remove_item(victim_id, item_key, 1)
+    if not removed:
+        return ""
+
+    await add_item(user_id, item_key)
+
+    victim_row = await get_user(victim_id)
+    victim_name = "игрока" if victim_row is None else display_name(
+        victim_row[1], victim_row[19] if len(victim_row) > 19 else None
+    )
+    emoji, name, _, _ = ITEMS[item_key]
+    return f"\n🥷 Кража удалась! Стащено {emoji} {esc(name)} у {esc(victim_name)}!"
 
 def apply_coin_tree_farm_roll(gained: int, active_items) -> tuple:
     """🟤 Монета Ногости / 🔶 Монета Бога Ногости: независимый ролл на КАЖДОМ базовом фарме
@@ -3469,13 +3733,13 @@ async def get_all_chat_ids():
 async def build_top(chat_id, order_column: str, limit: int = 10):
     if chat_id is None:
         rows = await db_query(
-            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges "
+            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges, bonus_streak, prestige_points, crafts_done "
             f"FROM users WHERE (top_banned IS NULL OR top_banned = 0) ORDER BY {order_column} DESC LIMIT ?",
             (limit,),
         )
     else:
         rows = await db_query(
-            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges, u.rebirth_points, u.rebirth_count, u.nickname, u.ultra_rebirth, u.promo_badges
+            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges, u.rebirth_points, u.rebirth_count, u.nickname, u.ultra_rebirth, u.promo_badges, u.bonus_streak, u.prestige_points, u.crafts_done
                 FROM users u JOIN chat_members cm ON u.user_id = cm.user_id
                 WHERE cm.chat_id = ? AND (u.top_banned IS NULL OR u.top_banned = 0) ORDER BY u.{order_column} DESC LIMIT ?""",
             (chat_id, limit),
@@ -3709,6 +3973,22 @@ async def notify_on(message: Message):
     await db_exec("UPDATE users SET levelup_notify = 1 WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["notify_on_1"])
 
+@dp.message(F.text.lower() == "кратко выкл")
+async def compact_mode_off(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    await ensure_user(user_id, username)
+    await db_exec("UPDATE users SET compact_mode = 0 WHERE user_id = ?", (user_id,))
+    await message.reply(TEXTS["compact_off_1"])
+
+@dp.message(F.text.lower() == "кратко вкл")
+async def compact_mode_on(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    await ensure_user(user_id, username)
+    await db_exec("UPDATE users SET compact_mode = 1 WHERE user_id = ?", (user_id,))
+    await message.reply(TEXTS["compact_on_1"])
+
 @dp.message(F.text.regexp(r"(?i)^\+ник\s+.+$"))
 async def set_nickname(message: Message):
     match = NICK_SET_RE.match(message.text.strip())
@@ -3815,6 +4095,22 @@ async def auto_rebirth_off(message: Message):
 
     await db_exec("UPDATE users SET auto_rebirth = 0 WHERE user_id = ?", (user_id,))
     await message.reply(TEXTS["auto_rebirth_off_1"])
+
+@dp.message(F.text.lower() == "пинг")
+async def vip_ping(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    row = await ensure_user(user_id, username)
+    vip_until = row[12]
+
+    if not is_vip_active(vip_until):
+        await message.reply(TEXTS["ping_not_vip_1"])
+        return
+
+    start = time.monotonic()
+    sent = await message.reply("🏓 Понг...")
+    delay_ms = round((time.monotonic() - start) * 1000)
+    await sent.edit_text(f"🏓 Понг! Задержка: {delay_ms} мс")
 
 @dp.message(F.text.lower() == "авто продажа вкл")
 async def auto_sell_on(message: Message):
@@ -4031,11 +4327,18 @@ async def badges_menu(message: Message):
     username = message.from_user.username or message.from_user.first_name or "Без имени"
     row = await ensure_user(user_id, username)
     evolution_level, cases_opened, total_farmed, vip_until = row[3], row[7], row[8], row[12]
+    coins = row[5]
     hidden = parse_hidden(row[13] if len(row) > 13 else "")
     promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
+    rebirth_points = row[14] if len(row) > 14 else 0
+    ultra_rebirth = bool(row[21]) if len(row) > 21 else False
+    bonus_streak = row[10] if len(row) > 10 else 0
+    prestige_points = row[27] if len(row) > 27 else 0
+    crafts_done = row[36] if len(row) > 36 else 0
     vip_active = is_vip_active(vip_until)
 
-    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges,
+                         coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points)
     if not earned:
         await message.reply(TEXTS["badges_menu_1"])
         return
@@ -4059,11 +4362,18 @@ async def badge_change_page(callback: CallbackQuery):
 
     row = await get_user(owner_id)
     username, evolution_level, cases_opened, total_farmed, vip_until = row[1], row[3], row[7], row[8], row[12]
+    coins = row[5]
     hidden = parse_hidden(row[13] if len(row) > 13 else "")
     promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
+    rebirth_points = row[14] if len(row) > 14 else 0
+    ultra_rebirth = bool(row[21]) if len(row) > 21 else False
+    bonus_streak = row[10] if len(row) > 10 else 0
+    prestige_points = row[27] if len(row) > 27 else 0
+    crafts_done = row[36] if len(row) > 36 else 0
     vip_active = is_vip_active(vip_until)
 
-    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges,
+                         coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points)
     kb = badges_keyboard(earned, hidden, owner_id, page=page)
     await safe_edit_text(callback, TEXTS["badges_menu_2"], reply_markup=kb)
 
@@ -4079,8 +4389,14 @@ async def toggle_badge(callback: CallbackQuery):
 
     row = await get_user(owner_id)
     username, evolution_level, cases_opened, total_farmed, vip_until = row[1], row[3], row[7], row[8], row[12]
+    coins = row[5]
     hidden = parse_hidden(row[13] if len(row) > 13 else "")
     promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
+    rebirth_points = row[14] if len(row) > 14 else 0
+    ultra_rebirth = bool(row[21]) if len(row) > 21 else False
+    bonus_streak = row[10] if len(row) > 10 else 0
+    prestige_points = row[27] if len(row) > 27 else 0
+    crafts_done = row[36] if len(row) > 36 else 0
 
     if key in hidden:
         hidden.discard(key)
@@ -4091,7 +4407,8 @@ async def toggle_badge(callback: CallbackQuery):
     await db_exec("UPDATE users SET hidden_badges = ? WHERE user_id = ?", (new_hidden_str, owner_id))
 
     vip_active = is_vip_active(vip_until)
-    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges)
+    earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges,
+                         coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points)
     kb = badges_keyboard(earned, hidden, owner_id, page=page)
     await safe_edit_text(callback, "🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
 
@@ -4122,7 +4439,7 @@ async def count_legs(message: Message):
     potions = active_potions_now(row[23], active_items=active_items)
     prestige_upgrades = parse_prestige_upgrades(row[28])
     chronos_boost_pct = row[34] if len(row) > 34 else 100
-
+    compact_mode = bool(row[35]) if len(row) > 35 else False
     flat_bonus = total_flat_bonus(active_items)
     limits = active_farm_limits(active_items, prestige_upgrades)
 
@@ -4211,6 +4528,7 @@ async def count_legs(message: Message):
         + await apply_rebirth_coin_proc(user_id, inventory_map)
         + await apply_craft_coin_proc(user_id, inventory_map)
     )
+    steal_text = await apply_leg_farm_steal(user_id, message.chat.id, active_items)
 
     now = time.monotonic()
     chat_id = message.chat.id
@@ -4242,7 +4560,8 @@ async def count_legs(message: Message):
         parts += f" +{star}⭐️"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text
+    bonus_text = "" if compact_mode else (vase_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text)
+    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + steal_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
@@ -4341,10 +4660,14 @@ async def info_player(message: Message):
     cases_opened, total_farmed = row[7], row[8]
     vip_until = row[12]
     rebirth_count = row[15] if len(row) > 15 else 0
+    rebirth_points = row[14] if len(row) > 14 else 0
     hidden = parse_hidden(row[13] if len(row) > 13 else "")
     promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
     nickname = row[19] if len(row) > 19 else None
     ultra_rebirth = bool(row[21]) if len(row) > 21 else False
+    bonus_streak = row[10] if len(row) > 10 else 0
+    prestige_points = row[27] if len(row) > 27 else 0
+    crafts_done = row[36] if len(row) > 36 else 0
     shown_name = display_name(username, nickname)
     vip_active = is_vip_active(vip_until)
     level = get_level_index(score, evolution_level, rebirth_count, ultra_rebirth)
@@ -4353,7 +4676,8 @@ async def info_player(message: Message):
     name_part = f" {esc(name)}" if name else ""
     item_text = ITEMS[active_item][1] if active_item and active_item in ITEMS else "нет"
     vip_text = "активен" if vip_active else "не активен"
-    badges = get_badges(username, evolution_level, cases_opened, total_farmed, vip_active, hidden, promo_badges)
+    badges = get_badges(username, evolution_level, cases_opened, total_farmed, vip_active, hidden, promo_badges,
+                         coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points)
 
     text = (
         f"👣 <b>Инфо об игроке {esc(shown_name)}{badges}:</b>\n"
@@ -4373,10 +4697,10 @@ async def send_legs_top(message: Message, chat_id, title: str):
         return
 
     text = f"🏆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
         level = get_level_index(score, evolution_level, rebirth_count, bool(ultra_rebirth))
         emoji, name, show_level = get_level_visual(level)
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw))
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
         lvl_part = f" ({level} лвл)" if show_level else ""
         name_part = f" {esc(name)}" if name else ""
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — <code>{score}</code>\n   └ {emoji}{name_part}{lvl_part} · эво {evolution_level}\n\n"
@@ -4391,8 +4715,8 @@ async def send_evo_top(message: Message, chat_id, title: str):
         return
 
     text = f"🎆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw))
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — эво {evolution_level} ({score} очков)\n"
 
     await message.reply(text)
@@ -4405,8 +4729,8 @@ async def send_coin_top(message: Message, chat_id, title: str):
         return
 
     text = f"🪙 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw))
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — {coins} 🪙\n"
 
     await message.reply(text)
@@ -4419,8 +4743,8 @@ async def send_rebirth_top(message: Message, chat_id, title: str):
         return
 
     text = f"🉑 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw))
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — {rebirth_points} 🉑 (перерождений: {rebirth_count})\n"
 
     await message.reply(text)
@@ -4499,6 +4823,7 @@ async def farm(message: Message):
     potions = active_potions_now(row[23], now, active_items)
     prestige_upgrades = parse_prestige_upgrades(row[28])
     chronos_boost_pct = row[34] if len(row) > 34 else 100
+    compact_mode = bool(row[35]) if len(row) > 35 else False
 
     inv_rows = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv_rows}
@@ -4592,7 +4917,8 @@ async def farm(message: Message):
         auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    extra_text = vase_text + auto_evo_text + auto_rebirth_text + potion_text + chaos_text + chronos_text + coin_tree_text + pocket_star_text + necklace_text
+    bonus_text = "" if compact_mode else (vase_text + potion_text + chaos_text + chronos_text + coin_tree_text + pocket_star_text + necklace_text)
+    extra_text = bonus_text + auto_evo_text + auto_rebirth_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
@@ -5876,6 +6202,7 @@ async def craft_do(callback: CallbackQuery):
         )
 
     await add_item(owner_id, recipe_key, 1)
+    await db_exec("UPDATE users SET crafts_done = crafts_done + 1 WHERE user_id = ?", (owner_id,))
 
     emoji, name, _, _ = ITEMS[recipe_key]
     result_text = f"✅ Скрафтил {emoji} {name}!"
@@ -6113,7 +6440,7 @@ async def try_auto_evolve(user_id: int, score: int, evolution_level: int, rebirt
     unlock_text = ""
     score_before_last_reset = score
     while True:
-        required = level_threshold(39, evolution_level, rebirth_count, active_items)
+        required = level_threshold(EVO_REQUIRED_BASE_LEVEL + evolution_level, evolution_level, rebirth_count, active_items)
         if score < required:
             break
         score_before_last_reset = score
@@ -6157,7 +6484,7 @@ async def evolve(message: Message):
     rebirth_count = row[15]
     active_items = parse_equipped(row[18])
 
-    required = level_threshold(39, evolution_level, rebirth_count, active_items)
+    required = level_threshold(EVO_REQUIRED_BASE_LEVEL + evolution_level, evolution_level, rebirth_count, active_items)
     if score < required:
         await message.reply(TEXTS["evolve_1"].format(v0=required))
         return
@@ -7654,7 +7981,7 @@ async def admin_simulate_evolution(message: Message):
 
     username, score, evolution_level = row[1], row[2], row[3]
     rebirth_count = row[15] if len(row) > 15 else 0
-    required = level_threshold(39, evolution_level, rebirth_count)
+    required = level_threshold(EVO_REQUIRED_BASE_LEVEL + evolution_level, evolution_level, rebirth_count)
     verdict = TEXTS["admin_simulate_evo_ok"] if score >= required else TEXTS["admin_simulate_evo_fail"].format(v0=required - score)
 
     await message.reply(
@@ -7674,6 +8001,32 @@ async def admin_stats(message: Message):
         (int(time.time()),),
     )
     players, total_score, total_coins, total_rebirth, total_cases, vip_count, banned_count = row
+
+    await message.reply(
+        TEXTS["admin_stats_1"].format(
+            v0=players, v1=total_score, v2=total_coins, v3=total_rebirth,
+            v4=total_cases, v5=vip_count or 0, v6=banned_count or 0,
+        )
+    )
+
+@dp.message(F.text.lower() == "стата")
+async def vip_stats(message: Message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+    row = await ensure_user(user_id, username)
+    vip_until = row[12]
+
+    if not is_vip_active(vip_until):
+        await message.reply(TEXTS["vip_stats_not_vip_1"])
+        return
+
+    stats_row = await db_query_one(
+        "SELECT COUNT(*), COALESCE(SUM(score),0), COALESCE(SUM(coins),0), COALESCE(SUM(rebirth_points),0), "
+        "COALESCE(SUM(cases_opened),0), SUM(CASE WHEN vip_until > ? THEN 1 ELSE 0 END), "
+        "SUM(CASE WHEN top_banned = 1 THEN 1 ELSE 0 END) FROM users",
+        (int(time.time()),),
+    )
+    players, total_score, total_coins, total_rebirth, total_cases, vip_count, banned_count = stats_row
 
     await message.reply(
         TEXTS["admin_stats_1"].format(
