@@ -169,7 +169,9 @@ PREMIUM_BUTTERFLY_LEGACY = '<tg-emoji emoji-id="4943160586331490355">🦋</tg-em
 
 PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5282820155015971423">✝️</tg-emoji>'
 PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5404393696865041225">🤲</tg-emoji>'
-PREMIUM_GUITARIST_CROWN = '<tg-emoji emoji-id="5314775523447034013">🎸</tg-emoji>'
+PREMIUM_GUITARIST_CROWN = '<tg-emoji emoji-id="5445191681404057893">🎸</tg-emoji>'
+PREMIUM_VILON_AMULET = '<tg-emoji emoji-id="5386386711469117619">🔱</tg-emoji>'
+PREMIUM_MIKU_RING = '<tg-emoji emoji-id="5292079619174852549">💍</tg-emoji>'
 PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5199714801286132798">🎧</tg-emoji>'
 
 PREMIUM_BADGE_TESTER = '<tg-emoji emoji-id="5217791863368470760">🥰</tg-emoji>'
@@ -401,6 +403,21 @@ EVO_FLOW_EXTRA_CHANCE = 0.10
 # тихий промах, без сообщения.
 LEG_STEAL_CHANCE = 0.01
 
+# Сколько бейджей игрок может ОДНОВРЕМЕННО показывать (в топах/профиле/инфо) — как слоты
+# экипировки в инвентаре: заработать можно сколько угодно, но включить показ — не больше этого.
+BADGES_DISPLAY_LIMIT = 5
+
+# 🔱 Амулет Вилона: пока экипирован, каждый фарм ног (🦵/🦿) идёт в счётчик; на VILON_TRIGGER_EVERY-й
+# раз счётчик сбрасывается и активируется x3 к добыче фермы/ног на VILON_BOOST_SECONDS секунд.
+VILON_TRIGGER_EVERY = 20
+VILON_BOOST_SECONDS = 20
+VILON_BOOST_MULT = 3
+
+# 💍 Кольцо Мику: пока экипировано, символ 🎶 в тексте фарма ног (лимит 1 за сообщение)
+# удваивает итог фарма — применяется как множитель поверх total, аналогично 🌌/⭐️.
+MIKU_RING_SYMBOL_LIMIT = 1
+MIKU_RING_FARM_MULT = 2
+
 # Бейджи за уровень эволюции — (ключ, название) по возрастанию порога. Сами emoji-константы
 # (PREMIUM_BADGE_EVO<N>) берутся из premium_emoji.py по этому же ключу с префиксом evo_milestone_.
 EVO_MILESTONE_BADGE_LEVELS = [
@@ -560,9 +577,10 @@ TEXTS = {
     "buy_vip_invoice_1": 'Это не твоя покупка!',
     "process_successful_payment_1": '💎 Оплата прошла! VIP-статус выдан навсегда. Спасибо за поддержку!',
     "badges_menu_1": 'У тебя пока нет значков. Качай ногу, эволюционируй, открывай кейсы!',
-    "badges_menu_2": '🏷 Твои значки (жми, чтобы скрыть/показать в топах):',
+    "badges_menu_2": f'🏷 Твои значки (жми, чтобы включить/выключить показ — максимум {BADGES_DISPLAY_LIMIT} одновременно):',
     "toggle_badge_1": 'Это не твои значки!',
     "toggle_badge_2": 'Готово!',
+    "toggle_badge_3": f'Уже показано максимум значков ({BADGES_DISPLAY_LIMIT}) — сначала выключи один, чтобы включить другой.',
     "count_legs_1": '{v0} {v1} → +{v2} очков{v3} {v4}(Всего: {v5}){v6}',
     "count_legs_2": 'Лютый рофл засчитан! {v0} → +{v1} очков{v2} (Всего: {v3}){v4}',
     "info_player_1": 'Игрок не найден (он ещё не писал ноги в этом боте).',
@@ -801,6 +819,7 @@ TEXTS = {
     ),
 
     "admin_restart_1": '♻️ Перезапускаю бота...',
+    "admin_unshow_all_badges_1": '🏷 Показ бейджей отключён у всех игроков. Каждый может заново включить нужные через «бейджи».',
 
     "admin_event_custom_1": 'Формат: !ивент х<множитель> <минуты>, например: !ивент х3 30',
     "admin_event_custom_2": 'Множитель и время должны быть положительными числами.',
@@ -1033,6 +1052,8 @@ ITEMS = {
     "krest_amulet":    (PREMIUM_KREST_AMULET, "Амулет Креста", 100, 0),
     "fati_amulet":     (PREMIUM_FATI_AMULET, "Амулет Фати", 80, 0),
     "guitarist_crown": (PREMIUM_GUITARIST_CROWN, "Корона Гитариста", 69, 0),
+    "vilon_amulet":    (PREMIUM_VILON_AMULET, "Амулет Вилона", 120, 0),
+    "miku_ring":       (PREMIUM_MIKU_RING, "Кольцо Мику", 250, 0),
 
     "chaos_orb":     (PREMIUM_CHAOS_ORB, "Шар хаоса", 0, 100),
     "chronos_clock": (PREMIUM_CHRONOS_CLOCK, "Часы Хроноса", 0, 120),
@@ -1154,7 +1175,7 @@ def find_item_key_by_name(query: str, allowed_keys: set):
 NON_TRADABLE_ITEMS = {
     "vip_charm",
     "kotyara_amulet", "miku_amulet", "golda", "karambit_gold", "butterfly_legacy",
-    "krest_amulet", "fati_amulet", "guitarist_crown",
+    "krest_amulet", "fati_amulet", "guitarist_crown", "vilon_amulet", "miku_ring",
     "chaos_orb", "chronos_clock", "chronos_orb",
     "miku_fan_amulet",
     "nogost_coin", "godly_nogost_coin", "craft_coin", "bitcoin",
@@ -1463,6 +1484,10 @@ HELP_BOOSTER_EXTRA = {
     "guitarist_crown": (
         f"Пассивный эффект пока экипирована: шанс {round(LEG_STEAL_CHANCE * 100)}% при фарме ног "
         "украсть 1 предмет из Кейса 1/2/3 у случайного игрока этого же чата."
+    ),
+    "vilon_amulet": (
+        f"Пассивный эффект пока экипирован: каждые {VILON_TRIGGER_EVERY} фармов ног подряд "
+        f"даёт x{VILON_BOOST_MULT} к добыче фермы и ног на {VILON_BOOST_SECONDS} секунд."
     ),
     "galaxy_power_amulet": "Вторая ступень уникальных бустеров — открывает лимит по галактикам.",
     "galaxy_might_amulet": "Третья ступень уникальных бустеров, требуется для дальнейшего крафта Гибридного амулета.",
@@ -1824,7 +1849,6 @@ PRESTIGE_ORDER = list(PRESTIGE_UPGRADES.keys())
 PRESTIGE_PAGE_SIZE = 4
 
 BADGES_PAGE_SIZE = 6
-BADGES_DISPLAY_LIMIT = 5  # сколько бейджей показывать рядом с ником в топах (как в инвентаре)
 
 POTIONS = {
     "potion_speed": {
@@ -2515,6 +2539,11 @@ def total_flat_bonus(active_items) -> int:
 def parse_hidden(hidden_str: str) -> set:
     return set(h for h in (hidden_str or "").split(",") if h)
 
+def parse_shown(shown_str: str) -> set:
+    """Явно включённые (не скрытые) ключи бейджей — whitelist модель, аналог инвентаря:
+    сколько бы бейджей игрок ни заработал, показываются только эти, максимум BADGES_DISPLAY_LIMIT."""
+    return set(s for s in (shown_str or "").split(",") if s)
+
 def parse_upgrades(upgrades_str: str) -> dict:
     result = {}
     for part in (upgrades_str or "").split(","):
@@ -2722,21 +2751,24 @@ def badge_list(username: str, evolution_level: int, cases_opened: int, total_far
     return result
 
 def get_badges(username: str, evolution_level: int, cases_opened: int, total_farmed: int, vip_active: bool,
-                hidden: set = frozenset(), promo_badges: set = frozenset(), coins: int = 0,
+                shown: set = frozenset(), promo_badges: set = frozenset(), coins: int = 0,
                 rebirth_points: int = 0, ultra_rebirth: bool = False, bonus_streak: int = 0,
                 crafts_done: int = 0, prestige_points: int = 0) -> str:
+    """shown — whitelist явно включённых ключей бейджей (см. parse_shown). Показываются
+    только они, максимум BADGES_DISPLAY_LIMIT штук — как со слотами экипировки в инвентаре,
+    а не «все заработанные минус скрытые»."""
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges,
                          coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points)
-    visible = [emoji for key, emoji, _ in earned if key not in hidden]
+    visible = [emoji for key, emoji, _ in earned if key in shown]
     return "".join(visible[:BADGES_DISPLAY_LIMIT])
 
-def badges_keyboard(earned, hidden: set, user_id: int, page: int = 0) -> InlineKeyboardMarkup:
+def badges_keyboard(earned, shown: set, user_id: int, page: int = 0) -> InlineKeyboardMarkup:
     total_pages = max(1, (len(earned) - 1) // BADGES_PAGE_SIZE + 1)
     page = max(0, min(page, total_pages - 1))
     start = page * BADGES_PAGE_SIZE
     rows = []
     for key, emoji, label in earned[start:start + BADGES_PAGE_SIZE]:
-        state = "🙈 скрыт" if key in hidden else "✅ показан"
+        state = "✅ показан" if key in shown else "🙈 скрыт"
         rows.append([InlineKeyboardButton(
             text=f"{plain_emoji(emoji)} {label} — {state}",
             callback_data=f"badge:{user_id}:{page}:{key}",
@@ -2956,7 +2988,7 @@ USER_COLUMNS = (
     "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
     "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock, "
     "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items, craft_points, "
-    "promo_badges, chronos_boost_pct, compact_mode, crafts_done"
+    "promo_badges, chronos_boost_pct, compact_mode, crafts_done, vilon_streak, vilon_boost_until, shown_badges"
 )
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -3098,6 +3130,9 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN chronos_boost_pct INTEGER DEFAULT 100",
         "ALTER TABLE users ADD COLUMN compact_mode INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN crafts_done INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN vilon_streak INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN vilon_boost_until INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN shown_badges TEXT DEFAULT ''",
     ):
         try:
             await db_exec(stmt)
@@ -3352,12 +3387,17 @@ async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = 
 
 def _random_booster_pool() -> list:
     """Все выбиваемые/крафтовые бустеры (boost_percent > 0), кроме предметов 1+ уровня крафта
-    (см. RECIPES) — используется шансом на выдачу бустера от 🔮 Шара Хроноса.
-    Это АВТОМАТИЧЕСКИ исключает эво-предметы star_necklace/blazing_star_necklace (level=1 в
-    RECIPES) — Хвост Джевила и подобные случайные источники их выдать не могут, только крафт."""
+    (см. RECIPES) и кроме любого предмета из NON_TRADABLE_ITEMS — используется шансом на выдачу
+    бустера от 🔮 Шара Хроноса.
+    NON_TRADABLE_ITEMS уже помечает все эксклюзивные/уникальные амулеты, короны, кольца и
+    эво-предметы (golda, karambit_gold, guitarist_crown, vilon_amulet, miku_ring, star_necklace
+    и т.д.) — так что достаточно этой одной проверки, чтобы ни один из них никогда не выпал
+    случайно через Хвост Джевила: получить их можно только крафтом или ручной выдачей админа."""
     pool = []
     for key, (_, _, boost_percent, _) in ITEMS.items():
         if boost_percent <= 0:
+            continue
+        if key in NON_TRADABLE_ITEMS:
             continue
         recipe = RECIPES.get(key)
         if recipe and recipe.get("level", 0) >= 1:
@@ -3439,6 +3479,34 @@ async def apply_leg_farm_steal(user_id: int, chat_id: int, active_items) -> str:
     )
     emoji, name, _, _ = ITEMS[item_key]
     return f"\n🥷 Кража удалась! Стащено {emoji} {esc(name)} у {esc(victim_name)}!"
+
+async def apply_vilon_amulet_trigger(user_id: int, active_items, vilon_streak: int) -> str:
+    """🔱 Амулет Вилона: пока экипирован, каждый фарм ног (🦵/🦿) считается в персональный
+    счётчик. На VILON_TRIGGER_EVERY-й раз счётчик сбрасывается и активируется x3 к добыче
+    на VILON_BOOST_SECONDS секунд (см. apply_vilon_amulet_boost — сам множитель применяется
+    отдельно, эта функция только считает и включает таймер)."""
+    if "vilon_amulet" not in set(_normalize_active_items(active_items)):
+        return ""
+
+    new_streak = vilon_streak + 1
+    if new_streak < VILON_TRIGGER_EVERY:
+        await db_exec("UPDATE users SET vilon_streak = ? WHERE user_id = ?", (new_streak, user_id))
+        return ""
+
+    boost_until = int(time.time()) + VILON_BOOST_SECONDS
+    await db_exec(
+        "UPDATE users SET vilon_streak = 0, vilon_boost_until = ? WHERE user_id = ?",
+        (boost_until, user_id),
+    )
+    return f"\n{ITEMS['vilon_amulet'][0]} Амулет Вилона: РЫВОК! x{VILON_BOOST_MULT} к добыче на {VILON_BOOST_SECONDS} сек!"
+
+def apply_vilon_amulet_boost(total: int, vilon_boost_until: int) -> int:
+    """Применяет активный x3 от Амулета Вилона к уже посчитанному total, если таймер ещё
+    не истёк. Не требует экипировки в момент применения — буст, один раз запущенный,
+    доигрывает своё время даже если амулет сняли (как и action-зелья)."""
+    if vilon_boost_until and vilon_boost_until > int(time.time()):
+        return round(total * VILON_BOOST_MULT)
+    return total
 
 def apply_coin_tree_farm_roll(gained: int, active_items) -> tuple:
     """🟤 Монета Ногости / 🔶 Монета Бога Ногости: независимый ролл на КАЖДОМ базовом фарме
@@ -3733,13 +3801,13 @@ async def get_all_chat_ids():
 async def build_top(chat_id, order_column: str, limit: int = 10):
     if chat_id is None:
         rows = await db_query(
-            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges, bonus_streak, prestige_points, crafts_done "
+            f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, shown_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges, bonus_streak, prestige_points, crafts_done "
             f"FROM users WHERE (top_banned IS NULL OR top_banned = 0) ORDER BY {order_column} DESC LIMIT ?",
             (limit,),
         )
     else:
         rows = await db_query(
-            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.hidden_badges, u.rebirth_points, u.rebirth_count, u.nickname, u.ultra_rebirth, u.promo_badges, u.bonus_streak, u.prestige_points, u.crafts_done
+            f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.shown_badges, u.rebirth_points, u.rebirth_count, u.nickname, u.ultra_rebirth, u.promo_badges, u.bonus_streak, u.prestige_points, u.crafts_done
                 FROM users u JOIN chat_members cm ON u.user_id = cm.user_id
                 WHERE cm.chat_id = ? AND (u.top_banned IS NULL OR u.top_banned = 0) ORDER BY u.{order_column} DESC LIMIT ?""",
             (chat_id, limit),
@@ -4328,7 +4396,7 @@ async def badges_menu(message: Message):
     row = await ensure_user(user_id, username)
     evolution_level, cases_opened, total_farmed, vip_until = row[3], row[7], row[8], row[12]
     coins = row[5]
-    hidden = parse_hidden(row[13] if len(row) > 13 else "")
+    shown = parse_shown(row[39] if len(row) > 39 else "")
     promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
     rebirth_points = row[14] if len(row) > 14 else 0
     ultra_rebirth = bool(row[21]) if len(row) > 21 else False
@@ -4343,7 +4411,7 @@ async def badges_menu(message: Message):
         await message.reply(TEXTS["badges_menu_1"])
         return
 
-    kb = badges_keyboard(earned, hidden, user_id, page=0)
+    kb = badges_keyboard(earned, shown, user_id, page=0)
     await message.reply(TEXTS["badges_menu_2"], reply_markup=kb)
 
 @dp.callback_query(F.data == "badge_noop")
@@ -4363,7 +4431,7 @@ async def badge_change_page(callback: CallbackQuery):
     row = await get_user(owner_id)
     username, evolution_level, cases_opened, total_farmed, vip_until = row[1], row[3], row[7], row[8], row[12]
     coins = row[5]
-    hidden = parse_hidden(row[13] if len(row) > 13 else "")
+    shown = parse_shown(row[39] if len(row) > 39 else "")
     promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
     rebirth_points = row[14] if len(row) > 14 else 0
     ultra_rebirth = bool(row[21]) if len(row) > 21 else False
@@ -4374,7 +4442,7 @@ async def badge_change_page(callback: CallbackQuery):
 
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges,
                          coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points)
-    kb = badges_keyboard(earned, hidden, owner_id, page=page)
+    kb = badges_keyboard(earned, shown, owner_id, page=page)
     await safe_edit_text(callback, TEXTS["badges_menu_2"], reply_markup=kb)
 
 @dp.callback_query(F.data.startswith("badge:"))
@@ -4385,12 +4453,11 @@ async def toggle_badge(callback: CallbackQuery):
     if callback.from_user.id != owner_id:
         await callback.answer(TEXTS["toggle_badge_1"], show_alert=True)
         return
-    await callback.answer(TEXTS["toggle_badge_2"])
 
     row = await get_user(owner_id)
     username, evolution_level, cases_opened, total_farmed, vip_until = row[1], row[3], row[7], row[8], row[12]
     coins = row[5]
-    hidden = parse_hidden(row[13] if len(row) > 13 else "")
+    shown = parse_shown(row[39] if len(row) > 39 else "")
     promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
     rebirth_points = row[14] if len(row) > 14 else 0
     ultra_rebirth = bool(row[21]) if len(row) > 21 else False
@@ -4398,19 +4465,24 @@ async def toggle_badge(callback: CallbackQuery):
     prestige_points = row[27] if len(row) > 27 else 0
     crafts_done = row[36] if len(row) > 36 else 0
 
-    if key in hidden:
-        hidden.discard(key)
+    if key in shown:
+        shown.discard(key)
+        await callback.answer(TEXTS["toggle_badge_2"])
+    elif len(shown) >= BADGES_DISPLAY_LIMIT:
+        await callback.answer(TEXTS["toggle_badge_3"], show_alert=True)
+        return
     else:
-        hidden.add(key)
+        shown.add(key)
+        await callback.answer(TEXTS["toggle_badge_2"])
 
-    new_hidden_str = ",".join(sorted(hidden))
-    await db_exec("UPDATE users SET hidden_badges = ? WHERE user_id = ?", (new_hidden_str, owner_id))
+    new_shown_str = ",".join(sorted(shown))
+    await db_exec("UPDATE users SET shown_badges = ? WHERE user_id = ?", (new_shown_str, owner_id))
 
     vip_active = is_vip_active(vip_until)
     earned = badge_list(username, evolution_level, cases_opened, total_farmed, vip_active, promo_badges,
                          coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points)
-    kb = badges_keyboard(earned, hidden, owner_id, page=page)
-    await safe_edit_text(callback, "🏷 Твои значки (жми, чтобы скрыть/показать в топах):", reply_markup=kb)
+    kb = badges_keyboard(earned, shown, owner_id, page=page)
+    await safe_edit_text(callback, TEXTS["badges_menu_2"], reply_markup=kb)
 
 @dp.message(F.text.regexp(r"[🦵🦿]"))
 async def count_legs(message: Message):
@@ -4440,6 +4512,8 @@ async def count_legs(message: Message):
     prestige_upgrades = parse_prestige_upgrades(row[28])
     chronos_boost_pct = row[34] if len(row) > 34 else 100
     compact_mode = bool(row[35]) if len(row) > 35 else False
+    vilon_streak = row[37] if len(row) > 37 else 0
+    vilon_boost_until = row[38] if len(row) > 38 else 0
     flat_bonus = total_flat_bonus(active_items)
     limits = active_farm_limits(active_items, prestige_upgrades)
 
@@ -4465,6 +4539,9 @@ async def count_legs(message: Message):
 
     galaxy = min(text.count("🌌"), limits["galaxy_limit"])
     star = min(text.count("⭐️"), limits["star_limit"])
+    miku_note = 0
+    if "miku_ring" in set(_normalize_active_items(active_items)):
+        miku_note = min(text.count("🎶"), MIKU_RING_SYMBOL_LIMIT)
 
     if gained == 0:
         return
@@ -4482,9 +4559,12 @@ async def count_legs(message: Message):
         total = round(total * (1 + 0.20 * galaxy))
     if star:
         total = round(total * (2 ** star))
+    if miku_note:
+        total = round(total * MIKU_RING_FARM_MULT)
     inventory_map = {k: q for k, q in inv}
     if inventory_map.get("pocket_star", 0) > 0:
         total = round(total * POCKET_STAR_LEG_FARM_MULT)
+    total = apply_vilon_amulet_boost(total, vilon_boost_until)
     potion_text = ""
     if "potion_speed" in potions:
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
@@ -4529,6 +4609,7 @@ async def count_legs(message: Message):
         + await apply_craft_coin_proc(user_id, inventory_map)
     )
     steal_text = await apply_leg_farm_steal(user_id, message.chat.id, active_items)
+    vilon_text = await apply_vilon_amulet_trigger(user_id, active_items, vilon_streak)
 
     now = time.monotonic()
     chat_id = message.chat.id
@@ -4559,9 +4640,11 @@ async def count_legs(message: Message):
     if star:
         parts += f" +{star}⭐️"
 
+    miku_text = f"\n{ITEMS['miku_ring'][0]} Кольцо Мику: 🎶 x{MIKU_RING_FARM_MULT} к итогу!" if miku_note else ""
+
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
     bonus_text = "" if compact_mode else (vase_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text)
-    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + steal_text
+    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + steal_text + vilon_text + miku_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
@@ -4661,7 +4744,7 @@ async def info_player(message: Message):
     vip_until = row[12]
     rebirth_count = row[15] if len(row) > 15 else 0
     rebirth_points = row[14] if len(row) > 14 else 0
-    hidden = parse_hidden(row[13] if len(row) > 13 else "")
+    shown = parse_shown(row[39] if len(row) > 39 else "")
     promo_badges = parse_promo_badges(row[33] if len(row) > 33 else "")
     nickname = row[19] if len(row) > 19 else None
     ultra_rebirth = bool(row[21]) if len(row) > 21 else False
@@ -4676,7 +4759,7 @@ async def info_player(message: Message):
     name_part = f" {esc(name)}" if name else ""
     item_text = ITEMS[active_item][1] if active_item and active_item in ITEMS else "нет"
     vip_text = "активен" if vip_active else "не активен"
-    badges = get_badges(username, evolution_level, cases_opened, total_farmed, vip_active, hidden, promo_badges,
+    badges = get_badges(username, evolution_level, cases_opened, total_farmed, vip_active, shown, promo_badges,
                          coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points)
 
     text = (
@@ -4697,10 +4780,10 @@ async def send_legs_top(message: Message, chat_id, title: str):
         return
 
     text = f"🏆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, shown_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
         level = get_level_index(score, evolution_level, rebirth_count, bool(ultra_rebirth))
         emoji, name, show_level = get_level_visual(level)
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_shown(shown_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
         lvl_part = f" ({level} лвл)" if show_level else ""
         name_part = f" {esc(name)}" if name else ""
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — <code>{score}</code>\n   └ {emoji}{name_part}{lvl_part} · эво {evolution_level}\n\n"
@@ -4715,8 +4798,8 @@ async def send_evo_top(message: Message, chat_id, title: str):
         return
 
     text = f"🎆 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, shown_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_shown(shown_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — эво {evolution_level} ({score} очков)\n"
 
     await message.reply(text)
@@ -4729,8 +4812,8 @@ async def send_coin_top(message: Message, chat_id, title: str):
         return
 
     text = f"🪙 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, shown_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_shown(shown_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — {coins} 🪙\n"
 
     await message.reply(text)
@@ -4743,8 +4826,8 @@ async def send_rebirth_top(message: Message, chat_id, title: str):
         return
 
     text = f"🉑 <b>{title}</b>\n\n"
-    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, hidden_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
-        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_hidden(hidden_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
+    for i, (username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, shown_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges_raw, bonus_streak, prestige_points, crafts_done) in enumerate(rows, 1):
+        badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until), parse_shown(shown_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points, bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — {rebirth_points} 🉑 (перерождений: {rebirth_count})\n"
 
     await message.reply(text)
@@ -4824,6 +4907,7 @@ async def farm(message: Message):
     prestige_upgrades = parse_prestige_upgrades(row[28])
     chronos_boost_pct = row[34] if len(row) > 34 else 100
     compact_mode = bool(row[35]) if len(row) > 35 else False
+    vilon_boost_until = row[38] if len(row) > 38 else 0
 
     inv_rows = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv_rows}
@@ -4856,6 +4940,7 @@ async def farm(message: Message):
             (rebirth_gain, user_id),
         )
         pocket_star_text = f"\n{ITEMS['pocket_star'][0]} Карманная звезда: +{rebirth_gain}🉑!"
+    gained = apply_vilon_amulet_boost(gained, vilon_boost_until)
     potion_text = ""
     if "potion_speed" in potions:
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
@@ -8043,6 +8128,14 @@ async def admin_restart(message: Message):
     await message.reply(TEXTS["admin_restart_1"])
     await bot.session.close()
     os._exit(0)
+
+@dp.message(F.text.lower() == "!снять бейдж всем")
+async def admin_unshow_all_badges(message: Message):
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    await db_exec("UPDATE users SET shown_badges = ''")
+    await message.reply(TEXTS["admin_unshow_all_badges_1"])
 
 @dp.message(F.text.regexp(r"(?i)^!ивент\s+х\d"))
 async def admin_event_custom(message: Message):
