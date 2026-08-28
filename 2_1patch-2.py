@@ -11,7 +11,7 @@ from urllib.parse import quote, unquote
 import libsql
 import aiohttp
 from aiogram import Bot, Dispatcher, F, BaseMiddleware
-from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest
+from aiogram.exceptions import TelegramRetryAfter, TelegramBadRequest, TelegramForbiddenError
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 from aiogram.types import (
@@ -617,6 +617,15 @@ TEXTS = {
     "count_legs_1": '{v0} {v1} → +{v2} очков{v3} {v4}(Всего: {v5}){v6}',
     "count_legs_2": 'Лютый рофл засчитан! {v0} → +{v1} очков{v2} (Всего: {v3}){v4}',
     "info_player_1": 'Игрок не найден (он ещё не писал ноги в этом боте).',
+    "cmd_ban_player_1": 'Бан работает только в групповых чатах.',
+    "cmd_ban_player_2": 'Только админ чата или владелец бота может банить.',
+    "cmd_ban_player_3": 'Ответь этой командой на сообщение того, кого банишь, либо напиши !бан @username (юзер должен был хоть раз написать боту).',
+    "cmd_ban_player_4": 'Нельзя забанить самого себя.',
+    "cmd_ban_player_5": 'Нельзя забанить владельца бота.',
+    "cmd_ban_player_6": '🔨 {v0} забанен. Бот больше не будет ему отвечать.',
+    "cmd_ban_player_7": '{v0} уже забанен.',
+    "cmd_unban_player_1": '✅ {v0} разбанен.',
+    "cmd_unban_player_2": '{v0} не был забанен в игре.',
     "send_legs_top_1": 'В топе пока пусто, никто еще не кинул ногу... 🧍',
     "send_evo_top_1": 'В топе пока пусто.',
     "send_coin_top_1": 'В топе пока пусто.',
@@ -2090,7 +2099,7 @@ PREFIX_COMMANDS = (
     "!сброс кд", "!сброс бонус", "!дать кейс", "!дебаг ", "!текст ", "!симулировать эволюция", "!ивент х",
     "!установить очкп", "!обнулить экономику", "!мультипликатор ферма", "!дать предмет",
     "!очистить инвентарь", "!дать апгрейд", "!вип навсегда", "!сброс ник", "!найти ", "!ультра навсегда",
-    "вип открыть кейс", "бустеры поиск ", "!дать ключ", "!дать всё",
+    "вип открыть кейс", "бустеры поиск ", "!дать ключ", "!дать всё", "!бан", "!разбан",
 )
 
 def is_command_text(text: str) -> bool:
@@ -2317,6 +2326,28 @@ def normalize_alias_fuzzy(text: str) -> str:
     canon = ALIAS_PHRASES.get(best_word, best_word)
     return canon
 
+_BAN_ALIAS_WORDS = ("swoon", "snowgrave")
+_BAN_ALIAS_RE = re.compile(
+    r"^(?:" + "|".join(re.escape(w) for w in _BAN_ALIAS_WORDS) + r")(\s+.*)?$",
+    re.IGNORECASE,
+)
+
+def normalize_ban_alias(text: str) -> str:
+    """'swoon' / 'snowgrave' -> '!бан', как отдельные алиасы команды бана (по просьбе
+    пользователя). Не через ALIAS_PHRASES, потому что та таблица только для фраз БЕЗ
+    аргументов (точное совпадение всей строки) — а !бан принимает опциональный
+    '@username' в хвосте, который здесь нужно сохранить как есть."""
+    if not text:
+        return text
+    stripped = text.strip()
+    if not stripped:
+        return text
+    m = _BAN_ALIAS_RE.match(stripped)
+    if not m:
+        return text
+    tail = m.group(1) or ""
+    return "!бан" + tail
+
 def apply_command_aliases(text: str) -> str:
     """Единая точка входа: применяет все виды алиасинга по порядку. Возвращает исходный текст,
     если ни один нормализатор не нашёл, что менять (в т.ч. для обычных сообщений с ногами 🦵/🦿 —
@@ -2327,6 +2358,9 @@ def apply_command_aliases(text: str) -> str:
         stripped_lower = text.strip().lower()
         if stripped_lower in FIXED_COMMANDS or stripped_lower in ALIAS_PHRASES:
             text = text.strip()
+    result = normalize_ban_alias(text)
+    if result != text:
+        return result
     result = normalize_alias_text(text)
     if result != text:
         return result
@@ -3015,6 +3049,18 @@ _USERS_WRITE_RE = re.compile(r"\b(?:UPDATE|DELETE\s+FROM)\s+users\b", re.IGNOREC
 def _invalidate_user_cache(user_id):
     _user_cache.pop(user_id, None)
 
+# In-memory множество забаненных в игре user_id. Держим отдельно от _user_cache,
+# потому что GameBanMiddleware проверяет его на КАЖДОМ входящем апдейте (message
+# и callback_query) — гонять полный SELECT по users на каждое сообщение было бы
+# слишком дорого. Заполняется при старте из БД (см. _load_game_banned_ids) и
+# обновляется точечно в самих командах !бан/!разбан.
+_game_banned_ids: set = set()
+
+async def _load_game_banned_ids():
+    rows = await db_query("SELECT user_id FROM users WHERE game_banned = 1")
+    _game_banned_ids.clear()
+    _game_banned_ids.update(r[0] for r in rows)
+
 def _connect(worker_idx):
     if _db_conns[worker_idx] is None:
         _db_conns[worker_idx] = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
@@ -3214,7 +3260,7 @@ USER_COLUMNS = (
     "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock, "
     "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items, craft_points, "
     "promo_badges, chronos_boost_pct, compact_mode, crafts_done, vilon_streak, vilon_boost_until, shown_badges, "
-    "kotyara_boost_until"
+    "kotyara_boost_until, game_banned"
 )
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -3360,6 +3406,7 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN vilon_boost_until INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN shown_badges TEXT DEFAULT ''",
         "ALTER TABLE users ADD COLUMN kotyara_boost_until INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN game_banned INTEGER DEFAULT 0",
     ):
         try:
             await db_exec(stmt)
@@ -3382,7 +3429,7 @@ async def ensure_user(user_id: int, username: str):
     if row is None:
         await db_exec("INSERT INTO users (user_id, username, score) VALUES (?, ?, 0)", (user_id, username))
         now = int(time.time())
-        new_row = (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "", 0, "", "", 0, "", 100)
+        new_row = (user_id, username, 0, 0, 0, 0, None, 0, 0, 0, 0, 1, 0, "", 0, 0, "", now, "", None, 0, 0, 0, "", None, 0, "", 0, "", 0, "", "", 0, "", 100, 0)
         _user_cache[user_id] = new_row
         return new_row
     if row[1] != username:
@@ -4161,6 +4208,25 @@ def get_chat(event):
 
 _leg_farm_last: dict = {}
 
+class GameBanMiddleware(BaseMiddleware):
+    """Полный игровой бан: бот вообще не реагирует на забаненного — ни командами,
+    ни фолбэками, ни даже ответом на callback_query (иначе кнопка у него зависала
+    бы с 'часиками' до таймаута Telegram). Стоит САМОЙ ПЕРВОЙ в цепочке (outer_
+    middleware, до AliasNormalize), чтобы забаненный не долетал вообще ни до
+    ThrottleMiddleware (не тратим место в _log_player_action), ни до самих
+    хендлеров. Проверка по in-memory _game_banned_ids, а не по БД — чтобы не
+    делать SELECT на каждый апдейт от каждого юзера в чате."""
+    async def __call__(self, handler, event, data):
+        user = getattr(event, "from_user", None)
+        if user is not None and user.id in _game_banned_ids:
+            if isinstance(event, CallbackQuery):
+                try:
+                    await event.answer()
+                except Exception:
+                    pass
+            return
+        return await handler(event, data)
+
 class AliasNormalizeMiddleware(BaseMiddleware):
     """Переписывает message.text на канонический вид команды ДО того, как текст попадёт
     в остальные middleware/хендлеры (is_command_text, ThrottleMiddleware, сами @dp.message)."""
@@ -4281,8 +4347,10 @@ class StaleCallbackGuardMiddleware(BaseMiddleware):
                 pass
             return
 
+dp.callback_query.outer_middleware(GameBanMiddleware())
 dp.callback_query.middleware(StaleCallbackGuardMiddleware())
 
+dp.message.outer_middleware(GameBanMiddleware())
 dp.message.outer_middleware(AliasNormalizeMiddleware())
 dp.message.middleware(TrackMembershipMiddleware())
 dp.message.middleware(ThrottleMiddleware(0.6))
@@ -5222,6 +5290,112 @@ async def info_player(message: Message):
         f"● VIP: {vip_text}"
     )
     await message.reply(text)
+
+BAN_RE = re.compile(r"^!бан(?:\s+@?(\w+))?$", re.IGNORECASE)
+UNBAN_RE = re.compile(r"^!разбан(?:\s+@?(\w+))?$", re.IGNORECASE)
+
+async def _is_chat_admin(chat_id: int, user_id: int) -> bool:
+    """Может ли этот юзер банить в ЭТОМ чате: владелец бота — всегда, иначе
+    смотрим реальный статус в Telegram (creator/administrator), а не что-то
+    своё игровое — бан привязан к правам модерации чата, как и просил пользователь
+    ('бан работает как и обычно ... если есть админ права')."""
+    try:
+        member = await bot.get_chat_member(chat_id, user_id)
+    except Exception:
+        return False
+    return member.status in ("creator", "administrator")
+
+async def _resolve_ban_target(message: Message, username_arg: str | None):
+    """Цель бана/разбана: реплай ИЛИ !бан @username. Если юзера ещё нет в базе
+    (никогда не писал боту, но упомянут по нику) — резолвим только по username
+    из БД: угадать user_id по голому @username без Telegram-объекта нельзя,
+    поэтому в этом случае просим ответить реплаем вместо @username."""
+    if message.reply_to_message and message.reply_to_message.from_user:
+        target = message.reply_to_message.from_user
+        return target.id, (target.username or target.first_name or str(target.id))
+    if username_arg:
+        row = await get_user_by_username(username_arg)
+        if row:
+            return row[0], row[1]
+        return None, None
+    return None, None
+
+@dp.message(F.text.regexp(r"(?i)^!бан(?:\s+@?\w+)?$"))
+async def cmd_ban_player(message: Message):
+    match = BAN_RE.match(message.text.strip())
+    if not match:
+        return
+    chat = message.chat
+    if chat.type not in ("group", "supergroup"):
+        await message.reply(TEXTS["cmd_ban_player_1"])
+        return
+    if not (is_admin(message) or await _is_chat_admin(chat.id, message.from_user.id)):
+        await message.reply(TEXTS["cmd_ban_player_2"])
+        return
+
+    target_id, target_username = await _resolve_ban_target(message, match.group(1))
+    if target_id is None:
+        await message.reply(TEXTS["cmd_ban_player_3"])
+        return
+    if target_id == message.from_user.id:
+        await message.reply(TEXTS["cmd_ban_player_4"])
+        return
+    if target_id == ADMIN_USER_ID:
+        await message.reply(TEXTS["cmd_ban_player_5"])
+        return
+    if target_id in _game_banned_ids:
+        await message.reply(TEXTS["cmd_ban_player_7"].format(v0=esc(target_username)))
+        return
+
+    await ensure_user(target_id, target_username)
+    await db_exec("UPDATE users SET game_banned = 1 WHERE user_id = ?", (target_id,))
+    _game_banned_ids.add(target_id)
+
+    chat_ban_note = ""
+    try:
+        await bot.ban_chat_member(chat.id, target_id)
+        chat_ban_note = " Также забанен в этом чате."
+    except TelegramForbiddenError:
+        chat_ban_note = " ⚠️ У бота нет прав банить в чате — забанен только в игре."
+    except TelegramBadRequest:
+        chat_ban_note = " ⚠️ Не удалось забанить в чате (возможно, уже вне чата) — забанен только в игре."
+    except Exception:
+        chat_ban_note = " ⚠️ Не удалось забанить в чате — забанен только в игре."
+
+    await message.reply(TEXTS["cmd_ban_player_6"].format(v0=esc(target_username)) + chat_ban_note)
+
+@dp.message(F.text.regexp(r"(?i)^!разбан(?:\s+@?\w+)?$"))
+async def cmd_unban_player(message: Message):
+    match = UNBAN_RE.match(message.text.strip())
+    if not match:
+        return
+    chat = message.chat
+    if chat.type not in ("group", "supergroup"):
+        await message.reply(TEXTS["cmd_ban_player_1"])
+        return
+    if not (is_admin(message) or await _is_chat_admin(chat.id, message.from_user.id)):
+        await message.reply(TEXTS["cmd_ban_player_2"])
+        return
+
+    target_id, target_username = await _resolve_ban_target(message, match.group(1))
+    if target_id is None:
+        await message.reply(TEXTS["cmd_ban_player_3"])
+        return
+    if target_id not in _game_banned_ids:
+        await message.reply(TEXTS["cmd_unban_player_2"].format(v0=esc(target_username)))
+        return
+
+    await db_exec("UPDATE users SET game_banned = 0 WHERE user_id = ?", (target_id,))
+    _game_banned_ids.discard(target_id)
+
+    chat_unban_note = ""
+    try:
+        await bot.unban_chat_member(chat.id, target_id, only_if_banned=True)
+        chat_unban_note = " Также разбанен в этом чате."
+    except Exception:
+        chat_unban_note = ""
+
+    await message.reply(TEXTS["cmd_unban_player_1"].format(v0=esc(target_username)) + chat_unban_note)
 
 async def send_legs_top(message: Message, chat_id, title: str):
     rows = await build_top(chat_id, "score")
@@ -9686,6 +9860,7 @@ async def keep_alive():
 
 async def main():
     await init_db()
+    await _load_game_banned_ids()
 
     app = web.Application()
     app.router.add_get('/', handle)
