@@ -412,16 +412,24 @@ LEG_STEAL_CHANCE = 0.01
 BADGES_DISPLAY_LIMIT = 5
 
 # 🔱 Амулет Вилона: пока экипирован, каждый фарм ног (🦵/🦿) идёт в счётчик; на VILON_TRIGGER_EVERY-й
-# раз счётчик сбрасывается и активируется x3 к добыче фермы/ног на VILON_BOOST_SECONDS секунд.
+# раз счётчик сбрасывается и активируется x1.5 к добыче фермы/ног на VILON_BOOST_SECONDS секунд.
 VILON_TRIGGER_EVERY = 20
-VILON_BOOST_SECONDS = 20
-VILON_BOOST_MULT = 3
+VILON_BOOST_SECONDS = 15
+VILON_BOOST_MULT = 1.5
 
 # 🐱 Амулет Котяры: пока экипирован, при каждом фарме ног — шанс KOTYARA_BOOST_CHANCE дать
 # x2 к добыче на KOTYARA_BOOST_SECONDS секунд (поверх обычного пассивного буста амулета).
 KOTYARA_BOOST_CHANCE = 0.25
 KOTYARA_BOOST_SECONDS = 10
 KOTYARA_BOOST_MULT = 2
+
+# 🐱 Амулет Котяры доп.эффект: символ 😺 в тексте фарма ног (лимит 3 за сообщение, как обычные
+# ноги/мек-ноги). Если в сообщении >=3 шт. 😺 — x1.5 к итогу фарма фермы/ног, и НЕЗАВИСИМО в этот
+# же момент шанс KOTYARA_CAT_COIN_CHANCE дать ещё случайные KOTYARA_CAT_COIN_MIN..MAX монет.
+KOTYARA_CAT_SYMBOL_LIMIT = 3
+KOTYARA_CAT_FARM_MULT = 1.5
+KOTYARA_CAT_COIN_CHANCE = 0.05
+KOTYARA_CAT_COIN_MIN, KOTYARA_CAT_COIN_MAX = 100, 1000
 
 # 💍 Кольцо Мику: пока экипировано, символ 🎶 в тексте фарма ног (лимит 1 за сообщение)
 # удваивает итог фарма — применяется как множитель поверх total, аналогично 🌌/⭐️.
@@ -1007,24 +1015,24 @@ ITEMS = {
     "orb":    ("🔮", "Шар парадокса", 14, 20),
     "pill":   ("💊", "Таблетка силы", 12, 30),
     "candle": ("🪔", "Свеча солнцестояния", 14, 35),
-    "gift":   ("💮", "Подарок кошко-девочки", 45, 5),
+    "gift":   ("💮", "Подарок кошко-девочки", 65, 5),
     "star":   ("⭐️", "Звезда перерождения", 30, 0),
-    "daily_charm": (PREMIUM_DAILY_CHARM, "Дневной амулет", 15, 0),
-    "mk_mgg":       (PREMIUM_MK_MGG, "Амулет MGG", 125, 0.57),
+    "daily_charm": (PREMIUM_DAILY_CHARM, "Дневной амулет", 150, 0),
+    "mk_mgg":       (PREMIUM_MK_MGG, "Амулет MGG", 145, 0.57),
     "mk_sandsmoon": (PREMIUM_MK_SANDSMOON, "Амулет SandsMoon", 40, 3.45),
-    "mk_fixsahal1": (PREMIUM_MK_FIXSAHAL1, "Амулет Fixsahal1", 30, 5.75),
+    "mk_fixsahal1": (PREMIUM_MK_FIXSAHAL1, "Амулет Fixsahal1", 45, 5.75),
     "mk_mk":        (PREMIUM_MK_MK, "Амулет Mk", 90, 1.72),
     "mk_panther":   (PREMIUM_MK_PANTHER, "Амулет Haos", 60, 8.04),
     "mk_vector":    (PREMIUM_MK_VECTOR, "Амулет Vector", 40, 4.02),
-    "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 1, 60),
-    "mk_mary":      (PREMIUM_MK_MARY, "Амулет Mary", 45, 5.75),
-    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 60, 10),
-    "vip_charm":    (PREMIUM_VIP_ITEM, "VIP-амулет", 250, 0),
+    "mk_broken":    (PREMIUM_MK_BROKEN, "Сломанный амулет", 2, 60),
+    "mk_mary":      (PREMIUM_MK_MARY, "Амулет Mary", 50, 5.75),
+    "mk_veron03":   (PREMIUM_MK_VERON03, "Амулет Veron03", 35, 10),
+    "vip_charm":    (PREMIUM_VIP_ITEM, "VIP-амулет", 270, 0),
     "strange_coin": (PREMIUM_STRANGE_COIN, "Странная монета", 0, 0.7),
 
-    "power_amulet":        (PREMIUM_POWER_AMULET, "Амулет силы", 40, 0),
+    "power_amulet":        (PREMIUM_POWER_AMULET, "Амулет силы", 75, 0),
     "galaxy_power_amulet": (PREMIUM_GALAXY_POWER_AMULET, "Амулет силы галактики", 80, 0),
-    "galaxy_might_amulet": (PREMIUM_GALAXY_MIGHT_AMULET, "Амулет Мощи галактики", 100, 0),
+    "galaxy_might_amulet": (PREMIUM_GALAXY_MIGHT_AMULET, "Амулет Мощи галактики", 135, 0),
     "hybrid_amulet":       (PREMIUM_HYBRID_AMULET, "Неактивированный гибридный амулет", 0, 0),
     "friendship_essence":  (PREMIUM_FRIENDSHIP_ESSENCE, "Эссенция дружбы", 0, 0),
     "time_particle":       (PREMIUM_TIME_PARTICLE, "Частица времени", 0, 0),
@@ -1035,18 +1043,18 @@ ITEMS = {
     "golden_vase":         (PREMIUM_GOLDEN_VASE, "Золотая ваза", 0, 0),
     "godly_vase":          (PREMIUM_GODLY_VASE, "Боготворная ваза", 0, 0),
 
-    "lucky_charm":  (PREMIUM_LUCKY_CHARM, "Малый амулет удачи", 15, 0),
-    "swift_pill":   (PREMIUM_SWIFT_PILL, "Ускоренная таблетка", 12, 0),
-    "party_set":    (PREMIUM_PARTY_SET, "Праздничный набор", 18, 0),
+    "lucky_charm":  (PREMIUM_LUCKY_CHARM, "Малый амулет удачи", 70, 0),
+    "swift_pill":   (PREMIUM_SWIFT_PILL, "Ускоренная таблетка", 55, 0),
+    "party_set":    (PREMIUM_PARTY_SET, "Праздничный набор", 115, 0),
     "warm_candle":  (PREMIUM_WARM_CANDLE, "Тёплая свеча", 0, 0),
 
     "ice_shard":     (PREMIUM_ICE_SHARD, "Ледяной осколок", 80, 12),
-    "ember":         (PREMIUM_EMBER, "Уголёк", 45, 12),
-    "dragon_claw":   (PREMIUM_DRAGON_CLAW, "Коготь дракона", 55, 8),
+    "ember":         (PREMIUM_EMBER, "Уголёк", 75, 12),
+    "dragon_claw":   (PREMIUM_DRAGON_CLAW, "Коготь дракона", 90, 8),
     "paradox_charm": (PREMIUM_PARADOX_CHARM, "Оберег парадокса", 65, 5),
-    "shadow_mask":   (PREMIUM_SHADOW_MASK, "Маска тени", 95, 1.5),
-    "tide_wave":     (PREMIUM_TIDE_WAVE, "Волна прилива", 50, 10),
-    "warrior_skull": (PREMIUM_WARRIOR_SKULL, "Череп воина", 1, 7),
+    "shadow_mask":   (PREMIUM_SHADOW_MASK, "Маска тени", 155, 1.5),
+    "tide_wave":     (PREMIUM_TIDE_WAVE, "Волна прилива", 85, 10),
+    "warrior_skull": (PREMIUM_WARRIOR_SKULL, "Череп воина", 78, 7),
     "broken_clock":  (PREMIUM_BROKEN_CLOCK, "Сломанные часы", 0, 15),
     "essence_drop":  (PREMIUM_ESSENCE_DROP, "Капля эссенции", 0, 10),
     "comet_shard":   (PREMIUM_COMET_SHARD, "Осколок кометы", 0, 3),
@@ -1055,13 +1063,13 @@ ITEMS = {
     "fate_thread":   (PREMIUM_FATE_THREAD, "Нить судьбы", 0, 4),
 
     "kotyara_amulet":  (PREMIUM_KOTYARA_AMULET, "Амулет Котяры", 280, 0),
-    "miku_amulet":     (PREMIUM_MIKU_AMULET, "Амулет Мику", 75, 0),
+    "miku_amulet":     (PREMIUM_MIKU_AMULET, "Амулет Мику", 85, 0),
     "golda":           (PREMIUM_GOLDA_ITEM, "Голда", 52, 0),
     "karambit_gold":   (PREMIUM_KARAMBIT_GOLD, "Керамбит голд", 228, 0),
     "butterfly_legacy": (PREMIUM_BUTTERFLY_LEGACY, "Бабочка легаси", 69, 0),
     "krest_amulet":    (PREMIUM_KREST_AMULET, "Амулет Креста", 100, 0),
     "fati_amulet":     (PREMIUM_FATI_AMULET, "Амулет Фати", 80, 0),
-    "guitarist_crown": (PREMIUM_GUITARIST_CROWN, "Корона Гитариста", 69, 0),
+    "guitarist_crown": (PREMIUM_GUITARIST_CROWN, "Корона Гитариста", 150, 0),
     "vilon_amulet":    (PREMIUM_VILON_AMULET, "Амулет Вилона", 120, 0),
     "miku_ring":       (PREMIUM_MIKU_RING, "Кольцо Мику", 250, 0),
 
@@ -1205,6 +1213,7 @@ PASSIVE_ITEMS = {
     "broken_clock", "essence_drop", "comet_shard", "koshko_gift", "ancient_stone", "fate_thread",
     "craft_coin", "bitcoin", "rebirth_coin", "evolution_coin", "awakening_coin",
     "pocket_star", "nano_it",
+    "chaos_orb", "chronos_clock", "rebirth_spark",
 }
 
 SELL_PRICE = {
@@ -1441,6 +1450,7 @@ TIDE_WAVE_PROC_CHANCE = 0.05
 CHAOS_ORB_FARM_CHANCE = 0.02
 CHAOS_ORB_FARM_MIN = 1
 CHAOS_ORB_FARM_MAX = 10_000_000
+CHAOS_ORB_BREW_CUT = 0.90
 
 CHRONOS_ORB_REBIRTH_CHANCE = 0.009
 CHRONOS_ORB_REBIRTH_MIN, CHRONOS_ORB_REBIRTH_MAX = 1, 500
@@ -1540,7 +1550,9 @@ HELP_BOOSTER_EXTRA = {
     ),
     "kotyara_amulet": (
         f"Пассивный эффект пока экипирован: при фарме ног — шанс {round(KOTYARA_BOOST_CHANCE * 100)}% "
-        f"включить x{KOTYARA_BOOST_MULT} к добыче на {KOTYARA_BOOST_SECONDS} секунд (поверх обычного буста)."
+        f"включить x{KOTYARA_BOOST_MULT} к добыче на {KOTYARA_BOOST_SECONDS} секунд (поверх обычного буста). "
+        f"Дополнительно: {KOTYARA_CAT_SYMBOL_LIMIT}+ символов 😺 в сообщении фарма ног дают x{KOTYARA_CAT_FARM_MULT} "
+        f"к итогу, и тогда же шанс {round(KOTYARA_CAT_COIN_CHANCE * 100)}% на {KOTYARA_CAT_COIN_MIN}-{KOTYARA_CAT_COIN_MAX}🪙."
     ),
     "mastery_lover_amulet": (
         "Топовый крафтовый бустер (3 ур. крафта). Пока экипирован, при каждом фарме ног независимо "
@@ -1593,7 +1605,17 @@ HELP_ITEM_EXTRA = {
         "уровня эволюции при ЛЮБОМ сбросе (и эволюция, и перерождение). Есть небольшой шанс "
         "дополнительно дать очки престижа или редкий бейдж."
     ),
-    "chaos_orb": "Крафт-сырьё для Шара Хроноса — сам по себе лежит пассивно без эффекта, нужен только для крафта.",
+    "chaos_orb": (
+        "Пассивный эффект: пока лежит в инвентаре (экипировать не нужно) — "
+        f"режет время варки зелий на {round(CHAOS_ORB_BREW_CUT * 100)}% и даёт независимый шанс "
+        f"{round(CHAOS_ORB_FARM_CHANCE * 100)}% при фарме ног поймать бонус-фарму "
+        f"({CHAOS_ORB_FARM_MIN}-{CHAOS_ORB_FARM_MAX} очков ноги). Также крафт-сырьё для Хвоста Джевила."
+    ),
+    "chronos_clock": (
+        "Пассивный эффект: пока лежит в инвентаре (экипировать не нужно) — время action-зелий "
+        "не тикает, пока предмет в инвентаре (зелье не истекает, доедает своё после расхода/продажи предмета). "
+        "Также крафт-сырьё для Хвоста Джевила."
+    ),
     "rebirth_spark": "Даётся автоматически при достижении 5 уровня эволюции. Крафт-сырьё для Ожерелья пылающей звезды.",
     "pocket_star": (
         "Пассивный эффект: пока лежит в инвентаре (экипировать не нужно) — команда «ферма» "
@@ -2482,13 +2504,13 @@ def parse_potions(potions_str: str) -> dict:
 def format_potions(potions: dict) -> str:
     return ",".join(f"{k}:{v}" for k, v in potions.items() if v > 0)
 
-def active_potions_now(potions_str: str, now: int = None, active_items=None) -> dict:
+def active_potions_now(potions_str: str, now: int = None, active_items=None, inventory_map: dict = None) -> dict:
     """Отфильтровывает истёкшие time-based зелья (charge-based остаются, пока заряды > 0).
-    ⏰ Часы Хроноса: пока экипированы, время action-зелий не тикает (не удаляем по истечению) —
-    сама запись until_ts в БД не трогается, поэтому после снятия предмета зелье честно
-    доедает оставшееся время."""
+    ⏰ Часы Хроноса: ПАССИВНЫЙ эффект — пока лежат в инвентаре (экипировать не нужно), время
+    action-зелий не тикает (не удаляем по истечению) — сама запись until_ts в БД не трогается,
+    поэтому после расхода/продажи предмета зелье честно доедает оставшееся время."""
     now = now or int(time.time())
-    frozen = bool(active_items and "chronos_clock" in set(_normalize_active_items(active_items)))
+    frozen = bool(inventory_map and inventory_map.get("chronos_clock", 0) > 0)
     parsed = parse_potions(potions_str)
     result = {}
     for key, val in parsed.items():
@@ -2506,16 +2528,16 @@ def potion_duration_seconds(key: str, upgrades: dict) -> int:
     bonus = 1 + 0.20 * upgrade_level(upgrades, "brew_duration")
     return round(base * bonus)
 
-CHAOS_ORB_BREW_CUT = 0.90
-
-def brew_seconds_for(key: str, upgrades: dict, prestige_upgrades: dict = None, active_items=None) -> int:
+def brew_seconds_for(key: str, upgrades: dict, prestige_upgrades: dict = None, active_items=None, inventory_map: dict = None) -> int:
+    """🌀 Шар хаоса: ПАССИВНЫЙ эффект — пока лежит в инвентаре (экипировать не нужно),
+    режет время варки зелий на CHAOS_ORB_BREW_CUT."""
     base = POTIONS[key]["brew_seconds"]
     cut = 1 - 0.10 * upgrade_level(upgrades, "brew_speed")
     if prestige_upgrades:
         p_speed = prestige_bonus(prestige_upgrades, "p_brew_speed")
         if p_speed:
             cut -= 0.02 * p_speed
-    if active_items and "chaos_orb" in set(_normalize_active_items(active_items)):
+    if inventory_map and inventory_map.get("chaos_orb", 0) > 0:
         cut -= CHAOS_ORB_BREW_CUT
     cut = max(0.1, cut)
     return max(30, round(base * cut))
@@ -3446,7 +3468,7 @@ async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = 
 def _random_booster_pool() -> list:
     """Все выбиваемые/крафтовые бустеры (boost_percent > 0), кроме предметов 1+ уровня крафта
     (см. RECIPES) и кроме любого предмета из NON_TRADABLE_ITEMS — используется шансом на выдачу
-    бустера от 🔮 Шара Хроноса.
+    бустера от 🔮 Хвоста Джевила.
     NON_TRADABLE_ITEMS уже помечает все эксклюзивные/уникальные амулеты, короны, кольца и
     эво-предметы (golda, karambit_gold, guitarist_crown, vilon_amulet, miku_ring, star_necklace
     и т.д.) — так что достаточно этой одной проверки, чтобы ни один из них никогда не выпал
@@ -3463,10 +3485,10 @@ def _random_booster_pool() -> list:
         pool.append(key)
     return pool
 
-async def apply_chaos_orb_proc(user_id: int, active_items) -> str:
-    """🌀 Шар хаоса: пока экипирован, шанс 2% при фарме ног поймать бонус-фарму
-    (случайное количество очков ноги от 1 до 10 000 000)."""
-    if "chaos_orb" not in set(_normalize_active_items(active_items)):
+async def apply_chaos_orb_proc(user_id: int, inventory_map: dict) -> str:
+    """🌀 Шар хаоса: ПАССИВНЫЙ эффект — пока лежит в инвентаре (экипировать не нужно),
+    шанс 2% при фарме ног поймать бонус-фарму (случайное количество очков ноги от 1 до 10 000 000)."""
+    if inventory_map.get("chaos_orb", 0) <= 0:
         return ""
     if random.random() >= CHAOS_ORB_FARM_CHANCE:
         return ""
@@ -4619,7 +4641,9 @@ async def count_legs(message: Message):
     auto_rebirth_enabled = bool(row[29])
     prestige_points = row[27]
     vip_active = is_vip_active(vip_until)
-    potions = active_potions_now(row[23], active_items=active_items)
+    inv_early = await get_inventory(user_id)
+    inventory_map_early = {k: q for k, q in inv_early}
+    potions = active_potions_now(row[23], active_items=active_items, inventory_map=inventory_map_early)
     prestige_upgrades = parse_prestige_upgrades(row[28])
     chronos_boost_pct = row[34] if len(row) > 34 else 100
     compact_mode = bool(row[35]) if len(row) > 35 else False
@@ -4654,6 +4678,9 @@ async def count_legs(message: Message):
     miku_note = 0
     if "miku_ring" in set(_normalize_active_items(active_items)):
         miku_note = min(text.count("🎶"), MIKU_RING_SYMBOL_LIMIT)
+    kotyara_cat_note = 0
+    if "kotyara_amulet" in set(_normalize_active_items(active_items)):
+        kotyara_cat_note = min(text.count("😺"), KOTYARA_CAT_SYMBOL_LIMIT)
 
     if gained == 0:
         return
@@ -4661,10 +4688,10 @@ async def count_legs(message: Message):
     gained += flat_bonus
     gained = round(gained * farm_yield_multiplier(upgrades))
 
-    event_mult, personal_mult, inv = await asyncio.gather(
-        get_event_multiplier(), get_personal_multiplier(user_id), get_inventory(user_id)
+    event_mult, personal_mult = await asyncio.gather(
+        get_event_multiplier(), get_personal_multiplier(user_id)
     )
-    inventory_map = {k: q for k, q in inv}
+    inventory_map = inventory_map_early
     nano_it_count = inventory_map.get("nano_it", 0)
     mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct, nano_it_count)
     p_yield_mult = 1 + 0.005 * prestige_bonus(prestige_upgrades, "p_farm_yield")
@@ -4675,6 +4702,12 @@ async def count_legs(message: Message):
         total = round(total * (2 ** star))
     if miku_note:
         total = round(total * MIKU_RING_FARM_MULT)
+    kotyara_cat_coins = 0
+    if kotyara_cat_note >= KOTYARA_CAT_SYMBOL_LIMIT:
+        total = round(total * KOTYARA_CAT_FARM_MULT)
+        if random.random() < KOTYARA_CAT_COIN_CHANCE:
+            kotyara_cat_coins = random.randint(KOTYARA_CAT_COIN_MIN, KOTYARA_CAT_COIN_MAX)
+            await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (kotyara_cat_coins, user_id))
     if inventory_map.get("pocket_star", 0) > 0:
         total = round(total * POCKET_STAR_LEG_FARM_MULT)
     total = apply_vilon_amulet_boost(total, vilon_boost_until)
@@ -4707,11 +4740,11 @@ async def count_legs(message: Message):
             user_id, new_score, evolution_level, rebirth_count, rebirth_points, prestige_points, prestige_upgrades, active_items
         )
 
-    inventory_map = {k: q for k, q in inv}
+    inventory_map = inventory_map_early
     luck_boost = "luck_x2" in potions
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
-    chaos_text = await apply_chaos_orb_proc(user_id, active_items)
+    chaos_text = await apply_chaos_orb_proc(user_id, inventory_map)
     necklace_text = (
         await apply_blazing_necklace_proc(user_id, active_items)
         + await apply_star_necklace_proc(user_id, active_items)
@@ -4757,10 +4790,15 @@ async def count_legs(message: Message):
         parts += f" +{star}⭐️"
 
     miku_text = f"\n{ITEMS['miku_ring'][0]} Кольцо Мику: 🎶 x{MIKU_RING_FARM_MULT} к итогу!" if miku_note else ""
+    kotyara_cat_text = ""
+    if kotyara_cat_note >= KOTYARA_CAT_SYMBOL_LIMIT:
+        kotyara_cat_text = f"\n{ITEMS['kotyara_amulet'][0]} Амулет Котяры: 😺 x{KOTYARA_CAT_FARM_MULT} к итогу!"
+        if kotyara_cat_coins:
+            kotyara_cat_text += f" +{kotyara_cat_coins}🪙 котокэш!"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
     bonus_text = "" if compact_mode else (vase_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text + mastery_text)
-    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + steal_text + vilon_text + kotyara_text + miku_text
+    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + steal_text + vilon_text + kotyara_text + kotyara_cat_text + miku_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
@@ -5021,15 +5059,15 @@ async def farm(message: Message):
     auto_rebirth_enabled = bool(row[29])
     prestige_points = row[27]
     vip_active = is_vip_active(vip_until)
-    potions = active_potions_now(row[23], now, active_items)
+    inv_rows = await get_inventory(user_id)
+    inventory_map = {k: q for k, q in inv_rows}
+    potions = active_potions_now(row[23], now, active_items, inventory_map)
     prestige_upgrades = parse_prestige_upgrades(row[28])
     chronos_boost_pct = row[34] if len(row) > 34 else 100
     compact_mode = bool(row[35]) if len(row) > 35 else False
     vilon_boost_until = row[38] if len(row) > 38 else 0
     kotyara_boost_until = row[40] if len(row) > 40 else 0
 
-    inv_rows = await get_inventory(user_id)
-    inventory_map = {k: q for k, q in inv_rows}
     has_time_particle = inventory_map.get("time_particle", 0) > 0
 
     cooldown = farm_cd_seconds(upgrades, active_items, has_time_particle, prestige_upgrades)
@@ -5089,7 +5127,7 @@ async def farm(message: Message):
     luck_boost = "luck_x2" in potions
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
     bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
-    chaos_text = await apply_chaos_orb_proc(user_id, active_items)
+    chaos_text = await apply_chaos_orb_proc(user_id, inventory_map)
     necklace_text = (
         await apply_blazing_necklace_proc(user_id, active_items)
         + await apply_star_necklace_proc(user_id, active_items)
@@ -5637,18 +5675,107 @@ def _paginate(items: list, page: int, page_size: int = INV_PAGE_SIZE):
     start = page * page_size
     return items[start:start + page_size], page, total_pages
 
-def _pagination_row(callback_prefix: str, user_id: int, page: int, total_pages: int, extra: str = "") -> list:
-    """Строка навигации ◀️ n/N ▶️. extra — доп. часть callback_data (например поисковый запрос)."""
-    if total_pages <= 1:
+def _pagination_row(callback_prefix: str, user_id: int, page: int, total_pages: int, extra: str = "", counter_callback: str = "noop") -> list:
+    """Строка навигации ◀️ n/N ▶️. extra — доп. часть callback_data (например поисковый запрос).
+    counter_callback — что происходит по тапу на счётчик "n/N" (по умолчанию ничего, "noop";
+    в каталоге бустеров туда подставляется открытие меню каталога)."""
+    if total_pages <= 1 and counter_callback == "noop":
         return []
     suffix = f":{extra}" if extra else ""
     nav = []
     if page > 0:
         nav.append(InlineKeyboardButton(text="◀️", callback_data=f"{callback_prefix}:{user_id}:{page - 1}{suffix}", style="primary"))
-    nav.append(InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data="noop"))
+    nav.append(InlineKeyboardButton(text=f"{page + 1}/{total_pages}", callback_data=counter_callback))
     if page < total_pages - 1:
         nav.append(InlineKeyboardButton(text="▶️", callback_data=f"{callback_prefix}:{user_id}:{page + 1}{suffix}", style="primary"))
     return nav
+
+# ==== Каталог бустеров (фильтр по категориям в меню инвентаря → бустеры) ====
+# Хранится в памяти на пользователя (не в БД — это чисто UI-состояние навигации),
+# сбрасывается при выходе в главное меню инвентаря или при повторном открытии раздела бустеров.
+_booster_catalog_state: dict[int, str] = {}
+
+BOOSTER_CATALOG_CATEGORIES = [
+    ("all", "🗂 Все"),
+    ("case1", "📦 Кейс 1"),
+    ("case2", "📦 Кейс 2"),
+    ("case3", "📦 Кейс 3"),
+    ("craft1", "🔨 Крафты 1"),
+    ("craft2", "🔨 Крафты 2"),
+    ("craft3", "🔨 Крафты 3"),
+    ("exclusive", "👑 Эксклюзив"),
+    ("other", "❓ Другое"),
+]
+_BOOSTER_CATALOG_LABELS = dict(BOOSTER_CATALOG_CATEGORIES)
+
+# Именные уникальные бустеры для категории «Эксклюзив» каталога — Голда, Керамбит, Мику
+# и подобные "личности" (в отличие от UNIQUE_BOOSTER_TIERS — цепочки power/galaxy/god/koshko,
+# которые остаются в своих обычных категориях «Крафты» по уровню).
+EXCLUSIVE_BOOSTER_ITEMS = {
+    "kotyara_amulet", "miku_amulet", "golda", "karambit_gold", "butterfly_legacy",
+    "krest_amulet", "fati_amulet", "guitarist_crown", "vilon_amulet", "miku_ring",
+    "miku_fan_amulet",
+}
+
+def _booster_categories_for(item_key: str) -> set:
+    """Возвращает множество категорий каталога, которым принадлежит бустер item_key.
+    Один бустер может состоять сразу в нескольких (кейс + крафт и т.п.) — тогда он
+    показывается в каждой из них. 'Эксклюзив' (именные уникальные бустеры) исключает 'Крафты'."""
+    cats = {"all"}
+    if item_key in EXCLUSIVE_BOOSTER_ITEMS:
+        cats.add("exclusive")
+    else:
+        recipe = RECIPES.get(item_key)
+        if recipe is not None:
+            level = recipe.get("level", 0)
+            if level <= 1:
+                cats.add("craft1")
+            elif level == 2:
+                cats.add("craft2")
+            else:
+                cats.add("craft3")
+    for case_num, case_data in CASES.items():
+        if item_key in case_data["pool"]:
+            cats.add(f"case{case_num}")
+    if cats == {"all"}:
+        cats.add("other")
+    return cats
+
+def get_booster_catalog_category(user_id: int) -> str:
+    return _booster_catalog_state.get(user_id, "all")
+
+def set_booster_catalog_category(user_id: int, category: str) -> None:
+    _booster_catalog_state[user_id] = category
+
+def reset_booster_catalog_category(user_id: int) -> None:
+    _booster_catalog_state.pop(user_id, None)
+
+def filter_boosters_by_catalog(boosters: list, user_id: int) -> list:
+    category = get_booster_catalog_category(user_id)
+    if category == "all":
+        return boosters
+    return [(k, q) for k, q in boosters if category in _booster_categories_for(k)]
+
+def booster_catalog_keyboard(user_id: int) -> InlineKeyboardMarkup:
+    """Меню выбора категории каталога бустеров. Переключение категорий вытесняющее —
+    выбор новой категории просто заменяет текущую (хранится ровно одна на пользователя)."""
+    current = get_booster_catalog_category(user_id)
+    kb_rows = []
+    row_buf = []
+    for cat_key, label in BOOSTER_CATALOG_CATEGORIES:
+        mark = " ✅" if cat_key == current else ""
+        row_buf.append(InlineKeyboardButton(
+            text=f"{label}{mark}",
+            callback_data=f"inv_boost_catalog_set:{user_id}:{cat_key}",
+            style="success" if cat_key == current else None,
+        ))
+        if len(row_buf) == 2:
+            kb_rows.append(row_buf)
+            row_buf = []
+    if row_buf:
+        kb_rows.append(row_buf)
+    kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_boost_catalog_back:{user_id}")])
+    return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
 def boosters_keyboard(rows, active_items, user_id: int, page: int = 0, query: str = None) -> InlineKeyboardMarkup:
     equipped = set(_normalize_active_items(active_items))
@@ -5656,6 +5783,8 @@ def boosters_keyboard(rows, active_items, user_id: int, page: int = 0, query: st
     if query:
         ql = query.lower()
         boosters = [(k, q) for k, q in boosters if ql in ITEMS[k][1].lower()]
+    else:
+        boosters = filter_boosters_by_catalog(boosters, user_id)
     page_items, page, total_pages = _paginate(boosters, page)
 
     kb_rows = []
@@ -5675,7 +5804,7 @@ def boosters_keyboard(rows, active_items, user_id: int, page: int = 0, query: st
     if query:
         nav_row = _pagination_row("inv_boost_search_page", user_id, page, total_pages, extra=quote(query))
     else:
-        nav_row = _pagination_row("inv_boost_page", user_id, page, total_pages)
+        nav_row = _pagination_row("inv_boost_page", user_id, page, total_pages, counter_callback=f"inv_boost_catalog_open:{user_id}")
     if nav_row:
         kb_rows.append(nav_row)
     kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
@@ -5728,7 +5857,7 @@ def autosell_keyboard(auto_sell_enabled: bool, auto_sell_items: set, user_id: in
     kb_rows.append([InlineKeyboardButton(text="◀️ Назад", callback_data=f"inv_menu:{user_id}")])
     return InlineKeyboardMarkup(inline_keyboard=kb_rows)
 
-def format_boosters_text(rows, max_slots: int = 1, page: int = 0, query: str = None):
+def format_boosters_text(rows, max_slots: int = 1, page: int = 0, query: str = None, user_id: int = None):
     boosters = [(k, q) for k, q in rows if k not in PASSIVE_ITEMS]
     if query:
         ql = query.lower()
@@ -5738,11 +5867,17 @@ def format_boosters_text(rows, max_slots: int = 1, page: int = 0, query: str = N
         _, page, total_pages = _paginate(boosters, page)
         page_suffix = f" (стр. {page + 1}/{total_pages})" if total_pages > 1 else ""
         return f"🔍 Поиск «{esc(query)}»{page_suffix}:"
+    catalog_suffix = ""
+    if user_id is not None:
+        category = get_booster_catalog_category(user_id)
+        if category != "all":
+            boosters = filter_boosters_by_catalog(boosters, user_id)
+            catalog_suffix = f" [{_BOOSTER_CATALOG_LABELS[category]}]"
     if not boosters:
-        return f"🧪 У тебя нет бустеров. Можно носить одновременно {max_slots}."
+        return f"🧪 У тебя нет бустеров в этой категории каталога.{catalog_suffix}" if catalog_suffix else f"🧪 У тебя нет бустеров. Можно носить одновременно {max_slots}."
     _, page, total_pages = _paginate(boosters, page)
     page_suffix = f" (стр. {page + 1}/{total_pages})" if total_pages > 1 else ""
-    return f"🧪 Твои бустеры (можно носить одновременно {max_slots}){page_suffix}:"
+    return f"🧪 Твои бустеры (можно носить одновременно {max_slots}){catalog_suffix}{page_suffix}:"
 
 def format_items_text(rows, page: int = 0):
     passive = [(k, q) for k, q in rows if k in PASSIVE_ITEMS]
@@ -5837,7 +5972,7 @@ def format_potions_text(inventory_potions: dict, active_potions: dict, brewing_p
 
 def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until: int, user_id: int,
                       upgrades: dict, now: int = None, prestige_upgrades: dict = None, page: int = 0,
-                      active_items=None) -> InlineKeyboardMarkup:
+                      active_items=None, inventory_map: dict = None) -> InlineKeyboardMarkup:
     now = now or int(time.time())
     kb_rows = []
 
@@ -5855,7 +5990,7 @@ def potions_keyboard(inventory_potions: dict, brewing_potion: str, brewing_until
     elif not brewing_active:
         for key in page_order:
             cfg = POTIONS[key]
-            seconds = brew_seconds_for(key, upgrades, prestige_upgrades, active_items)
+            seconds = brew_seconds_for(key, upgrades, prestige_upgrades, inventory_map=inventory_map)
             kb_rows.append([InlineKeyboardButton(
                 text=f"⚗️ Варить {cfg['emoji']} {cfg['name']} ({cfg['brew_cost']}🪙, {format_time_left(seconds)})",
                 callback_data=f"potion_brew:{user_id}:{key}",
@@ -5892,7 +6027,8 @@ async def inventory(message: Message):
         await message.reply(TEXTS["inventory_1"])
         return
 
-    await safe_reply(message, format_inventory_menu_text(active_items, upgrades, prestige_upgrades), reply_markup=inventory_menu_keyboard(user_id))
+    inventory_map = {k: q for k, q in rows}
+    await safe_reply(message, format_inventory_menu_text(active_items, upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map)), reply_markup=inventory_menu_keyboard(user_id))
 
 @dp.message(F.text.lower().in_({"мои предметы", "предметы"}))
 async def my_items_tab(message: Message):
@@ -5913,7 +6049,8 @@ async def my_boosters_tab(message: Message):
     rows = await get_inventory(user_id)
     inventory_map = {k: q for k, q in rows}
     max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
-    await message.reply(format_boosters_text(rows, max_slots), reply_markup=boosters_keyboard(rows, active_items, user_id, 0))
+    reset_booster_catalog_category(user_id)
+    await message.reply(format_boosters_text(rows, max_slots, user_id=user_id), reply_markup=boosters_keyboard(rows, active_items, user_id, 0))
 
 @dp.message(F.text.lower().regexp(r"^бустеры поиск\s+.+$"))
 async def my_boosters_search(message: Message):
@@ -5938,12 +6075,13 @@ async def my_potions_tab(message: Message):
     upgrades = parse_upgrades(row[16])
     stock = parse_potion_stock(row[26])
     active_items = parse_equipped(row[18])
-    active = active_potions_now(row[23], active_items=active_items)
+    inventory_map = {k: q for k, q in await get_inventory(user_id)}
+    active = active_potions_now(row[23], active_items=active_items, inventory_map=inventory_map)
     brewing_potion, brewing_until = row[24], row[25]
     prestige_upgrades = parse_prestige_upgrades(row[28])
     await message.reply(
         format_potions_text(stock, active, brewing_potion, brewing_until, upgrades),
-        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, user_id, upgrades, prestige_upgrades=prestige_upgrades, active_items=active_items),
+        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, user_id, upgrades, prestige_upgrades=prestige_upgrades, active_items=active_items, inventory_map=inventory_map),
     )
 
 @dp.callback_query(F.data.startswith("inv_menu:"))
@@ -5953,6 +6091,7 @@ async def inventory_back_to_menu(callback: CallbackQuery):
         await callback.answer(TEXTS["inventory_back_to_menu_1"], show_alert=True)
         return
     await callback.answer()
+    reset_booster_catalog_category(owner_id)
 
     row = await get_user(owner_id)
     upgrades = parse_upgrades(row[16])
@@ -5981,19 +6120,21 @@ async def inventory_open_category(callback: CallbackQuery):
         prestige_upgrades = parse_prestige_upgrades(row[28])
         inventory_map = {k: q for k, q in rows}
         max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
-        await safe_edit_text(callback, format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
+        reset_booster_catalog_category(owner_id)
+        await safe_edit_text(callback, format_boosters_text(rows, max_slots, page, user_id=owner_id), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
     elif category == "potions":
         row = await get_user(owner_id)
         upgrades = parse_upgrades(row[16])
         stock = parse_potion_stock(row[26])
         active_items = parse_equipped(row[18])
-        active = active_potions_now(row[23], active_items=active_items)
+        inventory_map = {k: q for k, q in await get_inventory(owner_id)}
+        active = active_potions_now(row[23], active_items=active_items, inventory_map=inventory_map)
         brewing_potion, brewing_until = row[24], row[25]
         prestige_upgrades = parse_prestige_upgrades(row[28])
         await safe_edit_text(
             callback,
             format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, page=page),
-            reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page, active_items=active_items),
+            reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page, active_items=active_items, inventory_map=inventory_map),
         )
     else:
         rows = await get_inventory(owner_id)
@@ -6018,6 +6159,7 @@ async def potion_brew_start(callback: CallbackQuery):
     active_items = parse_equipped(row[18])
     brewing_potion, brewing_until = row[24], row[25]
     prestige_upgrades = parse_prestige_upgrades(row[28])
+    inventory_map = {k: q for k, q in await get_inventory(owner_id)}
 
     if brewing_potion and brewing_until > now:
         await callback.answer(TEXTS["potion_brew_busy_1"], show_alert=True)
@@ -6028,7 +6170,7 @@ async def potion_brew_start(callback: CallbackQuery):
         await callback.answer(TEXTS["potion_brew_no_coins_1"].format(v0=cfg["brew_cost"], v1=coins), show_alert=True)
         return
 
-    seconds = brew_seconds_for(potion_key, upgrades, prestige_upgrades, active_items)
+    seconds = brew_seconds_for(potion_key, upgrades, prestige_upgrades, inventory_map=inventory_map)
     new_until = now + seconds
     await db_exec(
         "UPDATE users SET coins = coins - ?, brewing_potion = ?, brewing_until = ? WHERE user_id = ?",
@@ -6038,8 +6180,8 @@ async def potion_brew_start(callback: CallbackQuery):
     stock = parse_potion_stock(row[26])
     await safe_edit_text(
         callback,
-        format_potions_text(stock, active_potions_now(row[23], now, active_items), potion_key, new_until, upgrades, now),
-        reply_markup=potions_keyboard(stock, potion_key, new_until, owner_id, upgrades, now, prestige_upgrades, active_items=active_items),
+        format_potions_text(stock, active_potions_now(row[23], now, active_items, inventory_map), potion_key, new_until, upgrades, now),
+        reply_markup=potions_keyboard(stock, potion_key, new_until, owner_id, upgrades, now, prestige_upgrades, active_items=active_items, inventory_map=inventory_map),
     )
     await callback.answer(TEXTS["potion_brew_started_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=format_time_left(seconds)))
 
@@ -6056,6 +6198,7 @@ async def potion_collect(callback: CallbackQuery):
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     prestige_upgrades = parse_prestige_upgrades(row[28])
+    inventory_map = {k: q for k, q in await get_inventory(owner_id)}
 
     if not brewing_potion:
         await callback.answer(TEXTS["potion_collect_none_1"], show_alert=True)
@@ -6074,8 +6217,8 @@ async def potion_collect(callback: CallbackQuery):
     cfg = POTIONS[brewing_potion]
     await safe_edit_text(
         callback,
-        format_potions_text(stock, active_potions_now(row[23], now, active_items), None, 0, upgrades, now),
-        reply_markup=potions_keyboard(stock, None, 0, owner_id, upgrades, now, prestige_upgrades, active_items=active_items),
+        format_potions_text(stock, active_potions_now(row[23], now, active_items, inventory_map), None, 0, upgrades, now),
+        reply_markup=potions_keyboard(stock, None, 0, owner_id, upgrades, now, prestige_upgrades, active_items=active_items, inventory_map=inventory_map),
     )
     await callback.answer(TEXTS["potion_collect_ok_1"].format(v0=cfg["emoji"], v1=cfg["name"]))
 
@@ -6097,6 +6240,7 @@ async def potion_use(callback: CallbackQuery):
     active_items = parse_equipped(row[18])
     stock = parse_potion_stock(row[26])
     prestige_upgrades = parse_prestige_upgrades(row[28])
+    inventory_map = {k: q for k, q in await get_inventory(owner_id)}
 
     if stock.get(potion_key, 0) <= 0:
         await callback.answer(TEXTS["potion_use_none_1"], show_alert=True)
@@ -6106,7 +6250,7 @@ async def potion_use(callback: CallbackQuery):
     if stock[potion_key] <= 0:
         del stock[potion_key]
 
-    active = active_potions_now(row[23], now, active_items)
+    active = active_potions_now(row[23], now, active_items, inventory_map)
     cfg = POTIONS[potion_key]
     if cfg["effect"] == "no_cd":
         active[potion_key] = cfg["charges"]
@@ -6123,7 +6267,7 @@ async def potion_use(callback: CallbackQuery):
     await safe_edit_text(
         callback,
         format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, now),
-        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, now, prestige_upgrades, active_items=active_items),
+        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, now, prestige_upgrades, active_items=active_items, inventory_map=inventory_map),
     )
     if cfg["effect"] == "no_cd":
         await callback.answer(TEXTS["potion_use_ok_charges_1"].format(v0=cfg["emoji"], v1=cfg["name"], v2=cfg["charges"]))
@@ -6147,7 +6291,62 @@ async def inventory_boosters_page(callback: CallbackQuery):
     rows = await get_inventory(owner_id)
     inventory_map = {k: q for k, q in rows}
     max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
-    await safe_edit_text(callback, format_boosters_text(rows, max_slots, page), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
+    await safe_edit_text(callback, format_boosters_text(rows, max_slots, page, user_id=owner_id), reply_markup=boosters_keyboard(rows, active_items, owner_id, page))
+
+@dp.callback_query(F.data.startswith("inv_boost_catalog_open:"))
+async def inventory_boosters_catalog_open(callback: CallbackQuery):
+    """Открывает меню каталога — тап по счётчику страниц 'n/N' в разделе бустеров."""
+    owner_id = int(callback.data.split(":")[1])
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+    await callback.answer()
+    category = get_booster_catalog_category(owner_id)
+    label = _BOOSTER_CATALOG_LABELS[category]
+    await safe_edit_text(
+        callback,
+        f"🗂 <b>Каталог бустеров</b>\nТекущая категория: {label}\n\nВыбери категорию для фильтрации списка бустеров:",
+        reply_markup=booster_catalog_keyboard(owner_id),
+    )
+
+@dp.callback_query(F.data.startswith("inv_boost_catalog_set:"))
+async def inventory_boosters_catalog_set(callback: CallbackQuery):
+    """Выбор категории каталога — вытесняющее переключение: новая категория заменяет
+    предыдущую (хранится ровно одна активная категория на пользователя)."""
+    parts = callback.data.split(":")
+    owner_id = int(parts[1])
+    category = parts[2]
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+    if category not in _BOOSTER_CATALOG_LABELS:
+        await callback.answer()
+        return
+    set_booster_catalog_category(owner_id, category)
+    await callback.answer(f"Категория: {_BOOSTER_CATALOG_LABELS[category]}")
+    await safe_edit_text(
+        callback,
+        f"🗂 <b>Каталог бустеров</b>\nТекущая категория: {_BOOSTER_CATALOG_LABELS[category]}\n\nВыбери категорию для фильтрации списка бустеров:",
+        reply_markup=booster_catalog_keyboard(owner_id),
+    )
+
+@dp.callback_query(F.data.startswith("inv_boost_catalog_back:"))
+async def inventory_boosters_catalog_back(callback: CallbackQuery):
+    """Возврат из меню каталога к списку бустеров, с уже применённым фильтром категории."""
+    owner_id = int(callback.data.split(":")[1])
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["inventory_open_category_1"], show_alert=True)
+        return
+    await callback.answer()
+
+    row = await get_user(owner_id)
+    upgrades = parse_upgrades(row[16])
+    active_items = parse_equipped(row[18])
+    prestige_upgrades = parse_prestige_upgrades(row[28])
+    rows = await get_inventory(owner_id)
+    inventory_map = {k: q for k, q in rows}
+    max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
+    await safe_edit_text(callback, format_boosters_text(rows, max_slots, 0, user_id=owner_id), reply_markup=boosters_keyboard(rows, active_items, owner_id, 0))
 
 @dp.callback_query(F.data.startswith("inv_boost_search_page:"))
 async def inventory_boosters_search_page(callback: CallbackQuery):
@@ -6195,13 +6394,14 @@ async def inventory_potions_page(callback: CallbackQuery):
     upgrades = parse_upgrades(row[16])
     active_items = parse_equipped(row[18])
     stock = parse_potion_stock(row[26])
-    active = active_potions_now(row[23], active_items=active_items)
+    inventory_map = {k: q for k, q in await get_inventory(owner_id)}
+    active = active_potions_now(row[23], active_items=active_items, inventory_map=inventory_map)
     brewing_potion, brewing_until = row[24], row[25]
     prestige_upgrades = parse_prestige_upgrades(row[28])
     await safe_edit_text(
         callback,
         format_potions_text(stock, active, brewing_potion, brewing_until, upgrades, page=page),
-        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page, active_items=active_items),
+        reply_markup=potions_keyboard(stock, brewing_potion, brewing_until, owner_id, upgrades, prestige_upgrades=prestige_upgrades, page=page, active_items=active_items, inventory_map=inventory_map),
     )
 
 @dp.callback_query(F.data == "noop")
@@ -6236,7 +6436,7 @@ async def toggle_equip(callback: CallbackQuery):
         new_equipped = unequip_item(row[18], item_key)
         await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), owner_id))
         await safe_edit_text(callback,
-            format_boosters_text(rows, max_slots, page, query=query),
+            format_boosters_text(rows, max_slots, page, query=query, user_id=owner_id),
             reply_markup=boosters_keyboard(rows, new_equipped, owner_id, page, query=query),
         )
         await callback.answer(TEXTS["toggle_equip_4"])
@@ -6251,7 +6451,7 @@ async def toggle_equip(callback: CallbackQuery):
     await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), owner_id))
 
     await safe_edit_text(callback, 
-        format_boosters_text(rows, max_slots, page, query=query),
+        format_boosters_text(rows, max_slots, page, query=query, user_id=owner_id),
         reply_markup=boosters_keyboard(rows, new_equipped, owner_id, page, query=query),
     )
     await callback.answer(TEXTS["toggle_equip_4"])
