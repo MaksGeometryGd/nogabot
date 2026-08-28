@@ -390,6 +390,21 @@ BLAZING_NECKLACE_PRESTIGE_RANGE = (1, 3)
 # шанс дать предмет из кейса 1 при фарме ног.
 STAR_NECKLACE_CASE1_DROP_CHANCE = 0.025
 
+# 🔥 Оберег стихий (крафт-бустер 0 ур. крафта, +145% к добыче при экипировке):
+# шанс при фарме ног дать небольшую бонус-фарму очков ноги.
+ELEMENTAL_CHARM_PROC_CHANCE = 0.03
+ELEMENTAL_CHARM_PROC_RANGE = (5, 50)
+
+# 🕶️ Амулет сумерек (крафт-бустер 0 ур. крафта, +195% к добыче при экипировке):
+# шанс при фарме ног дать 1 очко перерождения.
+TWILIGHT_AMULET_PROC_CHANCE = 0.02
+TWILIGHT_AMULET_REBIRTH_AMOUNT = 1
+
+# 🐺 Клык хаоса (крафт-бустер 0 ур. крафта, +140% к добыче при экипировке):
+# шанс при фарме ног дать небольшой бонус монет.
+CHAOS_FANG_PROC_CHANCE = 0.03
+CHAOS_FANG_COIN_RANGE = (10, 40)
+
 # 🌠 Карманная звезда (не бустер, пассивный предмет из крафта 15 ур. эволюции):
 # буст команды «ферма» x1.6 + гарантированные очки перерождения за каждый её вызов,
 # и отдельно буст x1.2 обычной фармы ног (🦵/🦿/... в чате).
@@ -1048,6 +1063,14 @@ ITEMS = {
     "party_set":    (PREMIUM_PARTY_SET, "Праздничный набор", 115, 0),
     "warm_candle":  (PREMIUM_WARM_CANDLE, "Тёплая свеча", 0, 0),
 
+    # ==== Крафт-бустеры 0 уровня из сырья Кейса 3 (Стихий и Крафта) ====
+    "elemental_charm": ("🔥", "Оберег стихий", 145, 0),
+    "twilight_amulet": ("🕶️", "Амулет сумерек", 195, 0),
+
+    # ==== Крафт-бустеры 0 уровня из сырья Кейса 2 (Сапортов) ====
+    "support_totem": ("🪄", "Сапорт-тотем", 135, 0),
+    "chaos_fang":    ("🐺", "Клык хаоса", 140, 0),
+
     "ice_shard":     (PREMIUM_ICE_SHARD, "Ледяной осколок", 80, 12),
     "ember":         (PREMIUM_EMBER, "Уголёк", 75, 12),
     "dragon_claw":   (PREMIUM_DRAGON_CLAW, "Коготь дракона", 90, 8),
@@ -1225,6 +1248,7 @@ SELL_PRICE = {
     "hybrid_amulet": 200, "friendship_essence": 260, "time_particle": 220,
     "god_essence": 1000, "koshko_amulet": 1400, "devotion_coin": 60, "old_vase": 15, "golden_vase": 120, "godly_vase": 500,
     "lucky_charm": 20, "swift_pill": 18, "party_set": 25, "warm_candle": 14,
+    "elemental_charm": 55, "twilight_amulet": 120, "support_totem": 85, "chaos_fang": 130,
     "ice_shard": 15, "ember": 15, "dragon_claw": 22, "paradox_charm": 28, "shadow_mask": 45,
     "tide_wave": 16, "warrior_skull": 24,
     "broken_clock": 8, "essence_drop": 14, "comet_shard": 30, "koshko_gift": 35,
@@ -1299,6 +1323,22 @@ RECIPES = {
     "power_amulet": {
         "level": 0,
         "ingredients": {"pill": 1, "mk_broken": 1},
+    },
+    "elemental_charm": {
+        "level": 0,
+        "ingredients": {"ice_shard": 2, "ember": 2, "dragon_claw": 1},
+    },
+    "twilight_amulet": {
+        "level": 0,
+        "ingredients": {"shadow_mask": 1, "warrior_skull": 2, "tide_wave": 2},
+    },
+    "support_totem": {
+        "level": 0,
+        "ingredients": {"mk_fixsahal1": 1, "mk_mk": 1, "mk_vector": 1},
+    },
+    "chaos_fang": {
+        "level": 0,
+        "ingredients": {"mk_panther": 1, "mk_veron03": 1, "daily_charm": 1},
     },
     "galaxy_power_amulet": {
         "level": 1,
@@ -2962,7 +3002,7 @@ async def resolve_target(message: Message, to_self: bool):
 
 from concurrent.futures import ThreadPoolExecutor
 
-DB_WORKER_COUNT = int(os.environ.get("DB_WORKER_COUNT", "1"))
+DB_WORKER_COUNT = int(os.environ.get("DB_WORKER_COUNT", "5"))
 
 _db_queues: list = []
 _db_worker_tasks: list = []
@@ -3024,7 +3064,26 @@ def _ensure_db_workers():
         if _db_worker_tasks[i] is None or _db_worker_tasks[i].done():
             _db_worker_tasks[i] = asyncio.create_task(_db_worker(i))
 
-def _pick_worker(params):
+_USER_ID_PARAM_RE = re.compile(r"user_id\s*=\s*\?", re.IGNORECASE)
+
+def _pick_worker(sql: str, params) -> int:
+    """Выбирает воркер по user_id, а НЕ по первому попавшемуся int-параметру
+    (старое поведение было ненадёжным: 'UPDATE inventory SET qty = ? WHERE
+    user_id = ? ...' раньше шардировалось по qty, а не по user_id — при
+    DB_WORKER_COUNT > 1 это давало гонки для одного и того же игрока между
+    операциями с разным первым параметром). Теперь ищем позицию именно
+    того '?', который соответствует 'user_id = ?' в самом SQL, и берём
+    параметр с этим индексом. Если такого условия в запросе нет (массовые
+    INSERT/DELETE без фильтра по игроку, служебные апдейты) — используем
+    старую эвристику "первый int-параметр" как безопасный fallback, а если
+    и её нет — все такие запросы идут в воркер 0."""
+    m = _USER_ID_PARAM_RE.search(sql)
+    if m:
+        idx = sql[:m.end()].count("?") - 1
+        if 0 <= idx < len(params):
+            p = params[idx]
+            if isinstance(p, int) and not isinstance(p, bool):
+                return p % DB_WORKER_COUNT
     for p in params:
         if isinstance(p, int) and not isinstance(p, bool):
             return p % DB_WORKER_COUNT
@@ -3032,9 +3091,23 @@ def _pick_worker(params):
 
 async def _db_submit(fn, sql, params):
     _ensure_db_workers()
-    worker_idx = _pick_worker(params)
+    worker_idx = _pick_worker(sql, params)
     future = asyncio.get_event_loop().create_future()
     await _db_queues[worker_idx].put((fn, sql, params, future))
+    return await future
+
+async def _db_submit_many(fn, sql, params_list, shard_key=None):
+    """Как _db_submit, но для executemany-задач: worker выбирается по shard_key
+    (если передан — например user_id при батче для одного игрока), иначе
+    всегда воркер 0 (безопасный дефолт для батчей вроде лога действий, где
+    в одном батче замешаны разные игроки и единого user_id для шардирования нет)."""
+    _ensure_db_workers()
+    if shard_key is not None:
+        worker_idx = shard_key % DB_WORKER_COUNT
+    else:
+        worker_idx = 0
+    future = asyncio.get_event_loop().create_future()
+    await _db_queues[worker_idx].put((fn, sql, params_list, future))
     return await future
 
 async def db_exec(sql, params=()):
@@ -3045,13 +3118,17 @@ async def db_exec(sql, params=()):
         else:
             _user_cache.clear()
 
-async def db_exec_many(sql, params_list):
+async def db_exec_many(sql, params_list, shard_key=None):
     """Как db_exec, но один запрос в очередь воркера выполняет executemany
     сразу для списка наборов параметров — используется для батчинга (см.
-    _flush_player_log_buffer), чтобы N записей стоили очереди воркера как одна."""
+    _flush_player_log_buffer), чтобы N записей стоили очереди воркера как одна.
+    shard_key: если все строки батча относятся к ОДНОМУ user_id (например,
+    массовая выдача предметов из кейса), передай его сюда — иначе (батч из
+    вперемешку разных игроков, как в логе действий) не передавай, тогда
+    батч уйдёт в воркер 0."""
     if not params_list:
         return
-    await _db_submit(_exec_many_sync, sql, params_list)
+    await _db_submit_many(_exec_many_sync, sql, params_list, shard_key)
 
 async def db_query(sql, params=()):
     return await _db_submit(_query_sync, sql, params)
@@ -3554,6 +3631,39 @@ async def apply_star_necklace_proc(user_id: int, active_items) -> str:
     await add_item(user_id, item_key)
     emoji, name, _, _ = ITEMS[item_key]
     return f"\n{ITEMS['star_necklace'][0]} Ожерелье из звёзд: выпал {emoji} {name}!"
+
+async def apply_elemental_charm_proc(user_id: int, active_items) -> str:
+    """🔥 Оберег стихий: пока экипирован, при фарме ног — шанс 3% дать небольшую
+    бонус-фарму (5-50 очков ноги)."""
+    if "elemental_charm" not in set(_normalize_active_items(active_items)):
+        return ""
+    if random.random() >= ELEMENTAL_CHARM_PROC_CHANCE:
+        return ""
+    bonus = random.randint(*ELEMENTAL_CHARM_PROC_RANGE)
+    await db_exec("UPDATE users SET score = score + ? WHERE user_id = ?", (bonus, user_id))
+    return f"\n{ITEMS['elemental_charm'][0]} Оберег стихий: вспышка стихий! +{bonus} очков ноги!"
+
+async def apply_twilight_amulet_proc(user_id: int, active_items) -> str:
+    """🕶️ Амулет сумерек: пока экипирован, при фарме ног — шанс 2% дать
+    1 очко перерождения."""
+    if "twilight_amulet" not in set(_normalize_active_items(active_items)):
+        return ""
+    if random.random() >= TWILIGHT_AMULET_PROC_CHANCE:
+        return ""
+    await db_exec("UPDATE users SET rebirth_points = rebirth_points + ? WHERE user_id = ?",
+                  (TWILIGHT_AMULET_REBIRTH_AMOUNT, user_id))
+    return f"\n{ITEMS['twilight_amulet'][0]} Амулет сумерек: тень шепчет... +{TWILIGHT_AMULET_REBIRTH_AMOUNT}🉑!"
+
+async def apply_chaos_fang_proc(user_id: int, active_items) -> str:
+    """🐺 Клык хаоса: пока экипирован, при фарме ног — шанс 3% дать небольшой
+    бонус монет (10-40 🪙)."""
+    if "chaos_fang" not in set(_normalize_active_items(active_items)):
+        return ""
+    if random.random() >= CHAOS_FANG_PROC_CHANCE:
+        return ""
+    bonus = random.randint(*CHAOS_FANG_COIN_RANGE)
+    await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (bonus, user_id))
+    return f"\n{ITEMS['chaos_fang'][0]} Клык хаоса: хищный рывок! +{bonus}🪙!"
 
 async def apply_leg_farm_steal(user_id: int, chat_id: int, active_items) -> str:
     """👑 Корона Гитариста: пока экипирована, шанс LEG_STEAL_CHANCE при фарме ног (🦵/🦿)
@@ -4457,17 +4567,32 @@ async def vip_open_case_bulk(message: Message):
     sold_coins_total = 0
     for _ in range(count):
         item_key = roll_case_item(case_num)
-        coins_got, _ = await apply_case_reward(user_id, item_key, upgrades, auto_sell_enabled, auto_sell_items)
-        if coins_got:
+        if auto_sell_enabled and item_key in auto_sell_items and item_key not in NON_TRADABLE_ITEMS:
+            price = SELL_PRICE.get(item_key, 1) + sell_bonus_coins(upgrades)
             sold[item_key] = sold.get(item_key, 0) + 1
-            sold_coins_total += coins_got
+            sold_coins_total += price
         else:
             won[item_key] = won.get(item_key, 0) + 1
 
+    # Вместо до 20 отдельных запросов в БД (один на предмет, как раньше через
+    # apply_case_reward в цикле) — считаем всё в Python и пишем максимум 2
+    # запроса: один executemany для инвентаря (все выигранные предметы разом,
+    # ON CONFLICT суммирует qty построчно) и один UPDATE для монет/счётчиков
+    # (списание цены + доход от авто-продажи + cases_opened — одной строкой).
+    # Это и быстрее, и не держит DB-воркер занятым на 20+ round-trip'ов подряд,
+    # блокируя остальных игроков, которые шардируются на тот же воркер.
+    if won:
+        await db_exec_many(
+            "INSERT INTO inventory (user_id, item_key, qty) VALUES (?, ?, ?) "
+            "ON CONFLICT(user_id, item_key) DO UPDATE SET qty = qty + excluded.qty",
+            [(user_id, item_key, qty) for item_key, qty in won.items()],
+            shard_key=user_id,
+        )
+
     new_coins = coins - total_price + sold_coins_total
     await db_exec(
-        "UPDATE users SET coins = coins - ?, cases_opened = cases_opened + ? WHERE user_id = ?",
-        (total_price, count, user_id),
+        "UPDATE users SET coins = coins - ? + ?, cases_opened = cases_opened + ? WHERE user_id = ?",
+        (total_price, sold_coins_total, count, user_id),
     )
 
     loot_lines = "\n".join(f"● {ITEMS[k][0]} {esc(ITEMS[k][1])} × {qty}" for k, qty in won.items())
@@ -4749,6 +4874,11 @@ async def count_legs(message: Message):
         await apply_blazing_necklace_proc(user_id, active_items)
         + await apply_star_necklace_proc(user_id, active_items)
     )
+    craft_charm_text = (
+        await apply_elemental_charm_proc(user_id, active_items)
+        + await apply_twilight_amulet_proc(user_id, active_items)
+        + await apply_chaos_fang_proc(user_id, active_items)
+    )
     mastery_text, mastery_bitcoin_bonus = await apply_mastery_lover_proc(user_id, active_items)
     coin_tree_text = (
         await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
@@ -4797,7 +4927,7 @@ async def count_legs(message: Message):
             kotyara_cat_text += f" +{kotyara_cat_coins}🪙 котокэш!"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    bonus_text = "" if compact_mode else (vase_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text + mastery_text)
+    bonus_text = "" if compact_mode else (vase_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text + craft_charm_text + mastery_text)
     extra_text = bonus_text + auto_evo_text + auto_rebirth_text + steal_text + vilon_text + kotyara_text + kotyara_cat_text + miku_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
@@ -5132,6 +5262,11 @@ async def farm(message: Message):
         await apply_blazing_necklace_proc(user_id, active_items)
         + await apply_star_necklace_proc(user_id, active_items)
     )
+    craft_charm_text = (
+        await apply_elemental_charm_proc(user_id, active_items)
+        + await apply_twilight_amulet_proc(user_id, active_items)
+        + await apply_chaos_fang_proc(user_id, active_items)
+    )
     mastery_text, mastery_bitcoin_bonus = await apply_mastery_lover_proc(user_id, active_items)
     coin_tree_text = (
         nogost_coin_text
@@ -5163,7 +5298,7 @@ async def farm(message: Message):
         auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    bonus_text = "" if compact_mode else (vase_text + potion_text + chaos_text + chronos_text + coin_tree_text + pocket_star_text + necklace_text + mastery_text)
+    bonus_text = "" if compact_mode else (vase_text + potion_text + chaos_text + chronos_text + coin_tree_text + pocket_star_text + necklace_text + craft_charm_text + mastery_text)
     extra_text = bonus_text + auto_evo_text + auto_rebirth_text + kotyara_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
