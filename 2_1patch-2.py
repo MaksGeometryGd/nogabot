@@ -169,7 +169,7 @@ PREMIUM_BUTTERFLY_LEGACY = '<tg-emoji emoji-id="4943160586331490355">🦋</tg-em
 
 PREMIUM_KREST_AMULET = '<tg-emoji emoji-id="5282820155015971423">✝️</tg-emoji>'
 PREMIUM_FATI_AMULET = '<tg-emoji emoji-id="5404393696865041225">🤲</tg-emoji>'
-PREMIUM_GUITARIST_CROWN = '<tg-emoji emoji-id="5445191681404057893">🎸</tg-emoji>'
+PREMIUM_GUITARIST_CROWN = '<tg-emoji emoji-id="5445191681404057893">👑</tg-emoji>'
 PREMIUM_VILON_AMULET = '<tg-emoji emoji-id="5386386711469117619">🔱</tg-emoji>'
 PREMIUM_MIKU_RING = '<tg-emoji emoji-id="5292079619174852549">💍</tg-emoji>'
 PREMIUM_MIKU_FAN_AMULET = '<tg-emoji emoji-id="5199714801286132798">🎧</tg-emoji>'
@@ -198,6 +198,10 @@ PREMIUM_REBIRTH_SPARK = '<tg-emoji emoji-id="5467837274429335080">✨</tg-emoji>
 PREMIUM_STAR_NECKLACE = '<tg-emoji emoji-id="5415853988165734070">📿</tg-emoji>'
 PREMIUM_BLAZING_STAR_NECKLACE = '<tg-emoji emoji-id="5938541999031325561">📿</tg-emoji>'
 PREMIUM_POCKET_STAR = '<tg-emoji emoji-id="5435957248314579621">🌠</tg-emoji>'
+
+# ==== Крафт 3 ур.: Любитель Мастерства + его дроп-предмет nano-IT (вставь свои emoji-id) ====
+PREMIUM_MASTERY_LOVER_AMULET = '<tg-emoji emoji-id="5936158605714661655">🤖</tg-emoji>'
+PREMIUM_NANO_IT = '<tg-emoji emoji-id="5452097366045783407">🔩</tg-emoji>'
 
 PREMIUM_ICE_SHARD = '<tg-emoji emoji-id="5363812028353898315">🧊</tg-emoji>'
 PREMIUM_EMBER = '<tg-emoji emoji-id="5773638078321135255">🔥</tg-emoji>'
@@ -412,6 +416,12 @@ BADGES_DISPLAY_LIMIT = 5
 VILON_TRIGGER_EVERY = 20
 VILON_BOOST_SECONDS = 20
 VILON_BOOST_MULT = 3
+
+# 🐱 Амулет Котяры: пока экипирован, при каждом фарме ног — шанс KOTYARA_BOOST_CHANCE дать
+# x2 к добыче на KOTYARA_BOOST_SECONDS секунд (поверх обычного пассивного буста амулета).
+KOTYARA_BOOST_CHANCE = 0.25
+KOTYARA_BOOST_SECONDS = 10
+KOTYARA_BOOST_MULT = 2
 
 # 💍 Кольцо Мику: пока экипировано, символ 🎶 в тексте фарма ног (лимит 1 за сообщение)
 # удваивает итог фарма — применяется как множитель поверх total, аналогично 🌌/⭐️.
@@ -643,8 +653,8 @@ TEXTS = {
     "potion_use_ok_1": '{v0} {v1} выпито! Действует {v2}.',
     "potion_use_ok_charges_1": '{v0} {v1} выпито! Действует следующие {v2} использования фермы.',
     "toggle_equip_2": 'Этот предмет нельзя экипировать — он действует пассивно, пока лежит в инвентаре.',
-    "toggle_equip_3": 'Надел! {v0} вытеснил {v1} (слоты заняты).',
     "toggle_equip_4": 'Готово!',
+    "toggle_equip_5": 'Занято максимум слотов ({v0}) — сначала сними один бустер, чтобы надеть другой.',
     "craft_do_1": 'Это не твой крафт!',
     "craft_do_2": 'Рецепт не найден.',
     "craft_do_3": 'Нужен уровень крафта {v0}, у тебя {v1}.',
@@ -1044,7 +1054,7 @@ ITEMS = {
     "ancient_stone": (PREMIUM_ANCIENT_STONE, "Древний камень", 0, 18),
     "fate_thread":   (PREMIUM_FATE_THREAD, "Нить судьбы", 0, 4),
 
-    "kotyara_amulet":  (PREMIUM_KOTYARA_AMULET, "Амулет Котяры", 95, 0),
+    "kotyara_amulet":  (PREMIUM_KOTYARA_AMULET, "Амулет Котяры", 280, 0),
     "miku_amulet":     (PREMIUM_MIKU_AMULET, "Амулет Мику", 75, 0),
     "golda":           (PREMIUM_GOLDA_ITEM, "Голда", 52, 0),
     "karambit_gold":   (PREMIUM_KARAMBIT_GOLD, "Керамбит голд", 228, 0),
@@ -1074,6 +1084,10 @@ ITEMS = {
     "star_necklace":  (PREMIUM_STAR_NECKLACE, "Ожерелье из звёзд", 120, 0),
     "blazing_star_necklace": (PREMIUM_BLAZING_STAR_NECKLACE, "Ожерелье пылающей звезды", 210, 0),
     "pocket_star":    (PREMIUM_POCKET_STAR, "Карманная звезда", 0, 0),
+
+    # ==== Крафт 3 ур.: Любитель Мастерства + его дроп-предмет nano-IT ====
+    "mastery_lover_amulet": (PREMIUM_MASTERY_LOVER_AMULET, "Любитель Мастерства", 600, 0),
+    "nano_it":              (PREMIUM_NANO_IT, "nano-IT", 0, 0),
 }
 
 # Разделение ITEMS на «бустеры» (экипируемые, дают процентный буст к добыче) и «предметы»
@@ -1181,6 +1195,7 @@ NON_TRADABLE_ITEMS = {
     "nogost_coin", "godly_nogost_coin", "craft_coin", "bitcoin",
     "rebirth_coin", "evolution_coin", "awakening_coin",
     "pocket_star", "rebirth_spark", "star_necklace", "blazing_star_necklace",
+    "mastery_lover_amulet",
 }
 
 PASSIVE_ITEMS = {
@@ -1189,7 +1204,7 @@ PASSIVE_ITEMS = {
     "old_vase", "golden_vase", "godly_vase", "warm_candle",
     "broken_clock", "essence_drop", "comet_shard", "koshko_gift", "ancient_stone", "fate_thread",
     "craft_coin", "bitcoin", "rebirth_coin", "evolution_coin", "awakening_coin",
-    "pocket_star",
+    "pocket_star", "nano_it",
 }
 
 SELL_PRICE = {
@@ -1337,6 +1352,13 @@ RECIPES = {
         "craft_points_cost": 20,
     },
 
+    "mastery_lover_amulet": {
+        "level": 3,
+        "ingredients": {"chronos_orb": 2},
+        "rebirth_cost": 1488,
+        "refund_ingredients": {"chronos_orb": 1},
+    },
+
     "miku_fan_amulet": {
         "level": 1,
         "ingredients": {"mk_sandsmoon": 1, "miku_amulet": 1},
@@ -1439,6 +1461,19 @@ CHRONOS_ORB_OLD_VASE_CHANCE = 0.0069
 CHRONOS_BOOST_INTERVAL = 300
 CHRONOS_BOOST_MIN, CHRONOS_BOOST_MAX = 10, 400
 
+# ==== 🤖 Любитель Мастерства: пока экипирован, при каждом фарме ног независимо
+# проверяются 5 эффектов (несколько могут сработать одновременно за один фарм) ====
+MASTERY_LOVER_BITCOIN_CHANCE_CHANCE = 0.005   # шанс временно поднять шанс дропа биткоина
+MASTERY_LOVER_BITCOIN_CHANCE_BONUS = 0.001    # +0.1% к шансу дропа биткоина при этом проке
+MASTERY_LOVER_CRAFT_CHANCE = 0.01
+MASTERY_LOVER_CRAFT_AMOUNT = 15
+MASTERY_LOVER_REBIRTH_CHANCE = 0.02
+MASTERY_LOVER_REBIRTH_AMOUNT = 200
+MASTERY_LOVER_PRESTIGE_CHANCE = 0.015
+MASTERY_LOVER_PRESTIGE_AMOUNT = 50
+MASTERY_LOVER_NANO_IT_CHANCE = 0.03
+NANO_IT_BOOST_PCT_PER_UNIT = 5
+
 GOD_ESSENCE_FLAVOR = f"{PREMIUM_GOD_ESSENCE} Сила бога активирована."
 KOSHKO_AMULET_FLAVOR = f"{PREMIUM_KOSHKO_AMULET} Сила кошко-девочки активна."
 CHRONOS_ORB_FLAVOR = f"{PREMIUM_CHRONOS_ORB} ХАОС! ХАОС! ХАОС!"
@@ -1503,6 +1538,16 @@ HELP_BOOSTER_EXTRA = {
         "Пассивный эффект пока экипировано: при фарме ног — шанс 1.7% на 1-15 🉑 очков перерождения "
         "и независимый шанс 1.2% на 1-3 очка престижа."
     ),
+    "kotyara_amulet": (
+        f"Пассивный эффект пока экипирован: при фарме ног — шанс {round(KOTYARA_BOOST_CHANCE * 100)}% "
+        f"включить x{KOTYARA_BOOST_MULT} к добыче на {KOTYARA_BOOST_SECONDS} секунд (поверх обычного буста)."
+    ),
+    "mastery_lover_amulet": (
+        "Топовый крафтовый бустер (3 ур. крафта). Пока экипирован, при каждом фарме ног независимо "
+        "проверяются 5 эффектов: 0.5% — временно повышает шанс дропа 🟠 Биткоина на этот фарм; "
+        "1% — +15💠 очков крафта; 2% — +200🉑 очков перерождения; 1.5% — +50🔮 очков престижа; "
+        "3% — +1 предмет nano-IT (пассивно даёт +5% к добыче за каждую единицу в инвентаре)."
+    ),
 }
 
 def format_help_booster_text(key: str) -> str:
@@ -1555,6 +1600,11 @@ HELP_ITEM_EXTRA = {
         f"даёт в {POCKET_STAR_FARM_CMD_MULT}x больше и гарантированно "
         f"+{POCKET_STAR_FARM_CMD_REBIRTH_RANGE[0]}-{POCKET_STAR_FARM_CMD_REBIRTH_RANGE[1]} 🉑 очков перерождения. "
         f"Обычная фарма ног (🦵/🦿... в чате) — x{POCKET_STAR_LEG_FARM_MULT}."
+    ),
+    "nano_it": (
+        f"Пассивный эффект: пока лежит в инвентаре (экипировать не нужно) — даёт +{NANO_IT_BOOST_PCT_PER_UNIT}% "
+        "к добыче за КАЖДУЮ единицу в инвентаре (например, 3 шт. = +15%, суммируется с остальными бустерами). "
+        "Выпадает случайно от 🤖 Любителя Мастерства."
     ),
 }
 
@@ -1654,7 +1704,11 @@ def format_recipe_requirements(recipe: dict) -> str:
         parts.append(f"{recipe['craft_points_cost']} 💠")
     if recipe.get("rebirth_cost"):
         parts.append(f"{recipe['rebirth_cost']} 🉑")
-    return " + ".join(parts)
+    result = " + ".join(parts)
+    if recipe.get("refund_ingredients"):
+        refund_parts = [f"{qty}x {ITEMS[k][1]}" for k, qty in recipe["refund_ingredients"].items()]
+        result += f" (вернётся: {', '.join(refund_parts)})"
+    return result
 
 REBIRTH_MIN_EVO = 5
 REBIRTH_EVO_STEP = 3
@@ -2502,7 +2556,7 @@ def format_potion_stock(stock: dict) -> str:
     return ",".join(f"{k}:{v}" for k, v in stock.items() if v > 0)
 
 def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrades: dict = None,
-                    ultra_rebirth: bool = False, chronos_boost_pct: int = 100) -> float:
+                    ultra_rebirth: bool = False, chronos_boost_pct: int = 100, nano_it_count: int = 0) -> float:
     mult = 1.0
     if evolution_level >= 2:
         mult += EVO_BOOST_STEP
@@ -2522,6 +2576,8 @@ def get_multiplier(evolution_level: int, active_items, vip_active: bool, upgrade
         mult += 0.05 * upgrade_level(upgrades, "booster")
     if ultra_rebirth:
         mult += ULTRA_REBIRTH_BOOST
+    if nano_it_count:
+        mult += (NANO_IT_BOOST_PCT_PER_UNIT * nano_it_count) / 100
     return mult
 
 def _normalize_active_items(active_items):
@@ -2988,7 +3044,8 @@ USER_COLUMNS = (
     "rebirth_points, rebirth_count, upgrades, last_auto_claim, equipped_items, nickname, top_banned, "
     "ultra_rebirth, auto_evolve, active_potions, brewing_potion, brewing_until, potion_stock, "
     "prestige_points, prestige_upgrades, auto_rebirth, auto_sell, auto_sell_items, craft_points, "
-    "promo_badges, chronos_boost_pct, compact_mode, crafts_done, vilon_streak, vilon_boost_until, shown_badges"
+    "promo_badges, chronos_boost_pct, compact_mode, crafts_done, vilon_streak, vilon_boost_until, shown_badges, "
+    "kotyara_boost_until"
 )
 
 def display_name(username: str, nickname: str = None) -> str:
@@ -3133,6 +3190,7 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN vilon_streak INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN vilon_boost_until INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN shown_badges TEXT DEFAULT ''",
+        "ALTER TABLE users ADD COLUMN kotyara_boost_until INTEGER DEFAULT 0",
     ):
         try:
             await db_exec(stmt)
@@ -3432,6 +3490,37 @@ async def apply_blazing_necklace_proc(user_id: int, active_items) -> str:
         text += f"\n{ITEMS['blazing_star_necklace'][0]} Ожерелье пылающей звезды: +{gained} очков престижа!"
     return text
 
+async def apply_mastery_lover_proc(user_id: int, active_items) -> tuple[str, float]:
+    """🤖 Любитель Мастерства: пока экипирован, при каждом фарме ног независимо проверяются
+    5 эффектов — несколько могут сработать за один фарм одновременно:
+    0.5% -> временный бонус +0.1% к шансу дропа биткоина (см. apply_bitcoin_proc);
+    1% -> +15 очков крафта; 2% -> +200 очков перерождения; 1.5% -> +50 очков престижа;
+    3% -> +1 предмет nano-IT.
+    Возвращает (текст-приписка, бонус_к_шансу_биткоина_на_этот_фарм)."""
+    if "mastery_lover_amulet" not in set(_normalize_active_items(active_items)):
+        return "", 0.0
+    text = ""
+    bitcoin_bonus = 0.0
+    if random.random() < MASTERY_LOVER_BITCOIN_CHANCE_CHANCE:
+        bitcoin_bonus = MASTERY_LOVER_BITCOIN_CHANCE_BONUS
+        text += f"\n{PREMIUM_MASTERY_LOVER_AMULET} Любитель Мастерства: шанс дропа Биткоина повышен на этот фарм!"
+    if random.random() < MASTERY_LOVER_CRAFT_CHANCE:
+        await db_exec("UPDATE users SET craft_points = craft_points + ? WHERE user_id = ?",
+                      (MASTERY_LOVER_CRAFT_AMOUNT, user_id))
+        text += f"\n{PREMIUM_MASTERY_LOVER_AMULET} Любитель Мастерства: +{MASTERY_LOVER_CRAFT_AMOUNT}💠 очков крафта!"
+    if random.random() < MASTERY_LOVER_REBIRTH_CHANCE:
+        await db_exec("UPDATE users SET rebirth_points = rebirth_points + ? WHERE user_id = ?",
+                      (MASTERY_LOVER_REBIRTH_AMOUNT, user_id))
+        text += f"\n{PREMIUM_MASTERY_LOVER_AMULET} Любитель Мастерства: +{MASTERY_LOVER_REBIRTH_AMOUNT}🉑 очков перерождения!"
+    if random.random() < MASTERY_LOVER_PRESTIGE_CHANCE:
+        await db_exec("UPDATE users SET prestige_points = prestige_points + ? WHERE user_id = ?",
+                      (MASTERY_LOVER_PRESTIGE_AMOUNT, user_id))
+        text += f"\n{PREMIUM_MASTERY_LOVER_AMULET} Любитель Мастерства: +{MASTERY_LOVER_PRESTIGE_AMOUNT}🔮 очков престижа!"
+    if random.random() < MASTERY_LOVER_NANO_IT_CHANCE:
+        await add_item(user_id, "nano_it", 1)
+        text += f"\n{PREMIUM_MASTERY_LOVER_AMULET} Любитель Мастерства: +1 {PREMIUM_NANO_IT} nano-IT!"
+    return text, bitcoin_bonus
+
 async def apply_star_necklace_proc(user_id: int, active_items) -> str:
     """📿 Ожерелье из звёзд: пока экипировано, при фарме ног — шанс 2.5% выдать
     случайный предмет из Базового кейса (кейс 1, крафт-уровень 1)."""
@@ -3508,6 +3597,27 @@ def apply_vilon_amulet_boost(total: int, vilon_boost_until: int) -> int:
         return round(total * VILON_BOOST_MULT)
     return total
 
+async def apply_kotyara_amulet_trigger(user_id: int, active_items) -> str:
+    """🐱 Амулет Котяры: пока экипирован, при каждом фарме ног — независимый шанс
+    KOTYARA_BOOST_CHANCE (25%) включить x2 к добыче на KOTYARA_BOOST_SECONDS (10) секунд
+    (см. apply_kotyara_amulet_boost — сам множитель применяется отдельно, эта функция
+    только кидает шанс и включает таймер)."""
+    if "kotyara_amulet" not in set(_normalize_active_items(active_items)):
+        return ""
+    if random.random() >= KOTYARA_BOOST_CHANCE:
+        return ""
+    boost_until = int(time.time()) + KOTYARA_BOOST_SECONDS
+    await db_exec("UPDATE users SET kotyara_boost_until = ? WHERE user_id = ?", (boost_until, user_id))
+    return f"\n{ITEMS['kotyara_amulet'][0]} Амулет Котяры: МУРЛЫК-РЫВОК! x{KOTYARA_BOOST_MULT} к добыче на {KOTYARA_BOOST_SECONDS} сек!"
+
+def apply_kotyara_amulet_boost(total: int, kotyara_boost_until: int) -> int:
+    """Применяет активный x2 от Амулета Котяры к уже посчитанному total, если таймер ещё
+    не истёк. Не требует экипировки в момент применения — буст, один раз запущенный,
+    доигрывает своё время даже если амулет сняли (как и Амулет Вилона)."""
+    if kotyara_boost_until and kotyara_boost_until > int(time.time()):
+        return round(total * KOTYARA_BOOST_MULT)
+    return total
+
 def apply_coin_tree_farm_roll(gained: int, active_items) -> tuple:
     """🟤 Монета Ногости / 🔶 Монета Бога Ногости: независимый ролл на КАЖДОМ базовом фарме
     ног (после всех обычных множителей, включая x3/x6 boost_percent самих этих монет —
@@ -3559,12 +3669,13 @@ async def apply_craft_coin_proc(user_id: int, inventory_map: dict) -> str:
     await db_exec("UPDATE users SET craft_points = craft_points + 1 WHERE user_id = ?", (user_id,))
     return f"\n{PREMIUM_CRAFT_COIN} Монета Крафта: +1💠 очко крафта!"
 
-async def apply_bitcoin_proc(user_id: int, inventory_map: dict) -> str:
+async def apply_bitcoin_proc(user_id: int, inventory_map: dict, bonus_chance: float = 0.0) -> str:
     """🟠 Биткоин: пассивно (лёжа в инвентаре) шанс 0.05% при базовом фарме ног дать
-    +15 000 000 (15кк) 🪙 монет."""
+    +15 000 000 (15кк) 🪙 монет. bonus_chance — временная прибавка к шансу (например,
+    от проков 🤖 Любителя Мастерства) на этот конкретный фарм."""
     if inventory_map.get("bitcoin", 0) <= 0:
         return ""
-    if random.random() >= 0.0005:
+    if random.random() >= 0.0005 + bonus_chance:
         return ""
     await db_exec("UPDATE users SET coins = coins + 15000000 WHERE user_id = ?", (user_id,))
     return f"\n{PREMIUM_BITCOIN} Биткоин: КРИПТО-ДЖЕКПОТ! +15 000 000{PREMIUM_BITCOIN}!"
@@ -4514,6 +4625,7 @@ async def count_legs(message: Message):
     compact_mode = bool(row[35]) if len(row) > 35 else False
     vilon_streak = row[37] if len(row) > 37 else 0
     vilon_boost_until = row[38] if len(row) > 38 else 0
+    kotyara_boost_until = row[40] if len(row) > 40 else 0
     flat_bonus = total_flat_bonus(active_items)
     limits = active_farm_limits(active_items, prestige_upgrades)
 
@@ -4549,10 +4661,12 @@ async def count_legs(message: Message):
     gained += flat_bonus
     gained = round(gained * farm_yield_multiplier(upgrades))
 
-    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct)
     event_mult, personal_mult, inv = await asyncio.gather(
         get_event_multiplier(), get_personal_multiplier(user_id), get_inventory(user_id)
     )
+    inventory_map = {k: q for k, q in inv}
+    nano_it_count = inventory_map.get("nano_it", 0)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct, nano_it_count)
     p_yield_mult = 1 + 0.005 * prestige_bonus(prestige_upgrades, "p_farm_yield")
     total = round(gained * mult * event_mult * personal_mult * p_yield_mult)
     if galaxy:
@@ -4561,10 +4675,10 @@ async def count_legs(message: Message):
         total = round(total * (2 ** star))
     if miku_note:
         total = round(total * MIKU_RING_FARM_MULT)
-    inventory_map = {k: q for k, q in inv}
     if inventory_map.get("pocket_star", 0) > 0:
         total = round(total * POCKET_STAR_LEG_FARM_MULT)
     total = apply_vilon_amulet_boost(total, vilon_boost_until)
+    total = apply_kotyara_amulet_boost(total, kotyara_boost_until)
     potion_text = ""
     if "potion_speed" in potions:
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
@@ -4602,14 +4716,16 @@ async def count_legs(message: Message):
         await apply_blazing_necklace_proc(user_id, active_items)
         + await apply_star_necklace_proc(user_id, active_items)
     )
+    mastery_text, mastery_bitcoin_bonus = await apply_mastery_lover_proc(user_id, active_items)
     coin_tree_text = (
         await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
-        + await apply_bitcoin_proc(user_id, inventory_map)
+        + await apply_bitcoin_proc(user_id, inventory_map, mastery_bitcoin_bonus)
         + await apply_rebirth_coin_proc(user_id, inventory_map)
         + await apply_craft_coin_proc(user_id, inventory_map)
     )
     steal_text = await apply_leg_farm_steal(user_id, message.chat.id, active_items)
     vilon_text = await apply_vilon_amulet_trigger(user_id, active_items, vilon_streak)
+    kotyara_text = await apply_kotyara_amulet_trigger(user_id, active_items)
 
     now = time.monotonic()
     chat_id = message.chat.id
@@ -4643,8 +4759,8 @@ async def count_legs(message: Message):
     miku_text = f"\n{ITEMS['miku_ring'][0]} Кольцо Мику: 🎶 x{MIKU_RING_FARM_MULT} к итогу!" if miku_note else ""
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    bonus_text = "" if compact_mode else (vase_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text)
-    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + steal_text + vilon_text + miku_text
+    bonus_text = "" if compact_mode else (vase_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text + mastery_text)
+    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + steal_text + vilon_text + kotyara_text + miku_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
@@ -4688,7 +4804,9 @@ async def my_profile(message: Message):
     display_level = level
     nxt = next_level_text(score, evolution_level, rebirth_count, ultra_rebirth)
     chronos_boost_pct = row[34] if len(row) > 34 else 100
-    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct)
+    inv_rows_profile = await get_inventory(user_id)
+    nano_it_count = {k: q for k, q in inv_rows_profile}.get("nano_it", 0)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct, nano_it_count)
     flat_bonus = total_flat_bonus(active_items)
 
     if vip_active:
@@ -4908,6 +5026,7 @@ async def farm(message: Message):
     chronos_boost_pct = row[34] if len(row) > 34 else 100
     compact_mode = bool(row[35]) if len(row) > 35 else False
     vilon_boost_until = row[38] if len(row) > 38 else 0
+    kotyara_boost_until = row[40] if len(row) > 40 else 0
 
     inv_rows = await get_inventory(user_id)
     inventory_map = {k: q for k, q in inv_rows}
@@ -4924,7 +5043,8 @@ async def farm(message: Message):
     auto_legs, auto_coins, score, _coins_after = await claim_offline_auto_farm(user_id, row)
 
     low, high = farm_range(evolution_level)
-    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct)
+    nano_it_count = inventory_map.get("nano_it", 0)
+    mult = get_multiplier(evolution_level, active_items, vip_active, upgrades, ultra_rebirth, chronos_boost_pct, nano_it_count)
     event_mult = await get_event_multiplier()
     personal_mult = await get_personal_multiplier(user_id)
     p_yield_mult = 1 + 0.005 * prestige_bonus(prestige_upgrades, "p_farm_yield")
@@ -4941,6 +5061,7 @@ async def farm(message: Message):
         )
         pocket_star_text = f"\n{ITEMS['pocket_star'][0]} Карманная звезда: +{rebirth_gain}🉑!"
     gained = apply_vilon_amulet_boost(gained, vilon_boost_until)
+    gained = apply_kotyara_amulet_boost(gained, kotyara_boost_until)
     potion_text = ""
     if "potion_speed" in potions:
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
@@ -4973,12 +5094,14 @@ async def farm(message: Message):
         await apply_blazing_necklace_proc(user_id, active_items)
         + await apply_star_necklace_proc(user_id, active_items)
     )
+    mastery_text, mastery_bitcoin_bonus = await apply_mastery_lover_proc(user_id, active_items)
     coin_tree_text = (
         nogost_coin_text
         + await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
-        + await apply_bitcoin_proc(user_id, inventory_map)
+        + await apply_bitcoin_proc(user_id, inventory_map, mastery_bitcoin_bonus)
         + await apply_rebirth_coin_proc(user_id, inventory_map)
     )
+    kotyara_text = await apply_kotyara_amulet_trigger(user_id, active_items)
 
     await maybe_announce_levelup(message, username, score, new_score, evolution_level, bool(levelup_notify), rebirth_count, ultra_rebirth)
 
@@ -5002,8 +5125,8 @@ async def farm(message: Message):
         auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    bonus_text = "" if compact_mode else (vase_text + potion_text + chaos_text + chronos_text + coin_tree_text + pocket_star_text + necklace_text)
-    extra_text = bonus_text + auto_evo_text + auto_rebirth_text
+    bonus_text = "" if compact_mode else (vase_text + potion_text + chaos_text + chronos_text + coin_tree_text + pocket_star_text + necklace_text + mastery_text)
+    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + kotyara_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
@@ -6107,19 +6230,31 @@ async def toggle_equip(callback: CallbackQuery):
     max_slots = equipped_slots_max(upgrades, prestige_upgrades, coin_tree_slot_bonus(inventory_map))
 
     before = parse_equipped(row[18])
-    kicked = before[0] if item_key not in before and len(before) >= max_slots else None
-    new_equipped = equip_item(row[18], item_key, max_slots)
 
+    if item_key in before:
+        # Уже надет -> снимаем (как выключение бейджа).
+        new_equipped = unequip_item(row[18], item_key)
+        await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), owner_id))
+        await safe_edit_text(callback,
+            format_boosters_text(rows, max_slots, page, query=query),
+            reply_markup=boosters_keyboard(rows, new_equipped, owner_id, page, query=query),
+        )
+        await callback.answer(TEXTS["toggle_equip_4"])
+        return
+
+    if len(before) >= max_slots:
+        # Лимит слотов занят -> блокируем, как с бейджами ("сначала выключи один").
+        await callback.answer(TEXTS["toggle_equip_5"].format(v0=max_slots), show_alert=True)
+        return
+
+    new_equipped = equip_item(row[18], item_key, max_slots)
     await db_exec("UPDATE users SET equipped_items = ? WHERE user_id = ?", (format_equipped(new_equipped), owner_id))
 
     await safe_edit_text(callback, 
         format_boosters_text(rows, max_slots, page, query=query),
         reply_markup=boosters_keyboard(rows, new_equipped, owner_id, page, query=query),
     )
-    if kicked and kicked in ITEMS:
-        await callback.answer(TEXTS["toggle_equip_3"].format(v0=ITEMS[item_key][1], v1=ITEMS[kicked][1]))
-    else:
-        await callback.answer(TEXTS["toggle_equip_4"])
+    await callback.answer(TEXTS["toggle_equip_4"])
 
 CRAFT_RE = re.compile(r"^крафт(?:ы)?(?:\s+(.+))?$", re.IGNORECASE)
 
@@ -6267,6 +6402,8 @@ async def craft_do(callback: CallbackQuery):
 
     for ing_key, qty in recipe.get("ingredients", {}).items():
         await remove_item(owner_id, ing_key, qty)
+    for ing_key, qty in recipe.get("refund_ingredients", {}).items():
+        await add_item(owner_id, ing_key, qty)
     if recipe.get("needs_all_amulets"):
         for ing_key in ALL_PLAYER_AMULETS:
             await remove_item(owner_id, ing_key, 1)
