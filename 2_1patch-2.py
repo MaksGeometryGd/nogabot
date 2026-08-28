@@ -3020,20 +3020,90 @@ def _connect(worker_idx):
         _db_conns[worker_idx] = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
     return _db_conns[worker_idx]
 
+def _drop_conn(worker_idx):
+    """Убивает протухшее соединение воркера, чтобы следующий _connect() создал новое.
+    Без этого одно оборвавшееся HTTP/hrana-соединение (сетевой сбой, таймаут Turso,
+    обрыв стрима) навсегда застревало в _db_conns[worker_idx] — _connect() проверяет
+    только 'is None' и отдавал бы тот же мёртвый объект дальше, а значит КАЖДЫЙ
+    следующий запрос, попавший на этот воркер (то есть всегда одни и те же user_id,
+    см. _pick_worker), падал бы с ошибкой навсегда, до перезапуска бота."""
+    conn = _db_conns[worker_idx]
+    _db_conns[worker_idx] = None
+    if conn is not None:
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+def _is_retryable_db_error(e: Exception) -> bool:
+    """Отличаем 'протухло соединение/сеть моргнула' (стоит переподключиться и
+    повторить) от логических ошибок SQL (плохой запрос — повтор не поможет и
+    только зациклит ту же ошибку). Проверяем по тексту, а не по типу исключения,
+    потому что разные версии libsql/hrana поднимают разные классы ошибок на
+    сетевые обрывы, а стабильного публичного типа для этого нет."""
+    text = str(e).lower()
+    markers = (
+        "locked", "busy", "closed", "connection", "timeout", "timed out",
+        "broken pipe", "reset", "stream", "hrana", "network", "unavailable",
+        "eof", "disconnect",
+    )
+    return any(m in text for m in markers)
+
+def _run_with_reconnect(worker_idx, fn, sql=None, params=None):
+    """Общая обвязка для _exec_sync/_exec_many_sync/_query_sync: один повтор
+    на свежем соединении при транзиентной ошибке. ГЛАВНЫЙ ФИКС бага 'рандомные
+    команды отваливаются после включения DB_WORKER_COUNT=5': на одном потоке
+    протухшее соединение было бы видно сразу и на всех командах (сразу заметили
+    бы), а теперь оно тихо убивает только тот воркер (= только те user_id,
+    которые на него шардируются) — выглядит как 'рандомные' отвалы конкретных
+    юзеров/команд, хотя на самом деле это всегда один и тот же воркер.
+    sql/params передаются только для тегирования исключения через _tag_db_error
+    (диагностика в error_handler) — на саму retry-логику не влияют."""
+    try:
+        return fn()
+    except Exception as e:
+        if not _is_retryable_db_error(e):
+            _tag_db_error(e, worker_idx, sql, params)
+            raise
+        _drop_conn(worker_idx)
+        try:
+            return fn()
+        except Exception as e2:
+            _tag_db_error(e2, worker_idx, sql, params)
+            raise
+
+def _tag_db_error(e: Exception, worker_idx, sql, params):
+    """Вешает на исключение, какой воркер/запрос его вызвал — читается в
+    error_handler (_bot_last_sql/_bot_last_params), чтобы в логе ошибки сразу
+    было видно, на каком из DB_WORKER_COUNT воркеров и на каком именно SQL
+    всё упало, а не только голый traceback без этого контекста."""
+    try:
+        e._bot_worker_idx = worker_idx
+        e._bot_last_sql = sql
+        e._bot_last_params = params
+    except Exception:
+        pass
+
 def _exec_sync(worker_idx, sql, params):
-    conn = _connect(worker_idx)
-    conn.execute(sql, params)
-    conn.commit()
+    def attempt():
+        conn = _connect(worker_idx)
+        conn.execute(sql, params)
+        conn.commit()
+    _run_with_reconnect(worker_idx, attempt, sql, params)
 
 def _exec_many_sync(worker_idx, sql, params_list):
-    conn = _connect(worker_idx)
-    conn.executemany(sql, params_list)
-    conn.commit()
+    def attempt():
+        conn = _connect(worker_idx)
+        conn.executemany(sql, params_list)
+        conn.commit()
+    _run_with_reconnect(worker_idx, attempt, sql, params_list)
 
 def _query_sync(worker_idx, sql, params):
-    conn = _connect(worker_idx)
-    cur = conn.execute(sql, params)
-    return cur.fetchall()
+    def attempt():
+        conn = _connect(worker_idx)
+        cur = conn.execute(sql, params)
+        return cur.fetchall()
+    return _run_with_reconnect(worker_idx, attempt, sql, params)
 
 async def _db_worker(worker_idx):
     """Один из DB_WORKER_COUNT потоков. Каждый воркер берёт задачи строго из
@@ -4220,6 +4290,49 @@ dp.callback_query.middleware(CallbackThrottleMiddleware(0.15))
 
 _last_leg_reply = {}
 
+def _fmt_chat(chat) -> str:
+    if chat is None:
+        return "?"
+    title = getattr(chat, "title", None)
+    if title:
+        return f"{chat.id} ({title})"
+    return str(chat.id)
+
+def _fmt_user(user) -> str:
+    if user is None:
+        return "?"
+    uname = f"@{user.username}" if getattr(user, "username", None) else "без username"
+    return f"{user.id} ({uname})"
+
+def _extract_error_context(update) -> dict:
+    """Достаёт из Update максимум контекста для лога: кто, где, что именно
+    отправил (текст команды / callback_data), чтобы по логу можно было сразу
+    понять КАКАЯ команда и У КОГО упала, а не только сам traceback."""
+    ctx = {
+        "kind": "?", "user": "?", "chat": "?", "content": "?",
+    }
+    message = getattr(update, "message", None)
+    if message is not None:
+        ctx["kind"] = "message"
+        ctx["user"] = _fmt_user(getattr(message, "from_user", None))
+        ctx["chat"] = _fmt_chat(getattr(message, "chat", None))
+        ctx["content"] = message.text or message.caption or "<без текста>"
+        return ctx
+    callback = getattr(update, "callback_query", None)
+    if callback is not None:
+        ctx["kind"] = "callback_query"
+        ctx["user"] = _fmt_user(getattr(callback, "from_user", None))
+        ctx["chat"] = _fmt_chat(getattr(callback.message, "chat", None)) if callback.message else "?"
+        ctx["content"] = callback.data or "<без data>"
+        return ctx
+    pre_checkout = getattr(update, "pre_checkout_query", None)
+    if pre_checkout is not None:
+        ctx["kind"] = "pre_checkout_query"
+        ctx["user"] = _fmt_user(getattr(pre_checkout, "from_user", None))
+        ctx["content"] = f"invoice_payload={pre_checkout.invoice_payload!r}"
+        return ctx
+    return ctx
+
 @dp.errors()
 async def error_handler(event: ErrorEvent):
     """ВАЖНО (баг, который ломал ВСЕ текстовые команды молча): в aiogram 3.x хендлер
@@ -4234,7 +4347,16 @@ async def error_handler(event: ErrorEvent):
     какой был на скрине: команда молчит всегда, при любом отдельном вызове, без
     исключений в логах (потому что traceback.print_exc() тоже не успевал выполниться
     в старой версии — TypeError происходил на уровне вызова хендлера aiogram'ом).
-    Теперь сигнатура правильная: exception достаём из event.exception."""
+    Теперь сигнатура правильная: exception достаём из event.exception.
+
+    РАСШИРЕННЫЙ ЛОГ: раньше лог был по сути только repr(exception) + голый traceback
+    в stderr — по нему нельзя было понять КТО вызвал команду, КАКУЮ именно команду
+    и в КАКОМ чате, а после появления DB_WORKER_COUNT (см. _pick_worker) ещё и на
+    КАКОМ воркере БД это случилось (это ключевое для диагностики протухших
+    соединений — см. _run_with_reconnect). Теперь одна строка лога содержит время,
+    тип апдейта, юзера, чат, содержимое команды/callback_data, воркер БД (если
+    применимо) и полный traceback — и всё это ещё и уходит админу в Telegram,
+    а не только в консоль хостинга, которую не всегда удобно смотреть."""
     exception = event.exception
 
     if isinstance(exception, TelegramRetryAfter):
@@ -4242,8 +4364,51 @@ async def error_handler(event: ErrorEvent):
         return True
 
     import traceback
-    traceback.print_exc()
-    print(f"Необработанная ошибка: {exception!r}")
+    tb_text = traceback.format_exc()
+    ctx = _extract_error_context(event.update)
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    worker_info = ""
+    try:
+        last_sql = getattr(exception, "_bot_last_sql", None)
+        if last_sql is not None:
+            worker_idx = getattr(exception, "_bot_worker_idx", "?")
+            last_params = getattr(exception, "_bot_last_params", None)
+            worker_info = f"\nDB воркер: {worker_idx}/{DB_WORKER_COUNT} | SQL: {last_sql[:200]!r} | params: {last_params!r}"
+    except Exception:
+        pass
+
+    log_lines = [
+        "=" * 70,
+        f"[{ts}] Необработанная ошибка ({ctx['kind']})",
+        f"Юзер: {ctx['user']} | Чат: {ctx['chat']}",
+        f"Содержимое: {ctx['content']!r}",
+        f"Исключение: {type(exception).__name__}: {exception!r}{worker_info}",
+        tb_text.rstrip(),
+        "=" * 70,
+    ]
+    log_text = "\n".join(log_lines)
+    print(log_text)
+
+    try:
+        if ADMIN_USER_ID:
+            import html as _html
+            # bot работает с parse_mode=HTML (см. DefaultBotProperties выше) — без
+            # экранирования '<'/'>'/'&' в traceback или в тексте команды сообщение
+            # админу падало бы с TelegramBadRequest и лог до него бы не долетал.
+            safe_content = _html.escape(str(ctx["content"]))
+            safe_worker_info = _html.escape(worker_info)
+            safe_tb = _html.escape(tb_text[-3500:])
+            admin_report = (
+                f"🛑 Ошибка [{ts}]\n"
+                f"Тип: {ctx['kind']} | Юзер: {ctx['user']} | Чат: {ctx['chat']}\n"
+                f"Содержимое: {safe_content}\n"
+                f"{type(exception).__name__}: {_html.escape(str(exception))}{safe_worker_info}\n\n"
+                f"<pre>{safe_tb}</pre>"
+            )
+            await bot.send_message(ADMIN_USER_ID, admin_report[:4090])
+    except Exception as admin_log_e:
+        print(f"Не удалось отправить лог ошибки админу: {admin_log_e!r}")
 
     try:
         message = getattr(event.update, "message", None)
