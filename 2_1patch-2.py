@@ -1,6 +1,7 @@
 import asyncio
 import bisect
 import functools
+import json
 import os
 import random
 import re
@@ -622,7 +623,7 @@ TEXTS = {
     "cmd_ban_player_3": 'Ответь этой командой на сообщение того, кого банишь, либо напиши !бан @username (юзер должен был хоть раз написать боту).',
     "cmd_ban_player_4": 'Нельзя забанить самого себя.',
     "cmd_ban_player_5": 'Нельзя забанить владельца бота.',
-    "cmd_ban_player_6": '🔨 {v0} забанен. Бот больше не будет ему отвечать.',
+    "cmd_ban_player_6": '🚫 Уничтожен.',
     "cmd_ban_player_7": '{v0} уже забанен.',
     "cmd_unban_player_1": '✅ {v0} разбанен.',
     "cmd_unban_player_2": '{v0} не был забанен в игре.',
@@ -3407,6 +3408,7 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN shown_badges TEXT DEFAULT ''",
         "ALTER TABLE users ADD COLUMN kotyara_boost_until INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN game_banned INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN game_banned_snapshot TEXT DEFAULT NULL",
     ):
         try:
             await db_exec(stmt)
@@ -5320,6 +5322,52 @@ async def _resolve_ban_target(message: Message, username_arg: str | None):
         return None, None
     return None, None
 
+BAN_ROFL_VALUE = -9999999999
+BAN_SNAPSHOT_COLUMNS = ("score", "coins", "evolution_level", "rebirth_points")
+
+async def _wipe_stats_for_ban(target_id: int):
+    """Рофл-часть бана: перед обнулением сохраняет текущие score/coins/evolution_level/
+    rebirth_points в game_banned_snapshot (JSON), затем выставляет их всем в
+    BAN_ROFL_VALUE — чтобы у забаненного в топах/инфо было эффектное дно. При разбане
+    _restore_stats_after_unban читает этот снапшот и возвращает всё как было —
+    поэтому обязательно снапшотим ДО перезаписи, а не полагаемся на _user_cache
+    (он может быть протухшим/пустым)."""
+    row = await db_query_one(
+        "SELECT score, coins, evolution_level, rebirth_points FROM users WHERE user_id = ?",
+        (target_id,),
+    )
+    snapshot = dict(zip(BAN_SNAPSHOT_COLUMNS, row)) if row else {c: 0 for c in BAN_SNAPSHOT_COLUMNS}
+    await db_exec(
+        "UPDATE users SET game_banned_snapshot = ?, score = ?, coins = ?, "
+        "evolution_level = ?, rebirth_points = ? WHERE user_id = ?",
+        (json.dumps(snapshot), BAN_ROFL_VALUE, BAN_ROFL_VALUE, BAN_ROFL_VALUE, BAN_ROFL_VALUE, target_id),
+    )
+
+async def _restore_stats_after_unban(target_id: int):
+    """Возвращает score/coins/evolution_level/rebirth_points к значениям на момент
+    бана. Если снапшота почему-то нет (например, game_banned=1 выставили руками
+    в БД, минуя !бан) — ничего не трогаем, чтобы не обнулить игрока по ошибке."""
+    row = await db_query_one("SELECT game_banned_snapshot FROM users WHERE user_id = ?", (target_id,))
+    raw = row[0] if row else None
+    if not raw:
+        return
+    try:
+        snapshot = json.loads(raw)
+    except Exception:
+        snapshot = None
+    if not snapshot:
+        await db_exec("UPDATE users SET game_banned_snapshot = NULL WHERE user_id = ?", (target_id,))
+        return
+    await db_exec(
+        "UPDATE users SET game_banned_snapshot = NULL, score = ?, coins = ?, "
+        "evolution_level = ?, rebirth_points = ? WHERE user_id = ?",
+        (
+            snapshot.get("score", 0), snapshot.get("coins", 0),
+            snapshot.get("evolution_level", 0), snapshot.get("rebirth_points", 0),
+            target_id,
+        ),
+    )
+
 @dp.message(F.text.regexp(r"(?i)^!бан(?:\s+@?\w+)?$"))
 async def cmd_ban_player(message: Message):
     match = BAN_RE.match(message.text.strip())
@@ -5349,6 +5397,7 @@ async def cmd_ban_player(message: Message):
 
     await ensure_user(target_id, target_username)
     await db_exec("UPDATE users SET game_banned = 1 WHERE user_id = ?", (target_id,))
+    await _wipe_stats_for_ban(target_id)
     _game_banned_ids.add(target_id)
 
     chat_ban_note = ""
@@ -5362,7 +5411,7 @@ async def cmd_ban_player(message: Message):
     except Exception:
         chat_ban_note = " ⚠️ Не удалось забанить в чате — забанен только в игре."
 
-    await message.reply(TEXTS["cmd_ban_player_6"].format(v0=esc(target_username)) + chat_ban_note)
+    await message.reply(TEXTS["cmd_ban_player_6"] + chat_ban_note)
 
 @dp.message(F.text.regexp(r"(?i)^!разбан(?:\s+@?\w+)?$"))
 async def cmd_unban_player(message: Message):
@@ -5386,6 +5435,7 @@ async def cmd_unban_player(message: Message):
         return
 
     await db_exec("UPDATE users SET game_banned = 0 WHERE user_id = ?", (target_id,))
+    await _restore_stats_after_unban(target_id)
     _game_banned_ids.discard(target_id)
 
     chat_unban_note = ""
