@@ -4323,11 +4323,38 @@ class SpamProtectionMiddleware(BaseMiddleware):
         if already_seen:
             return await handler(event, data)
 
-        await ensure_user(user.id, user.username or str(user.id))
-        await db_exec("UPDATE users SET game_banned = 1 WHERE user_id = ?", (user.id,))
-        await _wipe_stats_for_ban(user.id)
-        _game_banned_ids.add(user.id)
+        await _apply_game_ban(user.id, user.username)
         await track_membership(user.id, chat.id)
+        return
+
+_PLUGIN_SPAM_RE = re.compile(r"spam|спам", re.IGNORECASE)
+
+class PluginSpamMiddleware(BaseMiddleware):
+    """Автобан за похожие на команды спам-плагинов сообщения (по просьбе
+    пользователя): '.spam', '.flowspam' и т.п. — точка в начале сообщения И
+    'spam'/'спам' где-то дальше в тексте (регистр не важен). НЕ триггерится
+    словом с точки без spam/спам (например '.troll') — это осознанно узкое
+    правило, широкое совпадение по одной точке банило бы слишком много
+    случайных сообщений. Работает везде (не только в приватных супергруппах,
+    в отличие от SpamProtectionMiddleware) и от кого угодно кроме овнера —
+    команда плагина-спамера сама по себе однозначный сигнал, независимо от
+    типа чата или того, писал ли юзер раньше."""
+    async def __call__(self, handler, event, data):
+        if not isinstance(event, Message) or not event.from_user or not event.text:
+            return await handler(event, data)
+        user = event.from_user
+        if user.id == ADMIN_USER_ID or user.is_bot:
+            return await handler(event, data)
+        if user.id in _game_banned_ids:
+            return await handler(event, data)
+        text = event.text.strip()
+        if not text.startswith(".") or not _PLUGIN_SPAM_RE.search(text[1:]):
+            return await handler(event, data)
+
+        await _apply_game_ban(user.id, user.username)
+        chat = event.chat
+        if chat.type in ("group", "supergroup"):
+            await track_membership(user.id, chat.id)
         return
 
 class TrackMembershipMiddleware(BaseMiddleware):
@@ -4434,6 +4461,7 @@ dp.message.outer_middleware(ChatBanMiddleware())
 dp.message.outer_middleware(GameBanMiddleware())
 dp.message.outer_middleware(AliasNormalizeMiddleware())
 dp.message.middleware(SpamProtectionMiddleware())
+dp.message.middleware(PluginSpamMiddleware())
 dp.message.middleware(TrackMembershipMiddleware())
 dp.message.middleware(ThrottleMiddleware(0.6))
 dp.callback_query.middleware(CallbackThrottleMiddleware(0.15))
@@ -5412,6 +5440,19 @@ async def _wipe_stats_for_ban(target_id: int):
         (json.dumps(snapshot), BAN_ROFL_VALUE, BAN_ROFL_VALUE, BAN_ROFL_VALUE, BAN_ROFL_VALUE, target_id),
     )
 
+async def _apply_game_ban(user_id: int, username: str | None = None):
+    """Единая точка входа 'забанить игрока в игре' — переиспользуется !бан/swoon/
+    snowgrave, !бан чат, SpamProtectionMiddleware и PluginSpamMiddleware, чтобы
+    последовательность (ensure_user -> game_banned=1 -> снапшот+обнуление статов ->
+    добавить в in-memory сет) не дублировалась и не расходилась между местами.
+    username опционален: если юзера ещё нет в БД, а username неизвестен (например,
+    он сам никогда не писал профиль), ensure_user всё равно создаст строку с
+    user_id — просто без красивого имени."""
+    await ensure_user(user_id, username or str(user_id))
+    await db_exec("UPDATE users SET game_banned = 1 WHERE user_id = ?", (user_id,))
+    await _wipe_stats_for_ban(user_id)
+    _game_banned_ids.add(user_id)
+
 async def _restore_stats_after_unban(target_id: int):
     """Возвращает score/coins/evolution_level/rebirth_points к значениям на момент
     бана. Если снапшота почему-то нет (например, game_banned=1 выставили руками
@@ -5464,10 +5505,7 @@ async def cmd_ban_player(message: Message):
         await message.reply(TEXTS["cmd_ban_player_7"].format(v0=esc(target_username)))
         return
 
-    await ensure_user(target_id, target_username)
-    await db_exec("UPDATE users SET game_banned = 1 WHERE user_id = ?", (target_id,))
-    await _wipe_stats_for_ban(target_id)
-    _game_banned_ids.add(target_id)
+    await _apply_game_ban(target_id, target_username)
 
     chat_ban_note = ""
     try:
@@ -9543,9 +9581,7 @@ async def cmd_ban_chat(message: Message):
         for (member_id,) in member_rows:
             if member_id == ADMIN_USER_ID or member_id in _game_banned_ids:
                 continue
-            await db_exec("UPDATE users SET game_banned = 1 WHERE user_id = ?", (member_id,))
-            await _wipe_stats_for_ban(member_id)
-            _game_banned_ids.add(member_id)
+            await _apply_game_ban(member_id)
             total_users_banned += 1
 
         await db_exec(
