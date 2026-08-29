@@ -619,7 +619,7 @@ TEXTS = {
     "count_legs_2": 'Лютый рофл засчитан! {v0} → +{v1} очков{v2} (Всего: {v3}){v4}',
     "info_player_1": 'Игрок не найден (он ещё не писал ноги в этом боте).',
     "cmd_ban_player_1": 'Бан работает только в групповых чатах.',
-    "cmd_ban_player_2": 'Только админ чата или владелец бота может банить.',
+    "cmd_ban_player_2": 'Банить может только владелец бота.',
     "cmd_ban_player_3": 'Ответь этой командой на сообщение того, кого банишь, либо напиши !бан @username (юзер должен был хоть раз написать боту).',
     "cmd_ban_player_4": 'Нельзя забанить самого себя.',
     "cmd_ban_player_5": 'Нельзя забанить владельца бота.',
@@ -931,6 +931,9 @@ TEXTS = {
     "admin_top_spam_2": '🚨 <b>Топ спама за {v0} мин. ({v1} игроков):</b>\n{v2}',
     "admin_list_chats_1": 'Бот пока нигде не активен (ещё никто не писал команды в группах).',
     "admin_list_chats_2": '💬 Чаты бота ({v0}):\n{v1}',
+    "cmd_ban_chat_1": 'Формат: !бан чат "название или начало названия".',
+    "cmd_ban_chat_2": 'Ни один чат не начинается с "{v0}".',
+    "cmd_ban_chat_3": '🚫 Уничтожено чатов: {v0}\n{v1}\n\nЗабанено игроков: {v2}\nБот покинул чатов: {v3}',
 
     "admin_logs_1": 'Лог пуст.',
     "admin_logs_2": '📜 <b>Последние действия ({v0}):</b>\n{v1}',
@@ -3062,6 +3065,17 @@ async def _load_game_banned_ids():
     _game_banned_ids.clear()
     _game_banned_ids.update(r[0] for r in rows)
 
+# In-memory множество забаненных чатов (banned_chats.chat_id) — та же логика, что
+# и у _game_banned_ids: ChatBanMiddleware проверяет его на каждом апдейте, поэтому
+# держим в памяти вместо SELECT на каждое сообщение. Заполняется при старте
+# (_load_banned_chat_ids) и обновляется точечно в !бан чат.
+_banned_chat_ids: set = set()
+
+async def _load_banned_chat_ids():
+    rows = await db_query("SELECT chat_id FROM banned_chats")
+    _banned_chat_ids.clear()
+    _banned_chat_ids.update(r[0] for r in rows)
+
 def _connect(worker_idx):
     if _db_conns[worker_idx] is None:
         _db_conns[worker_idx] = libsql.connect(database=TURSO_URL, auth_token=TURSO_TOKEN)
@@ -4156,6 +4170,15 @@ async def _flush_player_log_buffer():
 async def track_membership(user_id: int, chat_id: int):
     await db_exec("INSERT OR IGNORE INTO chat_members (user_id, chat_id) VALUES (?, ?)", (user_id, chat_id))
 
+async def _has_been_seen_in_chat(user_id: int, chat_id: int) -> bool:
+    """Уже писал ли этот юзер в ЭТОМ чате раньше (есть запись в chat_members).
+    Используется SpamProtectionMiddleware ДО track_membership — если проверять
+    после записи, 'новизна' юзера в чате терялась бы на первом же сообщении."""
+    row = await db_query_one(
+        "SELECT 1 FROM chat_members WHERE user_id = ? AND chat_id = ?", (user_id, chat_id)
+    )
+    return row is not None
+
 async def get_all_chat_ids():
     rows = await db_query("SELECT DISTINCT chat_id FROM chat_members")
     return [r[0] for r in rows]
@@ -4164,14 +4187,14 @@ async def build_top(chat_id, order_column: str, limit: int = 10):
     if chat_id is None:
         rows = await db_query(
             f"SELECT username, score, evolution_level, coins, cases_opened, total_farmed, vip_until, shown_badges, rebirth_points, rebirth_count, nickname, ultra_rebirth, promo_badges, bonus_streak, prestige_points, crafts_done "
-            f"FROM users WHERE (top_banned IS NULL OR top_banned = 0) ORDER BY {order_column} DESC LIMIT ?",
+            f"FROM users WHERE (top_banned IS NULL OR top_banned = 0) AND (game_banned IS NULL OR game_banned = 0) ORDER BY {order_column} DESC LIMIT ?",
             (limit,),
         )
     else:
         rows = await db_query(
             f"""SELECT u.username, u.score, u.evolution_level, u.coins, u.cases_opened, u.total_farmed, u.vip_until, u.shown_badges, u.rebirth_points, u.rebirth_count, u.nickname, u.ultra_rebirth, u.promo_badges, u.bonus_streak, u.prestige_points, u.crafts_done
                 FROM users u JOIN chat_members cm ON u.user_id = cm.user_id
-                WHERE cm.chat_id = ? AND (u.top_banned IS NULL OR u.top_banned = 0) ORDER BY u.{order_column} DESC LIMIT ?""",
+                WHERE cm.chat_id = ? AND (u.top_banned IS NULL OR u.top_banned = 0) AND (u.game_banned IS NULL OR u.game_banned = 0) ORDER BY u.{order_column} DESC LIMIT ?""",
             (chat_id, limit),
         )
     return rows
@@ -4209,6 +4232,24 @@ def get_chat(event):
     return None
 
 _leg_farm_last: dict = {}
+
+class ChatBanMiddleware(BaseMiddleware):
+    """Полный чёрный список чатов (!бан чат "название"): бот вообще не реагирует
+    ни на что из забаненного чата — ни командами, ни ответом на callback_query.
+    Стоит ПЕРЕД GameBanMiddleware: если чат целиком в бане, даже не важно, кто
+    именно в нём пишет — не тратим время на проверку конкретного юзера.
+    Проверка по in-memory _banned_chat_ids, не по БД — как и у GameBanMiddleware,
+    чтобы не делать SELECT на каждый апдейт."""
+    async def __call__(self, handler, event, data):
+        chat = get_chat(event)
+        if chat is not None and chat.id in _banned_chat_ids:
+            if isinstance(event, CallbackQuery):
+                try:
+                    await event.answer()
+                except Exception:
+                    pass
+            return
+        return await handler(event, data)
 
 class GameBanMiddleware(BaseMiddleware):
     """Полный игровой бан: бот вообще не реагирует на забаненного — ни командами,
@@ -4252,6 +4293,42 @@ class PrivateBlockMiddleware(BaseMiddleware):
                         pass
                 return
         return await handler(event, data)
+
+class SpamProtectionMiddleware(BaseMiddleware):
+    """Автобан от спама в приватных супергруппах (по просьбе пользователя): если
+    бота добавили в супергруппу БЕЗ публичной ссылки (chat.username is None —
+    попасть можно только по инвайту вида t.me/+xxxx, а не t.me/name), то ПЕРВОЕ
+    сообщение боту от любого юзера в этой группе (кроме овнера и других ботов)
+    сразу даёт игровой бан (game_banned, НЕ Telegram-бан в самом чате — это
+    оговорено отдельно). Публичные супергруппы (chat.username есть) не трогает.
+
+    'Новый в чате' проверяем по chat_members (та же таблица, что и обычный
+    учёт членства) — поэтому регистрируется ДО TrackMembershipMiddleware: если
+    сначала записать юзера в chat_members, а потом проверять 'новый ли он',
+    проверка всегда была бы False и защита никогда бы не сработала."""
+    async def __call__(self, handler, event, data):
+        if not isinstance(event, Message) or not event.from_user:
+            return await handler(event, data)
+        chat = event.chat
+        user = event.from_user
+        if chat.type not in ("group", "supergroup"):
+            return await handler(event, data)
+        if chat.username is not None:
+            return await handler(event, data)
+        if user.id == ADMIN_USER_ID or user.is_bot:
+            return await handler(event, data)
+        if user.id in _game_banned_ids:
+            return await handler(event, data)
+        already_seen = await _has_been_seen_in_chat(user.id, chat.id)
+        if already_seen:
+            return await handler(event, data)
+
+        await ensure_user(user.id, user.username or str(user.id))
+        await db_exec("UPDATE users SET game_banned = 1 WHERE user_id = ?", (user.id,))
+        await _wipe_stats_for_ban(user.id)
+        _game_banned_ids.add(user.id)
+        await track_membership(user.id, chat.id)
+        return
 
 class TrackMembershipMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
@@ -4349,11 +4426,14 @@ class StaleCallbackGuardMiddleware(BaseMiddleware):
                 pass
             return
 
+dp.callback_query.outer_middleware(ChatBanMiddleware())
 dp.callback_query.outer_middleware(GameBanMiddleware())
 dp.callback_query.middleware(StaleCallbackGuardMiddleware())
 
+dp.message.outer_middleware(ChatBanMiddleware())
 dp.message.outer_middleware(GameBanMiddleware())
 dp.message.outer_middleware(AliasNormalizeMiddleware())
+dp.message.middleware(SpamProtectionMiddleware())
 dp.message.middleware(TrackMembershipMiddleware())
 dp.message.middleware(ThrottleMiddleware(0.6))
 dp.callback_query.middleware(CallbackThrottleMiddleware(0.15))
@@ -5296,17 +5376,6 @@ async def info_player(message: Message):
 BAN_RE = re.compile(r"^!бан(?:\s+@?(\w+))?$", re.IGNORECASE)
 UNBAN_RE = re.compile(r"^!разбан(?:\s+@?(\w+))?$", re.IGNORECASE)
 
-async def _is_chat_admin(chat_id: int, user_id: int) -> bool:
-    """Может ли этот юзер банить в ЭТОМ чате: владелец бота — всегда, иначе
-    смотрим реальный статус в Telegram (creator/administrator), а не что-то
-    своё игровое — бан привязан к правам модерации чата, как и просил пользователь
-    ('бан работает как и обычно ... если есть админ права')."""
-    try:
-        member = await bot.get_chat_member(chat_id, user_id)
-    except Exception:
-        return False
-    return member.status in ("creator", "administrator")
-
 async def _resolve_ban_target(message: Message, username_arg: str | None):
     """Цель бана/разбана: реплай ИЛИ !бан @username. Если юзера ещё нет в базе
     (никогда не писал боту, но упомянут по нику) — резолвим только по username
@@ -5377,7 +5446,7 @@ async def cmd_ban_player(message: Message):
     if chat.type not in ("group", "supergroup"):
         await message.reply(TEXTS["cmd_ban_player_1"])
         return
-    if not (is_admin(message) or await _is_chat_admin(chat.id, message.from_user.id)):
+    if not is_admin(message):
         await message.reply(TEXTS["cmd_ban_player_2"])
         return
 
@@ -5422,7 +5491,7 @@ async def cmd_unban_player(message: Message):
     if chat.type not in ("group", "supergroup"):
         await message.reply(TEXTS["cmd_ban_player_1"])
         return
-    if not (is_admin(message) or await _is_chat_admin(chat.id, message.from_user.id)):
+    if not is_admin(message):
         await message.reply(TEXTS["cmd_ban_player_2"])
         return
 
@@ -8943,7 +9012,7 @@ async def admin_stats(message: Message):
     row = await db_query_one(
         "SELECT COUNT(*), COALESCE(SUM(score),0), COALESCE(SUM(coins),0), COALESCE(SUM(rebirth_points),0), "
         "COALESCE(SUM(cases_opened),0), SUM(CASE WHEN vip_until > ? THEN 1 ELSE 0 END), "
-        "SUM(CASE WHEN top_banned = 1 THEN 1 ELSE 0 END) FROM users",
+        "SUM(CASE WHEN top_banned = 1 THEN 1 ELSE 0 END) FROM users WHERE game_banned = 0 OR game_banned IS NULL",
         (int(time.time()),),
     )
     players, total_score, total_coins, total_rebirth, total_cases, vip_count, banned_count = row
@@ -8969,7 +9038,7 @@ async def vip_stats(message: Message):
     stats_row = await db_query_one(
         "SELECT COUNT(*), COALESCE(SUM(score),0), COALESCE(SUM(coins),0), COALESCE(SUM(rebirth_points),0), "
         "COALESCE(SUM(cases_opened),0), SUM(CASE WHEN vip_until > ? THEN 1 ELSE 0 END), "
-        "SUM(CASE WHEN top_banned = 1 THEN 1 ELSE 0 END) FROM users",
+        "SUM(CASE WHEN top_banned = 1 THEN 1 ELSE 0 END) FROM users WHERE game_banned = 0 OR game_banned IS NULL",
         (int(time.time()),),
     )
     players, total_score, total_coins, total_rebirth, total_cases, vip_count, banned_count = stats_row
@@ -9409,6 +9478,7 @@ async def admin_list_players(message: Message):
     await log_admin_action(message)
     rows = await db_query(
         "SELECT username, nickname, score, evolution_level FROM users "
+        "WHERE (game_banned IS NULL OR game_banned = 0) "
         "ORDER BY evolution_level DESC, score DESC LIMIT 100"
     )
     if not rows:
@@ -9420,6 +9490,80 @@ async def admin_list_players(message: Message):
         for username, nickname, score, evolution_level in rows
     ]
     await message.reply(TEXTS["admin_players_2"].format(v0=len(rows), v1="\n".join(lines)))
+
+BAN_CHAT_RE = re.compile(r'^!бан чат\s+"([^"]+)"$', re.IGNORECASE)
+
+@dp.message(F.text.regexp(r'(?i)^!бан чат\s+"[^"]+"$'))
+async def cmd_ban_chat(message: Message):
+    """!бан чат "префикс" — простой ПРЕФИКСНЫЙ поиск (не подстрока) по названиям
+    всех чатов, где бот отметился (chat_members), регистронезависимо: 'ро' находит
+    'Ронал Дом', но не 'Микро Ронал'. Если совпало несколько чатов (например,
+    спам-копии 'MGG', 'MGG1', 'MGG2') — банятся ВСЕ совпавшие, как и просил
+    пользователь. Для каждого найденного чата: (1) game_banned всем его участникам
+    из chat_members, (2) chat_id уходит в чёрный список banned_chats/_banned_chat_ids
+    (ChatBanMiddleware дальше не пустит туда бота вообще), (3) бот пытается сам
+    выйти из чата (bot.leave_chat) — если это не выйдет (бота уже нет там, или API
+    отказал), бан всё равно применяется, просто без выхода."""
+    if not is_admin(message):
+        return
+    await log_admin_action(message)
+    match = BAN_CHAT_RE.match(message.text.strip())
+    if not match:
+        await message.reply(TEXTS["cmd_ban_chat_1"])
+        return
+    query = match.group(1).strip().lower()
+    if not query:
+        await message.reply(TEXTS["cmd_ban_chat_1"])
+        return
+
+    chat_ids = await db_query("SELECT DISTINCT chat_id FROM chat_members")
+    matched = []
+    for (chat_id,) in chat_ids:
+        if chat_id in _banned_chat_ids:
+            continue
+        try:
+            chat = await bot.get_chat(chat_id)
+            title = chat.title or chat.full_name or str(chat_id)
+        except Exception:
+            continue
+        if title.lower().startswith(query):
+            matched.append((chat_id, title))
+
+    if not matched:
+        await message.reply(TEXTS["cmd_ban_chat_2"].format(v0=esc(match.group(1))))
+        return
+
+    now = int(time.time())
+    banned_by = message.from_user.username or str(message.from_user.id)
+    total_users_banned = 0
+    left_count = 0
+
+    for chat_id, title in matched:
+        member_rows = await db_query("SELECT user_id FROM chat_members WHERE chat_id = ?", (chat_id,))
+        for (member_id,) in member_rows:
+            if member_id == ADMIN_USER_ID or member_id in _game_banned_ids:
+                continue
+            await db_exec("UPDATE users SET game_banned = 1 WHERE user_id = ?", (member_id,))
+            await _wipe_stats_for_ban(member_id)
+            _game_banned_ids.add(member_id)
+            total_users_banned += 1
+
+        await db_exec(
+            "INSERT OR REPLACE INTO banned_chats (chat_id, title, banned_by, banned_at) VALUES (?, ?, ?, ?)",
+            (chat_id, title, banned_by, now),
+        )
+        _banned_chat_ids.add(chat_id)
+
+        try:
+            await bot.leave_chat(chat_id)
+            left_count += 1
+        except Exception:
+            pass
+
+    chat_list_text = "\n".join(f"● {esc(title)}" for _, title in matched)
+    await message.reply(TEXTS["cmd_ban_chat_3"].format(
+        v0=len(matched), v1=chat_list_text, v2=total_users_banned, v3=left_count,
+    ))
 
 @dp.message(F.text.lower() == "!список чат")
 async def admin_list_chats(message: Message):
@@ -9827,7 +9971,15 @@ async def _admin_clear_player_logs_impl(message: Message, arg: str):
 
 @dp.message(F.text.lower() == "!пинг")
 async def admin_ping(message: Message):
+    """!пинг — админский пинг (замер задержки БД). Если пишет НЕ овнер — раньше
+    тут было тихое `return` без единого сообщения: для обычного игрока это
+    выглядело неотличимо от 'бот завис', особенно для VIP, которые по привычке
+    писали !пинг (с !) вместо VIP-команды 'пинг' (без !, см. vip_ping) и получали
+    полную тишину. Теперь не-админ прозрачно попадает в тот же путь, что и VIP-
+    команда 'пинг': с активным VIP получает обычный понг, без VIP — понятное
+    сообщение вместо молчания."""
     if not is_admin(message):
+        await vip_ping(message)
         return
     await log_admin_action(message)
     start = time.monotonic()
@@ -9911,6 +10063,7 @@ async def keep_alive():
 async def main():
     await init_db()
     await _load_game_banned_ids()
+    await _load_banned_chat_ids()
 
     app = web.Application()
     app.router.add_get('/', handle)
