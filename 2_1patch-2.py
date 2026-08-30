@@ -3686,29 +3686,29 @@ async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = 
         roll = random.random() * roll_scale
         if roll < 0.002:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 400 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GODLY_VASE} СУПЕР УДАЧА! +400🉑"
+            return f"{PREMIUM_GODLY_VASE} СУПЕР УДАЧА! +400🉑"
         if roll < 0.022:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 20 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GODLY_VASE} +20🉑"
+            return f"{PREMIUM_GODLY_VASE} +20🉑"
         if roll < 0.122:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 10 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GODLY_VASE} +10🉑"
+            return f"{PREMIUM_GODLY_VASE} +10🉑"
         if roll < 0.322:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 6 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GODLY_VASE} +6🉑"
+            return f"{PREMIUM_GODLY_VASE} +6🉑"
         if roll < 1.122:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 2 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GODLY_VASE} +2🉑"
+            return f"{PREMIUM_GODLY_VASE} +2🉑"
         return ""
     if inventory_map.get("golden_vase", 0) > 0:
         if random.random() * roll_scale < 0.06:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GOLDEN_VASE} +1🉑"
+            return f"{PREMIUM_GOLDEN_VASE} +1🉑"
         return ""
     if inventory_map.get("old_vase", 0) > 0:
         if random.random() * roll_scale < 0.05:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_OLD_VASE} +1🉑"
+            return f"{PREMIUM_OLD_VASE} +1🉑"
         return ""
     return ""
 
@@ -3910,7 +3910,7 @@ async def apply_kotyara_amulet_trigger(user_id: int, active_items) -> str:
         return ""
     boost_until = int(time.time()) + KOTYARA_BOOST_SECONDS
     await db_exec("UPDATE users SET kotyara_boost_until = ? WHERE user_id = ?", (boost_until, user_id))
-    return f"\n{ITEMS['kotyara_amulet'][0]} Амулет Котяры: МУРЛЫК-РЫВОК! x{KOTYARA_BOOST_MULT} к добыче на {KOTYARA_BOOST_SECONDS} сек!"
+    return f"{ITEMS['kotyara_amulet'][0]} МУРЛЫК-РЫВОК! x{KOTYARA_BOOST_MULT} на {KOTYARA_BOOST_SECONDS} сек"
 
 def apply_kotyara_amulet_boost(total: int, kotyara_boost_until: int) -> int:
     """Применяет активный x2 от Амулета Котяры к уже посчитанному total, если таймер ещё
@@ -3988,7 +3988,7 @@ async def apply_rebirth_coin_proc(user_id: int, inventory_map: dict) -> str:
     if inventory_map.get("rebirth_coin", 0) <= 0:
         return ""
     await db_exec("UPDATE users SET rebirth_points = rebirth_points + 2 WHERE user_id = ?", (user_id,))
-    return f"\n{PREMIUM_REBIRTH_COIN} +2🉑"
+    return f"{PREMIUM_REBIRTH_COIN} +2🉑"
 
 async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
     """🔮 Хвост Джевила: пока экипирован, при каждом фарме ног независимо проверяются все
@@ -5283,7 +5283,7 @@ async def count_legs(message: Message):
     if "potion_speed" in potions:
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
         total *= speed_mult
-        potion_text += f"\n🧪⚡ x{speed_mult}"
+        potion_text += f"🧪⚡ x{speed_mult}"
 
     chronos_text, _chronos_reset_cd, chronos_farm_mult = await apply_chronos_orb_procs(user_id, active_items)
     if chronos_farm_mult != 1.0:
@@ -5322,10 +5322,10 @@ async def count_legs(message: Message):
         + await apply_chaos_fang_proc(user_id, active_items)
     )
     mastery_text, mastery_bitcoin_bonus = await apply_mastery_lover_proc(user_id, active_items)
+    rebirth_coin_text = await apply_rebirth_coin_proc(user_id, inventory_map)
     coin_tree_text = (
         await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
         + await apply_bitcoin_proc(user_id, inventory_map, mastery_bitcoin_bonus)
-        + await apply_rebirth_coin_proc(user_id, inventory_map)
         + await apply_craft_coin_proc(user_id, inventory_map)
     )
     steal_text = await apply_leg_farm_steal(user_id, message.chat.id, active_items)
@@ -5361,16 +5361,21 @@ async def count_legs(message: Message):
     if star:
         parts += f" +{star}⭐️"
 
-    miku_text = f"\n{ITEMS['miku_ring'][0]} Кольцо Мику: 🎶 x{MIKU_RING_FARM_MULT} к итогу!" if miku_note else ""
+    miku_text = f"{ITEMS['miku_ring'][0]} x{MIKU_RING_FARM_MULT}" if miku_note else ""
     kotyara_cat_text = ""
     if kotyara_cat_note >= KOTYARA_CAT_SYMBOL_LIMIT:
-        kotyara_cat_text = f"\n{ITEMS['kotyara_amulet'][0]} Амулет Котяры: 😺 x{KOTYARA_CAT_FARM_MULT} к итогу!"
+        kotyara_cat_text = f"{ITEMS['kotyara_amulet'][0]} 😺 x{KOTYARA_CAT_FARM_MULT}"
         if kotyara_cat_coins:
-            kotyara_cat_text += f" +{kotyara_cat_coins}🪙 котокэш!"
+            kotyara_cat_text += f" +{kotyara_cat_coins}🪙"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    bonus_text = "" if compact_mode else (vase_text + potion_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text + craft_charm_text + mastery_text)
-    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + steal_text + vilon_text + kotyara_text + kotyara_cat_text + miku_text
+    combo_bits = [b for b in (vase_text, potion_text, rebirth_coin_text) if b]
+    combo_text = ("\n" + " · ".join(combo_bits)) if combo_bits else ""
+    kotyara_bits = [b for b in (kotyara_text, kotyara_cat_text) if b]
+    kotyara_combo_text = ("\n" + " · ".join(kotyara_bits)) if kotyara_bits else ""
+    miku_combo_text = f"\n{miku_text}" if miku_text else ""
+    bonus_text = "" if compact_mode else (combo_text + tide_text + chaos_text + chronos_text + coin_tree_text + necklace_text + craft_charm_text + mastery_text)
+    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + steal_text + vilon_text + kotyara_combo_text + miku_combo_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
@@ -5910,11 +5915,11 @@ async def farm(message: Message):
         pocket_star_text = f"\n{ITEMS['pocket_star'][0]} Карманная звезда: +{rebirth_gain}🉑!"
     gained = apply_vilon_amulet_boost(gained, vilon_boost_until)
     gained = apply_kotyara_amulet_boost(gained, kotyara_boost_until)
-    potion_text = ""
+    potion_bits = []
     if "potion_speed" in potions:
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
         gained *= speed_mult
-        potion_text += f"\n🧪⚡ x{speed_mult}"
+        potion_bits.append(f"🧪⚡ x{speed_mult}")
 
     chronos_text, chronos_reset_cd, chronos_farm_mult = await apply_chronos_orb_procs(user_id, active_items)
     if chronos_farm_mult != 1.0:
@@ -5932,7 +5937,7 @@ async def farm(message: Message):
     if has_no_cd:
         potions = await consume_no_cd_charge(user_id, potions)
         charges_left = potions.get(NO_CD_CHARGES_KEY, 0)
-        potion_text += f"\n🧪🌀 Зелье без КД: заряд использован ({charges_left} ост.)"
+        potion_bits.append(f"🧪🌀 заряд использован ({charges_left} ост.)")
 
     luck_boost = "luck_x2" in potions
     vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
@@ -5948,11 +5953,11 @@ async def farm(message: Message):
         + await apply_chaos_fang_proc(user_id, active_items)
     )
     mastery_text, mastery_bitcoin_bonus = await apply_mastery_lover_proc(user_id, active_items)
+    rebirth_coin_text = await apply_rebirth_coin_proc(user_id, inventory_map)
     coin_tree_text = (
         nogost_coin_text
         + await apply_godly_nogost_coin_case_proc(user_id, inventory_map)
         + await apply_bitcoin_proc(user_id, inventory_map, mastery_bitcoin_bonus)
-        + await apply_rebirth_coin_proc(user_id, inventory_map)
     )
     kotyara_text = await apply_kotyara_amulet_trigger(user_id, active_items)
 
@@ -5978,8 +5983,11 @@ async def farm(message: Message):
         auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
-    bonus_text = "" if compact_mode else (vase_text + potion_text + chaos_text + chronos_text + coin_tree_text + pocket_star_text + necklace_text + craft_charm_text + mastery_text)
-    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + kotyara_text
+    combo_bits = [b for b in (vase_text, *potion_bits, rebirth_coin_text) if b]
+    combo_text = ("\n" + " · ".join(combo_bits)) if combo_bits else ""
+    bonus_text = "" if compact_mode else (combo_text + chaos_text + chronos_text + coin_tree_text + pocket_star_text + necklace_text + craft_charm_text + mastery_text)
+    kotyara_combo_text = f"\n{kotyara_text}" if kotyara_text else ""
+    extra_text = bonus_text + auto_evo_text + auto_rebirth_text + kotyara_combo_text
     chronos_equipped = "chronos_orb" in set(_normalize_active_items(active_items))
 
     if bonus["is_god"]:
