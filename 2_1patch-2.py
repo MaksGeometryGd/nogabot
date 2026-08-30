@@ -3910,7 +3910,7 @@ async def apply_kotyara_amulet_trigger(user_id: int, active_items) -> str:
         return ""
     boost_until = int(time.time()) + KOTYARA_BOOST_SECONDS
     await db_exec("UPDATE users SET kotyara_boost_until = ? WHERE user_id = ?", (boost_until, user_id))
-    return f"{ITEMS['kotyara_amulet'][0]} МУРЛЫК-РЫВОК! x{KOTYARA_BOOST_MULT} на {KOTYARA_BOOST_SECONDS} сек"
+    return f"{ITEMS['kotyara_amulet'][0]} Амулет Котяры: МУРЛЫК-РЫВОК! x{KOTYARA_BOOST_MULT} на {KOTYARA_BOOST_SECONDS} сек"
 
 def apply_kotyara_amulet_boost(total: int, kotyara_boost_until: int) -> int:
     """Применяет активный x2 от Амулета Котяры к уже посчитанному total, если таймер ещё
@@ -5361,10 +5361,10 @@ async def count_legs(message: Message):
     if star:
         parts += f" +{star}⭐️"
 
-    miku_text = f"{ITEMS['miku_ring'][0]} x{MIKU_RING_FARM_MULT}" if miku_note else ""
+    miku_text = f"{ITEMS['miku_ring'][0]} Кольцо Мику: x{MIKU_RING_FARM_MULT}" if miku_note else ""
     kotyara_cat_text = ""
     if kotyara_cat_note >= KOTYARA_CAT_SYMBOL_LIMIT:
-        kotyara_cat_text = f"{ITEMS['kotyara_amulet'][0]} 😺 x{KOTYARA_CAT_FARM_MULT}"
+        kotyara_cat_text = f"{ITEMS['kotyara_amulet'][0]} Амулет Котяры: 😺 x{KOTYARA_CAT_FARM_MULT}"
         if kotyara_cat_coins:
             kotyara_cat_text += f" +{kotyara_cat_coins}🪙"
 
