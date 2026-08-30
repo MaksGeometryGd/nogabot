@@ -2105,6 +2105,7 @@ NEWS_PREFIX = "!новость "
 
 FIXED_COMMANDS = {
     "моя нога", "топ ног", "гл топ ног", "топ эво", "гл топ эво", "топ коин", "гл топ коин",
+    "топ гкоин", "гл топ гкоин", "топ акоин", "гл топ акоин",
     "ферма", "фарма", "инвентарь", "эволюция", "кейс", "кейсы", "бонус",
     "смс выкл", "смс вкл", "вип", "!ивент ноги", "бейджи",
     "перерождение", "апгрейд", "прокачка", "апг", "престиж", "баланс", "топ очкп", "гл топ очкп",
@@ -2112,7 +2113,7 @@ FIXED_COMMANDS = {
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
     "мои зелья", "зелья",
     "!список вип", "!список ников", "!список чат", "!логи", "!логи вся", "!пинг", "!ивент стоп", "!ивент статус",
-    "!игроки", "!топ гкоин", "!гл топ гкоин", "!топ акоин", "!гл топ акоин",
+    "!игроки",
     "ультра перерождение", "ультра перерождение подтверждаю",
     "авто эво вкл", "авто эво выкл", "авто эволюция вкл", "авто эволюция выкл",
     "авто перерождение вкл", "авто перерождение выкл", "авто рб вкл", "авто рб выкл",
@@ -2141,6 +2142,8 @@ def is_command_text(text: str) -> bool:
 _TOP_WORDS = ["топ", "топчик", "ладдер", "лидеры", "лиддеры", "рейтинг", "top", "ladder", "lider", "liders", "leaders", "rating"]
 _LEG_WORDS = ["ног", "ноги", "ногой", "leg", "legs", "foot", "feet"]
 _COIN_WORDS = ["коин", "коины", "коинов", "монета", "монеты", "монет", "coin", "coins", "money", "валюта"]
+_GOLD_COIN_WORDS = ["гкоин", "гкоины", "гкоинов", "голдкоин", "голд коин", "голд-коин", "gold coin", "goldcoin"]
+_DIAMOND_COIN_WORDS = ["акоин", "акоины", "акоинов", "алмкоин", "алмазкоин", "алмаз коин", "алмаз-коин", "diamond coin", "diamondcoin"]
 _EVO_WORDS = ["эво", "эволюция", "эволюции", "эволюционировать", "evolution", "evolutions", "evo"]
 _BALANCE_WORDS = ["баланс", "бал", "кошелек", "кошелёк", "деньги", "bal", "balance", "cash", "счет", "счёт"]
 _REBIRTH_WORDS = ["перерождение", "перерождения", "ребёрт", "реберт", "ребёрты", "ребирты", "рб", "rebirth", "rb", "rebith"]
@@ -2174,6 +2177,12 @@ for _top in _TOP_WORDS:
         ALIAS_PHRASES[f"{_top} {_coin}"] = "топ коин"
         ALIAS_PHRASES[f"гл {_top} {_coin}"] = "гл топ коин"
         ALIAS_PHRASES[f"{_top} {_coin} вся"] = "топ коин вся"
+    for _gcoin in _GOLD_COIN_WORDS:
+        ALIAS_PHRASES[f"{_top} {_gcoin}"] = "топ гкоин"
+        ALIAS_PHRASES[f"гл {_top} {_gcoin}"] = "гл топ гкоин"
+    for _dcoin in _DIAMOND_COIN_WORDS:
+        ALIAS_PHRASES[f"{_top} {_dcoin}"] = "топ акоин"
+        ALIAS_PHRASES[f"гл {_top} {_dcoin}"] = "гл топ акоин"
     for _evo in _EVO_WORDS:
         ALIAS_PHRASES[f"{_top} {_evo}"] = "топ эво"
         ALIAS_PHRASES[f"гл {_top} {_evo}"] = "гл топ эво"
@@ -3677,29 +3686,29 @@ async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = 
         roll = random.random() * roll_scale
         if roll < 0.002:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 400 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GODLY_VASE} Боготворная ваза: СУПЕР УДАЧА! +400🉑!"
+            return f"\n{PREMIUM_GODLY_VASE} СУПЕР УДАЧА! +400🉑"
         if roll < 0.022:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 20 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GODLY_VASE} Боготворная ваза: +20🉑!"
+            return f"\n{PREMIUM_GODLY_VASE} +20🉑"
         if roll < 0.122:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 10 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GODLY_VASE} Боготворная ваза: +10🉑!"
+            return f"\n{PREMIUM_GODLY_VASE} +10🉑"
         if roll < 0.322:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 6 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GODLY_VASE} Боготворная ваза: +6🉑!"
+            return f"\n{PREMIUM_GODLY_VASE} +6🉑"
         if roll < 1.122:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 2 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GODLY_VASE} Боготворная ваза: +2🉑!"
+            return f"\n{PREMIUM_GODLY_VASE} +2🉑"
         return ""
     if inventory_map.get("golden_vase", 0) > 0:
         if random.random() * roll_scale < 0.06:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_GOLDEN_VASE} Золотая ваза: +1🉑!"
+            return f"\n{PREMIUM_GOLDEN_VASE} +1🉑"
         return ""
     if inventory_map.get("old_vase", 0) > 0:
         if random.random() * roll_scale < 0.05:
             await db_exec("UPDATE users SET rebirth_points = rebirth_points + 1 WHERE user_id = ?", (user_id,))
-            return f"\n{PREMIUM_OLD_VASE} Старая ваза: +1🉑!"
+            return f"\n{PREMIUM_OLD_VASE} +1🉑"
         return ""
     return ""
 
@@ -3950,7 +3959,7 @@ async def apply_godly_nogost_coin_case_proc(user_id: int, inventory_map: dict) -
         "UPDATE users SET score = score + 5000000, prestige_points = prestige_points + 100 WHERE user_id = ?",
         (user_id,),
     )
-    return f"\n{PREMIUM_GODLY_NOGOST_COIN} Монета Бога Ногости: УДАЧА! +100🔮 и +5 000 000 очков ноги!"
+    return f"\n{PREMIUM_GODLY_NOGOST_COIN} УДАЧА! +100🔮 +5 000 000 👣"
 
 async def apply_craft_coin_proc(user_id: int, inventory_map: dict) -> str:
     """🔘 Монета Крафта: пассивно (лёжа в инвентаре) шанс 5% при отправке в чат сообщения
@@ -3960,7 +3969,7 @@ async def apply_craft_coin_proc(user_id: int, inventory_map: dict) -> str:
     if random.random() >= 0.05:
         return ""
     await db_exec("UPDATE users SET craft_points = craft_points + 1 WHERE user_id = ?", (user_id,))
-    return f"\n{PREMIUM_CRAFT_COIN} Монета Крафта: +1💠 очко крафта!"
+    return f"\n{PREMIUM_CRAFT_COIN} +1💠"
 
 async def apply_bitcoin_proc(user_id: int, inventory_map: dict, bonus_chance: float = 0.0) -> str:
     """🟠 Биткоин: пассивно (лёжа в инвентаре) шанс 0.05% при базовом фарме ног дать
@@ -3971,7 +3980,7 @@ async def apply_bitcoin_proc(user_id: int, inventory_map: dict, bonus_chance: fl
     if random.random() >= 0.0005 + bonus_chance:
         return ""
     await db_exec("UPDATE users SET coins = coins + 15000000 WHERE user_id = ?", (user_id,))
-    return f"\n{PREMIUM_BITCOIN} Биткоин: КРИПТО-ДЖЕКПОТ! +15 000 000{PREMIUM_BITCOIN}!"
+    return f"\n{PREMIUM_BITCOIN} ДЖЕКПОТ! +15 000 000{PREMIUM_BITCOIN}"
 
 async def apply_rebirth_coin_proc(user_id: int, inventory_map: dict) -> str:
     """🟣 Монета Перерождения: пассивно (лёжа в инвентаре) при КАЖДОМ базовом фарме ног
@@ -3979,7 +3988,7 @@ async def apply_rebirth_coin_proc(user_id: int, inventory_map: dict) -> str:
     if inventory_map.get("rebirth_coin", 0) <= 0:
         return ""
     await db_exec("UPDATE users SET rebirth_points = rebirth_points + 2 WHERE user_id = ?", (user_id,))
-    return f"\n{PREMIUM_REBIRTH_COIN} Монета Перерождения: +2🉑!"
+    return f"\n{PREMIUM_REBIRTH_COIN} +2🉑"
 
 async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
     """🔮 Хвост Джевила: пока экипирован, при каждом фарме ног независимо проверяются все
@@ -3991,32 +4000,33 @@ async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
     lines = []
     reset_cd = False
     farm_extra_mult = random.uniform(CHRONOS_ORB_FARM_MULT_MIN, CHRONOS_ORB_FARM_MULT_MAX)
-    lines.append(f"\n🔮 Хвост Джевила: рандом-множитель фарма x{farm_extra_mult:.2f}")
+    lines.append(f"\n🔮 Хвост Джевила:")
+    lines.append(f"x{farm_extra_mult:.2f}")
 
     if random.random() < CHRONOS_ORB_REBIRTH_CHANCE:
         amount = random.randint(CHRONOS_ORB_REBIRTH_MIN, CHRONOS_ORB_REBIRTH_MAX)
         await db_exec("UPDATE users SET rebirth_points = rebirth_points + ? WHERE user_id = ?", (amount, user_id))
-        lines.append(f"🔮 Хвост Джевила: +{amount} 🉑!")
+        lines.append(f"+{amount} 🉑")
 
     if random.random() < CHRONOS_ORB_COIN_CHANCE:
         amount = random.randint(CHRONOS_ORB_COIN_MIN, CHRONOS_ORB_COIN_MAX)
         await db_exec("UPDATE users SET coins = coins + ? WHERE user_id = ?", (amount, user_id))
-        lines.append(f"🔮 Хвост Джевила: +{amount} 🪙!")
+        lines.append(f"+{amount} 🪙")
 
     if random.random() < CHRONOS_ORB_LEGS_CHANCE:
         amount = random.randint(CHRONOS_ORB_LEGS_MIN, CHRONOS_ORB_LEGS_MAX)
         await db_exec("UPDATE users SET score = score + ? WHERE user_id = ?", (amount, user_id))
-        lines.append(f"🔮 Хвост Джевила: +{amount} очков ноги!")
+        lines.append(f"+{amount} 👣")
 
     if random.random() < CHRONOS_ORB_NO_CD_CHANCE:
         reset_cd = True
-        lines.append("🔮 Хвост Джевила: кулдаун фермы обнулён!")
+        lines.append("кулдаун обнулён")
 
     if random.random() < CHRONOS_ORB_PRESTIGE_CHANCE:
         amount = random.randint(CHRONOS_ORB_PRESTIGE_MIN, CHRONOS_ORB_PRESTIGE_MAX)
         if amount > 0:
             await db_exec("UPDATE users SET prestige_points = prestige_points + ? WHERE user_id = ?", (amount, user_id))
-            lines.append(f"🔮 Хвост Джевила: +{amount} 🔮 очков престижа!")
+            lines.append(f"+{amount} 🔮")
 
     if random.random() < CHRONOS_ORB_POTION_CHANCE:
         potion_key = random.choice(POTION_ORDER)
@@ -4025,7 +4035,7 @@ async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
         stock[potion_key] = stock.get(potion_key, 0) + 1
         await db_exec("UPDATE users SET potion_stock = ? WHERE user_id = ?", (format_potion_stock(stock), user_id))
         cfg = POTIONS[potion_key]
-        lines.append(f"🔮 Хвост Джевила: +1 {cfg['emoji']} {esc(cfg['name'])}!")
+        lines.append(f"+1 {cfg['emoji']} {esc(cfg['name'])}")
 
     if random.random() < CHRONOS_ORB_BOOSTER_CHANCE:
         pool = _random_booster_pool()
@@ -4033,22 +4043,27 @@ async def apply_chronos_orb_procs(user_id: int, active_items) -> tuple:
             booster_key = random.choice(pool)
             await add_item(user_id, booster_key, 1)
             emoji, name, _, _ = ITEMS[booster_key]
-            lines.append(f"🔮 Хвост Джевила: +1 {emoji} {esc(name)}!")
+            lines.append(f"+1 {emoji} {esc(name)}")
 
     if random.random() < CHRONOS_ORB_BADGE_CHANCE:
         await add_promo_badge(user_id, "chaos_master")
         emoji, name = PROMO_BADGES["chaos_master"]
-        lines.append(f"🔮 Хвост Джевила: ПОЛУЧЕН БЕЙДЖ {emoji} «{esc(name)}»!!!")
+        lines.append(f"БЕЙДЖ {emoji} «{esc(name)}»!!!")
 
     if random.random() < CHRONOS_ORB_STRANGE_COIN_CHANCE:
         await add_item(user_id, "strange_coin", 1)
-        lines.append(f"🔮 Хвост Джевила: +1 {ITEMS['strange_coin'][0]} Странная монета!")
+        lines.append(f"+1 {ITEMS['strange_coin'][0]} Странная монета")
 
     if random.random() < CHRONOS_ORB_OLD_VASE_CHANCE:
         await add_item(user_id, "old_vase", 1)
-        lines.append(f"🔮 Хвост Джевила: +1 {ITEMS['old_vase'][0]} Старая ваза!")
+        lines.append(f"+1 {ITEMS['old_vase'][0]} Старая ваза")
 
-    return "\n".join(lines), reset_cd, farm_extra_mult
+    if len(lines) == 2:
+        # Только заголовок + множитель сработали, ни один из остальных бонусов не
+        # выпал — держим их на одной строке, чтобы не плодить пустой перенос
+        # "Хвост Джевила:" отдельно от "x2.50" без единого доп. эффекта рядом.
+        return f"{lines[0]} {lines[1]}", reset_cd, farm_extra_mult
+    return lines[0] + " " + " · ".join(lines[1:]), reset_cd, farm_extra_mult
 
 async def chronos_orb_boost_loop():
     """Фоновый таск: раз в CHRONOS_BOOST_INTERVAL (5 мин) пересчитывает рандомный % буста
@@ -5268,7 +5283,7 @@ async def count_legs(message: Message):
     if "potion_speed" in potions:
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
         total *= speed_mult
-        potion_text += f"\n🧪⚡ Зелье ускорения: x{speed_mult} к добыче!"
+        potion_text += f"\n🧪⚡ x{speed_mult}"
 
     chronos_text, _chronos_reset_cd, chronos_farm_mult = await apply_chronos_orb_procs(user_id, active_items)
     if chronos_farm_mult != 1.0:
@@ -5714,20 +5729,24 @@ async def send_rebirth_top(message: Message, chat_id, title: str):
 
 async def build_premium_coin_top(chat_id, column: str, limit: int = 10):
     """Топ по gold_coin/diamond_coin — эти поля вне USER_COLUMNS (см. комментарий у
-    ALTER TABLE), поэтому не переиспользуем build_top (он завязан на фиксированный
-    16-колоночный SELECT), а делаем отдельный минимальный запрос: username, nickname
-    и сама валюта. Без бейджей/эмодзи ноги — валюта пока нигде не используется,
-    усложнять топ не нужно. Исключает забаненных (game_banned), как и build_top."""
+    ALTER TABLE), поэтому не переиспользуем build_top как есть (он завязан на
+    фиксированный SELECT без gold_coin/diamond_coin), а делаем отдельный запрос:
+    та же колонка, что и build_top, плюс сама валюта — так топ гкоин/акоин может
+    показывать бейджи так же, как остальные топы (топ коин и т.д.), а не выглядеть
+    урезанной версией. Исключает забаненных (game_banned), как и build_top."""
     if chat_id is None:
         rows = await db_query(
-            f"SELECT username, nickname, {column} FROM users "
-            f"WHERE (game_banned IS NULL OR game_banned = 0) AND {column} > 0 "
+            f"SELECT username, nickname, {column}, evolution_level, cases_opened, total_farmed, vip_until, "
+            f"shown_badges, coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points, promo_badges "
+            f"FROM users WHERE (game_banned IS NULL OR game_banned = 0) AND {column} > 0 "
             f"ORDER BY {column} DESC LIMIT ?",
             (limit,),
         )
     else:
         rows = await db_query(
-            f"""SELECT u.username, u.nickname, u.{column} FROM users u
+            f"""SELECT u.username, u.nickname, u.{column}, u.evolution_level, u.cases_opened, u.total_farmed, u.vip_until,
+                    u.shown_badges, u.coins, u.rebirth_points, u.ultra_rebirth, u.bonus_streak, u.crafts_done, u.prestige_points, u.promo_badges
+                FROM users u
                 JOIN chat_members cm ON u.user_id = cm.user_id
                 WHERE cm.chat_id = ? AND (u.game_banned IS NULL OR u.game_banned = 0) AND u.{column} > 0
                 ORDER BY u.{column} DESC LIMIT ?""",
@@ -5735,14 +5754,22 @@ async def build_premium_coin_top(chat_id, column: str, limit: int = 10):
         )
     return rows
 
+def _format_premium_coin_top_line(i, row, emoji):
+    (username, nickname, coin_value, evolution_level, cases_opened, total_farmed, vip_until,
+     shown_badges, coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points, promo_badges_raw) = row
+    badges = get_badges(username, evolution_level, cases_opened, total_farmed, is_vip_active(vip_until),
+                         parse_shown(shown_badges), parse_promo_badges(promo_badges_raw), coins, rebirth_points,
+                         bool(ultra_rebirth), bonus_streak, crafts_done, prestige_points)
+    return f"{i}. {esc(display_name(username, nickname))}{badges} — {coin_value} {emoji}\n"
+
 async def send_gold_coin_top(message: Message, chat_id, title: str):
     rows = await build_premium_coin_top(chat_id, "gold_coin")
     if not rows:
         await message.reply(TEXTS["send_gold_coin_top_1"])
         return
     text = f"🌕 <b>{title}</b>\n\n"
-    for i, (username, nickname, gold_coin) in enumerate(rows, 1):
-        text += f"{i}. {esc(display_name(username, nickname))} — {gold_coin} 🌕\n"
+    for i, row in enumerate(rows, 1):
+        text += _format_premium_coin_top_line(i, row, "🌕")
     await message.reply(text)
 
 async def send_diamond_coin_top(message: Message, chat_id, title: str):
@@ -5751,23 +5778,23 @@ async def send_diamond_coin_top(message: Message, chat_id, title: str):
         await message.reply(TEXTS["send_diamond_coin_top_1"])
         return
     text = f"💎 <b>{title}</b>\n\n"
-    for i, (username, nickname, diamond_coin) in enumerate(rows, 1):
-        text += f"{i}. {esc(display_name(username, nickname))} — {diamond_coin} 💎\n"
+    for i, row in enumerate(rows, 1):
+        text += _format_premium_coin_top_line(i, row, "💎")
     await message.reply(text)
 
-@dp.message(F.text.lower() == "!топ гкоин")
+@dp.message(F.text.lower() == "топ гкоин")
 async def top_gold_coin_local(message: Message):
     await send_gold_coin_top(message, message.chat.id, "ТОП ГКОИН ЭТОГО ЧАТА")
 
-@dp.message(F.text.lower() == "!гл топ гкоин")
+@dp.message(F.text.lower() == "гл топ гкоин")
 async def top_gold_coin_global(message: Message):
     await send_gold_coin_top(message, None, "ТОП ГКОИН ВЕЗДЕ")
 
-@dp.message(F.text.lower() == "!топ акоин")
+@dp.message(F.text.lower() == "топ акоин")
 async def top_diamond_coin_local(message: Message):
     await send_diamond_coin_top(message, message.chat.id, "ТОП АКОИН ЭТОГО ЧАТА")
 
-@dp.message(F.text.lower() == "!гл топ акоин")
+@dp.message(F.text.lower() == "гл топ акоин")
 async def top_diamond_coin_global(message: Message):
     await send_diamond_coin_top(message, None, "ТОП АКОИН ВЕЗДЕ")
 
@@ -5887,7 +5914,7 @@ async def farm(message: Message):
     if "potion_speed" in potions:
         speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
         gained *= speed_mult
-        potion_text += f"\n🧪⚡ Зелье ускорения: x{speed_mult} к добыче!"
+        potion_text += f"\n🧪⚡ x{speed_mult}"
 
     chronos_text, chronos_reset_cd, chronos_farm_mult = await apply_chronos_orb_procs(user_id, active_items)
     if chronos_farm_mult != 1.0:
