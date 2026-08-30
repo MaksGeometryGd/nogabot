@@ -6,6 +6,7 @@ import os
 import random
 import re
 import time
+from collections import deque
 from datetime import datetime
 from urllib.parse import quote, unquote
 
@@ -631,6 +632,8 @@ TEXTS = {
     "send_evo_top_1": 'В топе пока пусто.',
     "send_coin_top_1": 'В топе пока пусто.',
     "send_rebirth_top_1": 'В топе пока пусто.',
+    "send_gold_coin_top_1": 'В топе гкоин пока пусто.',
+    "send_diamond_coin_top_1": 'В топе акоин пока пусто.',
     "require_subscription_1": '📝 Для работы на ферме нужно быть подписанным на канал.\nПодписывайтесь на канал и бегом обратно фармить',
     "farm_1": 'Ферма на кулдауне ⏳ Осталось {v0} мин {v1} сек',
     "farm_2": '{v0} 🦵 +{v1} очков (Всего: {v2}){v3}{v4}{v5}{v6}',
@@ -644,6 +647,14 @@ TEXTS = {
     "exchange_2": 'Количество монет должно быть больше нуля.',
     "exchange_3": 'Недостаточно очков. У тебя {v0}, максимум можешь обменять на {v1} 🪙.',
     "exchange_4": 'Обменял {v0} очков → +{v1} 🪙 монет (Всего монет: {v2}){v3}',
+    "gold_coin_exchange_1": 'Формат: обменять гкоин <количество>. Курс: 1000 🪙 = 1 📀 (указывай сколько 📀 хочешь получить).',
+    "gold_coin_exchange_2": 'Нужен обменник 1 лвл, чтобы обменивать на 📀 гкоин. Прокачай его в апгрейдах (апг).',
+    "gold_coin_exchange_3": 'Недостаточно монет. У тебя {v0} 🪙, нужно {v1} 🪙 на {v2} 📀. Максимум сейчас можешь получить {v3} 📀.',
+    "gold_coin_exchange_4": 'Обменял {v0} 🪙 → +{v1} 📀 (Всего гкоин: {v2})',
+    "diamond_coin_exchange_1": 'Формат: обменять акоин <количество>. Курс: 1000 📀 = 1 💎 (указывай сколько 💎 хочешь получить).',
+    "diamond_coin_exchange_2": 'Нужен обменник 2 лвл, чтобы обменивать на 💎 акоин. Прокачай его в апгрейдах (апг).',
+    "diamond_coin_exchange_3": 'Недостаточно гкоин. У тебя {v0} 📀, нужно {v1} 📀 на {v2} 💎. Максимум сейчас можешь получить {v3} 💎.',
+    "diamond_coin_exchange_4": 'Обменял {v0} 📀 → +{v1} 💎 (Всего акоин: {v2})',
     "transfer_currency_1": 'Ответь этой командой на сообщение того, кому передаёшь.',
     "transfer_currency_2": 'Нельзя передать самому себе.',
     "transfer_currency_3": 'Передавать можно только с 1 уровня эволюции.',
@@ -738,7 +749,7 @@ TEXTS = {
     ),
     "ultra_rebirth_cancelled_1": 'Ультра перерождение отменено — прогресс не тронут.',
     "ultra_rebirth_not_owner_1": 'Это не твоё подтверждение!',
-    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n💠 Очки крафта: <code>{v5}</code>\n{v4}',
+    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n📀 Гкоин: <code>{v6}</code>\n💎 Акоин: <code>{v7}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n💠 Очки крафта: <code>{v5}</code>\n{v4}',
     "admin_give_rebirth_1": 'Формат: !дать очкп <количество> [себе] (в ответ на сообщение игрока)',
     "admin_give_rebirth_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
     "admin_give_rebirth_3": 'Некорректное количество.',
@@ -934,6 +945,7 @@ TEXTS = {
     "cmd_ban_chat_1": 'Формат: !бан чат "название или начало названия".',
     "cmd_ban_chat_2": 'Ни один чат не начинается с "{v0}".',
     "cmd_ban_chat_3": '🚫 Уничтожено чатов: {v0}\n{v1}\n\nЗабанено игроков: {v2}\nБот покинул чатов: {v3}',
+    "flood_ban_1": '🚫 Уничтожен. Если бан случайный, можно попросить у @{v0} разбанить вас.',
 
     "admin_logs_1": 'Лог пуст.',
     "admin_logs_2": '📜 <b>Последние действия ({v0}):</b>\n{v1}',
@@ -1878,10 +1890,22 @@ UPGRADES = {
         "cost": _linear_cost(5, 5),
         "category": 3,
     },
-    "exchanger": {"name": "Обменник", "desc": "В разработке", "max_level": 2, "cost": None, "category": 3, "wip": True},
+    "exchanger": {
+        "name": "Обменник",
+        "desc": "1 лвл: открывает обмен на 📀 гкоин · 2 лвл: открывает обмен на 💎 акоин",
+        "max_level": 2,
+        "cost": lambda level: 100 if level == 1 else 10000,
+        "extra_cost": lambda level: ("coins", 10000) if level == 1 else ("gold_coin", 10000),
+        "category": 3,
+    },
 }
 UPGRADE_ORDER = list(UPGRADES.keys())
 UPGRADE_CATEGORIES = {1: "🌾 Ферма", 2: "🎒 Экономика", 3: "🔨 Крафты и прочее"}
+UPGRADE_EXTRA_CURRENCY_LABELS = {
+    "craft_points": "💠 очков крафта",
+    "coins": "🪙 монет",
+    "gold_coin": "📀 гкоин",
+}
 
 def _prestige_cost(base: int, growth: float):
     return lambda level: round(base * (growth ** (level - 1)))
@@ -2037,6 +2061,8 @@ EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT}$", re.IGNORECASE)
 REVERSE_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} коин$", re.IGNORECASE)
 CRAFT_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} (?:крафт|очкк)$", re.IGNORECASE)
 CRAFT_EXCHANGE_TO_RE = re.compile(rf"^обменять (?:крафт|очкк) {AMOUNT}$", re.IGNORECASE)
+GOLD_COIN_EXCHANGE_RE = re.compile(rf"^обменять (?:гкоин|голдкоин) {AMOUNT}$", re.IGNORECASE)
+DIAMOND_COIN_EXCHANGE_RE = re.compile(rf"^обменять (?:акоин|алмкоин|алмазкоин) {AMOUNT}$", re.IGNORECASE)
 CASE_NUM_RE = re.compile(r"^кейс (\d+)$", re.IGNORECASE)
 INFO_RE = re.compile(r"^инфо\s+@?(\w+)$", re.IGNORECASE)
 NICK_SET_RE = re.compile(r"^\+ник\s+(.+)$", re.IGNORECASE)
@@ -2086,7 +2112,7 @@ FIXED_COMMANDS = {
     "мои предметы", "предметы", "мои бустеры", "бустеры", "мой инвентарь", "-ник",
     "мои зелья", "зелья",
     "!список вип", "!список ников", "!список чат", "!логи", "!логи вся", "!пинг", "!ивент стоп", "!ивент статус",
-    "!игроки",
+    "!игроки", "!топ гкоин", "!гл топ гкоин", "!топ акоин", "!гл топ акоин",
     "ультра перерождение", "ультра перерождение подтверждаю",
     "авто эво вкл", "авто эво выкл", "авто эволюция вкл", "авто эволюция выкл",
     "авто перерождение вкл", "авто перерождение выкл", "авто рб вкл", "авто рб выкл",
@@ -3423,6 +3449,8 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN kotyara_boost_until INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN game_banned INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN game_banned_snapshot TEXT DEFAULT NULL",
+        "ALTER TABLE users ADD COLUMN gold_coin INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN diamond_coin INTEGER DEFAULT 0",
     ):
         try:
             await db_exec(stmt)
@@ -4233,6 +4261,61 @@ def get_chat(event):
 
 _leg_farm_last: dict = {}
 
+FLOOD_WINDOW_SECONDS = 3
+FLOOD_MESSAGE_LIMIT = 10
+_flood_timestamps: dict = {}
+
+class FloodBanMiddleware(BaseMiddleware):
+    """Защита от 'продвинутых' спам-плагинов, которые шлют произвольный текст без
+    узнаваемых команд (в отличие от PluginSpamMiddleware, которая ловит именно
+    '.spam'-подобные команды) — тут триггер чисто по ЧАСТОТЕ: FLOOD_MESSAGE_LIMIT
+    сообщений за FLOOD_WINDOW_SECONDS от одного юзера = автобан, независимо от
+    текста. Скользящее окно на deque timestamps в памяти (не в БД — на такой
+    частоте лишний запрос в БД на каждое сообщение был бы дороже самой защиты).
+    Стоит САМОЙ ПЕРВОЙ (даже раньше ChatBanMiddleware/GameBanMiddleware), чтобы
+    считать вообще все входящие сообщения от юзера, а не только те, что прошли
+    остальные фильтры — иначе флудер мог бы 'прятать' часть сообщений от счётчика.
+    В отличие от остальных автобанов, юзер получает объяснение с контактом
+    овнера (FLOOD_WINDOW_SECONDS достаточно мал, что случайный частый фарм
+    маловероятен, но всё же не исключён — например, двойные тапы по кнопкам).
+
+    Компромисс по памяти: _flood_timestamps не чистит записи неактивных юзеров
+    (после окна там остаётся deque с 1 старым timestamp навсегда) — на масштабах
+    этого бота это несколько байт на когда-либо писавшего юзера, не критично;
+    если игроков станет на порядки больше, стоит добавить периодическую очистку
+    по last-seen."""
+    async def __call__(self, handler, event, data):
+        if not isinstance(event, Message) or not event.from_user:
+            return await handler(event, data)
+        user = event.from_user
+        if user.id == ADMIN_USER_ID or user.is_bot:
+            return await handler(event, data)
+        if user.id in _game_banned_ids:
+            return await handler(event, data)
+
+        now = time.monotonic()
+        stamps = _flood_timestamps.get(user.id)
+        if stamps is None:
+            stamps = deque()
+            _flood_timestamps[user.id] = stamps
+        stamps.append(now)
+        while stamps and now - stamps[0] > FLOOD_WINDOW_SECONDS:
+            stamps.popleft()
+
+        if len(stamps) < FLOOD_MESSAGE_LIMIT:
+            return await handler(event, data)
+
+        _flood_timestamps.pop(user.id, None)
+        await _apply_game_ban(user.id, user.username)
+        chat = event.chat
+        if chat.type in ("group", "supergroup"):
+            await track_membership(user.id, chat.id)
+        try:
+            await event.reply(TEXTS["flood_ban_1"].format(v0=ADMIN_USERNAME))
+        except Exception:
+            pass
+        return
+
 class ChatBanMiddleware(BaseMiddleware):
     """Полный чёрный список чатов (!бан чат "название"): бот вообще не реагирует
     ни на что из забаненного чата — ни командами, ни ответом на callback_query.
@@ -4457,6 +4540,7 @@ dp.callback_query.outer_middleware(ChatBanMiddleware())
 dp.callback_query.outer_middleware(GameBanMiddleware())
 dp.callback_query.middleware(StaleCallbackGuardMiddleware())
 
+dp.message.outer_middleware(FloodBanMiddleware())
 dp.message.outer_middleware(ChatBanMiddleware())
 dp.message.outer_middleware(GameBanMiddleware())
 dp.message.outer_middleware(AliasNormalizeMiddleware())
@@ -5309,6 +5393,8 @@ async def my_profile(message: Message):
     ultra_rebirth = bool(row[21])
     vip_active = is_vip_active(vip_until)
     shown_name = display_name(username, nickname)
+    gc_row = await db_query_one("SELECT gold_coin, diamond_coin FROM users WHERE user_id = ?", (user_id,))
+    gold_coin, diamond_coin = gc_row if gc_row else (0, 0)
 
     level = get_level_index(score, evolution_level, rebirth_count, ultra_rebirth)
     emoji, name, show_level = get_level_visual(level)
@@ -5335,6 +5421,10 @@ async def my_profile(message: Message):
     ultra_line = "🌌 <b>Статус: После Ультра перерождения</b>\n" if ultra_rebirth else ""
     equipped_names = [ITEMS[k][1] for k in (active_items) if k and k in ITEMS]
     equip_line = ("● Экипировано:\n" + "\n".join(f"  {n}" for n in equipped_names) + "\n") if equipped_names else ""
+    premium_coins_line = (
+        f"● Гкоин: <code>{gold_coin}</code> 📀 · Акоин: <code>{diamond_coin}</code> 💎\n"
+        if (gold_coin or diamond_coin) else ""
+    )
 
     text = (
         f"👣 <b>ТВОЯ ЛЮТАЯ НОГОСТЬ, {esc(shown_name)}:</b>\n"
@@ -5342,6 +5432,7 @@ async def my_profile(message: Message):
         f"{ultra_line}"
         f"● Очки: <code>{score}</code>\n"
         f"● Монеты: <code>{coins}</code> 🪙\n"
+        f"{premium_coins_line}"
         f"● Вид ног: {emoji}{name_part}\n"
         f"{lvl_line}"
         f"● Уровень эволюции: {evolution_level}\n"
@@ -5390,12 +5481,19 @@ async def info_player(message: Message):
     vip_text = "активен" if vip_active else "не активен"
     badges = get_badges(username, evolution_level, cases_opened, total_farmed, vip_active, shown, promo_badges,
                          coins, rebirth_points, ultra_rebirth, bonus_streak, crafts_done, prestige_points)
+    gc_row = await db_query_one("SELECT gold_coin, diamond_coin FROM users WHERE user_id = ?", (row[0],))
+    gold_coin, diamond_coin = gc_row if gc_row else (0, 0)
+    premium_coins_line = (
+        f"● Гкоин: <code>{gold_coin}</code> 📀 · Акоин: <code>{diamond_coin}</code> 💎\n"
+        if (gold_coin or diamond_coin) else ""
+    )
 
     text = (
         f"👣 <b>Инфо об игроке {esc(shown_name)}{badges}:</b>\n"
         f"● Нога: {emoji}{name_part}{lvl_part}\n"
         f"● Очки: <code>{score}</code>\n"
         f"● Монеты: <code>{coins}</code> 🪙\n"
+        f"{premium_coins_line}"
         f"● Уровень эволюции: {evolution_level}\n"
         f"● VIP: {vip_text}"
     )
@@ -5613,6 +5711,65 @@ async def send_rebirth_top(message: Message, chat_id, title: str):
         text += f"{i}. {esc(display_name(username, nickname))}{badges} — {rebirth_points} 🉑 (перерождений: {rebirth_count})\n"
 
     await message.reply(text)
+
+async def build_premium_coin_top(chat_id, column: str, limit: int = 10):
+    """Топ по gold_coin/diamond_coin — эти поля вне USER_COLUMNS (см. комментарий у
+    ALTER TABLE), поэтому не переиспользуем build_top (он завязан на фиксированный
+    16-колоночный SELECT), а делаем отдельный минимальный запрос: username, nickname
+    и сама валюта. Без бейджей/эмодзи ноги — валюта пока нигде не используется,
+    усложнять топ не нужно. Исключает забаненных (game_banned), как и build_top."""
+    if chat_id is None:
+        rows = await db_query(
+            f"SELECT username, nickname, {column} FROM users "
+            f"WHERE (game_banned IS NULL OR game_banned = 0) AND {column} > 0 "
+            f"ORDER BY {column} DESC LIMIT ?",
+            (limit,),
+        )
+    else:
+        rows = await db_query(
+            f"""SELECT u.username, u.nickname, u.{column} FROM users u
+                JOIN chat_members cm ON u.user_id = cm.user_id
+                WHERE cm.chat_id = ? AND (u.game_banned IS NULL OR u.game_banned = 0) AND u.{column} > 0
+                ORDER BY u.{column} DESC LIMIT ?""",
+            (chat_id, limit),
+        )
+    return rows
+
+async def send_gold_coin_top(message: Message, chat_id, title: str):
+    rows = await build_premium_coin_top(chat_id, "gold_coin")
+    if not rows:
+        await message.reply(TEXTS["send_gold_coin_top_1"])
+        return
+    text = f"📀 <b>{title}</b>\n\n"
+    for i, (username, nickname, gold_coin) in enumerate(rows, 1):
+        text += f"{i}. {esc(display_name(username, nickname))} — {gold_coin} 📀\n"
+    await message.reply(text)
+
+async def send_diamond_coin_top(message: Message, chat_id, title: str):
+    rows = await build_premium_coin_top(chat_id, "diamond_coin")
+    if not rows:
+        await message.reply(TEXTS["send_diamond_coin_top_1"])
+        return
+    text = f"💎 <b>{title}</b>\n\n"
+    for i, (username, nickname, diamond_coin) in enumerate(rows, 1):
+        text += f"{i}. {esc(display_name(username, nickname))} — {diamond_coin} 💎\n"
+    await message.reply(text)
+
+@dp.message(F.text.lower() == "!топ гкоин")
+async def top_gold_coin_local(message: Message):
+    await send_gold_coin_top(message, message.chat.id, "ТОП ГКОИН ЭТОГО ЧАТА")
+
+@dp.message(F.text.lower() == "!гл топ гкоин")
+async def top_gold_coin_global(message: Message):
+    await send_gold_coin_top(message, None, "ТОП ГКОИН ВЕЗДЕ")
+
+@dp.message(F.text.lower() == "!топ акоин")
+async def top_diamond_coin_local(message: Message):
+    await send_diamond_coin_top(message, message.chat.id, "ТОП АКОИН ЭТОГО ЧАТА")
+
+@dp.message(F.text.lower() == "!гл топ акоин")
+async def top_diamond_coin_global(message: Message):
+    await send_diamond_coin_top(message, None, "ТОП АКОИН ВЕЗДЕ")
 
 @dp.message(F.text.lower() == "топ ног")
 async def top_legs_local(message: Message):
@@ -5975,6 +6132,81 @@ async def craft_exchange_to(message: Message):
     await message.reply(
         f"Обменял {rebirth_cost} 🉑 → +{craft_wanted} 💠 очков крафта (Всего: {new_craft_points})"
     )
+
+GOLD_COIN_RATE = 1000
+DIAMOND_COIN_RATE = 1000
+
+@dp.message(F.text.regexp(GOLD_COIN_EXCHANGE_RE))
+async def gold_coin_exchange(message: Message):
+    """обменять гкоин/голдкоин <кол-во> -> <кол-во> это сколько 📀 гкоин хочешь ПОЛУЧИТЬ.
+    Курс: GOLD_COIN_RATE 🪙 = 1 📀. Требует обменник (exchanger) 1+ лвл — без него
+    команда недоступна, апгрейд покупается в апгрейдах за 🉑+🪙 (см. UPGRADES['exchanger'])."""
+    match = GOLD_COIN_EXCHANGE_RE.match(message.text.strip())
+    gold_wanted = parse_amount(match.group(1))
+    if not gold_wanted or gold_wanted <= 0:
+        await message.reply(TEXTS["gold_coin_exchange_1"])
+        return
+
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    coins = row[5]
+    upgrades = parse_upgrades(row[16])
+    if upgrade_level(upgrades, "exchanger") < 1:
+        await message.reply(TEXTS["gold_coin_exchange_2"])
+        return
+
+    coin_cost = gold_wanted * GOLD_COIN_RATE
+    if coin_cost > coins:
+        max_affordable = coins // GOLD_COIN_RATE
+        await message.reply(TEXTS["gold_coin_exchange_3"].format(v0=coins, v1=coin_cost, v2=gold_wanted, v3=max_affordable))
+        return
+
+    gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (user_id,))
+    new_gold_coin = (gc_row[0] if gc_row else 0) + gold_wanted
+    new_coins = coins - coin_cost
+    await db_exec(
+        "UPDATE users SET coins = ?, gold_coin = ? WHERE user_id = ?",
+        (new_coins, new_gold_coin, user_id),
+    )
+    await message.reply(TEXTS["gold_coin_exchange_4"].format(v0=coin_cost, v1=gold_wanted, v2=new_gold_coin))
+
+@dp.message(F.text.regexp(DIAMOND_COIN_EXCHANGE_RE))
+async def diamond_coin_exchange(message: Message):
+    """обменять акоин/алмкоин/алмазкоин <кол-во> -> <кол-во> это сколько 💎 акоин хочешь
+    ПОЛУЧИТЬ. Курс: DIAMOND_COIN_RATE 📀 = 1 💎. Требует обменник 2 лвл."""
+    match = DIAMOND_COIN_EXCHANGE_RE.match(message.text.strip())
+    diamond_wanted = parse_amount(match.group(1))
+    if not diamond_wanted or diamond_wanted <= 0:
+        await message.reply(TEXTS["diamond_coin_exchange_1"])
+        return
+
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    upgrades = parse_upgrades(row[16])
+    if upgrade_level(upgrades, "exchanger") < 2:
+        await message.reply(TEXTS["diamond_coin_exchange_2"])
+        return
+
+    gc_row = await db_query_one("SELECT gold_coin, diamond_coin FROM users WHERE user_id = ?", (user_id,))
+    gold_coin, diamond_coin = gc_row if gc_row else (0, 0)
+
+    gold_cost = diamond_wanted * DIAMOND_COIN_RATE
+    if gold_cost > gold_coin:
+        max_affordable = gold_coin // DIAMOND_COIN_RATE
+        await message.reply(TEXTS["diamond_coin_exchange_3"].format(v0=gold_coin, v1=gold_cost, v2=diamond_wanted, v3=max_affordable))
+        return
+
+    new_gold_coin = gold_coin - gold_cost
+    new_diamond_coin = diamond_coin + diamond_wanted
+    await db_exec(
+        "UPDATE users SET gold_coin = ?, diamond_coin = ? WHERE user_id = ?",
+        (new_gold_coin, new_diamond_coin, user_id),
+    )
+    await message.reply(TEXTS["diamond_coin_exchange_4"].format(v0=gold_cost, v1=diamond_wanted, v2=new_diamond_coin))
 
 @dp.message(F.text.lower().startswith("обменять "))
 async def exchange(message: Message):
@@ -7605,6 +7837,12 @@ def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int,
     )
     return header
 
+UPGRADE_EXTRA_CURRENCY_EMOJI = {
+    "craft_points": plain_emoji(PREMIUM_CRAFT_POINT),
+    "coins": "🪙",
+    "gold_coin": "📀",
+}
+
 def upgrade_page_keyboard(upgrades: dict, user_id: int, category: int) -> InlineKeyboardMarkup:
     rows = []
     for key in UPGRADE_ORDER:
@@ -7622,7 +7860,7 @@ def upgrade_page_keyboard(upgrades: dict, user_id: int, category: int) -> Inline
             rows.append([InlineKeyboardButton(text=label, callback_data="upg_noop")])
         else:
             extra = upgrade_next_extra_cost(key, upgrades)
-            extra_part = f" + {extra[1]} {plain_emoji(PREMIUM_CRAFT_POINT)}" if extra else ""
+            extra_part = f" + {extra[1]} {UPGRADE_EXTRA_CURRENCY_EMOJI.get(extra[0], '')}" if extra else ""
             label = f"{cfg['name']} — {level}/{cfg['max_level']} ({cost} 🉑{extra_part})"
             rows.append([InlineKeyboardButton(text=label, callback_data=f"upg_buy:{user_id}:{category}:{key}")])
 
@@ -7687,6 +7925,7 @@ async def upgrade_buy(callback: CallbackQuery):
     upgrades = parse_upgrades(row[16])
     rebirth_points = row[14]
     craft_points = row[32]
+    coins = row[5]
     cost = upgrade_next_cost(key, upgrades)
 
     if cost is None:
@@ -7698,9 +7937,24 @@ async def upgrade_buy(callback: CallbackQuery):
 
     extra = upgrade_next_extra_cost(key, upgrades)
     extra_field, extra_amount = (extra if extra else (None, 0))
-    if extra_field == "craft_points" and craft_points < extra_amount:
+    # UPGRADE_EXTRA_CURRENCY_LABELS: описание для любой валюты, которая может
+    # встретиться в extra_cost апгрейдов (не только craft_points, как было раньше
+    # захардкожено) — эмодзи+название для алерта, и откуда брать текущий баланс.
+    # gold_coin не входит в USER_COLUMNS (см. комментарий у ALTER TABLE), поэтому
+    # для него читаем баланс отдельным запросом, а не из row.
+    extra_balance = None
+    if extra_field == "craft_points":
+        extra_balance = craft_points
+    elif extra_field == "coins":
+        extra_balance = coins
+    elif extra_field == "gold_coin":
+        gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (owner_id,))
+        extra_balance = gc_row[0] if gc_row else 0
+
+    if extra_field and extra_balance < extra_amount:
+        label = UPGRADE_EXTRA_CURRENCY_LABELS.get(extra_field, extra_field)
         await callback.answer(
-            f"Нужно {extra_amount} 💠 очков крафта, у тебя {craft_points}.", show_alert=True
+            f"Нужно {extra_amount} {label}, у тебя {extra_balance}.", show_alert=True
         )
         return
 
@@ -7711,6 +7965,10 @@ async def upgrade_buy(callback: CallbackQuery):
         "UPDATE users SET rebirth_points = ?, upgrades = ?, craft_points = ? WHERE user_id = ?",
         (new_points, format_upgrades(upgrades), new_craft_points, owner_id),
     )
+    if extra_field == "coins":
+        await db_exec("UPDATE users SET coins = coins - ? WHERE user_id = ?", (extra_amount, owner_id))
+    elif extra_field == "gold_coin":
+        await db_exec("UPDATE users SET gold_coin = gold_coin - ? WHERE user_id = ?", (extra_amount, owner_id))
 
     await safe_edit_text(callback, 
         format_upgrade_page_text(upgrades, new_points, category, new_craft_points),
@@ -8062,12 +8320,15 @@ async def show_balance(message: Message):
     rebirth_points, rebirth_count = row[14], row[15]
     craft_points = row[32]
     vip_active = is_vip_active(vip_until)
+    gc_row = await db_query_one("SELECT gold_coin, diamond_coin FROM users WHERE user_id = ?", (user_id,))
+    gold_coin, diamond_coin = gc_row if gc_row else (0, 0)
 
     vip_line = f"{PREMIUM_VIP_BADGE} VIP активен" if vip_active else "VIP не активен"
 
     await message.reply(
         TEXTS["show_balance_1"].format(
-            v0=score, v1=coins, v2=rebirth_points, v3=rebirth_count, v4=vip_line, v5=craft_points
+            v0=score, v1=coins, v2=rebirth_points, v3=rebirth_count, v4=vip_line, v5=craft_points,
+            v6=gold_coin, v7=diamond_coin,
         )
     )
 
