@@ -749,7 +749,7 @@ TEXTS = {
     ),
     "ultra_rebirth_cancelled_1": 'Ультра перерождение отменено — прогресс не тронут.',
     "ultra_rebirth_not_owner_1": 'Это не твоё подтверждение!',
-    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n📀 Гкоин: <code>{v6}</code>\n💎 Акоин: <code>{v7}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n💠 Очки крафта: <code>{v5}</code>\n{v4}',
+    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n📀 Голд коин: <code>{v6}</code>\n💎 Алмаз коин: <code>{v7}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n💠 Очки крафта: <code>{v5}</code>\n{v4}',
     "admin_give_rebirth_1": 'Формат: !дать очкп <количество> [себе] (в ответ на сообщение игрока)',
     "admin_give_rebirth_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
     "admin_give_rebirth_3": 'Некорректное количество.',
@@ -5422,7 +5422,7 @@ async def my_profile(message: Message):
     equipped_names = [ITEMS[k][1] for k in (active_items) if k and k in ITEMS]
     equip_line = ("● Экипировано:\n" + "\n".join(f"  {n}" for n in equipped_names) + "\n") if equipped_names else ""
     premium_coins_line = (
-        f"● Гкоин: <code>{gold_coin}</code> 📀 · Акоин: <code>{diamond_coin}</code> 💎\n"
+        f"● Голд коин: <code>{gold_coin}</code> 📀 · Алмаз коин: <code>{diamond_coin}</code> 💎\n"
         if (gold_coin or diamond_coin) else ""
     )
 
@@ -5484,7 +5484,7 @@ async def info_player(message: Message):
     gc_row = await db_query_one("SELECT gold_coin, diamond_coin FROM users WHERE user_id = ?", (row[0],))
     gold_coin, diamond_coin = gc_row if gc_row else (0, 0)
     premium_coins_line = (
-        f"● Гкоин: <code>{gold_coin}</code> 📀 · Акоин: <code>{diamond_coin}</code> 💎\n"
+        f"● Голд коин: <code>{gold_coin}</code> 📀 · Алмаз коин: <code>{diamond_coin}</code> 💎\n"
         if (gold_coin or diamond_coin) else ""
     )
 
@@ -7827,12 +7827,19 @@ async def toggle_event(message: Message):
     else:
         await message.reply(TEXTS["toggle_event_2"])
 
-def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int, craft_points: int = 0) -> str:
+def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int, craft_points: int = 0,
+                              coins: int = 0, gold_coin: int = 0) -> str:
     craft_line = f"💠 Очки крафта: <code>{craft_points}</code>\n" if category == 3 else ""
+    # Обменник (категория 3) тратит 🪙/📀 как доп. валюту (см. UPGRADES['exchanger']),
+    # поэтому в этой вкладке показываем их баланс так же, как очки крафта — иначе
+    # игрок не видит, хватает ли ему монет/гкоин на следующий уровень, не открывая
+    # отдельно "баланс".
+    coins_line = f"🪙 Монеты: <code>{coins}</code>\n📀 Голд коин: <code>{gold_coin}</code>\n" if category == 3 else ""
     header = (
         f"⚙️ <b>МЕНЮ ПРОКАЧКИ</b> — {UPGRADE_CATEGORIES[category]}\n"
         f"🉑 Очки перерождения: <code>{rebirth_points}</code>\n"
         f"{craft_line}"
+        f"{coins_line}"
         f"━━━━━━━━━━━━━━━━━━\n"
     )
     return header
@@ -7880,9 +7887,12 @@ async def upgrade_menu(message: Message):
     upgrades = parse_upgrades(row[16])
     rebirth_points = row[14]
     craft_points = row[32]
+    coins = row[5]
+    gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (user_id,))
+    gold_coin = gc_row[0] if gc_row else 0
 
     await message.reply(
-        format_upgrade_page_text(upgrades, rebirth_points, 1, craft_points),
+        format_upgrade_page_text(upgrades, rebirth_points, 1, craft_points, coins, gold_coin),
         reply_markup=upgrade_page_keyboard(upgrades, user_id, 1),
     )
 
@@ -7904,8 +7914,11 @@ async def upgrade_change_page(callback: CallbackQuery):
     upgrades = parse_upgrades(row[16])
     rebirth_points = row[14]
     craft_points = row[32]
+    coins = row[5]
+    gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (owner_id,))
+    gold_coin = gc_row[0] if gc_row else 0
     await safe_edit_text(callback, 
-        format_upgrade_page_text(upgrades, rebirth_points, category, craft_points),
+        format_upgrade_page_text(upgrades, rebirth_points, category, craft_points, coins, gold_coin),
         reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
     )
 
@@ -7961,6 +7974,8 @@ async def upgrade_buy(callback: CallbackQuery):
     upgrades[key] = upgrade_level(upgrades, key) + 1
     new_points = rebirth_points - cost
     new_craft_points = craft_points - extra_amount if extra_field == "craft_points" else craft_points
+    new_coins = coins - extra_amount if extra_field == "coins" else coins
+    new_gold_coin = (extra_balance - extra_amount) if extra_field == "gold_coin" else None
     await db_exec(
         "UPDATE users SET rebirth_points = ?, upgrades = ?, craft_points = ? WHERE user_id = ?",
         (new_points, format_upgrades(upgrades), new_craft_points, owner_id),
@@ -7970,8 +7985,12 @@ async def upgrade_buy(callback: CallbackQuery):
     elif extra_field == "gold_coin":
         await db_exec("UPDATE users SET gold_coin = gold_coin - ? WHERE user_id = ?", (extra_amount, owner_id))
 
+    if new_gold_coin is None:
+        gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (owner_id,))
+        new_gold_coin = gc_row[0] if gc_row else 0
+
     await safe_edit_text(callback, 
-        format_upgrade_page_text(upgrades, new_points, category, new_craft_points),
+        format_upgrade_page_text(upgrades, new_points, category, new_craft_points, new_coins, new_gold_coin),
         reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
     )
     await callback.answer(TEXTS["upgrade_buy_5"].format(v0=UPGRADES[key]['name'], v1=upgrades[key]))
