@@ -647,14 +647,14 @@ TEXTS = {
     "exchange_2": 'Количество монет должно быть больше нуля.',
     "exchange_3": 'Недостаточно очков. У тебя {v0}, максимум можешь обменять на {v1} 🪙.',
     "exchange_4": 'Обменял {v0} очков → +{v1} 🪙 монет (Всего монет: {v2}){v3}',
-    "gold_coin_exchange_1": 'Формат: обменять гкоин <количество>. Курс: 1000 🪙 = 1 📀 (указывай сколько 📀 хочешь получить).',
-    "gold_coin_exchange_2": 'Нужен обменник 1 лвл, чтобы обменивать на 📀 гкоин. Прокачай его в апгрейдах (апг).',
-    "gold_coin_exchange_3": 'Недостаточно монет. У тебя {v0} 🪙, нужно {v1} 🪙 на {v2} 📀. Максимум сейчас можешь получить {v3} 📀.',
-    "gold_coin_exchange_4": 'Обменял {v0} 🪙 → +{v1} 📀 (Всего гкоин: {v2})',
-    "diamond_coin_exchange_1": 'Формат: обменять акоин <количество>. Курс: 1000 📀 = 1 💎 (указывай сколько 💎 хочешь получить).',
+    "gold_coin_exchange_1": 'Формат: обменять гкоин <количество>. Курс: 1000 🪙 = 1 🌕 (указывай сколько 🌕 хочешь получить).',
+    "gold_coin_exchange_2": 'Нужен обменник 1 лвл, чтобы обменивать на 🌕 гкоин. Прокачай его в апгрейдах (апг).',
+    "gold_coin_exchange_3": 'Недостаточно монет. У тебя {v0} 🪙, нужно {v1} 🪙 на {v2} 🌕. Максимум сейчас можешь получить {v3} 🌕.',
+    "gold_coin_exchange_4": 'Обменял {v0} 🪙 → +{v1} 🌕 (Всего гкоин: {v2})',
+    "diamond_coin_exchange_1": 'Формат: обменять акоин <количество>. Курс: 1000 🌕 = 1 💎 (указывай сколько 💎 хочешь получить).',
     "diamond_coin_exchange_2": 'Нужен обменник 2 лвл, чтобы обменивать на 💎 акоин. Прокачай его в апгрейдах (апг).',
-    "diamond_coin_exchange_3": 'Недостаточно гкоин. У тебя {v0} 📀, нужно {v1} 📀 на {v2} 💎. Максимум сейчас можешь получить {v3} 💎.',
-    "diamond_coin_exchange_4": 'Обменял {v0} 📀 → +{v1} 💎 (Всего акоин: {v2})',
+    "diamond_coin_exchange_3": 'Недостаточно гкоин. У тебя {v0} 🌕, нужно {v1} 🌕 на {v2} 💎. Максимум сейчас можешь получить {v3} 💎.',
+    "diamond_coin_exchange_4": 'Обменял {v0} 🌕 → +{v1} 💎 (Всего акоин: {v2})',
     "transfer_currency_1": 'Ответь этой командой на сообщение того, кому передаёшь.',
     "transfer_currency_2": 'Нельзя передать самому себе.',
     "transfer_currency_3": 'Передавать можно только с 1 уровня эволюции.',
@@ -749,7 +749,7 @@ TEXTS = {
     ),
     "ultra_rebirth_cancelled_1": 'Ультра перерождение отменено — прогресс не тронут.',
     "ultra_rebirth_not_owner_1": 'Это не твоё подтверждение!',
-    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n📀 Голд коин: <code>{v6}</code>\n💎 Алмаз коин: <code>{v7}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n💠 Очки крафта: <code>{v5}</code>\n{v4}',
+    "show_balance_1": '💰 <b>Твой баланс</b>\n━━━━━━━━━━━━━━━━━━\n👣 Очки ноги: <code>{v0}</code>\n🪙 Монеты: <code>{v1}</code>\n🌕 Голд коин: <code>{v6}</code>\n💎 Алмаз коин: <code>{v7}</code>\n🉑 Очки перерождения: <code>{v2}</code> (перерождений: {v3})\n💠 Очки крафта: <code>{v5}</code>\n{v4}',
     "admin_give_rebirth_1": 'Формат: !дать очкп <количество> [себе] (в ответ на сообщение игрока)',
     "admin_give_rebirth_2": 'Ответь этой командой на сообщение игрока, либо допиши «себе».',
     "admin_give_rebirth_3": 'Некорректное количество.',
@@ -1892,7 +1892,7 @@ UPGRADES = {
     },
     "exchanger": {
         "name": "Обменник",
-        "desc": "1 лвл: открывает обмен на 📀 гкоин · 2 лвл: открывает обмен на 💎 акоин",
+        "desc": "1 лвл: открывает обмен на 🌕 гкоин · 2 лвл: открывает обмен на 💎 акоин",
         "max_level": 2,
         "cost": lambda level: 100 if level == 1 else 10000,
         "extra_cost": lambda level: ("coins", 10000) if level == 1 else ("gold_coin", 10000),
@@ -1904,7 +1904,7 @@ UPGRADE_CATEGORIES = {1: "🌾 Ферма", 2: "🎒 Экономика", 3: "�
 UPGRADE_EXTRA_CURRENCY_LABELS = {
     "craft_points": "💠 очков крафта",
     "coins": "🪙 монет",
-    "gold_coin": "📀 гкоин",
+    "gold_coin": "🌕 гкоин",
 }
 
 def _prestige_cost(base: int, growth: float):
@@ -4544,8 +4544,8 @@ dp.message.outer_middleware(FloodBanMiddleware())
 dp.message.outer_middleware(ChatBanMiddleware())
 dp.message.outer_middleware(GameBanMiddleware())
 dp.message.outer_middleware(AliasNormalizeMiddleware())
-dp.message.middleware(SpamProtectionMiddleware())
-dp.message.middleware(PluginSpamMiddleware())
+dp.message.outer_middleware(SpamProtectionMiddleware())
+dp.message.outer_middleware(PluginSpamMiddleware())
 dp.message.middleware(TrackMembershipMiddleware())
 dp.message.middleware(ThrottleMiddleware(0.6))
 dp.callback_query.middleware(CallbackThrottleMiddleware(0.15))
@@ -5422,7 +5422,7 @@ async def my_profile(message: Message):
     equipped_names = [ITEMS[k][1] for k in (active_items) if k and k in ITEMS]
     equip_line = ("● Экипировано:\n" + "\n".join(f"  {n}" for n in equipped_names) + "\n") if equipped_names else ""
     premium_coins_line = (
-        f"● Голд коин: <code>{gold_coin}</code> 📀 · Алмаз коин: <code>{diamond_coin}</code> 💎\n"
+        f"● Голд коин: <code>{gold_coin}</code> 🌕 · Алмаз коин: <code>{diamond_coin}</code> 💎\n"
         if (gold_coin or diamond_coin) else ""
     )
 
@@ -5484,7 +5484,7 @@ async def info_player(message: Message):
     gc_row = await db_query_one("SELECT gold_coin, diamond_coin FROM users WHERE user_id = ?", (row[0],))
     gold_coin, diamond_coin = gc_row if gc_row else (0, 0)
     premium_coins_line = (
-        f"● Голд коин: <code>{gold_coin}</code> 📀 · Алмаз коин: <code>{diamond_coin}</code> 💎\n"
+        f"● Голд коин: <code>{gold_coin}</code> 🌕 · Алмаз коин: <code>{diamond_coin}</code> 💎\n"
         if (gold_coin or diamond_coin) else ""
     )
 
@@ -5740,9 +5740,9 @@ async def send_gold_coin_top(message: Message, chat_id, title: str):
     if not rows:
         await message.reply(TEXTS["send_gold_coin_top_1"])
         return
-    text = f"📀 <b>{title}</b>\n\n"
+    text = f"🌕 <b>{title}</b>\n\n"
     for i, (username, nickname, gold_coin) in enumerate(rows, 1):
-        text += f"{i}. {esc(display_name(username, nickname))} — {gold_coin} 📀\n"
+        text += f"{i}. {esc(display_name(username, nickname))} — {gold_coin} 🌕\n"
     await message.reply(text)
 
 async def send_diamond_coin_top(message: Message, chat_id, title: str):
@@ -6138,8 +6138,8 @@ DIAMOND_COIN_RATE = 1000
 
 @dp.message(F.text.regexp(GOLD_COIN_EXCHANGE_RE))
 async def gold_coin_exchange(message: Message):
-    """обменять гкоин/голдкоин <кол-во> -> <кол-во> это сколько 📀 гкоин хочешь ПОЛУЧИТЬ.
-    Курс: GOLD_COIN_RATE 🪙 = 1 📀. Требует обменник (exchanger) 1+ лвл — без него
+    """обменять гкоин/голдкоин <кол-во> -> <кол-во> это сколько 🌕 гкоин хочешь ПОЛУЧИТЬ.
+    Курс: GOLD_COIN_RATE 🪙 = 1 🌕. Требует обменник (exchanger) 1+ лвл — без него
     команда недоступна, апгрейд покупается в апгрейдах за 🉑+🪙 (см. UPGRADES['exchanger'])."""
     match = GOLD_COIN_EXCHANGE_RE.match(message.text.strip())
     gold_wanted = parse_amount(match.group(1))
@@ -6175,7 +6175,7 @@ async def gold_coin_exchange(message: Message):
 @dp.message(F.text.regexp(DIAMOND_COIN_EXCHANGE_RE))
 async def diamond_coin_exchange(message: Message):
     """обменять акоин/алмкоин/алмазкоин <кол-во> -> <кол-во> это сколько 💎 акоин хочешь
-    ПОЛУЧИТЬ. Курс: DIAMOND_COIN_RATE 📀 = 1 💎. Требует обменник 2 лвл."""
+    ПОЛУЧИТЬ. Курс: DIAMOND_COIN_RATE 🌕 = 1 💎. Требует обменник 2 лвл."""
     match = DIAMOND_COIN_EXCHANGE_RE.match(message.text.strip())
     diamond_wanted = parse_amount(match.group(1))
     if not diamond_wanted or diamond_wanted <= 0:
@@ -7830,11 +7830,11 @@ async def toggle_event(message: Message):
 def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int, craft_points: int = 0,
                               coins: int = 0, gold_coin: int = 0) -> str:
     craft_line = f"💠 Очки крафта: <code>{craft_points}</code>\n" if category == 3 else ""
-    # Обменник (категория 3) тратит 🪙/📀 как доп. валюту (см. UPGRADES['exchanger']),
+    # Обменник (категория 3) тратит 🪙/🌕 как доп. валюту (см. UPGRADES['exchanger']),
     # поэтому в этой вкладке показываем их баланс так же, как очки крафта — иначе
     # игрок не видит, хватает ли ему монет/гкоин на следующий уровень, не открывая
     # отдельно "баланс".
-    coins_line = f"🪙 Монеты: <code>{coins}</code>\n📀 Голд коин: <code>{gold_coin}</code>\n" if category == 3 else ""
+    coins_line = f"🪙 Монеты: <code>{coins}</code>\n🌕 Голд коин: <code>{gold_coin}</code>\n" if category == 3 else ""
     header = (
         f"⚙️ <b>МЕНЮ ПРОКАЧКИ</b> — {UPGRADE_CATEGORIES[category]}\n"
         f"🉑 Очки перерождения: <code>{rebirth_points}</code>\n"
@@ -7847,7 +7847,7 @@ def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int,
 UPGRADE_EXTRA_CURRENCY_EMOJI = {
     "craft_points": plain_emoji(PREMIUM_CRAFT_POINT),
     "coins": "🪙",
-    "gold_coin": "📀",
+    "gold_coin": "🌕",
 }
 
 def upgrade_page_keyboard(upgrades: dict, user_id: int, category: int) -> InlineKeyboardMarkup:
