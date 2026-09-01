@@ -4277,7 +4277,7 @@ def get_chat(event):
 _leg_farm_last: dict = {}
 
 FLOOD_WINDOW_SECONDS = 3
-FLOOD_MESSAGE_LIMIT = 10
+FLOOD_MESSAGE_LIMIT = 5
 _flood_timestamps: dict = {}
 
 class FloodBanMiddleware(BaseMiddleware):
