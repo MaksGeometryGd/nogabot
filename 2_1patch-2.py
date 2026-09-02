@@ -1810,61 +1810,86 @@ def _linear_cost(base: int, step: int):
 def _per_n_levels_cost(base: int, step: int, n: int):
     return lambda level: base + step * ((level - 1) // n)
 
+def _percent_growth_cost(base: int, growth_pct: float, start_level: int):
+    """Цена уровня start_level равна base, а для каждого следующего уровня растёт на
+    growth_pct% относительно предыдущего (сложный процент от start_level)."""
+    factor = 1 + growth_pct / 100
+    return lambda level: round(base * (factor ** (level - start_level)))
+
+def _tiered_cost(old_fn, new_fn, threshold_level: int):
+    """До threshold_level (не включая) цена считается по old_fn, начиная с threshold_level —
+    по new_fn. Используется для веток, где ТЗ меняет формулу цены с определённого уровня
+    (напр. Ферма ДОБЫЧА: 1-9 ур — старая линейная цена, 10+ ур — новая с ростом 15%)."""
+    return lambda level: new_fn(level) if level >= threshold_level else old_fn(level)
+
 UPGRADES = {
     "farm_yield": {
         "name": "Ферма ДОБЫЧА",
-        "desc": "+10% к добыче фермы за лвл",
+        "desc": "+10% к добыче фермы за лвл (с 10 ур: +1.5х к ферме за апгрейд, считая от 10 ур)",
         "max_level": 10,
-        "cost": _linear_cost(1, 1),
+        "max_level_by_upgrader": {2: 15},
+        "cost": _tiered_cost(_linear_cost(1, 1), _percent_growth_cost(500, 15, 10), 10),
+        "extra_cost": lambda level: ("coins", round(5000 * (1.15 ** (level - 10)))) if level >= 10 else None,
         "category": 1,
     },
     "farm_cd": {
         "name": "Ферма КД",
-        "desc": "-2 мин к КД фермы за лвл",
+        "desc": "-2 мин к КД фермы за лвл (с 5 ур: -20 сек к КД фермы за апгрейд)",
         "max_level": 5,
-        "cost": _linear_cost(1, 2),
+        "max_level_by_upgrader": {2: 8},
+        "cost": _tiered_cost(_linear_cost(1, 2), _percent_growth_cost(1500, 35, 5), 5),
+        "extra_cost": lambda level: ("gold_coin", round(150 * (1.35 ** (level - 5)))) if level >= 5 else None,
         "category": 1,
     },
     "auto_farm_legs": {
         "name": "Авто-Ферма НОГИ",
-        "desc": "1:10 ног/мин · 2:100 ног/30с · 3:1000 ног/10с",
+        "desc": "1:10 ног/мин · 2:100 ног/30с · 3:1000 ног/10с · 4:10000 ног/5с",
         "max_level": 3,
-        "cost": _linear_cost(1, 4),
+        "max_level_by_upgrader": {2: 4},
+        "cost": lambda level: 7300 if level == 4 else _linear_cost(1, 4)(level),
+        "extra_cost": lambda level: ("diamond_coin", 10) if level == 4 else None,
         "category": 1,
     },
     "auto_farm_coins": {
         "name": "Авто-Ферма КОИНЫ",
-        "desc": "1:1 коин/5мин · 2:5 коин/5мин · 3:10 коин/3мин",
+        "desc": "1:1 коин/5мин · 2:5 коин/5мин · 3:10 коин/3мин · 4:100 коин/1мин",
         "max_level": 3,
-        "cost": _linear_cost(1, 2),
+        "max_level_by_upgrader": {2: 4},
+        "cost": lambda level: 5000 if level == 4 else _linear_cost(1, 2)(level),
+        "extra_cost": lambda level: ("prestige_points", 7000) if level == 4 else None,
         "category": 1,
     },
     "booster": {
         "name": "Бустер",
         "desc": "+5% буст ко всему за лвл",
         "max_level": 50,
-        "cost": _per_n_levels_cost(1, 1, 3),
+        "max_level_by_upgrader": {2: 75},
+        "cost": _tiered_cost(_per_n_levels_cost(1, 1, 3), _percent_growth_cost(400, 5, 50), 50),
         "category": 2,
     },
     "equip_slots": {
         "name": "Слоты экипировки",
-        "desc": "+1 слот экипировки за лвл (база 1, макс 3 слота на 2 лвл)",
+        "desc": "+1 слот экипировки за лвл (база 1, макс 4 слота на 3 лвл)",
         "max_level": 2,
-        "cost": _linear_cost(5, 5),
+        "max_level_by_upgrader": {2: 3},
+        "cost": lambda level: 20000 if level == 3 else _linear_cost(5, 5)(level),
+        "extra_cost": lambda level: ("diamond_coin", 100) if level == 3 else None,
         "category": 2,
     },
     "discount": {
         "name": "Скидка",
         "desc": "-10% к цене кейсов за лвл",
         "max_level": 3,
-        "cost": _linear_cost(1, 1),
+        "max_level_by_upgrader": {2: 5},
+        "cost": _tiered_cost(_linear_cost(1, 1), _percent_growth_cost(1000, 10, 3), 3),
         "category": 2,
     },
     "sell_boost": {
         "name": "Продажа",
         "desc": "+2 коина к продаже за лвл (3 лвл: 1% шанс +1 🉑 при продаже)",
         "max_level": 3,
-        "cost": _linear_cost(2, 2),
+        "max_level_by_upgrader": {2: 4},
+        "cost": lambda level: 2000 if level == 4 else _linear_cost(2, 2)(level),
         "category": 2,
     },
     "crafts": {
@@ -1880,32 +1905,131 @@ UPGRADES = {
         "name": "Скорость готовки зелья",
         "desc": "-10% времени варки зелья за лвл",
         "max_level": 5,
-        "cost": _linear_cost(3, 3),
+        "max_level_by_upgrader": {2: 7},
+        "cost": lambda level: 3000 if level in (6, 7) else _linear_cost(3, 3)(level),
+        "extra_cost": lambda level: ("gold_coin", 500) if level in (6, 7) else None,
         "category": 3,
     },
     "brew_duration": {
         "name": "Длительность зелья",
         "desc": "+20% к длительности эффекта зелий за лвл",
         "max_level": 3,
-        "cost": _linear_cost(5, 5),
+        "max_level_by_upgrader": {2: 4},
+        "cost": lambda level: 5000 if level == 4 else _linear_cost(5, 5)(level),
+        "extra_cost": lambda level: ("coins", 50000) if level == 4 else None,
         "category": 3,
     },
     "exchanger": {
         "name": "Обменник",
-        "desc": "1 лвл: открывает обмен на 🌕 гкоин · 2 лвл: открывает обмен на 💎 акоин",
+        "desc": "1 лвл: открывает обмен на 🌕 гкоин · 2 лвл: открывает обмен на 💎 акоин · "
+                "3 лвл: открывает обмен очкп→престиж (команда «обменять престиж <кол-во>», курс 1 🔮 = 30 🉑)",
         "max_level": 2,
-        "cost": lambda level: 100 if level == 1 else 10000,
-        "extra_cost": lambda level: ("coins", 10000) if level == 1 else ("gold_coin", 10000),
+        "max_level_by_upgrader": {2: 3},
+        "cost": lambda level: 50000 if level == 3 else (100 if level == 1 else 10000),
+        "extra_cost": lambda level: (
+            [("prestige_points", 50000), ("diamond_coin", 50)] if level == 3
+            else (("coins", 10000) if level == 1 else ("gold_coin", 10000))
+        ),
         "category": 3,
+    },
+    # ==== Абсолютно новые прокачки, категория 4 — открывается на 2 ур. апгрейдера ====
+    "auto_farm_rebirth": {
+        "name": "Авто-ферма очкп",
+        "desc": "Пассивно копит 🉑 очки перерождения со временем. 1:1 очкп/5мин · 2:10 очкп/3мин",
+        "max_level": 2,
+        "cost": _percent_growth_cost(2500, 50, 1),
+        "category": 4,
+    },
+    "transfer": {
+        "name": "Передача",
+        "desc": "Открывает передачу 🉑 очков перерождения другому игроку (команда «дать очкп <количество>»)",
+        "max_level": 1,
+        "cost": lambda level: 15000,
+        "extra_cost": lambda level: [("craft_points", 10), ("diamond_coin", 10)],
+        "category": 4,
+    },
+    "potion_booster": {
+        "name": "Бустер зелья",
+        "desc": "Усиливает эффекты зелья скорости и зелья удачи. 1:x1.2 усиления · 2:x2 усиления",
+        "max_level": 2,
+        "cost": _percent_growth_cost(500, 400, 1),  # рост x5 за уровень = +400%
+        "category": 4,
+    },
+    "auto_farm_gold_coin": {
+        "name": "Авто-ферма ГКОИН",
+        "desc": "Пассивно копит 🌕 голд коины со временем. 1:1 гкоин/1мин · 2:5 гкоин/30сек",
+        "max_level": 2,
+        "cost": _percent_growth_cost(6000, 30, 1),
+        "extra_cost": lambda level: ("gold_coin", round(5000 * (1.30 ** (level - 1)))),
+        "category": 4,
     },
 }
 UPGRADE_ORDER = list(UPGRADES.keys())
-UPGRADE_CATEGORIES = {1: "🌾 Ферма", 2: "🎒 Экономика", 3: "🔨 Крафты и прочее"}
+UPGRADE_CATEGORIES = {1: "🌾 Ферма", 2: "🎒 Экономика", 3: "🔨 Крафты и прочее", 4: "🔺 Новые прокачки"}
 UPGRADE_EXTRA_CURRENCY_LABELS = {
     "craft_points": "💠 очков крафта",
     "coins": "🪙 монет",
     "gold_coin": "🌕 гкоин",
+    "diamond_coin": "💎 акоин",
+    "prestige_points": "🔮 престижа",
 }
+
+# ==== Уровень апгрейдера (мета-прокачка над всем деревом апгрейдов) ====
+# Когда ВСЕ ветки во ВСЕХ открытых на данный момент категориях прокачаны до максимума,
+# в меню появляется отдельная кнопка "прокачать апгрейдер" — платный переход на
+# следующий уровень апгрейдера (1..UPGRADER_LEVEL_MAX), который открывает новые
+# max_level у части веток (см. UPGRADES) и/или новые категории (см. UPGRADER_UNLOCK_CATEGORY).
+UPGRADER_LEVEL_MAX = 5
+UPGRADER_LEVEL_UP_COST = {
+    # текущий уровень -> цена перехода на следующий, в 💎 акоин (diamond_coin)
+    1: 500,
+    2: 2000,
+    3: 5000,
+    4: 10000,
+}
+# С какого уровня апгрейдера открывается категория (вкладка) 4 — новые ветки 13-16.
+UPGRADER_UNLOCK_CATEGORY = {
+    4: 2,
+}
+
+def upgrader_next_cost(current_level: int):
+    """Цена перехода на следующий уровень апгрейдера (в 💎 акоин), либо None на максимуме."""
+    if current_level >= UPGRADER_LEVEL_MAX:
+        return None
+    return UPGRADER_LEVEL_UP_COST.get(current_level)
+
+def unlocked_categories(upgrader_lvl: int) -> list:
+    """Список номеров категорий (вкладок), доступных при данном уровне апгрейдера."""
+    cats = [1, 2, 3]
+    for cat, need_lvl in UPGRADER_UNLOCK_CATEGORY.items():
+        if upgrader_lvl >= need_lvl and cat not in cats:
+            cats.append(cat)
+    return sorted(cats)
+
+def all_upgrades_maxed(upgrades: dict, upgrader_lvl: int) -> bool:
+    """True, если все ветки во всех НА ДАННЫЙ МОМЕНТ открытых категориях прокачаны до максимума
+    (максимум считается с учётом уже достигнутого upgrader_lvl — см. effective_max_level).
+    Ветки с cfg['wip'] (уровни 3-5 апгрейдера без функционала) не имеют цены (upgrade_next_cost
+    вернёт None из-за cost is None/wip), но всё равно проверяются наравне — то есть их тоже
+    'нужно' формально докупить до max_level, если у них не выставлен wip. Ветки с cfg.get('wip')
+    считаются готовыми сразу (не блокируют переход)."""
+    cats = set(unlocked_categories(upgrader_lvl))
+    for key in UPGRADE_ORDER:
+        cfg = UPGRADES[key]
+        if cfg["category"] not in cats:
+            continue
+        if cfg.get("wip"):
+            continue
+        level = upgrade_level(upgrades, key)
+        if level < effective_max_level(key, upgrader_lvl):
+            return False
+    return True
+
+def upgrader_can_level_up(upgrades: dict, upgrader_lvl: int) -> bool:
+    """Можно ли показывать кнопку прокачки уровня апгрейдера прямо сейчас."""
+    if upgrader_lvl >= UPGRADER_LEVEL_MAX:
+        return False
+    return all_upgrades_maxed(upgrades, upgrader_lvl)
 
 def _prestige_cost(base: int, growth: float):
     return lambda level: round(base * (growth ** (level - 1)))
@@ -2029,8 +2153,10 @@ POTIONS = {
 POTION_ORDER = list(POTIONS.keys())
 NO_CD_CHARGES_KEY = "potion_haste"
 
-AUTO_FARM_LEGS_RATES = {1: (10, 60), 2: (100, 30), 3: (1000, 10)}
-AUTO_FARM_COINS_RATES = {1: (1, 300), 2: (5, 300), 3: (10, 180)}
+AUTO_FARM_LEGS_RATES = {1: (10, 60), 2: (100, 30), 3: (1000, 10), 4: (10000, 5)}
+AUTO_FARM_COINS_RATES = {1: (1, 300), 2: (5, 300), 3: (10, 180), 4: (100, 60)}
+AUTO_FARM_REBIRTH_RATES = {1: (1, 300), 2: (10, 180)}  # (очкп, за сколько секунд)
+AUTO_FARM_GOLD_COIN_RATES = {1: (1, 60), 2: (5, 30)}  # (гкоин, за сколько секунд)
 
 AMOUNT = r"(\d+(?:\.\d+)?к{0,4})"
 _AMOUNT_TOKEN_RE = re.compile(r"^\d+(?:\.\d+)?к{0,4}$", re.IGNORECASE)
@@ -2063,6 +2189,7 @@ CRAFT_EXCHANGE_RE = re.compile(rf"^обменять {AMOUNT} (?:крафт|оч�
 CRAFT_EXCHANGE_TO_RE = re.compile(rf"^обменять (?:крафт|очкк) {AMOUNT}$", re.IGNORECASE)
 GOLD_COIN_EXCHANGE_RE = re.compile(rf"^обменять (?:гкоин|голдкоин) {AMOUNT}$", re.IGNORECASE)
 DIAMOND_COIN_EXCHANGE_RE = re.compile(rf"^обменять (?:акоин|алмкоин|алмазкоин) {AMOUNT}$", re.IGNORECASE)
+PRESTIGE_EXCHANGE_RE = re.compile(rf"^обменять престиж {AMOUNT}$", re.IGNORECASE)
 CASE_NUM_RE = re.compile(r"^кейс (\d+)$", re.IGNORECASE)
 INFO_RE = re.compile(r"^инфо\s+@?(\w+)$", re.IGNORECASE)
 NICK_SET_RE = re.compile(r"^\+ник\s+(.+)$", re.IGNORECASE)
@@ -2754,25 +2881,54 @@ def format_upgrades(upgrades: dict) -> str:
 def upgrade_level(upgrades: dict, key: str) -> int:
     return upgrades.get(key, 0)
 
-def upgrade_next_cost(key: str, upgrades: dict):
+def effective_max_level(key: str, upgrader_lvl: int = 1) -> int:
+    """Итоговый max_level ветки с учётом уровня апгрейдера игрока. Часть веток расширяется
+    на 2 уровне апгрейдера (см. UPGRADES[key]['max_level_by_upgrader'] — словарь
+    {порог_уровня_апгрейдера: новый_max_level}). Берём наибольший порог, который игрок уже
+    достиг; если веток-расширений нет или апгрейдер ещё не прокачан — базовый max_level."""
+    cfg = UPGRADES[key]
+    result = cfg["max_level"]
+    extra = cfg.get("max_level_by_upgrader")
+    if extra:
+        for threshold in sorted(extra):
+            if upgrader_lvl >= threshold:
+                result = extra[threshold]
+    return result
+
+def upgrade_next_cost(key: str, upgrades: dict, upgrader_lvl: int = 1):
     cfg = UPGRADES[key]
     if cfg.get("wip") or cfg["cost"] is None:
         return None
     level = upgrade_level(upgrades, key)
-    if level >= cfg["max_level"]:
+    if level >= effective_max_level(key, upgrader_lvl):
         return None
     return cfg["cost"](level + 1)
 
-def upgrade_next_extra_cost(key: str, upgrades: dict):
+def upgrade_next_extra_cost(key: str, upgrades: dict, upgrader_lvl: int = 1):
     """Доп. стоимость в другой валюте для следующего уровня апгрейда (напр. крафты ур.3 = 🉑+💠).
-    Возвращает (currency_field, amount) либо None, если для этого уровня доп. валюты нет."""
+    Возвращает (currency_field, amount) либо None, если для этого уровня доп. валюты нет.
+    Для веток с несколькими доп. валютами сразу (см. exchanger 3 ур.) используй
+    upgrade_next_extra_costs — эта функция возвращает только первую пару, для обратной совместимости."""
+    costs = upgrade_next_extra_costs(key, upgrades, upgrader_lvl)
+    return costs[0] if costs else None
+
+def upgrade_next_extra_costs(key: str, upgrades: dict, upgrader_lvl: int = 1) -> list:
+    """Как upgrade_next_extra_cost, но всегда возвращает СПИСОК пар (currency_field, amount) —
+    ветки cfg['extra_cost'] могут возвращать одну пару (старый формат, для обратной
+    совместимости), список пар (несколько доп. валют сразу — напр. exchanger 3 ур. тратит
+    и prestige_points, и diamond_coin), или None/пустой список, если доп. валюты не нужны."""
     cfg = UPGRADES[key]
     if cfg.get("wip") or cfg["cost"] is None or not cfg.get("extra_cost"):
-        return None
+        return []
     level = upgrade_level(upgrades, key)
-    if level >= cfg["max_level"]:
-        return None
-    return cfg["extra_cost"](level + 1)
+    if level >= effective_max_level(key, upgrader_lvl):
+        return []
+    raw = cfg["extra_cost"](level + 1)
+    if not raw:
+        return []
+    if isinstance(raw, tuple):
+        return [raw]
+    return list(raw)
 
 def parse_prestige_upgrades(upgrades_str: str) -> dict:
     result = {}
@@ -2804,27 +2960,32 @@ def prestige_bonus(upgrades: dict, key: str) -> int:
     return PRESTIGE_UPGRADES[key]["bonus"](level)
 
 async def claim_offline_auto_farm(user_id: int, row) -> tuple:
-    """Начисляет оффлайн-доход от Авто-Фермы НОГИ/КОИНЫ по разнице времени.
-    Возвращает (legs_gained, coins_gained, new_score, new_coins)."""
+    """Начисляет оффлайн-доход от Авто-Ферм НОГИ/КОИНЫ/очкп/ГКОИН по разнице времени, используя
+    общий таймер last_auto_claim (единая точка отсчёта для всех авто-ферм разом).
+    Возвращает (legs_gained, coins_gained, rebirth_gained, gold_coin_gained, new_score, new_coins)."""
     upgrades = parse_upgrades(row[16])
     legs_lvl = upgrade_level(upgrades, "auto_farm_legs")
     coins_lvl = upgrade_level(upgrades, "auto_farm_coins")
+    rebirth_lvl = upgrade_level(upgrades, "auto_farm_rebirth")
+    gold_coin_lvl = upgrade_level(upgrades, "auto_farm_gold_coin")
     score, coins = row[2], row[5]
     last_claim = row[17] or 0
     now = int(time.time())
 
-    if not legs_lvl and not coins_lvl:
+    if not (legs_lvl or coins_lvl or rebirth_lvl or gold_coin_lvl):
         if not last_claim:
             await db_exec("UPDATE users SET last_auto_claim = ? WHERE user_id = ?", (now, user_id))
-        return 0, 0, score, coins
+        return 0, 0, 0, 0, score, coins
 
     if not last_claim:
         await db_exec("UPDATE users SET last_auto_claim = ? WHERE user_id = ?", (now, user_id))
-        return 0, 0, score, coins
+        return 0, 0, 0, 0, score, coins
 
     elapsed = max(0, now - last_claim)
     legs_gained = 0
     coins_gained = 0
+    rebirth_gained = 0
+    gold_coin_gained = 0
 
     if legs_lvl:
         amount, per_seconds = AUTO_FARM_LEGS_RATES[legs_lvl]
@@ -2832,27 +2993,57 @@ async def claim_offline_auto_farm(user_id: int, row) -> tuple:
     if coins_lvl:
         amount, per_seconds = AUTO_FARM_COINS_RATES[coins_lvl]
         coins_gained = int(elapsed // per_seconds) * amount
+    if rebirth_lvl:
+        amount, per_seconds = AUTO_FARM_REBIRTH_RATES[rebirth_lvl]
+        rebirth_gained = int(elapsed // per_seconds) * amount
+    if gold_coin_lvl:
+        amount, per_seconds = AUTO_FARM_GOLD_COIN_RATES[gold_coin_lvl]
+        gold_coin_gained = int(elapsed // per_seconds) * amount
 
-    if legs_gained == 0 and coins_gained == 0:
-        return 0, 0, score, coins
+    if not (legs_gained or coins_gained or rebirth_gained or gold_coin_gained):
+        return 0, 0, 0, 0, score, coins
 
     new_score = score + legs_gained
     new_coins = coins + coins_gained
     await db_exec(
-        "UPDATE users SET score = ?, coins = ?, total_farmed = total_farmed + ?, last_auto_claim = ? WHERE user_id = ?",
-        (new_score, new_coins, legs_gained, now, user_id),
+        "UPDATE users SET score = ?, coins = ?, total_farmed = total_farmed + ?, "
+        "rebirth_points = rebirth_points + ?, gold_coin = gold_coin + ?, last_auto_claim = ? WHERE user_id = ?",
+        (new_score, new_coins, legs_gained, rebirth_gained, gold_coin_gained, now, user_id),
     )
-    return legs_gained, coins_gained, new_score, new_coins
+    return legs_gained, coins_gained, rebirth_gained, gold_coin_gained, new_score, new_coins
 
 def rebirth_hardness_multiplier(rebirth_count: int) -> float:
     return 1 + REBIRTH_HARDNESS_STEP * rebirth_count
 
 def farm_yield_multiplier(upgrades: dict) -> float:
-    return 1 + 0.10 * upgrade_level(upgrades, "farm_yield")
+    """1-10 ур: обычные +10%/ур (аддитивно). 11-15 ур (открываются на 2 ур. апгрейдера):
+    каждый уровень выше 10-го умножает результат ещё на x1.5 (мультипликативно, а не аддитивно —
+    так задумано в ТЗ как отдельная, более мощная кривая для верхних уровней)."""
+    level = upgrade_level(upgrades, "farm_yield")
+    base_level = min(level, 10)
+    multiplier = 1 + 0.10 * base_level
+    extra_levels = max(0, level - 10)
+    if extra_levels:
+        multiplier *= 1.5 ** extra_levels
+    return multiplier
+
+POTION_BOOST_MULTIPLIERS = {0: 1.0, 1: 1.2, 2: 2.0}  # уровень ветки 'potion_booster' -> усиление
+
+def potion_boost_multiplier(upgrades: dict) -> float:
+    """Усиление эффектов зелья скорости и зелья удачи от ветки апгрейда 'potion_booster'
+    (ветка 15, категория 4). Без прокачки — x1.0 (эффекты зелий работают как раньше)."""
+    level = upgrade_level(upgrades, "potion_booster")
+    return POTION_BOOST_MULTIPLIERS.get(level, 1.0)
 
 def farm_cd_seconds(upgrades: dict, active_items=None, has_time_particle: bool = False,
                      prestige_upgrades: dict = None) -> int:
-    reduction = 120 * upgrade_level(upgrades, "farm_cd")
+    """1-5 ур: обычные -2 мин (120 сек) за уровень. 6-8 ур (открываются на 2 ур. апгрейдера):
+    каждый уровень выше 5-го снимает ещё 20 сек — отдельная, более мелкая кривая для
+    верхних уровней, как и у Ферма ДОБЫЧА."""
+    level = upgrade_level(upgrades, "farm_cd")
+    base_level = min(level, 5)
+    extra_levels = max(0, level - 5)
+    reduction = 120 * base_level + 20 * extra_levels
     cooldown = max(60, FARM_COOLDOWN - reduction)
 
     tier = get_active_unique_tier(active_items) if active_items is not None else None
@@ -3460,6 +3651,7 @@ async def init_db():
         "ALTER TABLE users ADD COLUMN game_banned_snapshot TEXT DEFAULT NULL",
         "ALTER TABLE users ADD COLUMN gold_coin INTEGER DEFAULT 0",
         "ALTER TABLE users ADD COLUMN diamond_coin INTEGER DEFAULT 0",
+        "ALTER TABLE users ADD COLUMN upgrader_level INTEGER DEFAULT 1",
     ):
         try:
             await db_exec(stmt)
@@ -3646,10 +3838,11 @@ async def remove_item(user_id: int, item_key: str, qty: int = 1) -> bool:
     await db_exec("UPDATE inventory SET qty = ? WHERE user_id = ? AND item_key = ?", (row[0] - qty, user_id, item_key))
     return True
 
-async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict, luck_boost: bool = False) -> dict:
+async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict, luck_mult: float = 1.0) -> dict:
     """Считает все монетные пассивки (Странная монета, Тёплая свеча, Монета боготворства) одним
-    общим числом монет + бонус Эссенции Бога (монеты гарант, очки перерождения — шанс x2 при
-    зелье удачи). Один UPDATE. Возвращает {'coins': N, 'rebirth': N, 'evo': 0 (не используется), 'is_god': bool}."""
+    общим числом монет + бонус Эссенции Бога (монеты гарант, очки перерождения — шанс растёт с
+    luck_mult при зелье удачи, luck_mult=1.0 без зелья). Один UPDATE.
+    Возвращает {'coins': N, 'rebirth': N, 'evo': 0 (не используется), 'is_god': bool}."""
     coin_bonus = 0
     if inventory_map.get("strange_coin", 0) > 0:
         coin_bonus += 5
@@ -3666,7 +3859,7 @@ async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict, lu
     if is_god:
         max_coin = 70 if tier == "koshko_amulet" else 50
         coin_bonus += random.randint(1, max_coin)
-        rebirth_chance = 0.60 if luck_boost else 0.30
+        rebirth_chance = min(1.0, 0.30 * luck_mult)
         if random.random() < rebirth_chance:
             rebirth_bonus += random.randint(1, 3)
 
@@ -3678,10 +3871,11 @@ async def apply_farm_bonuses(user_id: int, active_items, inventory_map: dict, lu
         )
     return {"coins": coin_bonus, "rebirth": rebirth_bonus, "evo": 0, "is_god": is_god, "tier": tier}
 
-async def apply_vase_proc(user_id: int, inventory_map: dict, luck_boost: bool = False) -> str:
+async def apply_vase_proc(user_id: int, inventory_map: dict, luck_mult: float = 1.0) -> str:
     """Проки пассивных ваз при фарме ног. Срабатывает только самая сильная имеющаяся ваза.
-    luck_boost (зелье удачи) удваивает эффективный ролл — вдвое повышает шанс на каждый порог."""
-    roll_scale = 0.5 if luck_boost else 1.0
+    luck_mult (зелье удачи, усиленное веткой 'potion_booster') делит эффективный ролл на
+    luck_mult — то есть повышает шанс на каждый порог в luck_mult раз. luck_mult=1.0 без зелья."""
+    roll_scale = 1.0 / luck_mult if luck_mult else 1.0
     if inventory_map.get("godly_vase", 0) > 0:
         roll = random.random() * roll_scale
         if roll < 0.002:
@@ -5281,7 +5475,8 @@ async def count_legs(message: Message):
     total = apply_kotyara_amulet_boost(total, kotyara_boost_until)
     potion_text = ""
     if "potion_speed" in potions:
-        speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
+        base_speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
+        speed_mult = round(base_speed_mult * potion_boost_multiplier(upgrades), 2)
         total *= speed_mult
         potion_text += f"🧪⚡ x{speed_mult}"
 
@@ -5308,9 +5503,9 @@ async def count_legs(message: Message):
         )
 
     inventory_map = inventory_map_early
-    luck_boost = "luck_x2" in potions
-    vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
-    bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
+    luck_mult = (2.0 * potion_boost_multiplier(upgrades)) if "luck_x2" in potions else 1.0
+    vase_text = await apply_vase_proc(user_id, inventory_map, luck_mult)
+    bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_mult)
     chaos_text = await apply_chaos_orb_proc(user_id, inventory_map)
     necklace_text = (
         await apply_blazing_necklace_proc(user_id, active_items)
@@ -5893,7 +6088,9 @@ async def farm(message: Message):
         await message.reply(TEXTS["farm_1"].format(v0=m, v1=s))
         return
 
-    auto_legs, auto_coins, score, _coins_after = await claim_offline_auto_farm(user_id, row)
+    auto_legs, auto_coins, auto_rebirth, auto_gold_coin, score, _coins_after = await claim_offline_auto_farm(user_id, row)
+    if auto_rebirth:
+        rebirth_points += auto_rebirth
 
     low, high = farm_range(evolution_level)
     nano_it_count = inventory_map.get("nano_it", 0)
@@ -5917,7 +6114,8 @@ async def farm(message: Message):
     gained = apply_kotyara_amulet_boost(gained, kotyara_boost_until)
     potion_bits = []
     if "potion_speed" in potions:
-        speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
+        base_speed_mult = DRAGON_CLAW_POTION_MULT if "dragon_claw" in set(_normalize_active_items(active_items)) else 2
+        speed_mult = round(base_speed_mult * potion_boost_multiplier(upgrades), 2)
         gained *= speed_mult
         potion_bits.append(f"🧪⚡ x{speed_mult}")
 
@@ -5939,9 +6137,9 @@ async def farm(message: Message):
         charges_left = potions.get(NO_CD_CHARGES_KEY, 0)
         potion_bits.append(f"🧪🌀 заряд использован ({charges_left} ост.)")
 
-    luck_boost = "luck_x2" in potions
-    vase_text = await apply_vase_proc(user_id, inventory_map, luck_boost)
-    bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_boost)
+    luck_mult = (2.0 * potion_boost_multiplier(upgrades)) if "luck_x2" in potions else 1.0
+    vase_text = await apply_vase_proc(user_id, inventory_map, luck_mult)
+    bonus = await apply_farm_bonuses(user_id, active_items, inventory_map, luck_mult)
     chaos_text = await apply_chaos_orb_proc(user_id, inventory_map)
     necklace_text = (
         await apply_blazing_necklace_proc(user_id, active_items)
@@ -5974,12 +6172,16 @@ async def farm(message: Message):
         )
 
     auto_text = ""
-    if auto_legs or auto_coins:
+    if auto_legs or auto_coins or auto_rebirth or auto_gold_coin:
         bits = []
         if auto_legs:
             bits.append(f"+{auto_legs} очков")
         if auto_coins:
             bits.append(f"+{auto_coins} 🪙")
+        if auto_rebirth:
+            bits.append(f"+{auto_rebirth} 🉑")
+        if auto_gold_coin:
+            bits.append(f"+{auto_gold_coin} 🌕")
         auto_text = f"\n⚙️ Авто-Ферма накопила: {', '.join(bits)}"
 
     coin_text = f" +{bonus['coins']}🪙" if bonus["coins"] else ""
@@ -6243,6 +6445,49 @@ async def diamond_coin_exchange(message: Message):
     )
     await message.reply(TEXTS["diamond_coin_exchange_4"].format(v0=gold_cost, v1=diamond_wanted, v2=new_diamond_coin))
 
+PRESTIGE_EXCHANGE_RATE = 30  # 🉑 очков перерождения за 1 🔮 очко престижа
+
+@dp.message(F.text.regexp(PRESTIGE_EXCHANGE_RE))
+async def prestige_exchange(message: Message):
+    """обменять престиж <кол-во> -> <кол-во> это сколько 🔮 очков престижа хочешь ПОЛУЧИТЬ.
+    Курс: PRESTIGE_EXCHANGE_RATE 🉑 = 1 🔮. Требует обменник 3 лвл (см. UPGRADES['exchanger'])."""
+    match = PRESTIGE_EXCHANGE_RE.match(message.text.strip())
+    prestige_wanted = parse_amount(match.group(1))
+    if not prestige_wanted or prestige_wanted <= 0:
+        await message.reply("Формат: обменять престиж <количество>. Курс: 30 🉑 = 1 🔮 (указывай сколько 🔮 хочешь получить).")
+        return
+
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name or "Без имени"
+
+    row = await ensure_user(user_id, username)
+    rebirth_points = row[14]
+    upgrades = parse_upgrades(row[16])
+    if upgrade_level(upgrades, "exchanger") < 3:
+        await message.reply("Нужен обменник 3 лвл, чтобы обменивать очкп на 🔮 престиж. Прокачай его в апгрейдах (апг).")
+        return
+
+    rebirth_cost = prestige_wanted * PRESTIGE_EXCHANGE_RATE
+    if rebirth_cost > rebirth_points:
+        max_affordable = rebirth_points // PRESTIGE_EXCHANGE_RATE
+        await message.reply(
+            f"Недостаточно очков перерождения. У тебя {rebirth_points} 🉑, "
+            f"нужно {rebirth_cost} 🉑 на {prestige_wanted} 🔮. "
+            f"Максимум сейчас можешь получить {max_affordable} 🔮."
+        )
+        return
+
+    pp_row = await db_query_one("SELECT prestige_points FROM users WHERE user_id = ?", (user_id,))
+    prestige_points = pp_row[0] if pp_row else 0
+
+    new_rebirth_points = rebirth_points - rebirth_cost
+    new_prestige_points = prestige_points + prestige_wanted
+    await db_exec(
+        "UPDATE users SET rebirth_points = ?, prestige_points = ? WHERE user_id = ?",
+        (new_rebirth_points, new_prestige_points, user_id),
+    )
+    await message.reply(f"Обменял {rebirth_cost} 🉑 → +{prestige_wanted} 🔮 престижа (Всего: {new_prestige_points})")
+
 @dp.message(F.text.lower().startswith("обменять "))
 async def exchange(message: Message):
     match = EXCHANGE_RE.match(message.text.strip().lower())
@@ -6280,7 +6525,9 @@ async def exchange(message: Message):
     await message.reply(TEXTS["exchange_4"].format(v0=spent, v1=coins_wanted, v2=new_coins, v3=warn))
 
 async def transfer_currency(message: Message, currency: str, amount: int):
-    """currency: 'ног' или 'коин'. Общая логика для дать/передать <число> <валюта>."""
+    """currency: 'ног', 'коин' или 'очкп'. Общая логика для дать/передать <число> <валюта>.
+    'очкп' требует прокачанную ветку apгрейда 'transfer' (см. UPGRADES['transfer'] — ветка 14,
+    открывается на 2 ур. апгрейдера) — без неё команда 'дать очкп' недоступна."""
     if not message.reply_to_message:
         await message.reply(TEXTS["transfer_currency_1"])
         return
@@ -6311,6 +6558,19 @@ async def transfer_currency(message: Message, currency: str, amount: int):
         await message.reply(TEXTS["transfer_currency_5"].format(v0=esc(sender_username), v1=amount, v2=esc(receiver_username)))
         await maybe_announce_levelup(message, receiver_username, receiver_row[2], new_receiver,
                                       receiver_row[3], bool(receiver_row[11]), receiver_row[15])
+    elif currency == "очкп":
+        sender_upgrades = parse_upgrades(sender_row[16])
+        if upgrade_level(sender_upgrades, "transfer") < 1:
+            await message.reply("Нужна ветка «Передача» (апгрейд) 1 лвл, чтобы передавать 🉑 очки перерождения. Прокачай её в апгрейдах (апг).")
+            return
+        sender_rebirth = sender_row[14]
+        if sender_rebirth < amount:
+            await message.reply(f"Недостаточно 🉑 очков перерождения. У тебя {sender_rebirth}.")
+            return
+        await ensure_user(receiver.id, receiver_username)
+        await db_exec("UPDATE users SET rebirth_points = rebirth_points - ? WHERE user_id = ?", (amount, sender.id))
+        await db_exec("UPDATE users SET rebirth_points = rebirth_points + ? WHERE user_id = ?", (amount, receiver.id))
+        await message.reply(f"{esc(sender_username)} передал {amount} 🉑 игроку {esc(receiver_username)}")
     else:
         if sender_row[5] < amount:
             await message.reply(TEXTS["transfer_currency_6"].format(v0=sender_row[5]))
@@ -6366,7 +6626,7 @@ async def transfer_item_direct(message: Message, item_query: str):
 
     await safe_reply(message, TEXTS["transfer_item_direct_6"].format(v0=emoji, v1=esc(name), v2=esc(receiver_username)))
 
-_TRANSFER_CURRENCY_TOKENS = {"ног": "ног", "коин": "коин"}
+_TRANSFER_CURRENCY_TOKENS = {"ног": "ног", "коин": "коин", "очкп": "очкп"}
 
 @dp.message(F.text.regexp(r"(?i)^(дать|передать)\s+(.+)$"))
 async def give_or_transfer(message: Message):
@@ -7862,19 +8122,36 @@ async def toggle_event(message: Message):
     else:
         await message.reply(TEXTS["toggle_event_2"])
 
+async def get_upgrader_and_diamond(user_id: int) -> tuple:
+    """upgrader_level и diamond_coin не входят в USER_COLUMNS (как и gold_coin — см. комментарий
+    у ALTER TABLE), поэтому читаем отдельным запросом, по тому же паттерну."""
+    row = await db_query_one("SELECT upgrader_level, diamond_coin FROM users WHERE user_id = ?", (user_id,))
+    if not row:
+        return 1, 0
+    return (row[0] or 1), (row[1] or 0)
+
 def format_upgrade_page_text(upgrades: dict, rebirth_points: int, category: int, craft_points: int = 0,
-                              coins: int = 0, gold_coin: int = 0) -> str:
-    craft_line = f"💠 Очки крафта: <code>{craft_points}</code>\n" if category == 3 else ""
-    # Обменник (категория 3) тратит 🪙/🌕 как доп. валюту (см. UPGRADES['exchanger']),
-    # поэтому в этой вкладке показываем их баланс так же, как очки крафта — иначе
-    # игрок не видит, хватает ли ему монет/гкоин на следующий уровень, не открывая
-    # отдельно "баланс".
+                              coins: int = 0, gold_coin: int = 0, upgrader_lvl: int = 1,
+                              diamond_coin: int = 0, prestige_points: int = 0) -> str:
+    craft_line = f"💠 Очки крафта: <code>{craft_points}</code>\n" if category in (3, 4) else ""
+    # Категория 3 (обменник) тратит 🪙/🌕 как доп. валюту, категория 4 (новые прокачки, ветки
+    # 13-16) тратит 🌕/💎/🔮 (см. UPGRADES['auto_farm_gold_coin'], ['transfer'], ['exchanger']),
+    # поэтому в этих вкладках показываем баланс нужных валют, иначе игрок не видит, хватает ли
+    # ему монет/гкоин на следующий уровень, не открывая отдельно "баланс".
     coins_line = f"🪙 Монеты: <code>{coins}</code>\n🌕 Голд коин: <code>{gold_coin}</code>\n" if category == 3 else ""
+    gold_line = f"🌕 Голд коин: <code>{gold_coin}</code>\n" if category == 4 else ""
+    prestige_line = f"🔮 Престиж: <code>{prestige_points}</code>\n" if category in (3, 4) else ""
+    can_lvl_up = upgrader_can_level_up(upgrades, upgrader_lvl)
+    diamond_line = f"💎 Алмаз коин: <code>{diamond_coin}</code>\n" if (can_lvl_up or category == 4) else ""
     header = (
         f"⚙️ <b>МЕНЮ ПРОКАЧКИ</b> — {UPGRADE_CATEGORIES[category]}\n"
+        f"🔺 Уровень апгрейдера: <code>{upgrader_lvl}/{UPGRADER_LEVEL_MAX}</code>\n"
         f"🉑 Очки перерождения: <code>{rebirth_points}</code>\n"
         f"{craft_line}"
         f"{coins_line}"
+        f"{gold_line}"
+        f"{prestige_line}"
+        f"{diamond_line}"
         f"━━━━━━━━━━━━━━━━━━\n"
     )
     return header
@@ -7883,31 +8160,43 @@ UPGRADE_EXTRA_CURRENCY_EMOJI = {
     "craft_points": plain_emoji(PREMIUM_CRAFT_POINT),
     "coins": "🪙",
     "gold_coin": "🌕",
+    "diamond_coin": "💎",
+    "prestige_points": "🔮",
 }
 
-def upgrade_page_keyboard(upgrades: dict, user_id: int, category: int) -> InlineKeyboardMarkup:
+def upgrade_page_keyboard(upgrades: dict, user_id: int, category: int, upgrader_lvl: int = 1) -> InlineKeyboardMarkup:
     rows = []
     for key in UPGRADE_ORDER:
         cfg = UPGRADES[key]
         if cfg["category"] != category:
             continue
         level = upgrade_level(upgrades, key)
+        max_lvl = effective_max_level(key, upgrader_lvl)
         if cfg.get("wip"):
-            label = f"🔧 {cfg['name']} — {level}/{cfg['max_level']} (в разработке)"
+            label = f"🔧 {cfg['name']} — {level}/{max_lvl} (в разработке)"
             rows.append([InlineKeyboardButton(text=label, callback_data="upg_noop")])
             continue
-        cost = upgrade_next_cost(key, upgrades)
+        cost = upgrade_next_cost(key, upgrades, upgrader_lvl)
         if cost is None:
-            label = f"✅ {cfg['name']} — {level}/{cfg['max_level']} (макс)"
+            label = f"✅ {cfg['name']} — {level}/{max_lvl} (макс)"
             rows.append([InlineKeyboardButton(text=label, callback_data="upg_noop")])
         else:
-            extra = upgrade_next_extra_cost(key, upgrades)
-            extra_part = f" + {extra[1]} {UPGRADE_EXTRA_CURRENCY_EMOJI.get(extra[0], '')}" if extra else ""
-            label = f"{cfg['name']} — {level}/{cfg['max_level']} ({cost} 🉑{extra_part})"
+            extras = upgrade_next_extra_costs(key, upgrades, upgrader_lvl)
+            extra_part = "".join(
+                f" + {amount} {UPGRADE_EXTRA_CURRENCY_EMOJI.get(currency, '')}" for currency, amount in extras
+            )
+            label = f"{cfg['name']} — {level}/{max_lvl} ({cost} 🉑{extra_part})"
             rows.append([InlineKeyboardButton(text=label, callback_data=f"upg_buy:{user_id}:{category}:{key}")])
 
+    # Кнопка прокачки уровня апгрейдера — появляется только когда все ветки во всех
+    # открытых на данном уровне апгрейдера категориях прокачаны до максимума.
+    if upgrader_can_level_up(upgrades, upgrader_lvl):
+        lvl_cost = upgrader_next_cost(upgrader_lvl)
+        label = f"🔺 Апгрейд уровня апгрейдера ({upgrader_lvl}→{upgrader_lvl + 1}) — {lvl_cost} 💎"
+        rows.append([InlineKeyboardButton(text=label, callback_data=f"upg_lvlup:{user_id}:{category}")])
+
     nav = []
-    for cat in (1, 2, 3):
+    for cat in unlocked_categories(upgrader_lvl):
         marker = "• " if cat == category else ""
         nav.append(InlineKeyboardButton(text=f"{marker}{cat}", callback_data=f"upg_page:{user_id}:{cat}"))
     rows.append(nav)
@@ -7923,12 +8212,15 @@ async def upgrade_menu(message: Message):
     rebirth_points = row[14]
     craft_points = row[32]
     coins = row[5]
+    prestige_points = row[27]
+    upgrader_lvl, diamond_coin = await get_upgrader_and_diamond(user_id)
     gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (user_id,))
     gold_coin = gc_row[0] if gc_row else 0
 
     await message.reply(
-        format_upgrade_page_text(upgrades, rebirth_points, 1, craft_points, coins, gold_coin),
-        reply_markup=upgrade_page_keyboard(upgrades, user_id, 1),
+        format_upgrade_page_text(upgrades, rebirth_points, 1, craft_points, coins, gold_coin,
+                                  upgrader_lvl, diamond_coin, prestige_points),
+        reply_markup=upgrade_page_keyboard(upgrades, user_id, 1, upgrader_lvl),
     )
 
 @dp.callback_query(F.data == "upg_noop")
@@ -7950,12 +8242,63 @@ async def upgrade_change_page(callback: CallbackQuery):
     rebirth_points = row[14]
     craft_points = row[32]
     coins = row[5]
+    prestige_points = row[27]
+    upgrader_lvl, diamond_coin = await get_upgrader_and_diamond(owner_id)
+    if category not in unlocked_categories(upgrader_lvl):
+        category = 1
     gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (owner_id,))
     gold_coin = gc_row[0] if gc_row else 0
     await safe_edit_text(callback, 
-        format_upgrade_page_text(upgrades, rebirth_points, category, craft_points, coins, gold_coin),
-        reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
+        format_upgrade_page_text(upgrades, rebirth_points, category, craft_points, coins, gold_coin,
+                                  upgrader_lvl, diamond_coin, prestige_points),
+        reply_markup=upgrade_page_keyboard(upgrades, owner_id, category, upgrader_lvl),
     )
+
+@dp.callback_query(F.data.startswith("upg_lvlup:"))
+async def upgrade_level_up(callback: CallbackQuery):
+    _, owner_str, category_str = callback.data.split(":")
+    owner_id = int(owner_str)
+    category = int(category_str)
+    if callback.from_user.id != owner_id:
+        await callback.answer(TEXTS["upgrade_buy_1"], show_alert=True)
+        return
+
+    row = await get_user(owner_id)
+    upgrades = parse_upgrades(row[16])
+    rebirth_points = row[14]
+    craft_points = row[32]
+    coins = row[5]
+    prestige_points = row[27]
+    upgrader_lvl, diamond_coin = await get_upgrader_and_diamond(owner_id)
+
+    if not upgrader_can_level_up(upgrades, upgrader_lvl):
+        await callback.answer(TEXTS["upgrade_buy_3"], show_alert=True)
+        return
+
+    lvl_cost = upgrader_next_cost(upgrader_lvl)
+    if lvl_cost is None or diamond_coin < lvl_cost:
+        await callback.answer(
+            f"Нужно {lvl_cost} 💎 акоин, у тебя {diamond_coin}.", show_alert=True
+        )
+        return
+
+    new_upgrader_lvl = upgrader_lvl + 1
+    await db_exec(
+        "UPDATE users SET upgrader_level = ?, diamond_coin = diamond_coin - ? WHERE user_id = ?",
+        (new_upgrader_lvl, lvl_cost, owner_id),
+    )
+    _, new_diamond_coin = await get_upgrader_and_diamond(owner_id)
+
+    if category not in unlocked_categories(new_upgrader_lvl):
+        category = 1
+    gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (owner_id,))
+    gold_coin = gc_row[0] if gc_row else 0
+    await safe_edit_text(callback,
+        format_upgrade_page_text(upgrades, rebirth_points, category, craft_points, coins, gold_coin,
+                                  new_upgrader_lvl, new_diamond_coin, prestige_points),
+        reply_markup=upgrade_page_keyboard(upgrades, owner_id, category, new_upgrader_lvl),
+    )
+    await callback.answer(f"🔺 Апгрейдер прокачан до уровня {new_upgrader_lvl}!")
 
 @dp.callback_query(F.data.startswith("upg_buy:"))
 async def upgrade_buy(callback: CallbackQuery):
@@ -7974,7 +8317,12 @@ async def upgrade_buy(callback: CallbackQuery):
     rebirth_points = row[14]
     craft_points = row[32]
     coins = row[5]
-    cost = upgrade_next_cost(key, upgrades)
+    prestige_points = row[27]
+    upgrader_lvl, diamond_coin = await get_upgrader_and_diamond(owner_id)
+    if category not in unlocked_categories(upgrader_lvl):
+        await callback.answer(TEXTS["upgrade_buy_2"], show_alert=True)
+        return
+    cost = upgrade_next_cost(key, upgrades, upgrader_lvl)
 
     if cost is None:
         await callback.answer(TEXTS["upgrade_buy_3"], show_alert=True)
@@ -7983,50 +8331,65 @@ async def upgrade_buy(callback: CallbackQuery):
         await callback.answer(TEXTS["upgrade_buy_4"].format(v0=cost, v1=rebirth_points), show_alert=True)
         return
 
-    extra = upgrade_next_extra_cost(key, upgrades)
-    extra_field, extra_amount = (extra if extra else (None, 0))
+    extras = upgrade_next_extra_costs(key, upgrades, upgrader_lvl)
     # UPGRADE_EXTRA_CURRENCY_LABELS: описание для любой валюты, которая может
     # встретиться в extra_cost апгрейдов (не только craft_points, как было раньше
     # захардкожено) — эмодзи+название для алерта, и откуда брать текущий баланс.
-    # gold_coin не входит в USER_COLUMNS (см. комментарий у ALTER TABLE), поэтому
-    # для него читаем баланс отдельным запросом, а не из row.
-    extra_balance = None
-    if extra_field == "craft_points":
-        extra_balance = craft_points
-    elif extra_field == "coins":
-        extra_balance = coins
-    elif extra_field == "gold_coin":
-        gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (owner_id,))
-        extra_balance = gc_row[0] if gc_row else 0
+    # gold_coin/diamond_coin/prestige_points не входят в USER_COLUMNS (см. комментарий
+    # у ALTER TABLE), поэтому для них читаем баланс отдельным запросом, а не из row.
+    async def _extra_balance(currency: str) -> int:
+        if currency == "craft_points":
+            return craft_points
+        if currency == "coins":
+            return coins
+        if currency == "gold_coin":
+            gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (owner_id,))
+            return gc_row[0] if gc_row else 0
+        if currency == "diamond_coin":
+            return diamond_coin
+        if currency == "prestige_points":
+            pp_row = await db_query_one("SELECT prestige_points FROM users WHERE user_id = ?", (owner_id,))
+            return pp_row[0] if pp_row else 0
+        return 0
 
-    if extra_field and extra_balance < extra_amount:
-        label = UPGRADE_EXTRA_CURRENCY_LABELS.get(extra_field, extra_field)
-        await callback.answer(
-            f"Нужно {extra_amount} {label}, у тебя {extra_balance}.", show_alert=True
-        )
-        return
+    # Сначала проверяем ВСЕ доп. валюты, прежде чем списывать хоть одну — иначе при
+    # нехватке второй валюты первая уже была бы списана.
+    for currency, amount in extras:
+        balance = await _extra_balance(currency)
+        if balance < amount:
+            label = UPGRADE_EXTRA_CURRENCY_LABELS.get(currency, currency)
+            await callback.answer(
+                f"Нужно {amount} {label}, у тебя {balance}.", show_alert=True
+            )
+            return
 
     upgrades[key] = upgrade_level(upgrades, key) + 1
     new_points = rebirth_points - cost
-    new_craft_points = craft_points - extra_amount if extra_field == "craft_points" else craft_points
-    new_coins = coins - extra_amount if extra_field == "coins" else coins
-    new_gold_coin = (extra_balance - extra_amount) if extra_field == "gold_coin" else None
+    extra_amounts = {currency: amount for currency, amount in extras}
+    new_craft_points = craft_points - extra_amounts.get("craft_points", 0)
+    new_coins = coins - extra_amounts.get("coins", 0)
+    new_diamond_coin = diamond_coin - extra_amounts.get("diamond_coin", 0)
+    new_prestige_points = prestige_points - extra_amounts.get("prestige_points", 0)
     await db_exec(
         "UPDATE users SET rebirth_points = ?, upgrades = ?, craft_points = ? WHERE user_id = ?",
         (new_points, format_upgrades(upgrades), new_craft_points, owner_id),
     )
-    if extra_field == "coins":
-        await db_exec("UPDATE users SET coins = coins - ? WHERE user_id = ?", (extra_amount, owner_id))
-    elif extra_field == "gold_coin":
-        await db_exec("UPDATE users SET gold_coin = gold_coin - ? WHERE user_id = ?", (extra_amount, owner_id))
+    if "coins" in extra_amounts:
+        await db_exec("UPDATE users SET coins = coins - ? WHERE user_id = ?", (extra_amounts["coins"], owner_id))
+    if "gold_coin" in extra_amounts:
+        await db_exec("UPDATE users SET gold_coin = gold_coin - ? WHERE user_id = ?", (extra_amounts["gold_coin"], owner_id))
+    if "diamond_coin" in extra_amounts:
+        await db_exec("UPDATE users SET diamond_coin = diamond_coin - ? WHERE user_id = ?", (extra_amounts["diamond_coin"], owner_id))
+    if "prestige_points" in extra_amounts:
+        await db_exec("UPDATE users SET prestige_points = prestige_points - ? WHERE user_id = ?", (extra_amounts["prestige_points"], owner_id))
 
-    if new_gold_coin is None:
-        gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (owner_id,))
-        new_gold_coin = gc_row[0] if gc_row else 0
+    gc_row = await db_query_one("SELECT gold_coin FROM users WHERE user_id = ?", (owner_id,))
+    new_gold_coin = gc_row[0] if gc_row else 0
 
     await safe_edit_text(callback, 
-        format_upgrade_page_text(upgrades, new_points, category, new_craft_points, new_coins, new_gold_coin),
-        reply_markup=upgrade_page_keyboard(upgrades, owner_id, category),
+        format_upgrade_page_text(upgrades, new_points, category, new_craft_points, new_coins, new_gold_coin,
+                                  upgrader_lvl, new_diamond_coin, new_prestige_points),
+        reply_markup=upgrade_page_keyboard(upgrades, owner_id, category, upgrader_lvl),
     )
     await callback.answer(TEXTS["upgrade_buy_5"].format(v0=UPGRADES[key]['name'], v1=upgrades[key]))
 
@@ -9622,7 +9985,7 @@ async def admin_set_upgrade(message: Message):
     if upgrade_key not in UPGRADES:
         await message.reply(TEXTS["admin_set_upgrade_3"])
         return
-    max_level = UPGRADES[upgrade_key]["max_level"]
+    max_level = effective_max_level(upgrade_key, UPGRADER_LEVEL_MAX)
     if level < 0 or level > max_level:
         await message.reply(TEXTS["admin_set_upgrade_4"].format(v0=max_level))
         return
